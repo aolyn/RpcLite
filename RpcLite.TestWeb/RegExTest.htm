@@ -1,0 +1,42 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<title>RpcLite Test</title>
+	<script src="scripts/jquery-1.11.1.min.js" type="text/javascript"></script>
+	<script type="text/javascript">
+		$(document).ready(function ()
+		{
+			var jo = { date: new Date() };
+			var jsonSt = "{\"date\":\"/Date(1403290130502+0800)/\",\"d\":22,\"s\":\"22\"}";
+			//jsonSt = JSON.stringify(jo);/Date(1403290130502+0800)/
+			//jsonSt = "";-62135596800000-0000
+			var reg = new RegExp("/Date\\((-?\\d+)(\\+|-)(\\d+)\\)/");
+			var m = reg.test(jsonSt);
+			//var jsonStr = jsonStr.replace(new RegExp('(^|[^////])//"/////Date//((-?[0-9]+)//)///////"', 'g'), "$1new Date($2)");//
+			var j2 = jsonSt.replace(reg, "DDDD");
+			var j3 = reg.exec(jsonSt);
+			$("#result").text(j2);
+
+			var oldTime = (new Date("2011/11/11 20:10:10")).getTime(); //得到毫秒数
+			var newTime = new Date(oldTime); //就得到普通的时间了
+
+			var d2 = JSON.parse(jsonSt, function (key, value)
+			{
+				if (reg.test(value))
+				{
+					var j4 = reg.exec(jsonSt);
+					var d = new Date(parseInt(j4[1]));
+					return d;
+				}
+				return value;
+			});
+		})
+
+
+	</script>
+</head>
+<body>
+	<div id="result">
+	</div>
+</body>
+</html>

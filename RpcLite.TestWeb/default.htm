@@ -1,0 +1,179 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<title>RpcLite Test</title>
+	<script src="scripts/jquery-1.11.1.js" type="text/javascript"></script>
+	<script type="text/javascript">
+
+		var convertDateTimeReg = new RegExp("/Date\\((-?\\d+)(\\+|-)(\\d+)\\)/");
+		$.ajaxSetup({
+			converters: {
+				"text json": function (text)
+				{
+					var d2 = JSON.parse(text, function (key, value)
+					{
+						if (typeof value == "string" && convertDateTimeReg.test(value))
+						{
+							var j4 = convertDateTimeReg.exec(value);
+							var zone = parseInt(j4[3]);
+							var d = new Date(parseInt(j4[1]) + zone * 3600 * 1000 / 100);
+							return d;
+						}
+						return value;
+					});
+
+					return d2;
+				}
+			}
+		});
+
+		function CallAsync(url, data, success, error)
+		{
+			$.ajax(
+			{
+				url: url,
+				type: "POST",
+				dataType: "json",
+				contentType: "application/json",
+				data: JSON.stringify(data),
+				success: success,
+				error: error
+			});
+		}
+
+		function testDelete()
+		{
+			var postData =
+			{
+				Id: 1,
+				Name: "Chris"
+			};
+
+			postData = 1;
+			//			postData = null;
+
+			$.ajax(
+			{
+				type: "POST",
+				//			url: "api/AddProduct",
+				//			url: "api/Get",
+				url: "api/Delete",
+				dataType: "json",
+				contentType: "application/json",
+				data: JSON.stringify(postData),
+				success: function (arg)
+				{
+					var sjson = JSON.stringify(arg);
+					$("#result").text(sjson);
+				},
+				error: function (arg)
+				{
+					$("#result").text(arg);
+				}
+			});
+		}
+
+		function testGet()
+		{
+			var postData =
+			{
+				Id: 1,
+				Name: "Chris"
+			};
+
+			postData = 1;
+
+			CallAsync("api/Get", null, function (arg)
+			{
+				var sjson = JSON.stringify(arg);
+				$("#result").text(sjson);
+			}, function (arg)
+			{
+				$("#result").text(arg);
+			});
+		}
+
+		function testGetById()
+		{
+			var postData = 1;
+
+			$.ajax(
+			{
+				type: "POST",
+				//			url: "api/AddProduct",
+				//			url: "api/Get",
+				url: "api/GetById",
+				dataType: "json",
+				contentType: "application/json",
+				data: JSON.stringify(postData),
+				success: function (arg)
+				{
+					var sjson = JSON.stringify(arg);
+					$("#result").text(sjson);
+				},
+				error: function (arg)
+				{
+					$("#result").text(arg);
+				}
+			});
+		}
+
+		function testAddProduct()
+		{
+			var product = { "Id": 1, "Name": "2014-06-15 21:56:42", "Price": 0, "Category": null, "ListDate": new Date() };
+			var postData =
+			{
+				id: 1,
+				product: product
+			};
+
+			$.ajax(
+			{
+				type: "POST",
+				url: "api/AddProduct",
+				dataType: "json",
+				contentType: "application/json",
+				data: JSON.stringify(postData),
+				success: function (arg)
+				{
+					var sjson = JSON.stringify(arg);
+					$("#result").text(sjson);
+				},
+				error: function (arg)
+				{
+					$("#result").text(arg);
+				}
+			});
+		}
+
+		function btnAddProduct_onclick()
+		{
+			testAddProduct();
+		}
+
+		function btnGetById_onclick()
+		{
+			testGetById();
+		}
+
+		function btnGet_onclick()
+		{
+			testGet();
+		}
+
+		function btnDelete_onclick()
+		{
+			testDelete();
+		}
+
+	</script>
+</head>
+<body>
+	<input id="btnGetById" type="button" value="GetById" onclick="return btnGetById_onclick()" />
+	<input id="btnAddProduct" type="button" value="AddProduct" onclick="return btnAddProduct_onclick()" />
+	<input id="btnGet" type="button" value="Get" onclick="return btnGet_onclick()" />
+	<input id="btnDelete" type="button" value="Delete" onclick="return btnDelete_onclick()" />
+	<div id="result">
+	</div>
+</body>
+</html>
