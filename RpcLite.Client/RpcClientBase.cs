@@ -34,11 +34,11 @@ namespace RpcLite.Client
 
 			var mime = _formatter.SupportMimes.First();
 
-			var resultObj = GetResponse(action, param, returnType, mime);
+			var resultObj = DoRequest(action, param, returnType, mime);
 			return resultObj;
 		}
 
-		private object GetResponse(string action, object param, Type returnType, string mime)
+		private object DoRequest(string action, object param, Type returnType, string mime)
 		{
 			var headDic = new Dictionary<string, string>
 				{

@@ -23,7 +23,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RpcLite.Client", "RpcLite.C
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RpcLite.Service", "RpcLite.Service\RpcLite.Service.csproj", "{DCF043E9-6FFF-4F70-B8A3-78857509BBCD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hrj", "..\..\..\Visual Studio 2008\Projects\_Library\HrjLib\Hrj.csproj", "{2B356DB8-B10B-4EA1-9E41-CCA854CD4835}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hrj", "Hrj\Hrj.csproj", "{0C52F3CD-AC50-460A-BFF9-C727B17300EC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -134,18 +134,16 @@ Global
 		{DCF043E9-6FFF-4F70-B8A3-78857509BBCD}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{DCF043E9-6FFF-4F70-B8A3-78857509BBCD}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{DCF043E9-6FFF-4F70-B8A3-78857509BBCD}.Release|x86.ActiveCfg = Release|Any CPU
-		{2B356DB8-B10B-4EA1-9E41-CCA854CD4835}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2B356DB8-B10B-4EA1-9E41-CCA854CD4835}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2B356DB8-B10B-4EA1-9E41-CCA854CD4835}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
-		{2B356DB8-B10B-4EA1-9E41-CCA854CD4835}.Debug|Mixed Platforms.Build.0 = Debug|x86
-		{2B356DB8-B10B-4EA1-9E41-CCA854CD4835}.Debug|x86.ActiveCfg = Debug|x86
-		{2B356DB8-B10B-4EA1-9E41-CCA854CD4835}.Debug|x86.Build.0 = Debug|x86
-		{2B356DB8-B10B-4EA1-9E41-CCA854CD4835}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2B356DB8-B10B-4EA1-9E41-CCA854CD4835}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2B356DB8-B10B-4EA1-9E41-CCA854CD4835}.Release|Mixed Platforms.ActiveCfg = Release|x86
-		{2B356DB8-B10B-4EA1-9E41-CCA854CD4835}.Release|Mixed Platforms.Build.0 = Release|x86
-		{2B356DB8-B10B-4EA1-9E41-CCA854CD4835}.Release|x86.ActiveCfg = Release|x86
-		{2B356DB8-B10B-4EA1-9E41-CCA854CD4835}.Release|x86.Build.0 = Release|x86
+		{0C52F3CD-AC50-460A-BFF9-C727B17300EC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0C52F3CD-AC50-460A-BFF9-C727B17300EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0C52F3CD-AC50-460A-BFF9-C727B17300EC}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{0C52F3CD-AC50-460A-BFF9-C727B17300EC}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{0C52F3CD-AC50-460A-BFF9-C727B17300EC}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{0C52F3CD-AC50-460A-BFF9-C727B17300EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0C52F3CD-AC50-460A-BFF9-C727B17300EC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0C52F3CD-AC50-460A-BFF9-C727B17300EC}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{0C52F3CD-AC50-460A-BFF9-C727B17300EC}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{0C52F3CD-AC50-460A-BFF9-C727B17300EC}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

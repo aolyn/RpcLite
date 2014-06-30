@@ -43,7 +43,7 @@ namespace WebApiClient
 
 
 			ClientTest();
-
+			return;
 			//DynamicProxyTest.TestClass.Test();
 
 			//TestDynamicType();

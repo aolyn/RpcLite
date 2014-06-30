@@ -78,13 +78,13 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Visual Studio 2008\Projects\_Library\HrjLib\Hrj.csproj">
-      <Project>{2b356db8-b10b-4ea1-9e41-cca854cd4835}</Project>
-      <Name>Hrj</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Contracts\Contracts.csproj">
       <Project>{99199B27-51C0-42D9-8DDB-4AFBE45F30CB}</Project>
       <Name>Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Hrj\Hrj.csproj">
+      <Project>{0c52f3cd-ac50-460a-bff9-c727b17300ec}</Project>
+      <Name>Hrj</Name>
     </ProjectReference>
     <ProjectReference Include="..\Model\Model.csproj">
       <Project>{2D6E36EC-3E98-4C98-98E8-34AFA8C75F1A}</Project>
