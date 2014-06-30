@@ -60,11 +60,13 @@ namespace RpcLite
 		{
 			if (request == null) throw new ArgumentNullException("request");
 
-			if (string.IsNullOrWhiteSpace(request.AppRelativeCurrentExecutionFilePath))
+			var requestPath = request.AppRelativeCurrentExecutionFilePath;
+
+			if (string.IsNullOrWhiteSpace(requestPath))
 				throw new ArgumentException("request.AppRelativeCurrentExecutionFilePath is null or white space");
 
 			var service = Services.FirstOrDefault(it =>
-					request.AppRelativeCurrentExecutionFilePath.StartsWith(it.Path, StringComparison.OrdinalIgnoreCase));
+					requestPath.StartsWith(it.Path, StringComparison.OrdinalIgnoreCase));
 
 			if (service == null)
 			{
@@ -74,7 +76,7 @@ namespace RpcLite
 
 			try
 			{
-				var actionName = request.AppRelativeCurrentExecutionFilePath.Substring(service.Path.Length);
+				var actionName = requestPath.Substring(service.Path.Length);
 				if (string.IsNullOrEmpty(actionName))
 					throw new RequestException("Bad request: not action name");
 
