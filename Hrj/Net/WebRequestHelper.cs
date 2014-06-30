@@ -9,7 +9,7 @@ namespace Hrj.Net
 {
 	public class WebRequestHelper
 	{
-		public static string PostData(string url, string json, Encoding encoding, Dictionary<string, string> headDic)
+		public static string PostData(string url, string postData, Encoding encoding, Dictionary<string, string> headDic)
 		{
 			var request = WebRequest.Create(url) as HttpWebRequest;
 			request.Method = "POST";
@@ -26,13 +26,13 @@ namespace Hrj.Net
 				}
 			}
 
-			if (!string.IsNullOrEmpty(json))
+			if (!string.IsNullOrEmpty(postData))
 			{
 				var requestStream = request.GetRequestStream();
 				if (encoding == null)
 					encoding = Encoding.UTF8;
 				var writer = new StreamWriter(requestStream, encoding);
-				writer.Write(json);
+				writer.Write(postData);
 				writer.Close();
 			}
 
