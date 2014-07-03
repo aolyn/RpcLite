@@ -3,34 +3,38 @@ using System.Collections.Generic;
 
 namespace RpcLite
 {
-	internal class ServiceInstancePool
+	internal class ServiceFactory
 	{
-		private static Dictionary<ActionInfo, ServiceInstanceContainer> containers = new Dictionary<ActionInfo, ServiceInstanceContainer>();
+		private static Dictionary<ActionInfo, ServiceInstancePool> containers = new Dictionary<ActionInfo, ServiceInstancePool>();
 		private static object containerLock = new object();
 
-		public static ServiceInstance GetServiceObject(ActionInfo action)
+		public static ServiceInstanceContainer GetService(ActionInfo action)
 		{
-			ServiceInstanceContainer container;
+			if (action == null) throw new ArgumentNullException("action can't be null");
+			if (action.ServiceCreator == null) throw new ArgumentNullException("action.ServiceCreator can't be null");
+
+			//var serviceCreator = action.ServiceCreator;
+			ServiceInstancePool container;
 			if (containers.TryGetValue(action, out container))
-				return container.GetServiceInstance();
+				return container.GetInstance();
 
 			lock (containerLock)
 			{
-				container = new ServiceInstanceContainer(action.ServiceCreator) { Size = 1000 };
+				container = new ServiceInstancePool(action.ServiceCreator) { Size = 1000 };
 				containers.Add(action, container);
-				return container.GetServiceInstance();
+				return container.GetInstance();
 			}
 		}
 	}
 
-	internal class ServiceInstanceContainer : IDisposable
+	internal class ServiceInstancePool : IDisposable
 	{
 		private Func<object> serviceCreator;
 
-		public static readonly Stack<ServiceInstance> Pool = new Stack<ServiceInstance>();
+		public static readonly Stack<ServiceInstanceContainer> Pool = new Stack<ServiceInstanceContainer>();
 		public int Size { get; set; }
 
-		public ServiceInstanceContainer(Func<object> serviceCreator)
+		public ServiceInstancePool(Func<object> serviceCreator)
 		{
 			this.serviceCreator = serviceCreator;
 		}
@@ -41,7 +45,7 @@ namespace RpcLite
 		}
 
 		private object poolLock = new object();
-		public ServiceInstance GetServiceInstance()
+		public ServiceInstanceContainer GetInstance()
 		{
 			lock (poolLock)
 			{
@@ -49,12 +53,12 @@ namespace RpcLite
 					return Pool.Pop();
 
 				var service = serviceCreator();
-				var instance = new ServiceInstance(this, service);
+				var instance = new ServiceInstanceContainer(this, service);
 				return instance;
 			}
 		}
 
-		public void ReleaseInstance(ServiceInstance instance)
+		public void ReleaseInstance(ServiceInstanceContainer instance)
 		{
 			lock (poolLock)
 			{
@@ -70,12 +74,12 @@ namespace RpcLite
 		}
 	}
 
-	internal class ServiceInstance : IDisposable
+	internal class ServiceInstanceContainer : IDisposable
 	{
-		private readonly ServiceInstanceContainer _container;
+		private readonly ServiceInstancePool _container;
 		public readonly object ServiceObject;
 
-		public ServiceInstance(ServiceInstanceContainer container, object serviceObject)
+		public ServiceInstanceContainer(ServiceInstancePool container, object serviceObject)
 		{
 			_container = container;
 			ServiceObject = serviceObject;

@@ -57,26 +57,19 @@ namespace RpcLite.Client
 			return resultObj;
 		}
 
-		private static Func<RpcClientBase<T>> _func;
-		private readonly static object createImplementTypeLock = new object();
-		public static RpcClientBase<T> CreateInstance()
+		private static Lazy<Func<RpcClientBase<T>>> _func = new Lazy<Func<RpcClientBase<T>>>(() =>
 		{
-			if (_func == null)
-			{
-				lock (createImplementTypeLock)
-				{
-					if (_func == null)
-					{
-						var type = ClientWrapper.WrapInterface<T>();
-						_func = TypeCreator.GetCreateInstanceFunc(type) as Func<RpcClientBase<T>>;
-					}
-				}
-			}
+			var type = ClientWrapper.WrapInterface<T>();
+			var func = TypeCreator.GetCreateInstanceFunc(type) as Func<RpcClientBase<T>>;
+			return func;
+		}, true);
 
-			if (_func == null)
+		public static RpcClientBase<T> GetInstance()
+		{
+			if (_func.Value == null)
 				throw new ClientException("GetCreateInstanceFunc Error.");
 
-			return _func();
+			return _func.Value();
 		}
 	}
 }

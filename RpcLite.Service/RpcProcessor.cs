@@ -44,7 +44,7 @@ namespace RpcLite
 
 		private static object InvokeAction(ActionInfo actionInfo, object reqArg)
 		{
-			using (var serviceInstance = ServiceInstancePool.GetServiceObject(actionInfo))
+			using (var serviceInstance = ServiceFactory.GetService(actionInfo))
 			{
 				object resultObj;
 				if (actionInfo.HasReturnValue)

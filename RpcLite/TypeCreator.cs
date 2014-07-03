@@ -118,6 +118,12 @@ namespace RpcLite
 		}
 
 		private readonly static Dictionary<Type, Type> InterfaceImplementTypes = new Dictionary<Type, Type>();
+		/// <summary>
+		/// thread unsafe
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="parentType"></param>
+		/// <returns></returns>
 		public static Type WrapInterface<T>(Type parentType)
 		{
 			var interfaceType = typeof(T);

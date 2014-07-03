@@ -141,18 +141,17 @@ namespace WebApiClient
 
 			}
 			{
-				var client = RpcClientBase<IProduct>.CreateInstance();
+				var client = RpcClientBase<IProduct>.GetInstance();
 			}
 			//client.AddProduct(2, new Product(), 4, 5, 6, 7);
 			{
-
 				//RpcLite.NetChannelHelper.GetResponse("Hello", 11);
 				//var type = ClientWrapper.WrapInterface<IProduct>();
 
-				var client2 = RpcClientBase<IProduct>.CreateInstance();
-				//var obj = RpcClientBase<IProduct>.CreateInstance();
-				var ip = client2 as IProduct;
+				var client2 = RpcClientBase<IProduct>.GetInstance();
 				client2.BaseUrl = "http://localhost:4098/api/";
+
+				var ip = client2 as IProduct;
 
 				var p1 = new Product { Id = 2, Name = "Chris" };
 				var result = ip.AddProduct(1, p1, 5, 6, 7, 8);
