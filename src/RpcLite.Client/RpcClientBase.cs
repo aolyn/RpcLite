@@ -66,10 +66,17 @@ namespace RpcLite.Client
 
 		public static RpcClientBase<T> GetInstance()
 		{
+			return GetInstance(null);
+		}
+
+		public static RpcClientBase<T> GetInstance(string baseUrl)
+		{
 			if (_func.Value == null)
 				throw new ClientException("GetCreateInstanceFunc Error.");
 
-			return _func.Value();
+			var client = _func.Value();
+			client.BaseUrl = baseUrl;
+			return client;
 		}
 	}
 }
