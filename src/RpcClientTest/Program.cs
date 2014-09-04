@@ -148,7 +148,7 @@ namespace WebApiClient
 				//RpcLite.NetChannelHelper.GetResponse("Hello", 11);
 				//var type = ClientWrapper.WrapInterface<IProduct>();
 
-				var client2 = RpcClientBase<IProduct>.GetInstance();
+				var client2 = RpcClientBase<IProduct>.GetInstance("http://localhost:4098/api/");
 				client2.BaseUrl = "http://localhost:4098/api/";
 
 				var ip = client2 as IProduct;
