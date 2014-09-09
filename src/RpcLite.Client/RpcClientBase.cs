@@ -24,16 +24,12 @@ namespace RpcLite.Client
 
 		protected object BeginGetResponse(string action, object request, Type returnType)
 		{
-			var response = DoRequest(action, request, returnType);
-
-			return response;
+			throw new NotImplementedException();
 		}
 
 		protected object EndGetResponse(string action, object request, Type returnType)
 		{
-			var response = DoRequest(action, request, returnType);
-
-			return response;
+			throw new NotImplementedException();
 		}
 
 		public T Client
