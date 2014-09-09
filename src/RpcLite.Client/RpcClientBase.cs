@@ -22,6 +22,20 @@ namespace RpcLite.Client
 			return response;
 		}
 
+		protected object BeginGetResponse(string action, object request, Type returnType)
+		{
+			var response = DoRequest(action, request, returnType);
+
+			return response;
+		}
+
+		protected object EndGetResponse(string action, object request, Type returnType)
+		{
+			var response = DoRequest(action, request, returnType);
+
+			return response;
+		}
+
 		public T Client
 		{
 			get { return this as T; }
