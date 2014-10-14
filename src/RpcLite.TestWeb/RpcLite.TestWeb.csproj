@@ -102,10 +102,6 @@
       <Project>{2D6E36EC-3E98-4C98-98E8-34AFA8C75F1A}</Project>
       <Name>Model</Name>
     </ProjectReference>
-    <ProjectReference Include="..\RpcLite.Service\RpcLite.Service.csproj">
-      <Project>{dcf043e9-6fff-4f70-b8a3-78857509bbcd}</Project>
-      <Name>RpcLite.Service</Name>
-    </ProjectReference>
     <ProjectReference Include="..\RpcLite\RpcLite.csproj">
       <Project>{EFA8DBF7-4300-4599-9C35-E716E25D7CCD}</Project>
       <Name>RpcLite</Name>
