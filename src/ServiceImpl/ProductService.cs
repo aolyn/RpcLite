@@ -57,14 +57,9 @@ namespace ServiceImpl
 			return Products.FirstOrDefault(it => it.Id == id);
 		}
 
-		#region IProduct Members
-
-
 		public int AddProduct(int id, Product product, int a, int b, int c, int d)
 		{
 			throw new NotImplementedException();
 		}
-
-		#endregion
 	}
 }

@@ -30,6 +30,21 @@ namespace RpcLite
 			return NullResponse.Value;
 		}
 
+		public static IAsyncResult BeginProcessRequest(ServiceRequest serviceRequest, AsyncCallback cb, object state)
+		{
+			var actionInfo = GetActionInfo(serviceRequest.ServiceType, serviceRequest.ActionName);
+			if (actionInfo == null)
+				throw new ServiceException("Action Not Found: " + serviceRequest.ActionName);
+
+			object requestObject = null;
+			if (actionInfo.ArgumentCount > 0)
+				requestObject = GetRequestObject(serviceRequest.InputStream, serviceRequest.Formatter, actionInfo.ArgumentType);
+
+			var result = BeginInvokeAction(actionInfo, requestObject, cb, state);
+
+			return result;
+		}
+
 		private static object GetRequestObject(Stream stream, IFormatter formatter, Type type)
 		{
 			try
@@ -50,6 +65,24 @@ namespace RpcLite
 				if (actionInfo.HasReturnValue)
 				{
 					resultObj = actionInfo.Func(serviceInstance.ServiceObject, reqArg);
+				}
+				else
+				{
+					actionInfo.Action(serviceInstance.ServiceObject, reqArg);
+					resultObj = null;
+				}
+				return resultObj;
+			}
+		}
+
+		private static IAsyncResult BeginInvokeAction(ActionInfo actionInfo, object reqArg, AsyncCallback cb, object state)
+		{
+			using (var serviceInstance = ServiceFactory.GetService(actionInfo))
+			{
+				IAsyncResult resultObj;
+				if (actionInfo.HasReturnValue)
+				{
+					resultObj = actionInfo.BeginFunc(serviceInstance.ServiceObject, reqArg, cb, state);
 				}
 				else
 				{

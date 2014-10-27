@@ -93,9 +93,11 @@
     <Compile Include="Service\Config\ConfigException.cs" />
     <Compile Include="Service\Config\GlobalConfig.cs" />
     <Compile Include="Service\Config\RpcLiteConfigSection.cs" />
+    <Compile Include="Service\RpcAsyncHandler.cs" />
     <Compile Include="Service\RpcHandler.cs" />
     <Compile Include="Service\RpcLiteModule.cs" />
     <Compile Include="Service\RpcProcessor.cs" />
+    <Compile Include="Service\ServiceAsyncResult.cs" />
     <Compile Include="Service\ServiceInfo.cs" />
     <Compile Include="Service\ServiceInstancePool.cs" />
     <Compile Include="Service\ServiceRequest.cs" />

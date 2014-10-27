@@ -11,7 +11,11 @@ namespace RpcLite
 		public Type ArgumentType { get; set; }
 		public bool HasReturnValue { get; set; }
 		public Func<object, object, object> Func { get; set; }
+		public Func<object, object, AsyncCallback, object, IAsyncResult> BeginFunc { get; set; }
+		public Action<IAsyncResult> EndFunc { get; set; }
 		public Action<object, object> Action { get; set; }
+		public Func<object, object, AsyncCallback, object, IAsyncResult> BeginAction { get; set; }
+		public Action<IAsyncResult> EndAction { get; set; }
 		public Func<object> ServiceCreator { get; set; }
 	}
 }
