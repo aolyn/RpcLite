@@ -68,6 +68,7 @@
     <Compile Include="Config\GlobalConfig.cs" />
     <Compile Include="Config\RpcLiteConfigSection.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RpcAsyncHandler.cs" />
     <Compile Include="RpcHandler.cs" />
     <Compile Include="RpcLiteModule.cs" />
     <Compile Include="RpcProcessor.cs" />

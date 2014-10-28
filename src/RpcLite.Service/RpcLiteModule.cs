@@ -13,7 +13,13 @@ namespace RpcLite
 
 		public void Init(HttpApplication context)
 		{
-			context.PostResolveRequestCache += context_PostResolveRequestCache;
+			//context.PostResolveRequestCache += context_PostResolveRequestCache;
+			context.MapRequestHandler += context_MapRequestHandler;
+		}
+
+		void context_MapRequestHandler(object sender, EventArgs e)
+		{
+			//HttpContext.Current.RemapHandler()
 		}
 
 		void context_PostResolveRequestCache(object sender, EventArgs e)

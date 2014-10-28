@@ -9,66 +9,9 @@ using RpcLite.Formatters;
 
 namespace RpcLite
 {
-	public class RpcHandler : IHttpHandler
+	public class RpcAsyncHandler : IHttpAsyncHandler
 	{
 		public static List<ServiceInfo> Services { get { return RpcLiteConfigSection.Instance.Services; } }
-
-		public void ProcessRequest(HttpContext context)
-		{
-			var request = context.Request;
-			var response = context.Response;
-
-			IFormatter formatter = null;
-			try
-			{
-				//get formatter from content type
-				if (!string.IsNullOrEmpty(request.ContentType))
-				{
-					formatter = GlobalConfig.Formaters.FirstOrDefault(it => it.SupportMimes.Contains(request.ContentType));
-					if (formatter == null)
-						throw new ConfigException("Not Supported MIME: " + request.ContentType);
-
-					response.ContentType = request.ContentType;
-				}
-				else
-				{
-					if (GlobalConfig.Formaters.Count == 0)
-						throw new ConfigException("Configuration error: no formatters.");
-
-					formatter = GlobalConfig.Formaters[0];
-					if (formatter.SupportMimes.Count == 0)
-						throw new ConfigException("Configuration error: formatter " + formatter.GetType() + " has no support MIME");
-
-					response.ContentType = formatter.SupportMimes[0];
-				}
-			}
-			catch (ThreadAbortException)
-			{
-			}
-			catch (Exception ex)
-			{
-				//by default send Exception data to client use Json Format
-				var resultJson = JsonConvert.SerializeObject(ex);
-				response.Write(resultJson);
-				response.End();
-			}
-
-			if (formatter != null)
-			{
-				try
-				{
-					ProcessRequest(request, response, formatter);
-				}
-				catch (ThreadAbortException)
-				{
-				}
-				catch (Exception ex)
-				{
-					formatter.Serialize(response.OutputStream, ex);
-					response.End();
-				}
-			}
-		}
 
 		private static void ProcessRequest(HttpRequest request, HttpResponse response, IFormatter formatter)
 		{
@@ -133,6 +76,76 @@ namespace RpcLite
 			{
 				return true;
 			}
+		}
+
+		public IAsyncResult BeginProcessRequest(HttpContext context, AsyncCallback cb, object extraData)
+		{
+			var request = context.Request;
+			var response = context.Response;
+
+			IFormatter formatter = null;
+			try
+			{
+				//get formatter from content type
+				if (!string.IsNullOrEmpty(request.ContentType))
+				{
+					formatter = GlobalConfig.Formaters.FirstOrDefault(it => it.SupportMimes.Contains(request.ContentType));
+					if (formatter == null)
+						throw new ConfigException("Not Supported MIME: " + request.ContentType);
+
+					response.ContentType = request.ContentType;
+				}
+				else
+				{
+					if (GlobalConfig.Formaters.Count == 0)
+						throw new ConfigException("Configuration error: no formatters.");
+
+					formatter = GlobalConfig.Formaters[0];
+					if (formatter.SupportMimes.Count == 0)
+						throw new ConfigException("Configuration error: formatter " + formatter.GetType() + " has no support MIME");
+
+					response.ContentType = formatter.SupportMimes[0];
+				}
+			}
+			catch (ThreadAbortException)
+			{
+			}
+			catch (Exception ex)
+			{
+				//by default send Exception data to client use Json Format
+				var resultJson = JsonConvert.SerializeObject(ex);
+				response.Write(resultJson);
+				response.End();
+			}
+
+			if (formatter != null)
+			{
+				try
+				{
+					ProcessRequest(request, response, formatter);
+				}
+				catch (ThreadAbortException)
+				{
+				}
+				catch (Exception ex)
+				{
+					formatter.Serialize(response.OutputStream, ex);
+					response.End();
+				}
+			}
+
+			return null;
+		}
+
+		public void EndProcessRequest(IAsyncResult result)
+		{
+			throw new NotImplementedException();
+		}
+
+
+		public void ProcessRequest(HttpContext context)
+		{
+			throw new NotImplementedException();
 		}
 	}
 }
