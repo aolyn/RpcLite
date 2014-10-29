@@ -7,9 +7,8 @@ using System.Web;
 using Newtonsoft.Json;
 using RpcLite.Config;
 using RpcLite.Formatters;
-using RpcLite.Service;
 
-namespace RpcLite
+namespace RpcLite.Service
 {
 	public class RpcAsyncHandler : IHttpAsyncHandler
 	{
@@ -204,9 +203,15 @@ namespace RpcLite
 					ServiceType = service.Type,
 				};
 
+				var response = new ServiceResponse
+				{
+					ResponseStream = responseStream,
+					Formatter = formatter,
+				};
+
 				try
 				{
-					var result = RpcProcessor.BeginProcessRequest(serviceRequest, cb, requestContext);
+					var result = RpcProcessor.BeginProcessRequest(serviceRequest, response, cb, requestContext);
 					//formatter.Serialize(responseStream, result);
 					return result;
 				}
@@ -234,10 +239,27 @@ namespace RpcLite
 
 		public void EndProcessRequest(IAsyncResult result)
 		{
-			var ar = result as ServiceAsyncResult;
-			if (ar != null)
+			var state = result.AsyncState as SeviceInvokeContext;
+			if (state != null)
 			{
+				if (state.Action.HasReturnValue)
+				{
+					var service = (ServiceInstanceContainer)state.Service;
+					try
+					{
+						var requestResult = state.Action.EndFunc(service.ServiceObject, result);
+						state.Output.Formatter.Serialize(state.Output.ResponseStream, requestResult);
+					}
+					catch (Exception ex)
+					{
 
+						throw;
+					}
+				}
+				else
+				{
+					//state.Action.EndAction(state.Service, result);
+				}
 			}
 		}
 	}

@@ -1,4 +1,5 @@
-﻿using Model;
+﻿using System;
+using Model;
 
 namespace Contracts
 {
@@ -11,5 +12,8 @@ namespace Contracts
 		Product[] Get();
 		Product GetById(int id);
 		Product Get(int id);
+
+		//IAsyncResult BeginAdd(Product product, AsyncCallback cb, object state);
+		//int EndAdd(IAsyncResult asyncResult);
 	}
 }
