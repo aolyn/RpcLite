@@ -6,7 +6,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using RpcLite.Formatters;
 
-namespace RpcLite
+namespace RpcLite.Service
 {
 	public static class RpcProcessor
 	{
@@ -30,7 +30,7 @@ namespace RpcLite
 			return NullResponse.Value;
 		}
 
-		public static IAsyncResult BeginProcessRequest(ServiceRequest serviceRequest, AsyncCallback cb, object state)
+		public static IAsyncResult BeginProcessRequest(ServiceRequest serviceRequest, ServiceResponse outputStream, AsyncCallback cb, object state)
 		{
 			var actionInfo = GetActionInfo(serviceRequest.ServiceType, serviceRequest.ActionName);
 			if (actionInfo == null)
@@ -40,7 +40,7 @@ namespace RpcLite
 			if (actionInfo.ArgumentCount > 0)
 				requestObject = GetRequestObject(serviceRequest.InputStream, serviceRequest.Formatter, actionInfo.ArgumentType);
 
-			var result = BeginInvokeAction(actionInfo, requestObject, cb, state);
+			var result = BeginInvokeAction(actionInfo, outputStream, requestObject, cb, state);
 
 			return result;
 		}
@@ -75,22 +75,20 @@ namespace RpcLite
 			}
 		}
 
-		private static IAsyncResult BeginInvokeAction(ActionInfo actionInfo, object reqArg, AsyncCallback cb, object state)
+		private static IAsyncResult BeginInvokeAction(ActionInfo actionInfo, ServiceResponse output, object reqArg, AsyncCallback cb, object state)
 		{
-			using (var serviceInstance = ServiceFactory.GetService(actionInfo))
+			var serviceInstance = ServiceFactory.GetService(actionInfo);
+
+			var invokeState = new SeviceInvokeContext
 			{
-				IAsyncResult resultObj;
-				if (actionInfo.HasReturnValue)
-				{
-					resultObj = actionInfo.BeginFunc(serviceInstance.ServiceObject, reqArg, cb, state);
-				}
-				else
-				{
-					actionInfo.Action(serviceInstance.ServiceObject, reqArg);
-					resultObj = null;
-				}
-				return resultObj;
-			}
+				Service = serviceInstance,
+				State = state,
+				Action = actionInfo,
+				Output = output,
+			};
+
+			var ar = actionInfo.BeginFunc(serviceInstance.ServiceObject, reqArg, cb, invokeState);
+			return ar;
 		}
 
 		public static ActionInfo GetActionInfo(Type serviceType, string actionName)
@@ -106,11 +104,33 @@ namespace RpcLite
 			if (method == null)
 				return null;
 
-			var arguments = method.GetParameters();
-			var argumentType = TypeCreator.GetParameterType(method);
+			var isAsync = actionName.StartsWith("Begin");
 			var hasReturn = method.ReturnType.FullName != "System.Void";
 
-			var methodFunc = GetCallMethodFunc(serviceType, argumentType, arguments, method, hasReturn);
+			var arguments = method.GetParameters();
+			Type argumentType = null;
+			Delegate methodFunc = null;
+			Delegate endMethodFunc = null;
+			if (isAsync)
+			{
+				arguments = arguments
+					.Take(arguments.Length - 2)
+					.ToArray();
+				argumentType = TypeCreator.GetParameterType(method, arguments);
+				methodFunc = GetCallMethodAsyncFunc(serviceType, argumentType, arguments, method, hasReturn);
+
+				var endFuncName = "End" + method.Name.Substring(5);
+				var endMethod = GetActionMethod(serviceType, endFuncName);
+				var endMethodHasReturn = endMethod.ReturnType.FullName != "System.Void";
+				var endMethodArguments = endMethod.GetParameters();
+				hasReturn = endMethodHasReturn;
+				endMethodFunc = GetEndMethodAsyncFunc(serviceType, typeof(IAsyncResult), endMethodArguments, endMethod, endMethodHasReturn);
+			}
+			else
+			{
+				argumentType = TypeCreator.GetParameterType(method);
+				methodFunc = GetCallMethodFunc(serviceType, argumentType, arguments, method, hasReturn);
+			}
 
 			actionInfo = new ActionInfo
 			{
@@ -123,10 +143,24 @@ namespace RpcLite
 			};
 
 			if (hasReturn)
-				actionInfo.Func = methodFunc as Func<object, object, object>;
+			{
+				if (isAsync)
+				{
+					actionInfo.BeginFunc = methodFunc as Func<object, object, AsyncCallback, object, IAsyncResult>;
+					actionInfo.EndFunc = endMethodFunc as Func<object, IAsyncResult, object>;
+				}
+				else
+					actionInfo.Func = methodFunc as Func<object, object, object>;
+			}
 			else
-				actionInfo.Action = methodFunc as Action<object, object>;
-
+			{
+				if (isAsync)
+				{
+					actionInfo.EndAction = endMethodFunc as Action<IAsyncResult>;
+				}
+				else
+					actionInfo.Action = methodFunc as Action<object, object>;
+			}
 			Actions.Add(actionKey, actionInfo);
 			return actionInfo;
 		}
@@ -158,6 +192,109 @@ namespace RpcLite
 			else
 			{
 				call = Expression.Call(convertService, method);
+			}
+
+			var methodArgs = new[] { serviceArgument, actionArgument };
+
+			LambdaExpression methodLam;
+			if (hasReturn)
+			{
+				var convertCall = Expression.Convert(call, typeof(object));
+				methodLam = Expression.Lambda(convertCall, methodArgs);
+			}
+			else
+			{
+				methodLam = Expression.Lambda(call, methodArgs);
+			}
+
+			var methodFunc = methodLam.Compile();
+			return methodFunc;
+		}
+
+		private static Delegate GetCallMethodAsyncFunc(Type serviceType, Type argumentType, ParameterInfo[] arguments, MethodInfo method, bool hasReturn)
+		{
+			if (arguments.Length > 0 && argumentType == null)
+				throw new ArgumentException("parameterType can not be null when paras.Length > 0");
+
+			var serviceArgument = Expression.Parameter(typeof(object), "service");
+			var actionArgument = Expression.Parameter(typeof(object), "argument");
+			var asyncCallbackArgument = Expression.Parameter(typeof(AsyncCallback), "callback");
+			var stateArgument = Expression.Parameter(typeof(object), "state");
+
+			var convertService = Expression.Convert(serviceArgument, serviceType);
+			var convertArgument = argumentType == null ? null : Expression.Convert(actionArgument, argumentType);
+
+			MethodCallExpression call;
+			if (arguments.Length > 1)
+			{
+				var callArgs = arguments
+					.Select(it => (Expression)Expression.Property(convertArgument, it.Name))
+					.ToList();
+
+				callArgs.Add(asyncCallbackArgument);
+				callArgs.Add(stateArgument);
+
+				call = Expression.Call(convertService, method, callArgs);
+			}
+			else if (arguments.Length == 1)
+			{
+				call = Expression.Call(convertService, method, new Expression[] { convertArgument, asyncCallbackArgument, stateArgument });
+			}
+			else
+			{
+				call = Expression.Call(convertService, method, new Expression[] { asyncCallbackArgument, stateArgument });
+			}
+
+			var methodArgs = new[] { serviceArgument, actionArgument, asyncCallbackArgument, stateArgument };
+
+			LambdaExpression methodLam;
+			if (hasReturn)
+			{
+				var convertCall = Expression.Convert(call, typeof(IAsyncResult));
+				methodLam = Expression.Lambda(convertCall, methodArgs);
+			}
+			else
+			{
+				methodLam = Expression.Lambda(call, methodArgs);
+			}
+
+			var methodFunc = methodLam.Compile();
+			return methodFunc;
+		}
+
+		private static Delegate GetEndMethodAsyncFunc(Type serviceType, Type argumentType, ParameterInfo[] arguments, MethodInfo method, bool hasReturn)
+		{
+			if (arguments.Length > 0 && argumentType == null)
+				throw new ArgumentException("parameterType can not be null when paras.Length > 0");
+
+			var serviceArgument = Expression.Parameter(typeof(object), "service");
+			var actionArgument = Expression.Parameter(typeof(object), "argument");
+			//var asyncCallbackArgument = Expression.Parameter(typeof(AsyncCallback), "callback");
+			//var stateArgument = Expression.Parameter(typeof(object), "state");
+			//var stateArgument = Expression.Parameter(typeof(object), "state");
+
+			var convertService = Expression.Convert(serviceArgument, serviceType);
+			var convertArgument = argumentType == null ? null : Expression.Convert(actionArgument, argumentType);
+
+			MethodCallExpression call;
+			if (arguments.Length > 1)
+			{
+				var callArgs = arguments
+					.Select(it => (Expression)Expression.Property(convertArgument, it.Name))
+					.ToList();
+
+				//callArgs.Add(asyncCallbackArgument);
+				//callArgs.Add(stateArgument);
+
+				call = Expression.Call(convertService, method, callArgs);
+			}
+			else if (arguments.Length == 1)
+			{
+				call = Expression.Call(convertService, method, new Expression[] { convertArgument });
+			}
+			else
+			{
+				call = Expression.Call(convertService, method, new Expression[] { });
 			}
 
 			var methodArgs = new[] { serviceArgument, actionArgument };

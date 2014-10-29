@@ -262,13 +262,24 @@ namespace RpcLite
 		public static Type GetParameterType(MethodBase method)
 		{
 			var paras = method.GetParameters();
+			return GetParameterType(method, paras);
+		}
 
+		public static Type GetParameterType(MethodBase method, ParameterInfo[] paras)
+		{
+			var declareType = method.DeclaringType;
+			var methodName = method.Name;
+			return GetParameterType(paras, declareType, methodName);
+		}
+
+		public static Type GetParameterType(ParameterInfo[] paras, Type declareType, string methodName)
+		{
 			Type parameterType = null;
 			//prepare call parameter
 			if (paras.Length > 1)
 			{
 				var paraTypeName = string.Format("{0}_{1}_{2}_ParameterType",
-					method.DeclaringType.FullName.Replace(".", "_").Replace("+", "__"), method.Name, paras.Length);
+					declareType.FullName.Replace(".", "_").Replace("+", "__"), methodName, paras.Length);
 				if (!ActionParameterTypes.TryGetValue(paraTypeName, out parameterType))
 				{
 					var properties = paras

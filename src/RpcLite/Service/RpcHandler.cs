@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 using RpcLite.Config;
 using RpcLite.Formatters;
 
-namespace RpcLite
+namespace RpcLite.Service
 {
 	public class RpcHandler : IHttpHandler
 	{

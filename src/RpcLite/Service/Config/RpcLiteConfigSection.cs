@@ -43,47 +43,46 @@ namespace RpcLite.Config
 			_instance = new RpcLiteConfigSection();
 			try
 			{
-				if (section.ChildNodes != null)
+				foreach (XmlNode item in section.ChildNodes)
 				{
-					foreach (XmlNode item in section.ChildNodes)
+					if (item.Name != "add")
+						continue;
+
+					var name = item.Attributes.Cast<XmlAttribute>().Where(it => it.Name == "name").Select(it => it.Value).FirstOrDefault();
+					var path = item.Attributes.Cast<XmlAttribute>().Where(it => it.Name == "path").Select(it => it.Value).FirstOrDefault();
+					var type = item.Attributes.Cast<XmlAttribute>().Where(it => it.Name == "type").Select(it => it.Value).FirstOrDefault();
+
+					if (string.IsNullOrEmpty(path))
+						throw new ConfigurationErrorsException("path of  RpcLite configuration node can't be null or empty");
+					if (string.IsNullOrEmpty(type))
+						throw new ConfigurationErrorsException("type of  RpcLite configuration node can't be null or empty");
+
+					string typeName;
+					Assembly assembly;
+
+					int splitorIndex = type.IndexOf(",", StringComparison.Ordinal);
+					if (splitorIndex > -1)
 					{
-						var name = item.Attributes.Cast<XmlAttribute>().Where(it => it.Name == "name").Select(it => it.Value).FirstOrDefault();
-						var path = item.Attributes.Cast<XmlAttribute>().Where(it => it.Name == "path").Select(it => it.Value).FirstOrDefault();
-						var type = item.Attributes.Cast<XmlAttribute>().Where(it => it.Name == "type").Select(it => it.Value).FirstOrDefault();
-
-						if (string.IsNullOrEmpty(path))
-							throw new ConfigurationErrorsException("path of  RpcLite configuration node can't be null or empty");
-						if (string.IsNullOrEmpty(type))
-							throw new ConfigurationErrorsException("type of  RpcLite configuration node can't be null or empty");
-
-						string typeName;
-						Assembly assembly;
-
-						int splitorIndex = type.IndexOf(",", StringComparison.Ordinal);
-						if (splitorIndex > -1)
-						{
-							typeName = type.Substring(0, splitorIndex);
-							var assemblyName = type.Substring(splitorIndex + 1);
-							var asms = AppDomain.CurrentDomain.GetAssemblies();
-							assembly = asms.FirstOrDefault(it => it.FullName.StartsWith(assemblyName + ",", StringComparison.OrdinalIgnoreCase));
-							if (assembly == null)
-								assembly = Assembly.Load(assemblyName);
-						}
-						else
-						{
-							typeName = type;
-							assembly = Assembly.GetEntryAssembly();
-						}
-
-						var typeInfo = assembly.GetType(typeName);
-
-						Services.Add(new ServiceInfo
-						{
-							Name = name,
-							Path = path,
-							Type = typeInfo,
-						});
+						typeName = type.Substring(0, splitorIndex);
+						var assemblyName = type.Substring(splitorIndex + 1);
+						var asms = AppDomain.CurrentDomain.GetAssemblies();
+						assembly = asms.FirstOrDefault(it => it.FullName.StartsWith(assemblyName + ",", StringComparison.OrdinalIgnoreCase))
+							?? Assembly.Load(assemblyName);
 					}
+					else
+					{
+						typeName = type;
+						assembly = Assembly.GetEntryAssembly();
+					}
+
+					var typeInfo = assembly.GetType(typeName);
+
+					Services.Add(new ServiceInfo
+					{
+						Name = name,
+						Path = path,
+						Type = typeInfo,
+					});
 				}
 			}
 			catch (Exception ex)
