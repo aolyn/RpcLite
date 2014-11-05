@@ -67,16 +67,48 @@ namespace ServiceImpl
 			return new Action<Product>(Add).BeginInvoke(product, cb, state);
 		}
 
-		int addedProductId = -1;
+		int _addedProductId = -1;
 		public void Add(Product product)
 		{
 			Products.Add(product);
-			addedProductId = product.Id;
+			_addedProductId = product.Id;
 		}
 
 		public int EndAdd(IAsyncResult ar)
 		{
-			return addedProductId;
+			return _addedProductId;
+		}
+
+		public IAsyncResult BeginEdit(int id, Product product, AsyncCallback cb, object state)
+		{
+			editProduct = product;
+			return new Action<Product>(Edit).BeginInvoke(product, cb, state);
+		}
+
+		Product editProduct;
+		public void Edit(Product product)
+		{
+		}
+
+		public Product EndEdit(IAsyncResult ar)
+		{
+			return editProduct;
+		}
+
+
+		public IAsyncResult BeginCheck(AsyncCallback cb, object state)
+		{
+			throw new NotImplementedException();
+		}
+
+		public void EndCheck(IAsyncResult ar)
+		{
+			throw new NotImplementedException();
+		}
+
+		public int AddProduct(int id, Product product)
+		{
+			return id;
 		}
 	}
 }

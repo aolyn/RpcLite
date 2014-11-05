@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using RpcLite.Config;
 using RpcLite.Formatters;
 
 namespace RpcLite.Service
@@ -124,7 +125,7 @@ namespace RpcLite.Service
 				var endMethodHasReturn = endMethod.ReturnType.FullName != "System.Void";
 				var endMethodArguments = endMethod.GetParameters();
 				hasReturn = endMethodHasReturn;
-				endMethodFunc = GetEndMethodAsyncFunc(serviceType, typeof(IAsyncResult), endMethodArguments, endMethod, endMethodHasReturn);
+				endMethodFunc = GetCallMethodFunc(serviceType, typeof(IAsyncResult), endMethodArguments, endMethod, endMethodHasReturn);
 			}
 			else
 			{
@@ -139,7 +140,8 @@ namespace RpcLite.Service
 				ArgumentType = argumentType,
 				MethodInfo = method,
 				HasReturnValue = hasReturn,
-				ServiceCreator = TypeCreator.GetCreateInstanceFunc(serviceType)
+				ServiceCreator = TypeCreator.GetCreateInstanceFunc(serviceType),
+				IsAsync = isAsync,
 			};
 
 			if (hasReturn)
@@ -156,7 +158,7 @@ namespace RpcLite.Service
 			{
 				if (isAsync)
 				{
-					actionInfo.EndAction = endMethodFunc as Action<IAsyncResult>;
+					actionInfo.EndAction = endMethodFunc as Action<object, IAsyncResult>;
 				}
 				else
 					actionInfo.Action = methodFunc as Action<object, object>;
@@ -171,7 +173,7 @@ namespace RpcLite.Service
 				throw new ArgumentException("parameterType can not be null when paras.Length > 0");
 
 			var serviceArgument = Expression.Parameter(typeof(object), "service");
-			var actionArgument = Expression.Parameter(typeof(object), "arg");
+			var actionArgument = Expression.Parameter(typeof(object), "argument");
 
 			var convertService = Expression.Convert(serviceArgument, serviceType);
 			var convertArgument = argumentType == null ? null : Expression.Convert(actionArgument, argumentType);
@@ -262,57 +264,54 @@ namespace RpcLite.Service
 			return methodFunc;
 		}
 
-		private static Delegate GetEndMethodAsyncFunc(Type serviceType, Type argumentType, ParameterInfo[] arguments, MethodInfo method, bool hasReturn)
-		{
-			if (arguments.Length > 0 && argumentType == null)
-				throw new ArgumentException("parameterType can not be null when paras.Length > 0");
+		//private static Delegate GetEndMethodAsyncFunc(Type serviceType, Type argumentType, ParameterInfo[] arguments, MethodInfo method, bool hasReturn)
+		//{
+		//	if (arguments.Length > 0 && argumentType == null)
+		//		throw new ArgumentException("parameterType can not be null when paras.Length > 0");
 
-			var serviceArgument = Expression.Parameter(typeof(object), "service");
-			var actionArgument = Expression.Parameter(typeof(object), "argument");
-			//var asyncCallbackArgument = Expression.Parameter(typeof(AsyncCallback), "callback");
-			//var stateArgument = Expression.Parameter(typeof(object), "state");
-			//var stateArgument = Expression.Parameter(typeof(object), "state");
+		//	var serviceArgument = Expression.Parameter(typeof(object), "service");
+		//	var actionArgument = Expression.Parameter(typeof(object), "argument");
 
-			var convertService = Expression.Convert(serviceArgument, serviceType);
-			var convertArgument = argumentType == null ? null : Expression.Convert(actionArgument, argumentType);
+		//	var convertService = Expression.Convert(serviceArgument, serviceType);
+		//	var convertArgument = argumentType == null ? null : Expression.Convert(actionArgument, argumentType);
 
-			MethodCallExpression call;
-			if (arguments.Length > 1)
-			{
-				var callArgs = arguments
-					.Select(it => (Expression)Expression.Property(convertArgument, it.Name))
-					.ToList();
+		//	MethodCallExpression call;
+		//	if (arguments.Length > 1)
+		//	{
+		//		var callArgs = arguments
+		//			.Select(it => (Expression)Expression.Property(convertArgument, it.Name))
+		//			.ToList();
 
-				//callArgs.Add(asyncCallbackArgument);
-				//callArgs.Add(stateArgument);
+		//		//callArgs.Add(asyncCallbackArgument);
+		//		//callArgs.Add(stateArgument);
 
-				call = Expression.Call(convertService, method, callArgs);
-			}
-			else if (arguments.Length == 1)
-			{
-				call = Expression.Call(convertService, method, new Expression[] { convertArgument });
-			}
-			else
-			{
-				call = Expression.Call(convertService, method, new Expression[] { });
-			}
+		//		call = Expression.Call(convertService, method, callArgs);
+		//	}
+		//	else if (arguments.Length == 1)
+		//	{
+		//		call = Expression.Call(convertService, method, new Expression[] { convertArgument });
+		//	}
+		//	else
+		//	{
+		//		call = Expression.Call(convertService, method, new Expression[] { });
+		//	}
 
-			var methodArgs = new[] { serviceArgument, actionArgument };
+		//	var methodArgs = new[] { serviceArgument, actionArgument };
 
-			LambdaExpression methodLam;
-			if (hasReturn)
-			{
-				var convertCall = Expression.Convert(call, typeof(object));
-				methodLam = Expression.Lambda(convertCall, methodArgs);
-			}
-			else
-			{
-				methodLam = Expression.Lambda(call, methodArgs);
-			}
+		//	LambdaExpression methodLam;
+		//	if (hasReturn)
+		//	{
+		//		var convertCall = Expression.Convert(call, typeof(object));
+		//		methodLam = Expression.Lambda(convertCall, methodArgs);
+		//	}
+		//	else
+		//	{
+		//		methodLam = Expression.Lambda(call, methodArgs);
+		//	}
 
-			var methodFunc = methodLam.Compile();
-			return methodFunc;
-		}
+		//	var methodFunc = methodLam.Compile();
+		//	return methodFunc;
+		//}
 
 		private static MethodInfo GetActionMethod(Type serviceType, string action)
 		{
@@ -329,6 +328,27 @@ namespace RpcLite.Service
 				}
 			}
 			return method;
+		}
+
+		public static IFormatter GetFormatter(string contentType)
+		{
+			IFormatter formatter;
+			if (!string.IsNullOrEmpty(contentType))
+			{
+				formatter = GlobalConfig.Formaters.FirstOrDefault(it => it.SupportMimes.Contains(contentType));
+				if (formatter == null)
+					throw new ConfigException("Not Supported MIME: " + contentType);
+			}
+			else
+			{
+				if (GlobalConfig.Formaters.Count == 0)
+					throw new ConfigException("Configuration error: no formatters.");
+
+				formatter = GlobalConfig.Formaters[0];
+				if (formatter.SupportMimes.Count == 0)
+					throw new ConfigException("Configuration error: formatter " + formatter.GetType() + " has no support MIME");
+			}
+			return formatter;
 		}
 	}
 }

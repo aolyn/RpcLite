@@ -23,7 +23,9 @@ namespace RpcLite
 		public Action<object, object> Action { get; set; }
 		public Func<object, object, AsyncCallback, object, IAsyncResult> BeginAction { get; set; }
 		//public Func<object, object, object, object, object> BeginAction { get; set; }
-		public Action<IAsyncResult> EndAction { get; set; }
+		public Action<object, IAsyncResult> EndAction { get; set; }
 		public Func<object> ServiceCreator { get; set; }
+
+		public bool IsAsync { get; set; }
 	}
 }
