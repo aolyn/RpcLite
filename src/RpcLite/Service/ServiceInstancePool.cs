@@ -1,17 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace RpcLite
+namespace RpcLite.Service
 {
 	internal class ServiceFactory
 	{
-		private static Dictionary<ActionInfo, ServiceInstancePool> containers = new Dictionary<ActionInfo, ServiceInstancePool>();
-		private static object containerLock = new object();
+		private static readonly Dictionary<ActionInfo, ServiceInstancePool> containers = new Dictionary<ActionInfo, ServiceInstancePool>();
+		private static readonly object containerLock = new object();
 
 		public static ServiceInstanceContainer GetService(ActionInfo action)
 		{
-			if (action == null) throw new ArgumentNullException("action can't be null");
-			if (action.ServiceCreator == null) throw new ArgumentNullException("action.ServiceCreator can't be null");
+			if (action == null) throw new ArgumentNullException("action");
+			if (action.ServiceCreator == null) throw new ArgumentException("action.ServiceCreator can't be null");
 
 			//var serviceCreator = action.ServiceCreator;
 			ServiceInstancePool container;
@@ -29,7 +29,7 @@ namespace RpcLite
 
 	internal class ServiceInstancePool : IDisposable
 	{
-		private Func<object> serviceCreator;
+		private readonly Func<object> serviceCreator;
 
 		public static readonly Stack<ServiceInstanceContainer> Pool = new Stack<ServiceInstanceContainer>();
 		public int Size { get; set; }
@@ -44,7 +44,7 @@ namespace RpcLite
 			throw new NotImplementedException();
 		}
 
-		private object poolLock = new object();
+		private readonly object poolLock = new object();
 		public ServiceInstanceContainer GetInstance()
 		{
 			lock (poolLock)
@@ -66,9 +66,13 @@ namespace RpcLite
 				{
 					Pool.Push(instance);
 				}
-				else if (instance.ServiceObject is IDisposable)
+				else
 				{
-					((IDisposable)instance.ServiceObject).Dispose();
+					var o = instance.ServiceObject as IDisposable;
+					if (o != null)
+					{
+						o.Dispose();
+					}
 				}
 			}
 		}

@@ -122,11 +122,11 @@ namespace RpcLite.Service
 			try
 			{
 				//get formatter from content type
-				IFormatter formatter = GetFormatter(request.ContentType);
+				var formatter = RpcProcessor.GetFormatter(request.ContentType);
 				if (formatter != null)
 					response.ContentType = request.ContentType;
 
-				return ProcessRequestAsync(request.InputStream, response.OutputStream, context, request.AppRelativeCurrentExecutionFilePath, formatter, cb);
+				return BeginProcessRequest(request.InputStream, response.OutputStream, context, request.AppRelativeCurrentExecutionFilePath, formatter, cb);
 			}
 			catch (ThreadAbortException)
 			{
@@ -150,30 +150,9 @@ namespace RpcLite.Service
 			return null;
 		}
 
-		private static IFormatter GetFormatter(string contentType)
+		private static IAsyncResult BeginProcessRequest(Stream requestStream, Stream responseStream, object requestContext, string requestPath, IFormatter formatter, AsyncCallback cb)
 		{
-			IFormatter formatter;
-			if (!string.IsNullOrEmpty(contentType))
-			{
-				formatter = GlobalConfig.Formaters.FirstOrDefault(it => it.SupportMimes.Contains(contentType));
-				if (formatter == null)
-					throw new ConfigException("Not Supported MIME: " + contentType);
-			}
-			else
-			{
-				if (GlobalConfig.Formaters.Count == 0)
-					throw new ConfigException("Configuration error: no formatters.");
-
-				formatter = GlobalConfig.Formaters[0];
-				if (formatter.SupportMimes.Count == 0)
-					throw new ConfigException("Configuration error: formatter " + formatter.GetType() + " has no support MIME");
-			}
-			return formatter;
-		}
-
-		private static IAsyncResult ProcessRequestAsync(Stream requestStream, Stream responseStream, object requestContext, string requestPath, IFormatter formatter, AsyncCallback cb)
-		{
-			if (requestStream == null) throw new ArgumentNullException("request");
+			if (requestStream == null) throw new ArgumentNullException("requestStream");
 
 			//var requestPath = request.AppRelativeCurrentExecutionFilePath;
 
@@ -183,11 +162,18 @@ namespace RpcLite.Service
 			var service = RpcServiceHelper.Services.FirstOrDefault(it =>
 					requestPath.StartsWith(it.Path, StringComparison.OrdinalIgnoreCase));
 
-			//if (service == null)
-			//{
-			//	formatter.Serialize(responseStream, new ConfigException("Configuration error service not found"));
-			//	return;
-			//}
+			if (service == null)
+			{
+				formatter.Serialize(responseStream, new ConfigException("Configuration error service not found"));
+				return new ServiceAsyncResult
+				{
+					AsyncState = requestContext,
+					IsCompleted = true,
+					CompletedSynchronously = true,
+					AsyncWaitHandle = null,
+					HttpContext = HttpContext.Current,
+				};
+			}
 
 			try
 			{
@@ -212,7 +198,6 @@ namespace RpcLite.Service
 				try
 				{
 					var result = RpcProcessor.BeginProcessRequest(serviceRequest, response, cb, requestContext);
-					//formatter.Serialize(responseStream, result);
 					return result;
 				}
 				catch (Exception ex)
@@ -222,7 +207,7 @@ namespace RpcLite.Service
 			}
 			catch (Exception ex)
 			{
-				//formatter.Serialize(responseStream.OutputStream, ex);
+				formatter.Serialize(responseStream, ex);
 				var result = new ServiceAsyncResult
 				{
 					HttpContext = requestContext,
@@ -232,7 +217,6 @@ namespace RpcLite.Service
 					AsyncState = null,
 				};
 
-				cb(result);
 				return result;
 			}
 		}
@@ -240,34 +224,44 @@ namespace RpcLite.Service
 		public void EndProcessRequest(IAsyncResult result)
 		{
 			var state = result.AsyncState as SeviceInvokeContext;
-			if (state != null)
+
+			if (state == null) return;
+
+			var service = (ServiceInstanceContainer)state.Service;
+			if (service == null) return;
+
+			try
 			{
 				if (state.Action.HasReturnValue)
 				{
-					var service = (ServiceInstanceContainer)state.Service;
+					object requestResult;
+
 					try
 					{
-						var requestResult = state.Action.EndFunc(service.ServiceObject, result);
-						state.Output.Formatter.Serialize(state.Output.ResponseStream, requestResult);
+						requestResult = state.Action.EndFunc(service.ServiceObject, result);
 					}
 					catch (Exception ex)
 					{
-
-						throw;
+						requestResult = ex;
 					}
+					state.Output.Formatter.Serialize(state.Output.ResponseStream, requestResult);
 				}
 				else
 				{
-					//state.Action.EndAction(state.Service, result);
+					state.Action.EndAction(service.ServiceObject, result);
 				}
 			}
+			catch (Exception ex)
+			{
+				state.Output.Formatter.Serialize(state.Output.ResponseStream, ex);
+			}
+			service.Dispose();
 		}
 	}
 
 	class RpcServiceHelper
 	{
 		public static List<ServiceInfo> Services { get { return RpcLiteConfigSection.Instance.Services; } }
-
 	}
 
 }
