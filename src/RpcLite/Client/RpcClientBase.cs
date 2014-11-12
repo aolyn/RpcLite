@@ -8,13 +8,30 @@ using RpcLite.Formatters;
 
 namespace RpcLite.Client
 {
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <typeparam name="T"></typeparam>
 	public class RpcClientBase<T> where T : class
 	{
+		/// <summary>
+		/// 
+		/// </summary>
 		public string BaseUrl { get; set; }
 
 		private IFormatter _formatter = new JsonFormatter();
+		/// <summary>
+		/// 
+		/// </summary>
 		public IFormatter Formatter { get { return _formatter; } set { _formatter = value; } }
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="action"></param>
+		/// <param name="request"></param>
+		/// <param name="returnType"></param>
+		/// <returns></returns>
 		protected object GetResponse(string action, object request, Type returnType)
 		{
 			var response = DoRequest(action, request, returnType);
@@ -22,6 +39,13 @@ namespace RpcLite.Client
 			return response;
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="action"></param>
+		/// <param name="request"></param>
+		/// <param name="returnType"></param>
+		/// <returns></returns>
 		protected object BeginGetResponse(string action, object request, Type returnType)
 		{
 			if (_formatter == null)
@@ -47,11 +71,21 @@ namespace RpcLite.Client
 
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="action"></param>
+		/// <param name="request"></param>
+		/// <param name="returnType"></param>
+		/// <returns></returns>
 		protected object EndGetResponse(string action, object request, Type returnType)
 		{
 			throw new NotImplementedException();
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
 		public T Client
 		{
 			get { return this as T; }
@@ -94,11 +128,20 @@ namespace RpcLite.Client
 			return func;
 		}, true);
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
 		public static RpcClientBase<T> GetInstance()
 		{
 			return GetInstance(null);
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="baseUrl"></param>
+		/// <returns></returns>
 		public static RpcClientBase<T> GetInstance(string baseUrl)
 		{
 			if (_func.Value == null)

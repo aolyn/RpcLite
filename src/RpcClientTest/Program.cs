@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Xml.Serialization;
 using ClientImpl;
 using Model;
 using RpcLite;
@@ -18,6 +19,21 @@ namespace WebApiClient
 	{
 		static void Main(string[] args)
 		{
+			{
+				var product = new Model.Product
+				{
+					Id = 1,
+					Category = DateTime.Now.ToString(),
+					Name = DateTime.Now.ToString(),
+					Price = 123123,
+					ListDate = DateTime.Now,
+				};
+
+				var stream = new StringWriter();
+				var xmlSerializer = new XmlSerializer(product.GetType());
+				xmlSerializer.Serialize(stream, product);
+				var result = stream.ToString();
+			}
 
 			//{
 			//	var ex = new Exception("TEST");

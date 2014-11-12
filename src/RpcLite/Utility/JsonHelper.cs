@@ -4,8 +4,17 @@ using Newtonsoft.Json;
 
 namespace RpcLite.Utility
 {
+	/// <summary>
+	/// 
+	/// </summary>
 	public static class JsonHelper
 	{
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="stream"></param>
+		/// <param name="targetType"></param>
+		/// <returns></returns>
 		public static object Deserialize(Stream stream, Type targetType)
 		{
 			using (var reader = new StreamReader(stream))
@@ -24,6 +33,10 @@ namespace RpcLite.Utility
 			}
 		}
 
+
+		/// <summary>
+		/// 
+		/// </summary>
 		public static void Serialize(Stream stream, object source)
 		{
 			using (var writer = new StreamWriter(stream))

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -10,9 +9,17 @@ using RpcLite.Formatters;
 
 namespace RpcLite.Service
 {
+	/// <summary>
+	/// RpcLite AsyncHandler to process service request
+	/// </summary>
 	public class RpcAsyncHandler : IHttpAsyncHandler
 	{
 		#region Sync
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="context"></param>
 		public void ProcessRequest(HttpContext context)
 		{
 			var request = context.Request;
@@ -65,8 +72,7 @@ namespace RpcLite.Service
 			if (string.IsNullOrWhiteSpace(requestPath))
 				throw new ArgumentException("request.AppRelativeCurrentExecutionFilePath is null or white space");
 
-			var service = RpcServiceHelper.Services.FirstOrDefault(it =>
-					requestPath.StartsWith(it.Path, StringComparison.OrdinalIgnoreCase));
+			var service = RpcServiceHelper.GetService(requestPath);
 
 			if (service == null)
 			{
@@ -104,6 +110,9 @@ namespace RpcLite.Service
 			}
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
 		public bool IsReusable
 		{
 			get
@@ -114,6 +123,13 @@ namespace RpcLite.Service
 
 		#endregion
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="context"></param>
+		/// <param name="cb"></param>
+		/// <param name="extraData"></param>
+		/// <returns></returns>
 		public IAsyncResult BeginProcessRequest(HttpContext context, AsyncCallback cb, object extraData)
 		{
 			var request = context.Request;
@@ -126,7 +142,7 @@ namespace RpcLite.Service
 				if (formatter != null)
 					response.ContentType = request.ContentType;
 
-				return BeginProcessRequest(request.InputStream, response.OutputStream, context, request.AppRelativeCurrentExecutionFilePath, formatter, cb);
+				return BeginProcessRequest(request.InputStream, response.OutputStream, request.AppRelativeCurrentExecutionFilePath, formatter, cb, context);
 			}
 			catch (ThreadAbortException)
 			{
@@ -150,17 +166,14 @@ namespace RpcLite.Service
 			return null;
 		}
 
-		private static IAsyncResult BeginProcessRequest(Stream requestStream, Stream responseStream, object requestContext, string requestPath, IFormatter formatter, AsyncCallback cb)
+		private static IAsyncResult BeginProcessRequest(Stream requestStream, Stream responseStream, string requestPath, IFormatter formatter, AsyncCallback cb, object requestContext)
 		{
 			if (requestStream == null) throw new ArgumentNullException("requestStream");
-
-			//var requestPath = request.AppRelativeCurrentExecutionFilePath;
 
 			if (string.IsNullOrWhiteSpace(requestPath))
 				throw new ArgumentException("request.AppRelativeCurrentExecutionFilePath is null or white space");
 
-			var service = RpcServiceHelper.Services.FirstOrDefault(it =>
-					requestPath.StartsWith(it.Path, StringComparison.OrdinalIgnoreCase));
+			var service = RpcServiceHelper.GetService(requestPath);
 
 			if (service == null)
 			{
@@ -181,7 +194,7 @@ namespace RpcLite.Service
 				if (string.IsNullOrEmpty(actionName))
 					throw new RequestException("Bad request: not action name");
 
-				var serviceRequest = new ServiceRequest
+				var request = new ServiceRequest
 				{
 					ActionName = actionName,
 					Formatter = formatter,
@@ -197,7 +210,7 @@ namespace RpcLite.Service
 
 				try
 				{
-					var result = RpcProcessor.BeginProcessRequest(serviceRequest, response, cb, requestContext);
+					var result = RpcProcessor.BeginProcessRequest(request, response, cb, requestContext);
 					return result;
 				}
 				catch (Exception ex)
@@ -221,47 +234,13 @@ namespace RpcLite.Service
 			}
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="result"></param>
 		public void EndProcessRequest(IAsyncResult result)
 		{
-			var state = result.AsyncState as SeviceInvokeContext;
-
-			if (state == null) return;
-
-			var service = (ServiceInstanceContainer)state.Service;
-			if (service == null) return;
-
-			try
-			{
-				if (state.Action.HasReturnValue)
-				{
-					object requestResult;
-
-					try
-					{
-						requestResult = state.Action.EndFunc(service.ServiceObject, result);
-					}
-					catch (Exception ex)
-					{
-						requestResult = ex;
-					}
-					state.Output.Formatter.Serialize(state.Output.ResponseStream, requestResult);
-				}
-				else
-				{
-					state.Action.EndAction(service.ServiceObject, result);
-				}
-			}
-			catch (Exception ex)
-			{
-				state.Output.Formatter.Serialize(state.Output.ResponseStream, ex);
-			}
-			service.Dispose();
+			RpcProcessor.EndProcessRequest(result);
 		}
 	}
-
-	class RpcServiceHelper
-	{
-		public static List<ServiceInfo> Services { get { return RpcLiteConfigSection.Instance.Services; } }
-	}
-
 }

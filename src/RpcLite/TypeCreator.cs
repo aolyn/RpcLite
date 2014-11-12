@@ -7,6 +7,9 @@ using System.Reflection.Emit;
 
 namespace RpcLite
 {
+	/// <summary>
+	/// 
+	/// </summary>
 	public class TypeCreator
 	{
 		private static readonly ModuleBuilder ModBuilder;
@@ -20,6 +23,9 @@ namespace RpcLite
 			ModBuilder = AssemblyBuilder.DefineDynamicModule(assmFileName, assmFileName, false);
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
 		public static Type CreateType(string name, List<PropertyItemInfo> propeties)
 		{
 			const TypeAttributes typeAttribute = TypeAttributes.Class | TypeAttributes.Public | TypeAttributes.Serializable;
@@ -86,6 +92,9 @@ namespace RpcLite
 			return type;
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
 		private static FieldBuilder AddProperty(string name, Type type, TypeBuilder typeBuilder)
 		{
 			var field = typeBuilder.DefineField("__@" + name, type, FieldAttributes.Private);
@@ -259,12 +268,18 @@ namespace RpcLite
 		}
 
 		private static readonly Dictionary<string, Type> ActionParameterTypes = new Dictionary<string, Type>();
+		/// <summary>
+		/// 
+		/// </summary>
 		public static Type GetParameterType(MethodBase method)
 		{
 			var paras = method.GetParameters();
 			return GetParameterType(method, paras);
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
 		public static Type GetParameterType(MethodBase method, ParameterInfo[] paras)
 		{
 			var declareType = method.DeclaringType;
@@ -272,6 +287,9 @@ namespace RpcLite
 			return GetParameterType(paras, declareType, methodName);
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
 		public static Type GetParameterType(ParameterInfo[] paras, Type declareType, string methodName)
 		{
 			Type parameterType = null;
@@ -307,6 +325,9 @@ namespace RpcLite
 		/// </summary>
 		/// <param name="serviceType"></param>
 		/// <returns></returns>
+		/// <summary>
+		/// 
+		/// </summary>
 		public static Func<object> GetCreateInstanceFunc(Type serviceType)
 		{
 			if (serviceType == null)
@@ -329,11 +350,5 @@ namespace RpcLite
 			return del;
 		}
 
-	}
-
-	public class PropertyItemInfo
-	{
-		public string Name { get; set; }
-		public Type Type { get; set; }
 	}
 }

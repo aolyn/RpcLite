@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using System.Threading;
 using Contracts;
 using Model;
 
@@ -17,7 +19,7 @@ namespace ServiceImpl
 				Products.Add(new Product
 				{
 					Id = i,
-					Name = DateTime.Now.ToString(),
+					Name = DateTime.Now.ToString(CultureInfo.InvariantCulture),
 					ListDate = DateTime.Now,
 					Category = "aa",
 					Price = rnd.Next(1000)
@@ -74,6 +76,16 @@ namespace ServiceImpl
 			_addedProductId = product.Id;
 		}
 
+		public Product AddAndGet(Product product)
+		{
+			return product;
+		}
+
+		public static Product AddS(Product product)
+		{
+			return product;
+		}
+
 		public int EndAdd(IAsyncResult ar)
 		{
 			return _addedProductId;
@@ -82,19 +94,21 @@ namespace ServiceImpl
 		public IAsyncResult BeginEdit(int id, Product product, AsyncCallback cb, object state)
 		{
 			editProduct = product;
-			return new Action<Product>(Edit).BeginInvoke(product, cb, state);
+			return new Action<Product>(EditInternal).BeginInvoke(product, cb, state);
 		}
 
 		Product editProduct;
-		public void Edit(Product product)
+		public void EditInternal(Product product)
 		{
+			Thread.Sleep(3000);
+			product.Category = "Category: " + DateTime.Now.ToShortTimeString();
+			product.ListDate = DateTime.Now;
 		}
 
 		public Product EndEdit(IAsyncResult ar)
 		{
 			return editProduct;
 		}
-
 
 		public IAsyncResult BeginCheck(AsyncCallback cb, object state)
 		{

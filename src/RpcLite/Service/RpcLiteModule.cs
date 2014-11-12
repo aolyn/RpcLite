@@ -1,16 +1,26 @@
 ﻿using System;
 using System.Web;
 
-namespace RpcLite
+namespace RpcLite.Service
 {
+	/// <summary>
+	/// 
+	/// </summary>
 	public class RpcLiteModule : IHttpModule
 	{
 		#region IHttpModule Members
 
+		/// <summary>
+		/// 
+		/// </summary>
 		public void Dispose()
 		{
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="context"></param>
 		public void Init(HttpApplication context)
 		{
 			context.PostResolveRequestCache += context_PostResolveRequestCache;

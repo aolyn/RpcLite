@@ -7,7 +7,7 @@ using System.Xml;
 
 namespace RpcLite.Config
 {
-	public class RpcLiteConfigSection : IConfigurationSectionHandler
+	internal class RpcLiteConfigSection : IConfigurationSectionHandler
 	{
 		private static RpcLiteConfigSection _instance;
 		public static RpcLiteConfigSection Instance
@@ -31,7 +31,7 @@ namespace RpcLite.Config
 
 		static RpcLiteConfigSection()
 		{
-			object sec = ConfigurationManager.GetSection("RpcLite");
+			var sec = ConfigurationManager.GetSection("RpcLite");
 			_instance = sec as RpcLiteConfigSection;
 		}
 
@@ -45,7 +45,7 @@ namespace RpcLite.Config
 			{
 				foreach (XmlNode item in section.ChildNodes)
 				{
-					if (item.Name != "add")
+					if (item.Name != "add" || item.Attributes == null)
 						continue;
 
 					var name = item.Attributes.Cast<XmlAttribute>().Where(it => it.Name == "name").Select(it => it.Value).FirstOrDefault();
@@ -60,7 +60,7 @@ namespace RpcLite.Config
 					string typeName;
 					Assembly assembly;
 
-					int splitorIndex = type.IndexOf(",", StringComparison.Ordinal);
+					var splitorIndex = type.IndexOf(",", StringComparison.Ordinal);
 					if (splitorIndex > -1)
 					{
 						typeName = type.Substring(0, splitorIndex);

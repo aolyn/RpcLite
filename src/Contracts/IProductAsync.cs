@@ -8,8 +8,8 @@ namespace Contracts
 		IAsyncResult BeginAdd(Product product, AsyncCallback cb, object state);
 		int EndAdd(IAsyncResult ar);
 
-		IAsyncResult BeginEdit(int id, Product product, AsyncCallback cb, object state);
-		Product EndEdit(IAsyncResult ar);
+		//IAsyncResult BeginEdit(int id, Product product, AsyncCallback cb, object state);
+		//Product EndEdit(IAsyncResult ar);
 
 		IAsyncResult BeginCheck(AsyncCallback cb, object state);
 		void EndCheck(IAsyncResult ar);
