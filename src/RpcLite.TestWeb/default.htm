@@ -1,8 +1,9 @@
-﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+﻿<!DOCTYPE HTML >
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 	<title>RpcLite Test</title>
 	<script src="scripts/jquery-1.11.1.js" type="text/javascript"></script>
+	<script src="scripts/json2xml.js"></script>
 	<script type="text/javascript">
 
 		var convertDateTimeReg = new RegExp("/Date\\((-?\\d+)(\\+|-)(\\d+)\\)/");
@@ -132,6 +133,91 @@
 			{
 				type: "POST",
 				url: "api/AddProduct",
+				//dataType: "json",
+				//contentType: "application/json",
+				dataType: "xml",
+				contentType: "text/xml",
+				data: "<root>" + json2xml(postData,'	') + "</root>",//JSON.stringify(postData),
+				success: function (arg)
+				{
+					var sjson = JSON.stringify(arg);
+					$("#result").text(sjson);
+				},
+				error: function (arg)
+				{
+					$("#result").text(arg);
+				}
+			});
+		}
+
+		function testEdit()
+		{
+			var product = { "id": 1, "product": { "Id": 1, "Name": "2014-06-15 21:56:42", "Price": 0, "Category": null, "ListDate": new Date() } };
+			var postData =
+			{
+				id: 1,
+				product: product
+			};
+
+			$.ajax(
+			{
+				type: "POST",
+				url: "api/Edit",
+				dataType: "json",
+				contentType: "application/json",
+				data: JSON.stringify(postData),
+				success: function (arg)
+				{
+					var sjson = JSON.stringify(arg);
+					$("#result").text(sjson);
+				},
+				error: function (arg)
+				{
+					$("#result").text(arg);
+				}
+			});
+		}
+
+		function testBeginAdd()
+		{
+			var product = { "Id": 1, "Name": "2014-06-15 21:56:42", "Price": 0, "Category": null, "ListDate": new Date() };
+			var postData =
+			{
+				id: 1,
+				product: product
+			};
+
+			$.ajax(
+			{
+				type: "POST",
+				url: "api/BeginAdd",
+				dataType: "json",
+				contentType: "application/json",
+				data: JSON.stringify(postData),
+				success: function (arg)
+				{
+					var sjson = JSON.stringify(arg);
+					$("#result").text(sjson);
+				},
+				error: function (arg)
+				{
+					$("#result").text(arg);
+				}
+			});
+		}
+		function testAddProductAsync()
+		{
+			var product = { "Id": 1, "Name": "2014-06-15 21:56:42", "Price": 0, "Category": null, "ListDate": new Date() };
+			var postData =
+			{
+				id: 1,
+				product: product
+			};
+
+			$.ajax(
+			{
+				type: "POST",
+				url: "api/AddProduct",
 				dataType: "json",
 				contentType: "application/json",
 				data: JSON.stringify(postData),
@@ -170,8 +256,10 @@
 	</script>
 </head>
 <body>
-	<input id="btnGetById" type="button" value="GetById" onclick="return btnGetById_onclick()" />
 	<input id="btnAddProduct" type="button" value="AddProduct" onclick="return btnAddProduct_onclick()" />
+	<input type="button" value="Edit" onclick="return testEdit()" />
+	<input type="button" value="BeginAdd" onclick="return testBeginAdd()" />
+	<input id="btnGetById" type="button" value="GetById" onclick="return btnGetById_onclick()" />
 	<input id="btnGet" type="button" value="Get" onclick="return btnGet_onclick()" />
 	<input id="btnDelete" type="button" value="Delete" onclick="return btnDelete_onclick()" />
 	<div id="result">

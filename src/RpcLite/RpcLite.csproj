@@ -21,6 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Debug\RpcLite.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -77,6 +78,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="PropertyItemInfo.cs" />
     <Compile Include="Client\ClientException.cs" />
     <Compile Include="Client\ClientWrapper.cs" />
     <Compile Include="Client\RpcClientBase.cs" />
@@ -89,14 +91,17 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServiceChannel.cs" />
     <Compile Include="ServiceException.cs" />
+    <Compile Include="Service\ActionHelper.cs" />
     <Compile Include="Service\ActionInfo.cs" />
     <Compile Include="Service\Config\ConfigException.cs" />
     <Compile Include="Service\Config\GlobalConfig.cs" />
     <Compile Include="Service\Config\RpcLiteConfigSection.cs" />
+    <Compile Include="Service\MethodHelper.cs" />
     <Compile Include="Service\RpcAsyncHandler.cs" />
     <Compile Include="Service\RpcHandler.cs" />
     <Compile Include="Service\RpcLiteModule.cs" />
     <Compile Include="Service\RpcProcessor.cs" />
+    <Compile Include="Service\RpcServiceHelper.cs" />
     <Compile Include="Service\ServiceAsyncResult.cs" />
     <Compile Include="Service\ServiceInfo.cs" />
     <Compile Include="Service\ServiceInstancePool.cs" />

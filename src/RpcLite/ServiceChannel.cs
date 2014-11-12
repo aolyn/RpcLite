@@ -5,6 +5,9 @@ using System.Text;
 
 namespace RpcLite
 {
+	/// <summary>
+	/// 
+	/// </summary>
 	public class ServiceChannel
 	{
 	}
