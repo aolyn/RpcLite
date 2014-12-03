@@ -72,7 +72,9 @@
     <Content Include="default.htm" />
     <Content Include="Global.asax" />
     <Content Include="scripts\jquery-1.11.1.min.js" />
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>

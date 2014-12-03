@@ -36,5 +36,10 @@ namespace RpcLite.Service
 		/// 
 		/// </summary>
 		public object SyncResult { get; set; }
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public object Tag { get; set; }
 	}
 }
