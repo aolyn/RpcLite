@@ -2,6 +2,7 @@
 
 namespace Contracts
 {
+
 	public interface IProduct
 	{
 		int Add(Product product);
@@ -12,4 +13,5 @@ namespace Contracts
 		Product GetById(int id);
 		Product Get(int id);
 	}
+
 }
