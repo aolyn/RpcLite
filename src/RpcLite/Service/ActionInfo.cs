@@ -76,6 +76,9 @@ namespace RpcLite.Service
 		/// </summary>
 		public bool IsAsync { get; set; }
 
+		/// <summary>
+		/// 
+		/// </summary>
 		public bool IsStatic { get; set; }
 	}
 }

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -8,9 +7,16 @@ namespace RpcLite.Service
 {
 	class MethodHelper
 	{
-		private static readonly Dictionary<string, MethodInfo> ActionMethods = new Dictionary<string, MethodInfo>();
+		private static readonly QuickReadConcurrentDictionary<string, MethodInfo> ActionMethods = new QuickReadConcurrentDictionary<string, MethodInfo>();
+		private static readonly QuickReadConcurrentDictionary<MethodInfo, Delegate> CallMethods = new QuickReadConcurrentDictionary<MethodInfo, Delegate>();
+		private static readonly QuickReadConcurrentDictionary<MethodInfo, Delegate> AsyncCallMethods = new QuickReadConcurrentDictionary<MethodInfo, Delegate>();
 
 		public static Delegate GetCallMethodFunc(Type serviceType, Type argumentType, ParameterInfo[] arguments, MethodInfo method, bool hasReturn)
+		{
+			return CallMethods.GetOrAdd(method, GetCallMethodFuncInternal(serviceType, argumentType, arguments, method, hasReturn));
+		}
+
+		private static Delegate GetCallMethodFuncInternal(Type serviceType, Type argumentType, ParameterInfo[] arguments, MethodInfo method, bool hasReturn)
 		{
 			if (arguments.Length > 0 && argumentType == null)
 				throw new ArgumentException("parameterType can not be null when paras.Length > 0");
@@ -67,6 +73,11 @@ namespace RpcLite.Service
 
 		public static Delegate GetCallMethodAsyncFunc(Type serviceType, Type argumentType, ParameterInfo[] arguments, MethodInfo method, bool hasReturn)
 		{
+			return AsyncCallMethods.GetOrAdd(method, GetCallMethodAsyncFuncInternal(serviceType, argumentType, arguments, method, hasReturn));
+		}
+
+		private static Delegate GetCallMethodAsyncFuncInternal(Type serviceType, Type argumentType, ParameterInfo[] arguments, MethodInfo method, bool hasReturn)
+		{
 			if (arguments.Length > 0 && argumentType == null)
 				throw new ArgumentException("parameterType can not be null when paras.Length > 0");
 
@@ -122,14 +133,13 @@ namespace RpcLite.Service
 		public static MethodInfo GetActionMethod(Type serviceType, string action)
 		{
 			var methodKey = serviceType.Name + "." + action;
-			MethodInfo method;
-			if (!ActionMethods.TryGetValue(methodKey, out method))
+			return ActionMethods.GetOrAdd(methodKey, () =>
 			{
 				var methods = serviceType.GetMethods();
-				method = methods
+				var method = methods
 					.FirstOrDefault(it => string.CompareOrdinal(it.Name, action) == 0);
-			}
-			return method;
+				return method;
+			});
 		}
 	}
 }

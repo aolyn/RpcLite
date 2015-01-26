@@ -84,6 +84,7 @@
     <Compile Include="Client\RpcClientBase.cs" />
     <Compile Include="NullResponse.cs" />
     <Compile Include="ProcessRequestException.cs" />
+    <Compile Include="QuickReadConcurrentDictionary.cs" />
     <Compile Include="RequestException.cs" />
     <Compile Include="Formatters\XmlFormater.cs" />
     <Compile Include="Formatters\JsonFormater.cs" />
@@ -107,7 +108,7 @@
     <Compile Include="Service\ServiceInstancePool.cs" />
     <Compile Include="Service\ServiceRequest.cs" />
     <Compile Include="Service\ServiceResponse.cs" />
-    <Compile Include="Service\SeviceInvokeContext.cs" />
+    <Compile Include="Service\ServiceContext.cs" />
     <Compile Include="TypeCreator.cs" />
     <Compile Include="Utility\JsonHelper.cs" />
   </ItemGroup>
