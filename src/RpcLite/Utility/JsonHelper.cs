@@ -49,7 +49,10 @@ namespace RpcLite.Utility
 		{
 			using (var jsonWriter = new JsonTextWriter(writer))
 			{
-				var jsonSerializer = new JsonSerializer();
+				var jsonSerializer = new JsonSerializer
+				{
+					NullValueHandling = NullValueHandling.Ignore
+				};
 				jsonSerializer.Serialize(jsonWriter, source);
 			}
 		}

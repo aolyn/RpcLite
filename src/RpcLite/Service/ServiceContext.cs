@@ -9,23 +9,23 @@ namespace RpcLite.Service
 	/// <summary>
 	/// 
 	/// </summary>
-	public class SeviceInvokeContext
+	public class ServiceContext
 	{
 
 		/// <summary>
 		/// 
 		/// </summary>
-		public object Service { get; set; }
+		internal object ServiceContainer { get; set; }
 
 		/// <summary>
 		/// 
 		/// </summary>
-		public object State { get; set; }
+		internal object State { get; set; }
 
 		/// <summary>
 		/// 
 		/// </summary>
-		public ActionInfo Action { get; set; }
+		internal ActionInfo Action { get; set; }
 
 		/// <summary>
 		/// 
@@ -35,11 +35,26 @@ namespace RpcLite.Service
 		/// <summary>
 		/// 
 		/// </summary>
-		public object SyncResult { get; set; }
+		public object Result { get; set; }
 
 		/// <summary>
 		/// 
 		/// </summary>
 		public object Tag { get; set; }
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public ServiceRequest Request { get; set; }
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public object Argument { get; set; }
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public ServiceInfo Service { get; set; }
 	}
 }

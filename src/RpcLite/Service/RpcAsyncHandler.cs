@@ -96,7 +96,7 @@ namespace RpcLite.Service
 
 				try
 				{
-					var result = RpcProcessor.ProcessRequest(serviceRequest);
+					var result = service.ProcessRequest(serviceRequest);
 					formatter.Serialize(response.OutputStream, result);
 				}
 				catch (Exception ex)
@@ -210,7 +210,7 @@ namespace RpcLite.Service
 
 				try
 				{
-					var result = RpcProcessor.BeginProcessRequest(request, response, cb, requestContext);
+					var result = service.BeginProcessRequest(request, response, cb, requestContext);
 					return result;
 				}
 				catch (Exception ex)
@@ -240,7 +240,7 @@ namespace RpcLite.Service
 		/// <param name="result"></param>
 		public void EndProcessRequest(IAsyncResult result)
 		{
-			RpcProcessor.EndProcessRequest(result);
+			ServiceInfo.EndProcessRequest(result);
 		}
 	}
 }

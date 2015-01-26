@@ -129,19 +129,13 @@ namespace RpcLite.Service
 			return resultObj;
 		}
 
-		public static IAsyncResult BeginInvokeAction(ActionInfo actionInfo, ServiceResponse output, object reqArg, AsyncCallback cb, object state)
+		public static IAsyncResult BeginInvokeAction(ActionInfo actionInfo, ServiceResponse response, object reqArg, AsyncCallback cb, ServiceContext state)
 		{
 			var serviceInstance = ServiceFactory.GetService(actionInfo);
 
-			var invokeState = new SeviceInvokeContext
-			{
-				Service = serviceInstance,
-				State = state,
-				Action = actionInfo,
-				Response = output,
-			};
+			state.ServiceContainer = serviceInstance;
 
-			var ar = actionInfo.BeginFunc(serviceInstance.ServiceObject, reqArg, cb, invokeState);
+			var ar = actionInfo.BeginFunc(serviceInstance.ServiceObject, reqArg, cb, state);
 			return ar;
 		}
 	}
