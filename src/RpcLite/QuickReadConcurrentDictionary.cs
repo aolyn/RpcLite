@@ -10,7 +10,7 @@ namespace RpcLite
 	/// <typeparam name="TValue"></typeparam>
 	public class QuickReadConcurrentDictionary<TKey, TValue> : Dictionary<TKey, TValue>
 	{
-		private readonly Dictionary<TKey, TValue> _innerDictionary = new Dictionary<TKey, TValue>();
+		//private readonly Dictionary<TKey, TValue> _innerDictionary = new Dictionary<TKey, TValue>();
 		private readonly object _allLocker = new object();
 		private readonly Dictionary<TKey, object> _itemLocks = new Dictionary<TKey, object>();
 
@@ -44,7 +44,7 @@ namespace RpcLite
 			}
 
 			TValue value;
-			if (_innerDictionary.TryGetValue(key, out value))
+			if (TryGetValue(key, out value))
 			{
 				return value;
 			}
@@ -61,14 +61,14 @@ namespace RpcLite
 
 			lock (locker)
 			{
-				if (_innerDictionary.TryGetValue(key, out value))
+				if (TryGetValue(key, out value))
 				{
 					_itemLocks.Remove(key);
 					return value;
 				}
 
 				value = valueFactory();
-				_innerDictionary.Add(key, value);
+				Add(key, value);
 				_itemLocks.Remove(key);
 				return value;
 			}

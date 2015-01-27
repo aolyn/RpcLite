@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Threading.Tasks;
 
 namespace RpcLite.Service
 {
@@ -45,25 +45,36 @@ namespace RpcLite.Service
 			Type argumentType;
 			Delegate methodFunc;
 			Delegate endMethodFunc = null;
-			if (isAsync)
-			{
-				arguments = arguments
-					.Take(arguments.Length - 2)
-					.ToArray();
-				argumentType = TypeCreator.GetParameterType(method, arguments);
-				methodFunc = MethodHelper.GetCallMethodAsyncFunc(serviceType, argumentType, arguments, method, hasReturn);
 
-				var endFuncName = "End" + method.Name.Substring(5);
-				var endMethod = MethodHelper.GetActionMethod(serviceType, endFuncName);
-				var endMethodHasReturn = endMethod.ReturnType.FullName != "System.Void";
-				var endMethodArguments = endMethod.GetParameters();
-				hasReturn = endMethodHasReturn;
-				endMethodFunc = MethodHelper.GetCallMethodFunc(serviceType, typeof(IAsyncResult), endMethodArguments, endMethod, endMethodHasReturn);
+			bool isTask = false;
+			if (method.ReturnType.Name.StartsWith("Task"))
+			{
+				isTask = true;
+				argumentType = TypeCreator.GetParameterType(method);
+				methodFunc = MethodHelper.GetCallMethodFunc(serviceType, argumentType, arguments, method, hasReturn);
 			}
 			else
 			{
-				argumentType = TypeCreator.GetParameterType(method);
-				methodFunc = MethodHelper.GetCallMethodFunc(serviceType, argumentType, arguments, method, hasReturn);
+				if (isAsync)
+				{
+					arguments = arguments
+						.Take(arguments.Length - 2)
+						.ToArray();
+					argumentType = TypeCreator.GetParameterType(method, arguments);
+					methodFunc = MethodHelper.GetCallMethodAsyncFunc(serviceType, argumentType, arguments, method, hasReturn);
+
+					var endFuncName = "End" + method.Name.Substring(5);
+					var endMethod = MethodHelper.GetActionMethod(serviceType, endFuncName);
+					var endMethodHasReturn = endMethod.ReturnType.FullName != "System.Void";
+					var endMethodArguments = endMethod.GetParameters();
+					hasReturn = endMethodHasReturn;
+					endMethodFunc = MethodHelper.GetCallMethodFunc(serviceType, typeof(IAsyncResult), endMethodArguments, endMethod, endMethodHasReturn);
+				}
+				else
+				{
+					argumentType = TypeCreator.GetParameterType(method);
+					methodFunc = MethodHelper.GetCallMethodFunc(serviceType, argumentType, arguments, method, hasReturn);
+				}
 			}
 
 			actionInfo = new ActionInfo
@@ -76,9 +87,15 @@ namespace RpcLite.Service
 				ServiceCreator = TypeCreator.GetCreateInstanceFunc(serviceType),
 				IsAsync = isAsync,
 				IsStatic = method.IsStatic,
+				IsTask = isTask,
 			};
 
-			if (hasReturn)
+			if (isTask)
+			{
+				actionInfo.InvokeTask = methodFunc as Func<object, object, object>;
+				actionInfo.TaskResultType = method.ReturnType.GetGenericArguments().FirstOrDefault();
+			}
+			else if (hasReturn)
 			{
 				if (isAsync)
 				{
@@ -97,6 +114,7 @@ namespace RpcLite.Service
 				else
 					actionInfo.Action = methodFunc as Action<object, object>;
 			}
+
 			Actions.Add(actionKey, actionInfo);
 			return actionInfo;
 		}
@@ -136,6 +154,16 @@ namespace RpcLite.Service
 			state.ServiceContainer = serviceInstance;
 
 			var ar = actionInfo.BeginFunc(serviceInstance.ServiceObject, reqArg, cb, state);
+			return ar;
+		}
+
+		public static IAsyncResult InvokeTask(ActionInfo actionInfo, ServiceResponse response, object requestObject, AsyncCallback cb, ServiceContext context)
+		{
+			var serviceInstance = ServiceFactory.GetService(actionInfo);
+
+			context.ServiceContainer = serviceInstance;
+
+			var ar = (Task)actionInfo.InvokeTask(serviceInstance.ServiceObject, requestObject);
 			return ar;
 		}
 	}
