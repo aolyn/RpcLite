@@ -13,14 +13,14 @@ namespace RpcLite.Service
 		/// <summary>
 		/// 
 		/// </summary>
-		public static List<ServiceInfo> Services { get { return RpcLiteConfigSection.Instance.Services; } }
+		public static List<RpcService> Services { get { return RpcLiteConfigSection.Instance.Services; } }
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="requestPath"></param>
 		/// <returns></returns>
-		public static ServiceInfo GetService(string requestPath)
+		public static RpcService GetService(string requestPath)
 		{
 			var service = Services.FirstOrDefault(it =>
 				requestPath.StartsWith(it.Path, StringComparison.OrdinalIgnoreCase));
@@ -32,7 +32,7 @@ namespace RpcLite.Service
 		/// </summary>
 		/// <param name="name"></param>
 		/// <returns></returns>
-		public static ServiceInfo GetServiceByName(string name)
+		public static RpcService GetServiceByName(string name)
 		{
 			var service = Services
 				.FirstOrDefault(it => string.Compare(it.Name, name, StringComparison.OrdinalIgnoreCase) == 0);

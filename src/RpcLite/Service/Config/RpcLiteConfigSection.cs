@@ -24,8 +24,8 @@ namespace RpcLite.Config
 			}
 		}
 
-		private readonly List<ServiceInfo> _services = new List<ServiceInfo>();
-		public List<ServiceInfo> Services
+		private readonly List<RpcService> _services = new List<RpcService>();
+		public List<RpcService> Services
 		{
 			get { return _services; }
 		}
@@ -78,7 +78,7 @@ namespace RpcLite.Config
 
 					var typeInfo = assembly.GetType(typeName);
 
-					Services.Add(new ServiceInfo
+					Services.Add(new RpcService
 					{
 						Name = name,
 						Path = path,
