@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using RpcLite.Formatters;
+using System.Threading.Tasks;
 
 namespace RpcLite.Service
 {
@@ -75,7 +76,12 @@ namespace RpcLite.Service
 				BeforeInvoke(context);
 
 			IAsyncResult ar;
-			if (actionInfo.IsAsync)
+			if (actionInfo.IsTask)
+			{
+				var task = (Task)ActionHelper.InvokeTask(actionInfo, response, requestObject, cb, context);
+				ar = ToBegin(task, cb, context/*, actionInfo.TaskResultType*/);
+			}
+			else if (actionInfo.IsAsync)
 			{
 				ar = ActionHelper.BeginInvokeAction(actionInfo, response, requestObject, cb, context);
 			}
@@ -94,6 +100,56 @@ namespace RpcLite.Service
 			return ar;
 		}
 
+		private static IAsyncResult ToBegin(Task task, AsyncCallback callback, object state/*, Type argumentType*/)
+		{
+			if (task == null)
+				throw new ArgumentNullException("task");
+
+			var tcs = new TaskCompletionSource<object>(state);
+			task.ContinueWith(t =>
+			{
+				//bool sr = false;
+				//if (task.IsFaulted)
+				//	sr = tcs.TrySetException(task.Exception.InnerExceptions);
+				//else if (task.IsCanceled)
+				//	sr = tcs.TrySetCanceled();
+				//else
+				//	sr = tcs.TrySetResult(GetTaskResult(t) /*task.Result*/);
+
+				if (task.IsFaulted)
+				{
+					if (task.Exception != null)
+						tcs.TrySetException(task.Exception.InnerExceptions);
+				}
+				else if (task.IsCanceled)
+					tcs.TrySetCanceled();
+				else
+					tcs.TrySetResult(GetTaskResult(t));
+
+				if (callback != null)
+					callback(tcs.Task);
+			}, TaskScheduler.Default);
+
+			return tcs.Task;
+		}
+
+		/// <summary>
+		/// get result of task
+		/// </summary>
+		/// <param name="task"></param>
+		/// <returns></returns>
+		private static object GetTaskResult(Task task)
+		{
+			if (task.GetType() == typeof(Task))
+			{
+				return null;
+			}
+			else
+			{
+				return ((dynamic)task).Result;
+			}
+		}
+		
 		private static object GetRequestObject(Stream stream, IFormatter formatter, Type type)
 		{
 			try
@@ -144,6 +200,19 @@ namespace RpcLite.Service
 
 		private void EndProcessRequest(IAsyncResult result, ServiceContext state)
 		{
+			var task = result as Task;
+			if (task != null)
+			{
+				if (AfterInvoke != null)
+					AfterInvoke(state);
+
+				if (state.Action.HasReturnValue)
+				{
+					state.Response.Formatter.Serialize(state.Response.ResponseStream, GetTaskResult(task));
+				}
+				return;
+			}
+
 			if (!state.Action.IsAsync)
 			{
 				if (AfterInvoke != null)

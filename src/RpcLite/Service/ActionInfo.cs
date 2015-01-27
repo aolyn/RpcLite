@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reflection;
+using System.Threading.Tasks;
 
 namespace RpcLite.Service
 {
@@ -32,6 +33,13 @@ namespace RpcLite.Service
 		/// 
 		/// </summary>
 		public bool HasReturnValue { get; set; }
+
+
+		/// <summary>
+		/// T: service, argument, callback, state, return
+		/// </summary>
+		public Func<object, object, object> InvokeTask { get; set; }
+
 
 		/// <summary>
 		/// T: service, argument, return
@@ -80,5 +88,15 @@ namespace RpcLite.Service
 		/// 
 		/// </summary>
 		public bool IsStatic { get; set; }
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public bool IsTask { get; set; }
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public Type TaskResultType { get; set; }
 	}
 }

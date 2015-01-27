@@ -18,6 +18,64 @@ namespace RpcLite.Service
 
 		private static Delegate GetCallMethodFuncInternal(Type serviceType, Type argumentType, ParameterInfo[] arguments, MethodInfo method, bool hasReturn)
 		{
+			if (method.ReturnType.Name.StartsWith("Task"))
+				return GetCallTaskMethodFuncInternal(serviceType, argumentType, arguments, method, hasReturn);
+
+			if (arguments.Length > 0 && argumentType == null)
+				throw new ArgumentException("parameterType can not be null when paras.Length > 0");
+
+			var serviceArgument = Expression.Parameter(typeof(object), "service");
+			var actionArgument = Expression.Parameter(typeof(object), "argument");
+
+			var convertService = Expression.Convert(serviceArgument, serviceType);
+			var convertArgument = argumentType == null ? null : Expression.Convert(actionArgument, argumentType);
+
+			MethodCallExpression call;
+			if (arguments.Length > 1)
+			{
+				if (convertArgument == null)
+					throw new ArgumentException("argumentType can't be null when arguments.Length > 1");
+
+				var callArgs = arguments
+					.Select(it => Expression.Property(convertArgument, it.Name))
+					.ToList();
+
+				call = method.IsStatic
+					? Expression.Call(method, callArgs)
+					: Expression.Call(convertService, method, callArgs);
+			}
+			else if (arguments.Length == 1)
+			{
+				call = method.IsStatic
+					? Expression.Call(method, new Expression[] { convertArgument })
+					: Expression.Call(convertService, method, new Expression[] { convertArgument });
+			}
+			else
+			{
+				call = method.IsStatic
+					? Expression.Call(method)
+					: Expression.Call(convertService, method);
+			}
+
+			var methodArgs = new[] { serviceArgument, actionArgument };
+
+			LambdaExpression methodLam;
+			if (hasReturn)
+			{
+				var convertCall = Expression.Convert(call, typeof(object));
+				methodLam = Expression.Lambda(convertCall, methodArgs);
+			}
+			else
+			{
+				methodLam = Expression.Lambda(call, methodArgs);
+			}
+
+			var methodFunc = methodLam.Compile();
+			return methodFunc;
+		}
+
+		private static Delegate GetCallTaskMethodFuncInternal(Type serviceType, Type argumentType, ParameterInfo[] arguments, MethodInfo method, bool hasReturn)
+		{
 			if (arguments.Length > 0 && argumentType == null)
 				throw new ArgumentException("parameterType can not be null when paras.Length > 0");
 
@@ -141,5 +199,7 @@ namespace RpcLite.Service
 				return method;
 			});
 		}
+
+
 	}
 }
