@@ -240,7 +240,7 @@ namespace RpcLite.Service
 		/// <param name="result"></param>
 		public void EndProcessRequest(IAsyncResult result)
 		{
-			ServiceInfo.EndProcessRequest(result);
+			RpcService.EndProcessRequest(result);
 		}
 	}
 }

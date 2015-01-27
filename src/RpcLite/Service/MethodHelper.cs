@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Threading.Tasks;
 
 namespace RpcLite.Service
 {
@@ -13,12 +14,12 @@ namespace RpcLite.Service
 
 		public static Delegate GetCallMethodFunc(Type serviceType, Type argumentType, ParameterInfo[] arguments, MethodInfo method, bool hasReturn)
 		{
-			return CallMethods.GetOrAdd(method, GetCallMethodFuncInternal(serviceType, argumentType, arguments, method, hasReturn));
+			return CallMethods.GetOrAdd(method, () => GetCallMethodFuncInternal(serviceType, argumentType, arguments, method, hasReturn));
 		}
 
 		private static Delegate GetCallMethodFuncInternal(Type serviceType, Type argumentType, ParameterInfo[] arguments, MethodInfo method, bool hasReturn)
 		{
-			if (method.ReturnType.Name.StartsWith("Task"))
+			if (method.ReturnType.IsGenericType && method.ReturnType.BaseType == typeof(Task))
 				return GetCallTaskMethodFuncInternal(serviceType, argumentType, arguments, method, hasReturn);
 
 			if (arguments.Length > 0 && argumentType == null)
@@ -131,7 +132,7 @@ namespace RpcLite.Service
 
 		public static Delegate GetCallMethodAsyncFunc(Type serviceType, Type argumentType, ParameterInfo[] arguments, MethodInfo method, bool hasReturn)
 		{
-			return AsyncCallMethods.GetOrAdd(method, GetCallMethodAsyncFuncInternal(serviceType, argumentType, arguments, method, hasReturn));
+			return AsyncCallMethods.GetOrAdd(method, () => GetCallMethodAsyncFuncInternal(serviceType, argumentType, arguments, method, hasReturn));
 		}
 
 		private static Delegate GetCallMethodAsyncFuncInternal(Type serviceType, Type argumentType, ParameterInfo[] arguments, MethodInfo method, bool hasReturn)

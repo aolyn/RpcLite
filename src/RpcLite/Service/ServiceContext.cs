@@ -55,6 +55,6 @@ namespace RpcLite.Service
 		/// <summary>
 		/// 
 		/// </summary>
-		public ServiceInfo Service { get; set; }
+		public RpcService Service { get; set; }
 	}
 }

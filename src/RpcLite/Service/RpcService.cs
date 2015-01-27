@@ -8,7 +8,7 @@ namespace RpcLite.Service
 	/// <summary>
 	/// Respresnts service infomation
 	/// </summary>
-	public class ServiceInfo
+	public class RpcService
 	{
 		/// <summary>
 		/// Service request url path
@@ -100,7 +100,7 @@ namespace RpcLite.Service
 			return ar;
 		}
 
-		private static IAsyncResult ToBegin(Task task, AsyncCallback callback, object state/*, Type argumentType*/)
+		private static IAsyncResult ToBegin(Task task, AsyncCallback callback, object state)
 		{
 			if (task == null)
 				throw new ArgumentNullException("task");
@@ -108,14 +108,6 @@ namespace RpcLite.Service
 			var tcs = new TaskCompletionSource<object>(state);
 			task.ContinueWith(t =>
 			{
-				//bool sr = false;
-				//if (task.IsFaulted)
-				//	sr = tcs.TrySetException(task.Exception.InnerExceptions);
-				//else if (task.IsCanceled)
-				//	sr = tcs.TrySetCanceled();
-				//else
-				//	sr = tcs.TrySetResult(GetTaskResult(t) /*task.Result*/);
-
 				if (task.IsFaulted)
 				{
 					if (task.Exception != null)
@@ -149,7 +141,7 @@ namespace RpcLite.Service
 				return ((dynamic)task).Result;
 			}
 		}
-		
+
 		private static object GetRequestObject(Stream stream, IFormatter formatter, Type type)
 		{
 			try
@@ -200,67 +192,62 @@ namespace RpcLite.Service
 
 		private void EndProcessRequest(IAsyncResult result, ServiceContext state)
 		{
-			var task = result as Task;
-			if (task != null)
-			{
-				if (AfterInvoke != null)
-					AfterInvoke(state);
-
-				if (state.Action.HasReturnValue)
-				{
-					state.Response.Formatter.Serialize(state.Response.ResponseStream, GetTaskResult(task));
-				}
-				return;
-			}
-
-			if (!state.Action.IsAsync)
-			{
-				if (AfterInvoke != null)
-					AfterInvoke(state);
-
-				if (state.Action.HasReturnValue)
-				{
-					state.Response.Formatter.Serialize(state.Response.ResponseStream, state.Result);
-				}
-				return;
-			}
-
 			var serviceContainer = (ServiceInstanceContainer)state.ServiceContainer;
-			if (serviceContainer == null) return;
+			object resultObject = null;
 
 			try
 			{
-				if (state.Action.HasReturnValue)
+				if (state.Action.IsTask)
 				{
-					object requestResult;
+					var task = result as Task;
+					if (task == null)
+						throw new ServiceException("task async api return no Task result");
 
-					try
+					resultObject = GetTaskResult(task);
+				}
+				else if (!state.Action.IsAsync)
+				{
+					if (state.Action.HasReturnValue)
 					{
-						requestResult = state.Action.EndFunc(serviceContainer.ServiceObject, result);
+						resultObject = state.Result;
 					}
-					catch (Exception ex)
-					{
-						requestResult = ex;
-					}
-
-					state.Result = requestResult;
-
-					if (AfterInvoke != null)
-						AfterInvoke(state);
-					state.Response.Formatter.Serialize(state.Response.ResponseStream, requestResult);
 				}
 				else
 				{
-					state.Action.EndAction(serviceContainer.ServiceObject, result);
-					if (AfterInvoke != null)
-						AfterInvoke(state);
+					if (state.Action.HasReturnValue)
+					{
+						try
+						{
+							resultObject = state.Action.EndFunc(serviceContainer.ServiceObject, result);
+						}
+						catch (Exception ex)
+						{
+							resultObject = ex;
+						}
+					}
+					else
+					{
+						state.Action.EndAction(serviceContainer.ServiceObject, result);
+					}
 				}
 			}
 			catch (Exception ex)
 			{
-				state.Response.Formatter.Serialize(state.Response.ResponseStream, ex);
+				resultObject = ex;
 			}
-			serviceContainer.Dispose();
+
+			if (state.Action.IsAsync && !state.Action.IsStatic)
+			{
+				serviceContainer.Dispose();
+			}
+
+			if (AfterInvoke != null)
+				AfterInvoke(state);
+
+			if (state.Action.HasReturnValue)
+			{
+				state.Response.Formatter.Serialize(state.Response.ResponseStream, resultObject);
+			}
 		}
 	}
 }

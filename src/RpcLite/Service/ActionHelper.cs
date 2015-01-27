@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -7,7 +6,7 @@ namespace RpcLite.Service
 {
 	internal class ActionHelper
 	{
-		private static readonly Dictionary<string, ActionInfo> Actions = new Dictionary<string, ActionInfo>();
+		private static readonly QuickReadConcurrentDictionary<string, ActionInfo> Actions = new QuickReadConcurrentDictionary<string, ActionInfo>();
 
 		/// <summary>
 		/// 
@@ -18,11 +17,11 @@ namespace RpcLite.Service
 		public static ActionInfo GetActionInfo(Type serviceType, string actionName)
 		{
 			var actionKey = serviceType.FullName + "." + actionName;
+			return Actions.GetOrAdd(actionKey, () => GetActionInfoInternal(serviceType, actionName, actionKey));
+		}
 
-			ActionInfo actionInfo;
-			if (Actions.TryGetValue(actionKey, out actionInfo))
-				return actionInfo;
-
+		private static ActionInfo GetActionInfoInternal(Type serviceType, string actionName, string actionKey)
+		{
 			var method = MethodHelper.GetActionMethod(serviceType, actionName);
 
 			if (method == null)
@@ -46,10 +45,11 @@ namespace RpcLite.Service
 			Delegate methodFunc;
 			Delegate endMethodFunc = null;
 
-			bool isTask = false;
-			if (method.ReturnType.Name.StartsWith("Task"))
+			var isTask = false;
+			if (method.ReturnType.IsGenericType && method.ReturnType.BaseType == typeof(Task))
 			{
 				isTask = true;
+				isAsync = true;
 				argumentType = TypeCreator.GetParameterType(method);
 				methodFunc = MethodHelper.GetCallMethodFunc(serviceType, argumentType, arguments, method, hasReturn);
 			}
@@ -77,7 +77,7 @@ namespace RpcLite.Service
 				}
 			}
 
-			actionInfo = new ActionInfo
+			var actionInfo = new ActionInfo
 			{
 				Name = actionKey,
 				ArgumentCount = arguments.Length,
@@ -115,7 +115,6 @@ namespace RpcLite.Service
 					actionInfo.Action = methodFunc as Action<object, object>;
 			}
 
-			Actions.Add(actionKey, actionInfo);
 			return actionInfo;
 		}
 
@@ -132,38 +131,46 @@ namespace RpcLite.Service
 			}
 		}
 
-		private static object InvokeAcion(ActionInfo actionInfo, object requestArgument, object serviceInstance)
+		private static object InvokeAcion(ActionInfo actionInfo, object requestObject, object serviceObject)
 		{
 			object resultObj;
 			if (actionInfo.HasReturnValue)
 			{
-				resultObj = actionInfo.Func(serviceInstance, requestArgument);
+				resultObj = actionInfo.Func(serviceObject, requestObject);
 			}
 			else
 			{
-				actionInfo.Action(serviceInstance, requestArgument);
+				actionInfo.Action(serviceObject, requestObject);
 				resultObj = null;
 			}
 			return resultObj;
 		}
 
-		public static IAsyncResult BeginInvokeAction(ActionInfo actionInfo, ServiceResponse response, object reqArg, AsyncCallback cb, ServiceContext state)
+		public static IAsyncResult BeginInvokeAction(ActionInfo actionInfo, ServiceResponse response, object requestObject, AsyncCallback cb, ServiceContext state)
 		{
-			var serviceInstance = ServiceFactory.GetService(actionInfo);
+			object serviceObject = null;
+			if (!actionInfo.IsStatic)
+			{
+				var serviceContainer = ServiceFactory.GetService(actionInfo);
+				state.ServiceContainer = serviceContainer;
+				serviceObject = serviceContainer.ServiceObject;
+			}
 
-			state.ServiceContainer = serviceInstance;
-
-			var ar = actionInfo.BeginFunc(serviceInstance.ServiceObject, reqArg, cb, state);
+			var ar = actionInfo.BeginFunc(serviceObject, requestObject, cb, state);
 			return ar;
 		}
 
 		public static IAsyncResult InvokeTask(ActionInfo actionInfo, ServiceResponse response, object requestObject, AsyncCallback cb, ServiceContext context)
 		{
-			var serviceInstance = ServiceFactory.GetService(actionInfo);
+			object serviceObject = null;
+			if (!actionInfo.IsStatic)
+			{
+				var serviceContainer = ServiceFactory.GetService(actionInfo);
+				context.ServiceContainer = serviceContainer;
+				serviceObject = serviceContainer.ServiceObject;
+			}
 
-			context.ServiceContainer = serviceInstance;
-
-			var ar = (Task)actionInfo.InvokeTask(serviceInstance.ServiceObject, requestObject);
+			var ar = (Task)actionInfo.InvokeTask(serviceObject, requestObject);
 			return ar;
 		}
 	}
