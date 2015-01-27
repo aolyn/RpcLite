@@ -104,7 +104,7 @@
     <Compile Include="Service\RpcProcessor.cs" />
     <Compile Include="Service\RpcServiceHelper.cs" />
     <Compile Include="Service\ServiceAsyncResult.cs" />
-    <Compile Include="Service\ServiceInfo.cs" />
+    <Compile Include="Service\RpcService.cs" />
     <Compile Include="Service\ServiceInstancePool.cs" />
     <Compile Include="Service\ServiceRequest.cs" />
     <Compile Include="Service\ServiceResponse.cs" />
