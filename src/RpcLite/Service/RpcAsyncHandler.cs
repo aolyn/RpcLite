@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
 using System.Threading;
 using System.Web;
 using Newtonsoft.Json;
@@ -22,91 +21,28 @@ namespace RpcLite.Service
 		/// <param name="context"></param>
 		public void ProcessRequest(HttpContext context)
 		{
-			var request = context.Request;
-			var response = context.Response;
+			ProcessRequestInternal(context);
+		}
 
-			try
+		internal static void ProcessRequestInternal(HttpContext context)
+		{
+			var are = new AutoResetEvent(false);
+			var ar = BeginProcessRequestInternal(context, r =>
 			{
-				//get formatter from content type
-				IFormatter formatter;
-				if (!string.IsNullOrEmpty(request.ContentType))
-				{
-					formatter = GlobalConfig.Formaters.FirstOrDefault(it => it.SupportMimes.Contains(request.ContentType));
-					if (formatter == null)
-						throw new ConfigException("Not Supported MIME: " + request.ContentType);
+				are.Set();
+			}, null);
 
-					response.ContentType = request.ContentType;
+			if (ar != null)
+			{
+				if (ar.CompletedSynchronously)
+				{
+					EndProcessRequestInternal(ar);
 				}
 				else
 				{
-					if (GlobalConfig.Formaters.Count == 0)
-						throw new ConfigException("Configuration error: no formatters.");
-
-					formatter = GlobalConfig.Formaters[0];
-					if (formatter.SupportMimes.Count == 0)
-						throw new ConfigException("Configuration error: formatter " + formatter.GetType() + " has no support MIME");
-
-					response.ContentType = formatter.SupportMimes[0];
+					are.WaitOne();
+					EndProcessRequestInternal(ar);
 				}
-
-				ProcessRequest(request, response, formatter);
-			}
-			catch (ThreadAbortException)
-			{
-			}
-			catch (Exception ex)
-			{
-				//by default send Exception data to client use Json Format
-				var resultJson = JsonConvert.SerializeObject(ex);
-				response.Write(resultJson);
-				response.End();
-			}
-		}
-
-		private static void ProcessRequest(HttpRequest request, HttpResponse response, IFormatter formatter)
-		{
-			if (request == null) throw new ArgumentNullException("request");
-
-			var requestPath = request.AppRelativeCurrentExecutionFilePath;
-
-			if (string.IsNullOrWhiteSpace(requestPath))
-				throw new ArgumentException("request.AppRelativeCurrentExecutionFilePath is null or white space");
-
-			var service = RpcServiceHelper.GetService(requestPath);
-
-			if (service == null)
-			{
-				formatter.Serialize(response.OutputStream, new ConfigException("Configuration error service not found"));
-				return;
-			}
-
-			try
-			{
-				var actionName = requestPath.Substring(service.Path.Length);
-				if (string.IsNullOrEmpty(actionName))
-					throw new RequestException("Bad request: not action name");
-
-				var serviceRequest = new ServiceRequest
-				{
-					ActionName = actionName,
-					Formatter = formatter,
-					InputStream = request.InputStream,
-					ServiceType = service.Type,
-				};
-
-				try
-				{
-					var result = service.ProcessRequest(serviceRequest);
-					formatter.Serialize(response.OutputStream, result);
-				}
-				catch (Exception ex)
-				{
-					throw new ProcessRequestException(ex.Message, ex);
-				}
-			}
-			catch (Exception ex)
-			{
-				formatter.Serialize(response.OutputStream, ex);
 			}
 		}
 
@@ -132,8 +68,15 @@ namespace RpcLite.Service
 		/// <returns></returns>
 		public IAsyncResult BeginProcessRequest(HttpContext context, AsyncCallback cb, object extraData)
 		{
+			return BeginProcessRequestInternal(context, cb, extraData);
+		}
+
+		private static IAsyncResult BeginProcessRequestInternal(HttpContext context, AsyncCallback cb, object extraData)
+		{
 			var request = context.Request;
 			var response = context.Response;
+
+			Hrj.Logging.Logger.Debug("BeginProcessRequest: " + request.Url);
 
 			try
 			{
@@ -142,7 +85,13 @@ namespace RpcLite.Service
 				if (formatter != null)
 					response.ContentType = request.ContentType;
 
-				return BeginProcessRequest(request.InputStream, response.OutputStream, request.AppRelativeCurrentExecutionFilePath, formatter, cb, context);
+				var ar = BeginProcessRequest(request.InputStream, response.OutputStream, request.AppRelativeCurrentExecutionFilePath, formatter, cb, context);
+				Hrj.Logging.Logger.Debug("RpcAsyncHandler.BeginProcessRequest end return"
+					+ string.Format("ar.IsCompleted: {0}", ar.IsCompleted)); //JsonConvert.SerializeObject(ar));
+
+				if (ar.IsCompleted)
+					cb(ar);
+				return ar;
 			}
 			catch (ThreadAbortException)
 			{
@@ -170,6 +119,8 @@ namespace RpcLite.Service
 		{
 			if (requestStream == null) throw new ArgumentNullException("requestStream");
 
+			Hrj.Logging.Logger.Debug("BeginProcessReques 2");
+
 			if (string.IsNullOrWhiteSpace(requestPath))
 				throw new ArgumentException("request.AppRelativeCurrentExecutionFilePath is null or white space");
 
@@ -177,6 +128,8 @@ namespace RpcLite.Service
 
 			if (service == null)
 			{
+				Hrj.Logging.Logger.Debug("BeginProcessReques Can't find service " + requestPath);
+
 				formatter.Serialize(responseStream, new ConfigException("Configuration error service not found"));
 				return new ServiceAsyncResult
 				{
@@ -210,7 +163,9 @@ namespace RpcLite.Service
 
 				try
 				{
+					Hrj.Logging.Logger.Debug("RpcAsyncHandler.BeginProcessRequest start service.BeginProcessRequest(request, response, cb, requestContext) " + requestPath);
 					var result = service.BeginProcessRequest(request, response, cb, requestContext);
+					Hrj.Logging.Logger.Debug("RpcAsyncHandler.BeginProcessRequest end service.BeginProcessRequest(request, response, cb, requestContext) " + requestPath);
 					return result;
 				}
 				catch (Exception ex)
@@ -240,7 +195,14 @@ namespace RpcLite.Service
 		/// <param name="result"></param>
 		public void EndProcessRequest(IAsyncResult result)
 		{
+			EndProcessRequestInternal(result);
+		}
+
+		private static void EndProcessRequestInternal(IAsyncResult result)
+		{
+			Hrj.Logging.Logger.Debug("RpcAsyncHandler.EndProcessRequest start RpcService.EndProcessRequest(result);");
 			RpcService.EndProcessRequest(result);
+			Hrj.Logging.Logger.Debug("RpcAsyncHandler.EndProcessRequest end RpcService.EndProcessRequest(result);");
 		}
 	}
 }
