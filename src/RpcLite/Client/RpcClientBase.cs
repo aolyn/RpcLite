@@ -68,7 +68,6 @@ namespace RpcLite.Client
 
 			var resultObj = JsonConvert.DeserializeObject(result, returnType);
 			return resultObj;
-
 		}
 
 		/// <summary>

@@ -54,13 +54,22 @@ namespace RpcLite.Service
 		/// <returns></returns>
 		public IAsyncResult BeginProcessRequest(ServiceRequest request, ServiceResponse response, AsyncCallback cb, object state)
 		{
+			Hrj.Logging.Logger.Debug("RpcService.BeginProcessRequest");
+
+			Hrj.Logging.Logger.Debug("RpcService.BeginProcessRequest: start ActionHelper.GetActionInfo");
 			var actionInfo = ActionHelper.GetActionInfo(request.ServiceType, request.ActionName);
+			Hrj.Logging.Logger.Debug("RpcService.BeginProcessRequest: end ActionHelper.GetActionInfo");
 			if (actionInfo == null)
+			{
+				Hrj.Logging.Logger.Debug("Action Not Found: " + request.ActionName);
 				throw new ServiceException("Action Not Found: " + request.ActionName);
+			}
 
 			object requestObject = null;
 			if (actionInfo.ArgumentCount > 0)
 				requestObject = GetRequestObject(request.InputStream, request.Formatter, actionInfo.ArgumentType);
+
+			Hrj.Logging.Logger.Debug("RpcService.BeginProcessRequest: got requestObject");
 
 			var context = new ServiceContext
 			{
@@ -87,7 +96,9 @@ namespace RpcLite.Service
 			}
 			else
 			{
+				Hrj.Logging.Logger.Debug("RpcService.BeginProcessRequest: start ActionHelper.InvokeAction");
 				context.Result = ActionHelper.InvokeAction(actionInfo, requestObject);
+				Hrj.Logging.Logger.Debug("RpcService.BeginProcessRequest: end ActionHelper.InvokeAction");
 				ar = new ServiceAsyncResult
 				{
 					AsyncState = context,
