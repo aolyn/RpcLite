@@ -30,10 +30,10 @@ namespace RpcLite.Service
 		/// </summary>
 		public bool IsCompleted { get; set; }
 
-		/// <summary>
-		/// 
-		/// </summary>
-		public object HttpContext { get; set; }
+		///// <summary>
+		///// 
+		///// </summary>
+		//public object HttpContext { get; set; }
 
 		/// <summary>
 		/// 

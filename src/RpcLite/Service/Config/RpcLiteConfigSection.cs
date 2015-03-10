@@ -53,6 +53,8 @@ namespace RpcLite.Config
 					var path = item.Attributes.Cast<XmlAttribute>().Where(it => it.Name == "path").Select(it => it.Value).FirstOrDefault();
 					var type = item.Attributes.Cast<XmlAttribute>().Where(it => it.Name == "type").Select(it => it.Value).FirstOrDefault();
 
+					if (string.IsNullOrEmpty(name))
+						throw new ConfigurationErrorsException("name of  RpcLite configuration node can't be null or empty");
 					if (string.IsNullOrEmpty(path))
 						throw new ConfigurationErrorsException("path of  RpcLite configuration node can't be null or empty");
 					if (string.IsNullOrEmpty(type))

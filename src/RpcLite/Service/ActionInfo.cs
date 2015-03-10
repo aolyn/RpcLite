@@ -9,6 +9,8 @@ namespace RpcLite.Service
 	/// </summary>
 	public class ActionInfo
 	{
+		#region public properties
+
 		/// <summary>
 		/// 
 		/// </summary>
@@ -98,5 +100,158 @@ namespace RpcLite.Service
 		/// 
 		/// </summary>
 		public Type TaskResultType { get; set; }
+
+		#endregion
+
+
+		internal Task ExecuteTask(ServiceResponse response, object requestObject, AsyncCallback cb, ServiceContext context)
+		{
+			var task = (Task)ActionHelper.InvokeTask(context, cb);
+			return task;
+		}
+
+		internal IAsyncResult ExecuteTask(ServiceContext context, AsyncCallback callback)
+		{
+			IAsyncResult ar;
+			if (IsTask)
+			{
+				//var task = (Task)ActionHelper.InvokeTask(actionInfo, response, requestObject, cb, context);
+				var task = ExecuteTask(context.Response, context.Argument, callback, context);
+				ar = ToBegin(task, callback, context/*, actionInfo.TaskResultType*/);
+			}
+			else if (IsAsync)
+			{
+				ar = ActionHelper.BeginInvokeAction(context.Action, context.Response, context.Argument, callback, context);
+			}
+			else
+			{
+				//Hrj.Logging.Logger.Debug("RpcService.BeginProcessRequest: start ActionHelper.InvokeAction");
+				context.Result = ActionHelper.InvokeAction(context.Action, context.Argument);
+				//Hrj.Logging.Logger.Debug("RpcService.BeginProcessRequest: end ActionHelper.InvokeAction");
+				ar = new ServiceAsyncResult
+				{
+					AsyncState = context,
+					IsCompleted = true,
+					CompletedSynchronously = true,
+					AsyncWaitHandle = null,
+				};
+			}
+			return ar;
+		}
+
+		private static IAsyncResult ToBegin(Task task, AsyncCallback callback, object state)
+		{
+			if (task == null)
+				throw new ArgumentNullException("task");
+
+			var tcs = new TaskCompletionSource<object>(state);
+			task.ContinueWith(t =>
+			{
+				if (task.IsFaulted)
+				{
+					if (task.Exception != null)
+						tcs.TrySetException(task.Exception.InnerExceptions);
+				}
+				else if (task.IsCanceled)
+					tcs.TrySetCanceled();
+				else
+					tcs.TrySetResult(GetTaskResult(t));
+
+				if (callback != null)
+					callback(tcs.Task);
+			}, TaskScheduler.Default);
+
+			return tcs.Task;
+		}
+
+		/// <summary>
+		/// get result of task
+		/// </summary>
+		/// <param name="task"></param>
+		/// <returns></returns>
+		internal static object GetTaskResult(Task task)
+		{
+			if (task.GetType() == typeof(Task))
+			{
+				return null;
+			}
+			else
+			{
+				//try
+				//{
+				//	var type = task.GetType();
+				//	GetTaskResultFuncs.GetOrAdd(type, () =>
+				//	{
+				//		var arg = Expression.Parameter(type, "task");
+				//		var expProp = Expression.Property(arg, "Result");
+				//		var expConvert = Expression.Convert(expProp, typeof(object));
+				//		var asignExp = Expression.Lambda(expConvert, arg);
+				//		var getFunc = asignExp.Compile();
+				//		return (Func<Task, object>)getFunc;
+				//	});
+				//	//var value = getFunc(task);
+				//}
+				//catch (Exception ex)
+				//{
+				//}
+
+				return ((dynamic)task).Result;
+			}
+		}
+
+		internal static object GetResultObject(IAsyncResult ar, ServiceContext context)
+		{
+			object resultObject = null;
+			var serviceContainer = (ServiceInstanceContainer)context.ServiceContainer;
+
+			try
+			{
+				if (context.Action.IsTask)
+				{
+					var task = ar as Task;
+					if (task == null)
+						throw new ServiceException("task async api return no Task result");
+
+					resultObject = ActionInfo.GetTaskResult(task);
+				}
+				else if (!context.Action.IsAsync)
+				{
+					if (context.Action.HasReturnValue)
+					{
+						resultObject = context.Result;
+					}
+				}
+				else
+				{
+					if (context.Action.HasReturnValue)
+					{
+						try
+						{
+							resultObject = context.Action.EndFunc(serviceContainer.ServiceObject, ar);
+						}
+						catch (Exception ex)
+						{
+							resultObject = ex;
+						}
+					}
+					else
+					{
+						context.Action.EndAction(serviceContainer.ServiceObject, ar);
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				resultObject = ex;
+			}
+
+			if (context.Action.IsAsync && !context.Action.IsStatic)
+			{
+				serviceContainer.Dispose();
+			}
+
+			return resultObject;
+		}
+
 	}
 }

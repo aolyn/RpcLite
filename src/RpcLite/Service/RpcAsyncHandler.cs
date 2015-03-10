@@ -9,7 +9,8 @@ using RpcLite.Formatters;
 namespace RpcLite.Service
 {
 	/// <summary>
-	/// RpcLite AsyncHandler to process service request
+	/// <para>RpcLite AsyncHandler to process service request</para>
+	/// <para>in mono 3.12 RpcAsyncHandler can't work use Sync Handler</para>
 	/// </summary>
 	public class RpcAsyncHandler : IHttpAsyncHandler
 	{
@@ -26,22 +27,21 @@ namespace RpcLite.Service
 
 		internal static void ProcessRequestInternal(HttpContext context)
 		{
-			var are = new AutoResetEvent(false);
-			var ar = BeginProcessRequestInternal(context, r =>
+			using (var are = new AutoResetEvent(false))
 			{
-				are.Set();
-			}, null);
+				var ar = BeginProcessRequestInternal(context, r => are.Set(), null);
 
-			if (ar != null)
-			{
-				if (ar.CompletedSynchronously)
+				if (ar != null)
 				{
-					EndProcessRequestInternal(ar);
-				}
-				else
-				{
-					are.WaitOne();
-					EndProcessRequestInternal(ar);
+					if (ar.CompletedSynchronously)
+					{
+						EndProcessRequestInternal(ar);
+					}
+					else
+					{
+						are.WaitOne();
+						EndProcessRequestInternal(ar);
+					}
 				}
 			}
 		}
@@ -76,7 +76,7 @@ namespace RpcLite.Service
 			var request = context.Request;
 			var response = context.Response;
 
-			Hrj.Logging.Logger.Debug("BeginProcessRequest: " + request.Url);
+			//Hrj.Logging.Logger.Debug("BeginProcessRequest: " + request.Url);
 
 			try
 			{
@@ -85,12 +85,15 @@ namespace RpcLite.Service
 				if (formatter != null)
 					response.ContentType = request.ContentType;
 
-				var ar = BeginProcessRequest(request.InputStream, response.OutputStream, request.AppRelativeCurrentExecutionFilePath, formatter, cb, context);
-				Hrj.Logging.Logger.Debug("RpcAsyncHandler.BeginProcessRequest end return"
-					+ string.Format("ar.IsCompleted: {0}", ar.IsCompleted)); //JsonConvert.SerializeObject(ar));
+				var requestPath = request.Path;
+				requestPath = "~/" + requestPath.Substring(request.ApplicationPath.Length);
 
-				if (ar.IsCompleted)
-					cb(ar);
+				var ar = BeginProcessRequest(request.InputStream, response.OutputStream, requestPath, formatter, cb, context);
+				//Hrj.Logging.Logger.Debug("RpcAsyncHandler.BeginProcessRequest end return"
+				//+ string.Format("ar.IsCompleted: {0}", ar.IsCompleted)); //JsonConvert.SerializeObject(ar));
+
+				//if (ar.IsCompleted)
+				//	cb(ar);
 				return ar;
 			}
 			catch (ThreadAbortException)
@@ -101,7 +104,7 @@ namespace RpcLite.Service
 					IsCompleted = true,
 					CompletedSynchronously = true,
 					AsyncWaitHandle = null,
-					HttpContext = HttpContext.Current,
+					//HttpContext = HttpContext.Current,
 				};
 			}
 			catch (Exception ex)
@@ -119,7 +122,7 @@ namespace RpcLite.Service
 		{
 			if (requestStream == null) throw new ArgumentNullException("requestStream");
 
-			Hrj.Logging.Logger.Debug("BeginProcessReques 2");
+			//Hrj.Logging.Logger.Debug("BeginProcessReques 2");
 
 			if (string.IsNullOrWhiteSpace(requestPath))
 				throw new ArgumentException("request.AppRelativeCurrentExecutionFilePath is null or white space");
@@ -128,7 +131,7 @@ namespace RpcLite.Service
 
 			if (service == null)
 			{
-				Hrj.Logging.Logger.Debug("BeginProcessReques Can't find service " + requestPath);
+				//Hrj.Logging.Logger.Debug("BeginProcessReques Can't find service " + requestPath);
 
 				formatter.Serialize(responseStream, new ConfigException("Configuration error service not found"));
 				return new ServiceAsyncResult
@@ -137,7 +140,7 @@ namespace RpcLite.Service
 					IsCompleted = true,
 					CompletedSynchronously = true,
 					AsyncWaitHandle = null,
-					HttpContext = HttpContext.Current,
+					//HttpContext = HttpContext.Current,
 				};
 			}
 
@@ -163,9 +166,9 @@ namespace RpcLite.Service
 
 				try
 				{
-					Hrj.Logging.Logger.Debug("RpcAsyncHandler.BeginProcessRequest start service.BeginProcessRequest(request, response, cb, requestContext) " + requestPath);
+					//Hrj.Logging.Logger.Debug("RpcAsyncHandler.BeginProcessRequest start service.BeginProcessRequest(request, response, cb, requestContext) " + requestPath);
 					var result = service.BeginProcessRequest(request, response, cb, requestContext);
-					Hrj.Logging.Logger.Debug("RpcAsyncHandler.BeginProcessRequest end service.BeginProcessRequest(request, response, cb, requestContext) " + requestPath);
+					//Hrj.Logging.Logger.Debug("RpcAsyncHandler.BeginProcessRequest end service.BeginProcessRequest(request, response, cb, requestContext) " + requestPath);
 					return result;
 				}
 				catch (Exception ex)
@@ -178,7 +181,7 @@ namespace RpcLite.Service
 				formatter.Serialize(responseStream, ex);
 				var result = new ServiceAsyncResult
 				{
-					HttpContext = requestContext,
+					//HttpContext = requestContext,
 					AsyncWaitHandle = null,
 					CompletedSynchronously = true,
 					IsCompleted = true,
@@ -200,9 +203,9 @@ namespace RpcLite.Service
 
 		private static void EndProcessRequestInternal(IAsyncResult result)
 		{
-			Hrj.Logging.Logger.Debug("RpcAsyncHandler.EndProcessRequest start RpcService.EndProcessRequest(result);");
+			//Hrj.Logging.Logger.Debug("RpcAsyncHandler.EndProcessRequest start RpcService.EndProcessRequest(result);");
 			RpcService.EndProcessRequest(result);
-			Hrj.Logging.Logger.Debug("RpcAsyncHandler.EndProcessRequest end RpcService.EndProcessRequest(result);");
+			//Hrj.Logging.Logger.Debug("RpcAsyncHandler.EndProcessRequest end RpcService.EndProcessRequest(result);");
 		}
 	}
 }

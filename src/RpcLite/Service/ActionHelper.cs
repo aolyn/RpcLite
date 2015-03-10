@@ -160,17 +160,17 @@ namespace RpcLite.Service
 			return ar;
 		}
 
-		public static IAsyncResult InvokeTask(ActionInfo actionInfo, ServiceResponse response, object requestObject, AsyncCallback cb, ServiceContext context)
+		public static IAsyncResult InvokeTask(ServiceContext context, AsyncCallback callback)
 		{
 			object serviceObject = null;
-			if (!actionInfo.IsStatic)
+			if (!context.Action.IsStatic)
 			{
-				var serviceContainer = ServiceFactory.GetService(actionInfo);
+				var serviceContainer = ServiceFactory.GetService(context.Action);
 				context.ServiceContainer = serviceContainer;
 				serviceObject = serviceContainer.ServiceObject;
 			}
 
-			var ar = (Task)actionInfo.InvokeTask(serviceObject, requestObject);
+			var ar = (Task)context.Action.InvokeTask(serviceObject, context.Argument);
 			return ar;
 		}
 	}

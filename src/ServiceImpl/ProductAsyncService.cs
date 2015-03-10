@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
+using System.Net;
 using System.Threading;
+using System.Threading.Tasks;
 using Contracts;
 using Model;
 
@@ -123,6 +124,19 @@ namespace ServiceImpl
 		public int AddProduct(int id, Product product)
 		{
 			return id;
+		}
+
+		public async Task<string> GetHtml(string url)
+		{
+			var client = WebRequest.Create(url);
+			//var result = Task.Factory.FromAsync(client.BeginGetResponse, client.EndGetResponse);
+			var resp = await client.GetResponseAsync();
+			var stream = resp.GetResponseStream();
+			var buffer = new byte[(int)resp.ContentLength];
+
+			var result2 = await stream.ReadAsync(buffer, 0, buffer.Length);
+			var str = System.Text.Encoding.UTF8.GetString(buffer, 0, result2);
+			return str;
 		}
 	}
 }
