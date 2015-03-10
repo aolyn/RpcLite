@@ -3,7 +3,7 @@
 namespace RpcLite.Service
 {
 	/// <summary>
-	/// 
+	/// in mono 3.12 RpcAsyncHandler can't work use Sync Handler
 	/// </summary>
 	public class RpcHandler : IHttpHandler
 	{

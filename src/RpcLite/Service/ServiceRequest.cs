@@ -1,8 +1,7 @@
 ﻿using System;
 using System.IO;
-using RpcLite.Service;
 
-namespace RpcLite
+namespace RpcLite.Service
 {
 	/// <summary>
 	/// 

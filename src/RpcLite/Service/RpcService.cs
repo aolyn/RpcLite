@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
-using RpcLite.Formatters;
 using System.Threading.Tasks;
+using RpcLite.Formatters;
 
 namespace RpcLite.Service
 {
@@ -10,6 +10,8 @@ namespace RpcLite.Service
 	/// </summary>
 	public class RpcService
 	{
+		#region properties
+
 		/// <summary>
 		/// Service request url path
 		/// </summary>
@@ -35,6 +37,8 @@ namespace RpcLite.Service
 		/// </summary>
 		public event Action<ServiceContext> AfterInvoke;
 
+		#endregion
+
 		/// <summary>
 		/// Convert to string
 		/// </summary>
@@ -54,14 +58,14 @@ namespace RpcLite.Service
 		/// <returns></returns>
 		public IAsyncResult BeginProcessRequest(ServiceRequest request, ServiceResponse response, AsyncCallback cb, object state)
 		{
-			Hrj.Logging.Logger.Debug("RpcService.BeginProcessRequest");
+			//Hrj.Logging.Logger.Debug("RpcService.BeginProcessRequest");
 
-			Hrj.Logging.Logger.Debug("RpcService.BeginProcessRequest: start ActionHelper.GetActionInfo");
+			//Hrj.Logging.Logger.Debug("RpcService.BeginProcessRequest: start ActionHelper.GetActionInfo");
 			var actionInfo = ActionHelper.GetActionInfo(request.ServiceType, request.ActionName);
-			Hrj.Logging.Logger.Debug("RpcService.BeginProcessRequest: end ActionHelper.GetActionInfo");
+			//Hrj.Logging.Logger.Debug("RpcService.BeginProcessRequest: end ActionHelper.GetActionInfo");
 			if (actionInfo == null)
 			{
-				Hrj.Logging.Logger.Debug("Action Not Found: " + request.ActionName);
+				//Hrj.Logging.Logger.Debug("Action Not Found: " + request.ActionName);
 				throw new ServiceException("Action Not Found: " + request.ActionName);
 			}
 
@@ -69,7 +73,7 @@ namespace RpcLite.Service
 			if (actionInfo.ArgumentCount > 0)
 				requestObject = GetRequestObject(request.InputStream, request.Formatter, actionInfo.ArgumentType);
 
-			Hrj.Logging.Logger.Debug("RpcService.BeginProcessRequest: got requestObject");
+			//Hrj.Logging.Logger.Debug("RpcService.BeginProcessRequest: got requestObject");
 
 			var context = new ServiceContext
 			{
@@ -84,74 +88,14 @@ namespace RpcLite.Service
 			if (BeforeInvoke != null)
 				BeforeInvoke(context);
 
-			IAsyncResult ar;
-			if (actionInfo.IsTask)
-			{
-				var task = (Task)ActionHelper.InvokeTask(actionInfo, response, requestObject, cb, context);
-				ar = ToBegin(task, cb, context/*, actionInfo.TaskResultType*/);
-			}
-			else if (actionInfo.IsAsync)
-			{
-				ar = ActionHelper.BeginInvokeAction(actionInfo, response, requestObject, cb, context);
-			}
-			else
-			{
-				Hrj.Logging.Logger.Debug("RpcService.BeginProcessRequest: start ActionHelper.InvokeAction");
-				context.Result = ActionHelper.InvokeAction(actionInfo, requestObject);
-				Hrj.Logging.Logger.Debug("RpcService.BeginProcessRequest: end ActionHelper.InvokeAction");
-				ar = new ServiceAsyncResult
-				{
-					AsyncState = context,
-					IsCompleted = true,
-					CompletedSynchronously = true,
-					AsyncWaitHandle = null,
-				};
-			}
+			IAsyncResult ar = actionInfo.ExecuteTask(context, cb);
 
 			return ar;
 		}
 
-		private static IAsyncResult ToBegin(Task task, AsyncCallback callback, object state)
-		{
-			if (task == null)
-				throw new ArgumentNullException("task");
 
-			var tcs = new TaskCompletionSource<object>(state);
-			task.ContinueWith(t =>
-			{
-				if (task.IsFaulted)
-				{
-					if (task.Exception != null)
-						tcs.TrySetException(task.Exception.InnerExceptions);
-				}
-				else if (task.IsCanceled)
-					tcs.TrySetCanceled();
-				else
-					tcs.TrySetResult(GetTaskResult(t));
-
-				if (callback != null)
-					callback(tcs.Task);
-			}, TaskScheduler.Default);
-
-			return tcs.Task;
-		}
-
-		/// <summary>
-		/// get result of task
-		/// </summary>
-		/// <param name="task"></param>
-		/// <returns></returns>
-		private static object GetTaskResult(Task task)
-		{
-			if (task.GetType() == typeof(Task))
-			{
-				return null;
-			}
-			else
-			{
-				return ((dynamic)task).Result;
-			}
-		}
+		//private static readonly QuickReadConcurrentDictionary<Type, Func<Task, object>> GetTaskResultFuncs 
+		//	= new QuickReadConcurrentDictionary<Type, Func<Task, object>>();
 
 		private static object GetRequestObject(Stream stream, IFormatter formatter, Type type)
 		{
@@ -201,63 +145,16 @@ namespace RpcLite.Service
 			state.Service.EndProcessRequest(result, state);
 		}
 
-		private void EndProcessRequest(IAsyncResult result, ServiceContext state)
+		private void EndProcessRequest(IAsyncResult ar, ServiceContext context)
 		{
-			var serviceContainer = (ServiceInstanceContainer)state.ServiceContainer;
-			object resultObject = null;
-
-			try
-			{
-				if (state.Action.IsTask)
-				{
-					var task = result as Task;
-					if (task == null)
-						throw new ServiceException("task async api return no Task result");
-
-					resultObject = GetTaskResult(task);
-				}
-				else if (!state.Action.IsAsync)
-				{
-					if (state.Action.HasReturnValue)
-					{
-						resultObject = state.Result;
-					}
-				}
-				else
-				{
-					if (state.Action.HasReturnValue)
-					{
-						try
-						{
-							resultObject = state.Action.EndFunc(serviceContainer.ServiceObject, result);
-						}
-						catch (Exception ex)
-						{
-							resultObject = ex;
-						}
-					}
-					else
-					{
-						state.Action.EndAction(serviceContainer.ServiceObject, result);
-					}
-				}
-			}
-			catch (Exception ex)
-			{
-				resultObject = ex;
-			}
-
-			if (state.Action.IsAsync && !state.Action.IsStatic)
-			{
-				serviceContainer.Dispose();
-			}
+			object resultObject = ActionInfo.GetResultObject(ar, context);
 
 			if (AfterInvoke != null)
-				AfterInvoke(state);
+				AfterInvoke(context);
 
-			if (state.Action.HasReturnValue)
+			if (context.Action.HasReturnValue)
 			{
-				state.Response.Formatter.Serialize(state.Response.ResponseStream, resultObject);
+				context.Response.Formatter.Serialize(context.Response.ResponseStream, resultObject);
 			}
 		}
 	}
