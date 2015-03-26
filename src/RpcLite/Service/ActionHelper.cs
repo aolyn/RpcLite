@@ -6,7 +6,7 @@ namespace RpcLite.Service
 {
 	internal class ActionHelper
 	{
-		private static readonly QuickReadConcurrentDictionary<string, ActionInfo> Actions = new QuickReadConcurrentDictionary<string, ActionInfo>();
+		private static readonly QuickReadConcurrentDictionary<string, RpcAction> Actions = new QuickReadConcurrentDictionary<string, RpcAction>();
 
 		/// <summary>
 		/// 
@@ -14,13 +14,13 @@ namespace RpcLite.Service
 		/// <param name="serviceType"></param>
 		/// <param name="actionName"></param>
 		/// <returns></returns>
-		public static ActionInfo GetActionInfo(Type serviceType, string actionName)
+		public static RpcAction GetActionInfo(Type serviceType, string actionName)
 		{
 			var actionKey = serviceType.FullName + "." + actionName;
 			return Actions.GetOrAdd(actionKey, () => GetActionInfoInternal(serviceType, actionName, actionKey));
 		}
 
-		private static ActionInfo GetActionInfoInternal(Type serviceType, string actionName, string actionKey)
+		private static RpcAction GetActionInfoInternal(Type serviceType, string actionName, string actionKey)
 		{
 			var method = MethodHelper.GetActionMethod(serviceType, actionName);
 
@@ -77,7 +77,7 @@ namespace RpcLite.Service
 				}
 			}
 
-			var actionInfo = new ActionInfo
+			var actionInfo = new RpcAction
 			{
 				Name = actionKey,
 				ArgumentCount = arguments.Length,
@@ -118,7 +118,7 @@ namespace RpcLite.Service
 			return actionInfo;
 		}
 
-		public static object InvokeAction(ActionInfo actionInfo, object reqArg)
+		public static object InvokeAction(RpcAction actionInfo, object reqArg)
 		{
 			if (actionInfo.IsStatic)
 			{
@@ -131,7 +131,7 @@ namespace RpcLite.Service
 			}
 		}
 
-		private static object InvokeAcion(ActionInfo actionInfo, object requestObject, object serviceObject)
+		private static object InvokeAcion(RpcAction actionInfo, object requestObject, object serviceObject)
 		{
 			object resultObj;
 			if (actionInfo.HasReturnValue)
@@ -146,7 +146,7 @@ namespace RpcLite.Service
 			return resultObj;
 		}
 
-		public static IAsyncResult BeginInvokeAction(ActionInfo actionInfo, ServiceResponse response, object requestObject, AsyncCallback cb, ServiceContext state)
+		public static IAsyncResult BeginInvokeAction(RpcAction actionInfo, ServiceResponse response, object requestObject, AsyncCallback cb, ServiceContext state)
 		{
 			object serviceObject = null;
 			if (!actionInfo.IsStatic)

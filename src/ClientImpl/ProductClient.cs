@@ -1,11 +1,9 @@
-﻿using Contracts;
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using Contracts;
 using Model;
 using Newtonsoft.Json;
-using RpcLite;
-using System;
-using System.Collections.Generic;
-using System.Reflection;
-using System.Text;
 using RpcLite.Client;
 
 namespace ClientImpl
@@ -130,7 +128,7 @@ namespace ClientImpl
 					{"Accept","application/json"},
 				};
 
-			var result = Hrj.Net.WebRequestHelper.PostData(serviceUrl, json, Encoding.UTF8, headDic);
+			var result = RpcLite.Net.WebRequestHelper.PostData(serviceUrl, json, Encoding.UTF8, headDic);
 			var resultObj = JsonConvert.DeserializeObject(result, paramType);
 			return resultObj;
 		}

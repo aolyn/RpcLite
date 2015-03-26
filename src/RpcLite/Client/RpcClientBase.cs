@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Hrj.Net;
 using Newtonsoft.Json;
 using RpcLite.Formatters;
+using RpcLite.Net;
 
 namespace RpcLite.Client
 {

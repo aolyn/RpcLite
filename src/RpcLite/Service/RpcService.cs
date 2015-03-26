@@ -147,7 +147,7 @@ namespace RpcLite.Service
 
 		private void EndProcessRequest(IAsyncResult ar, ServiceContext context)
 		{
-			object resultObject = ActionInfo.GetResultObject(ar, context);
+			object resultObject = RpcAction.GetResultObject(ar, context);
 
 			if (AfterInvoke != null)
 				AfterInvoke(context);

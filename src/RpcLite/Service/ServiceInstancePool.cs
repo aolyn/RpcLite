@@ -5,10 +5,10 @@ namespace RpcLite.Service
 {
 	internal class ServiceFactory
 	{
-		private static readonly Dictionary<ActionInfo, ServiceInstancePool> containers = new Dictionary<ActionInfo, ServiceInstancePool>();
+		private static readonly Dictionary<RpcAction, ServiceInstancePool> containers = new Dictionary<RpcAction, ServiceInstancePool>();
 		private static readonly object containerLock = new object();
 
-		public static ServiceInstanceContainer GetService(ActionInfo action)
+		public static ServiceInstanceContainer GetService(RpcAction action)
 		{
 			if (action == null) throw new ArgumentNullException("action");
 			if (action.ServiceCreator == null) throw new ArgumentException("action.ServiceCreator can't be null");
