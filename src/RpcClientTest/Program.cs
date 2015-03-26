@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Xml.Serialization;
-using ClientImpl;
-using Model;
-using RpcLite;
-using Contracts;
 using System.Text;
 using System.Web.Script.Serialization;
+using System.Xml.Serialization;
+using ClientImpl;
+using Contracts;
+using Model;
 using Newtonsoft.Json;
-using System.IO;
+using RpcLite;
 using RpcLite.Client;
 
 namespace WebApiClient

@@ -25,7 +25,7 @@ namespace RpcLite.Service
 		/// <summary>
 		/// 
 		/// </summary>
-		internal ActionInfo Action { get; set; }
+		internal RpcAction Action { get; set; }
 
 		/// <summary>
 		/// 

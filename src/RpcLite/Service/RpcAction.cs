@@ -7,7 +7,7 @@ namespace RpcLite.Service
 	/// <summary>
 	/// 
 	/// </summary>
-	public class ActionInfo
+	public class RpcAction
 	{
 		#region public properties
 
@@ -102,7 +102,6 @@ namespace RpcLite.Service
 		public Type TaskResultType { get; set; }
 
 		#endregion
-
 
 		internal Task ExecuteTask(ServiceResponse response, object requestObject, AsyncCallback cb, ServiceContext context)
 		{
@@ -212,7 +211,7 @@ namespace RpcLite.Service
 					if (task == null)
 						throw new ServiceException("task async api return no Task result");
 
-					resultObject = ActionInfo.GetTaskResult(task);
+					resultObject = GetTaskResult(task);
 				}
 				else if (!context.Action.IsAsync)
 				{

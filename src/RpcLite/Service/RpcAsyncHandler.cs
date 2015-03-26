@@ -29,6 +29,7 @@ namespace RpcLite.Service
 		{
 			using (var are = new AutoResetEvent(false))
 			{
+				// ReSharper disable once AccessToDisposedClosure
 				var ar = BeginProcessRequestInternal(context, r => are.Set(), null);
 
 				if (ar != null)
@@ -86,7 +87,10 @@ namespace RpcLite.Service
 					response.ContentType = request.ContentType;
 
 				var requestPath = request.Path;
-				requestPath = "~/" + requestPath.Substring(request.ApplicationPath.Length);
+				// ReSharper disable once PossibleNullReferenceException
+				requestPath = request.ApplicationPath.Length == 1
+					? "~" + requestPath
+					: "~" + requestPath.Substring(request.ApplicationPath.Length);
 
 				var ar = BeginProcessRequest(request.InputStream, response.OutputStream, requestPath, formatter, cb, context);
 				//Hrj.Logging.Logger.Debug("RpcAsyncHandler.BeginProcessRequest end return"

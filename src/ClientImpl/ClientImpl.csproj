@@ -82,10 +82,6 @@
       <Project>{99199B27-51C0-42D9-8DDB-4AFBE45F30CB}</Project>
       <Name>Contracts</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Hrj\Hrj.csproj">
-      <Project>{0c52f3cd-ac50-460a-bff9-c727b17300ec}</Project>
-      <Name>Hrj</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Model\Model.csproj">
       <Project>{2D6E36EC-3E98-4C98-98E8-34AFA8C75F1A}</Project>
       <Name>Model</Name>
