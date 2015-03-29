@@ -109,7 +109,7 @@ namespace RpcLite.Service
 			return task;
 		}
 
-		internal IAsyncResult ExecuteTask(ServiceContext context, AsyncCallback callback)
+		internal IAsyncResult Execute(ServiceContext context, AsyncCallback callback)
 		{
 			IAsyncResult ar;
 			if (IsTask)
@@ -170,32 +170,27 @@ namespace RpcLite.Service
 		/// <returns></returns>
 		internal static object GetTaskResult(Task task)
 		{
-			if (task.GetType() == typeof(Task))
-			{
-				return null;
-			}
-			else
-			{
-				//try
-				//{
-				//	var type = task.GetType();
-				//	GetTaskResultFuncs.GetOrAdd(type, () =>
-				//	{
-				//		var arg = Expression.Parameter(type, "task");
-				//		var expProp = Expression.Property(arg, "Result");
-				//		var expConvert = Expression.Convert(expProp, typeof(object));
-				//		var asignExp = Expression.Lambda(expConvert, arg);
-				//		var getFunc = asignExp.Compile();
-				//		return (Func<Task, object>)getFunc;
-				//	});
-				//	//var value = getFunc(task);
-				//}
-				//catch (Exception ex)
-				//{
-				//}
+			return task.GetType() == typeof(Task)
+				? null
+				: ((dynamic)task).Result;
 
-				return ((dynamic)task).Result;
-			}
+			//try
+			//{
+			//	var type = task.GetType();
+			//	GetTaskResultFuncs.GetOrAdd(type, () =>
+			//	{
+			//		var arg = Expression.Parameter(type, "task");
+			//		var expProp = Expression.Property(arg, "Result");
+			//		var expConvert = Expression.Convert(expProp, typeof(object));
+			//		var asignExp = Expression.Lambda(expConvert, arg);
+			//		var getFunc = asignExp.Compile();
+			//		return (Func<Task, object>)getFunc;
+			//	});
+			//	//var value = getFunc(task);
+			//}
+			//catch (Exception ex)
+			//{
+			//}
 		}
 
 		internal static object GetResultObject(IAsyncResult ar, ServiceContext context)

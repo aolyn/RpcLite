@@ -110,6 +110,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ClientAddressResolver\RpcLite.ClientAddressResolver.csproj">
+      <Project>{7ae9591b-8465-4d8a-b27d-51e2ec6fe82c}</Project>
+      <Name>RpcLite.ClientAddressResolver</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ClientImpl\ClientImpl.csproj">
       <Project>{42520B20-6F74-4BCB-926F-BDA46B3388F1}</Project>
       <Name>ClientImpl</Name>

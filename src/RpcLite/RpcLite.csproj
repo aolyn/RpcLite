@@ -82,6 +82,11 @@
     <Reference Include="System.Configuration" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Client\IAddressResolver.cs" />
+    <Compile Include="Client\ClientAddressResolver.cs" />
+    <Compile Include="Config\ResolverConfigItem.cs" />
+    <Compile Include="Config\ClientConfigItem.cs" />
+    <Compile Include="Config\ServiceConfigItem.cs" />
     <Compile Include="Net\WebRequestHelper.cs" />
     <Compile Include="PropertyItemInfo.cs" />
     <Compile Include="Client\ClientException.cs" />
@@ -99,9 +104,9 @@
     <Compile Include="ServiceException.cs" />
     <Compile Include="Service\ActionHelper.cs" />
     <Compile Include="Service\RpcAction.cs" />
-    <Compile Include="Service\Config\ConfigException.cs" />
+    <Compile Include="Config\ConfigException.cs" />
     <Compile Include="Service\Config\GlobalConfig.cs" />
-    <Compile Include="Service\Config\RpcLiteConfigSection.cs" />
+    <Compile Include="Config\RpcLiteConfigSection.cs" />
     <Compile Include="Service\MethodHelper.cs" />
     <Compile Include="Service\RpcAsyncHandler.cs" />
     <Compile Include="Service\RpcHandler.cs" />
