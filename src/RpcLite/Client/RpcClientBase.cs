@@ -133,7 +133,13 @@ namespace RpcLite.Client
 		/// <returns></returns>
 		public static RpcClientBase<T> GetInstance()
 		{
-			return GetInstance(null);
+			return GetInstance(GetDefaultBaseUrl());
+		}
+
+		private static string GetDefaultBaseUrl()
+		{
+			var uri = ClientAddressResolver<T>.GetAddress();
+			return uri == null ? null : uri.ToString();
 		}
 
 		/// <summary>

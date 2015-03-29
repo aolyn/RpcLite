@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using RpcLite.Config;
 
 namespace RpcLite.Service
@@ -10,10 +11,31 @@ namespace RpcLite.Service
 	/// </summary>
 	public class RpcServiceHelper
 	{
-		/// <summary>
-		/// 
-		/// </summary>
-		public static List<RpcService> Services { get { return RpcLiteConfigSection.Instance.Services; } }
+		private static readonly List<RpcService> _services = new List<RpcService>();
+		public static List<RpcService> Services
+		{
+			get { return _services; }
+		}
+
+		static RpcServiceHelper()
+		{
+			foreach (var item in RpcLiteConfigSection.Instance.Services)
+			{
+				var typeInfo = TypeCreator.GetTypeFromName(item.TypeName, item.AssemblyName);
+
+				Services.Add(new RpcService
+				{
+					Name = item.Name,
+					Path = item.Path,
+					Type = typeInfo,
+				});
+			}
+		}
+
+		///// <summary>
+		///// 
+		///// </summary>
+		//public static List<RpcService> Services { get { return RpcLiteConfigSection.Instance.Services; } }
 
 		/// <summary>
 		/// 

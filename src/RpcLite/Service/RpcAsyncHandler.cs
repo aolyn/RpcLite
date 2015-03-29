@@ -2,9 +2,9 @@
 using System.IO;
 using System.Threading;
 using System.Web;
-using Newtonsoft.Json;
 using RpcLite.Config;
 using RpcLite.Formatters;
+using RpcLite.Utility;
 
 namespace RpcLite.Service
 {
@@ -114,8 +114,8 @@ namespace RpcLite.Service
 			catch (Exception ex)
 			{
 				//by default send Exception data to client use Json Format
-				var resultJson = JsonConvert.SerializeObject(ex);
-				response.Write(resultJson);
+				JsonHelper.Serialize(response.OutputStream, ex);
+				//response.Write(resultJson);
 				response.End();
 			}
 

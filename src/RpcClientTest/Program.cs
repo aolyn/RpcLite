@@ -167,6 +167,8 @@ namespace WebApiClient
 				var client2 = RpcClientBase<IProduct>.GetInstance("http://localhost:4098/api/");
 				client2.BaseUrl = "http://localhost:4098/api/";
 
+				client2 = RpcClientBase<IProduct>.GetInstance();
+
 				var ip = client2 as IProduct;
 
 				var p1 = new Product { Id = 2, Name = "Chris" };
@@ -210,7 +212,6 @@ namespace WebApiClient
 			var type = TypeCreator.CreateType(newTypeName, propeties);
 			var obj = Activator.CreateInstance(type);
 		}
-
 
 	}
 }

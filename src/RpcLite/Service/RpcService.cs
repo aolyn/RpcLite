@@ -88,7 +88,7 @@ namespace RpcLite.Service
 			if (BeforeInvoke != null)
 				BeforeInvoke(context);
 
-			IAsyncResult ar = actionInfo.ExecuteTask(context, cb);
+			var ar = actionInfo.Execute(context, cb);
 
 			return ar;
 		}

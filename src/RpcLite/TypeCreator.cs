@@ -350,5 +350,24 @@ namespace RpcLite
 			return del;
 		}
 
+		public static Type GetTypeFromName(string typeName, string assemblyName)
+		{
+			Assembly assembly;
+
+			if (!string.IsNullOrWhiteSpace(assemblyName))
+			{
+				var asms = AppDomain.CurrentDomain.GetAssemblies();
+				assembly = asms.FirstOrDefault(it => it.FullName.StartsWith(assemblyName + ",", StringComparison.OrdinalIgnoreCase))
+					?? Assembly.Load(assemblyName);
+			}
+			else
+			{
+				assembly = Assembly.GetEntryAssembly();
+			}
+
+			var typeInfo = assembly.GetType(typeName);
+			return typeInfo;
+		}
+
 	}
 }
