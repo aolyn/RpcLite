@@ -5,7 +5,7 @@ using System.Text;
 
 namespace RpcLite.Client
 {
-	class ClientAddressResolver<T>
+	class ClientAddressResolver<T> where T : class
 	{
 		Type type = typeof(T);
 		static IAddressResolver Resolver = null;

@@ -22,6 +22,10 @@ namespace RpcLite.Service
 			foreach (var item in RpcLiteConfigSection.Instance.Services)
 			{
 				var typeInfo = TypeCreator.GetTypeFromName(item.TypeName, item.AssemblyName);
+				if (typeInfo == null)
+				{
+					throw new ServiceException("can't load service type: " + item.Type);
+				}
 
 				Services.Add(new RpcService
 				{

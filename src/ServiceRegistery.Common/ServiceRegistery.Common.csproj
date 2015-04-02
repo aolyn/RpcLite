@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{7AE9591B-8465-4D8A-B27D-51E2EC6FE82C}</ProjectGuid>
+    <ProjectGuid>{9284345C-1C32-4D92-A6D2-583FDDBF1110}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>RpcLite.Resolvers</RootNamespace>
-    <AssemblyName>RpcLite.Resolvers</AssemblyName>
+    <RootNamespace>ServiceRegistery</RootNamespace>
+    <AssemblyName>ServiceRegistery.Common</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -21,7 +21,6 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -30,7 +29,6 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -42,18 +40,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="HttpClientAddressResolver.cs" />
+    <Compile Include="Contract\GetServiceAddressRequest.cs" />
+    <Compile Include="Contract\IRegistryService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\RpcLite\RpcLite.csproj">
-      <Project>{efa8dbf7-4300-4599-9c35-e716e25d7ccd}</Project>
-      <Name>RpcLite</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ServiceRegistery.Common\ServiceRegistery.Common.csproj">
-      <Project>{9284345c-1c32-4d92-a6d2-583fddbf1110}</Project>
-      <Name>ServiceRegistery.Common</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

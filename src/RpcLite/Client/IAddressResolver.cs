@@ -15,7 +15,7 @@ namespace RpcLite.Client
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
 		/// <returns></returns>
-		Uri GetAddress<T>();
+		Uri GetAddress<T>() where T : class;
 
 		/// <summary>
 		/// 

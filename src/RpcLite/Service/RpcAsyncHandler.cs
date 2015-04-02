@@ -111,6 +111,11 @@ namespace RpcLite.Service
 					//HttpContext = HttpContext.Current,
 				};
 			}
+			catch (TypeInitializationException ex)
+			{
+				JsonHelper.Serialize(response.OutputStream, ex.InnerException);
+				response.End();
+			}
 			catch (Exception ex)
 			{
 				//by default send Exception data to client use Json Format
