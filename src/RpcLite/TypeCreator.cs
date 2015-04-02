@@ -157,9 +157,9 @@ namespace RpcLite
 
 			//真正创建，并返回
 			implementType = typeBuilder.CreateType();
-#if DEBUG
-			AssemblyBuilder.Save(AssemblyBuilder.GetName().Name + ".dll");//for test
-#endif
+//#if DEBUG
+//			AssemblyBuilder.Save(AssemblyBuilder.GetName().Name + ".dll");//for test
+//#endif
 			InterfaceImplementTypes.Add(interfaceType, implementType);
 			return implementType;
 		}
