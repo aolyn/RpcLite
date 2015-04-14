@@ -5,8 +5,19 @@ using System.Text;
 
 namespace RpcLite.Net
 {
+	/// <summary>
+	/// Contain simple methods to process web request & response
+	/// </summary>
 	public class WebRequestHelper
 	{
+		/// <summary>
+		/// post data to web server and get retrieve response data
+		/// </summary>
+		/// <param name="url"></param>
+		/// <param name="postData"></param>
+		/// <param name="encoding"></param>
+		/// <param name="headDic"></param>
+		/// <returns></returns>
 		public static string PostData(string url, string postData, Encoding encoding, Dictionary<string, string> headDic)
 		{
 			var request = WebRequest.Create(url) as HttpWebRequest;

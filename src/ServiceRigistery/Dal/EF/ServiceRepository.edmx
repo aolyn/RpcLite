@@ -27,18 +27,6 @@
           <Property Name="Environment" Type="varchar" MaxLength="64" Nullable="false" />
           <Property Name="Address" Type="varchar" MaxLength="128" />
         </EntityType>
-        <Association Name="ServiceMapping_Environment">
-          <End Role="ServiceEnvironment" Type="Self.ServiceEnvironment" Multiplicity="1" />
-          <End Role="ServiceMapping" Type="Self.ServiceMapping" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="ServiceEnvironment">
-              <PropertyRef Name="Name" />
-            </Principal>
-            <Dependent Role="ServiceMapping">
-              <PropertyRef Name="Environment" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="ServiceMapping_Service">
           <End Role="Service" Type="Self.Service" Multiplicity="1" />
           <End Role="ServiceMapping" Type="Self.ServiceMapping" Multiplicity="*" />
@@ -55,10 +43,6 @@
           <EntitySet Name="Service" EntityType="Self.Service" Schema="servicerepository" store:Type="Tables" />
           <EntitySet Name="ServiceEnvironment" EntityType="Self.ServiceEnvironment" Schema="servicerepository" store:Type="Tables" />
           <EntitySet Name="ServiceMapping" EntityType="Self.ServiceMapping" Schema="servicerepository" store:Type="Tables" />
-          <AssociationSet Name="ServiceMapping_Environment" Association="Self.ServiceMapping_Environment">
-            <End Role="ServiceEnvironment" EntitySet="ServiceEnvironment" />
-            <End Role="ServiceMapping" EntitySet="ServiceMapping" />
-          </AssociationSet>
           <AssociationSet Name="ServiceMapping_Service" Association="Self.ServiceMapping_Service">
             <End Role="Service" EntitySet="Service" />
             <End Role="ServiceMapping" EntitySet="ServiceMapping" />
@@ -186,10 +170,10 @@
     </Options>
     <!-- Diagram content (shape and connector positions) -->
     <Diagrams>
-      <Diagram DiagramId="8a25a668478d42e6a2531183813ec8d8" Name="Diagram1">
-        <EntityTypeShape EntityType="MusicStory.Model.Service" Width="1.5" PointX="0.75" PointY="5.375" />
-        <EntityTypeShape EntityType="MusicStory.Model.ServiceEnvironment" Width="1.5" PointX="0.75" PointY="1.375" />
-        <EntityTypeShape EntityType="MusicStory.Model.ServiceMapping" Width="1.5" PointX="3" PointY="1" />
+      <Diagram DiagramId="8a25a668478d42e6a2531183813ec8d8" Name="Diagram1" DisplayType="true">
+        <EntityTypeShape EntityType="MusicStory.Model.Service" Width="1.75" PointX="0.75" PointY="5.375" />
+        <EntityTypeShape EntityType="MusicStory.Model.ServiceEnvironment" Width="1.625" PointX="0.75" PointY="1.375" />
+        <EntityTypeShape EntityType="MusicStory.Model.ServiceMapping" Width="2" PointX="3" PointY="1" />
         <AssociationConnector Association="MusicStory.Model.ServiceMapping_Service" />
         <AssociationConnector Association="MusicStory.Model.ServiceMapping_Environment" />
       </Diagram>

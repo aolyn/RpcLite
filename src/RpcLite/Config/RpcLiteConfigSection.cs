@@ -11,6 +11,8 @@ namespace RpcLite.Config
 	/// </summary>
 	public class RpcLiteConfigSection : IConfigurationSectionHandler
 	{
+		private string _clientEnvironmentAttributeValue;
+
 		private static RpcLiteConfigSection _instance;
 		/// <summary>
 		/// Instance of RpcLiteConfigSection
@@ -118,10 +120,12 @@ namespace RpcLite.Config
 					if (environment != null && !string.IsNullOrWhiteSpace(environment.Value))
 					{
 						ClientEnvironment = environment.Value;
+						_clientEnvironmentAttributeValue = environment.Value;
 					}
 					else
 					{
 						ClientEnvironment = Environment;
+						_clientEnvironmentAttributeValue = null;
 					}
 				}
 
