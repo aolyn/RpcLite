@@ -87,6 +87,7 @@
     <Compile Include="Config\ResolverConfigItem.cs" />
     <Compile Include="Config\ClientConfigItem.cs" />
     <Compile Include="Config\ServiceConfigItem.cs" />
+    <Compile Include="Logging\LogHelper.cs" />
     <Compile Include="Net\WebRequestHelper.cs" />
     <Compile Include="PropertyItemInfo.cs" />
     <Compile Include="Client\ClientException.cs" />
