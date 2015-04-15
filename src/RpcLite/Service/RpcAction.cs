@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reflection;
 using System.Threading.Tasks;
+using RpcLite.Logging;
 
 namespace RpcLite.Service
 {
@@ -124,9 +125,9 @@ namespace RpcLite.Service
 			}
 			else
 			{
-				//Hrj.Logging.Logger.Debug("RpcService.BeginProcessRequest: start ActionHelper.InvokeAction");
+				LogHelper.Debug("RpcService.BeginProcessRequest: start ActionHelper.InvokeAction");
 				context.Result = ActionHelper.InvokeAction(context.Action, context.Argument);
-				//Hrj.Logging.Logger.Debug("RpcService.BeginProcessRequest: end ActionHelper.InvokeAction");
+				LogHelper.Debug("RpcService.BeginProcessRequest: end ActionHelper.InvokeAction");
 				ar = new ServiceAsyncResult
 				{
 					AsyncState = context,
