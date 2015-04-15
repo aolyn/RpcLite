@@ -10,8 +10,7 @@ namespace RpcLite.Resolvers
 {
 	public class HttpClientAddressResolver : IAddressResolver
 	{
-		private static bool _isInitializing;
-		private static readonly Dictionary<Type, string> defaultBaseUrlDictionary = new Dictionary<Type, string>();
+		private static QuickReadConcurrentDictionary<Type, string> _defaultBaseUrlDictionary = new QuickReadConcurrentDictionary<Type, string>();
 
 		static HttpClientAddressResolver()
 		{
@@ -23,15 +22,13 @@ namespace RpcLite.Resolvers
 		{
 			lock (initializeLocker)
 			{
-				_isInitializing = true;
 				InitilizeBaseUrls();
-				_isInitializing = false;
 			}
 		}
 
 		private static void InitilizeBaseUrls()
 		{
-			var tempDic = new Dictionary<Type, string>();
+			var tempDic = new QuickReadConcurrentDictionary<Type, string>();
 			foreach (var item in RpcLiteConfigSection.Instance.Clients)
 			{
 				Assembly assembly;
@@ -53,12 +50,13 @@ namespace RpcLite.Resolvers
 					tempDic.Add(typeInfo, item.Path);
 			}
 
-			defaultBaseUrlDictionary.Clear();
-			foreach (var item in tempDic)
-			{
-				defaultBaseUrlDictionary.Add(item.Key, item.Value);
-			}
-			tempDic.Clear();
+			_defaultBaseUrlDictionary = tempDic;
+			//defaultBaseUrlDictionary.Clear();
+			//foreach (var item in tempDic)
+			//{
+			//	defaultBaseUrlDictionary.Add(item.Key, item.Value);
+			//}
+			//tempDic.Clear();
 		}
 
 		public Uri GetAddress<T>() where T : class
@@ -66,48 +64,49 @@ namespace RpcLite.Resolvers
 			return GetAddressInternal<T>();
 		}
 
-
-		//TODO: thread safe
 		private static Uri GetAddressInternal<T>() where T : class
 		{
-			//RpcLiteConfigSection.Instance.Clients[0].TypeName 
-
-			string baseUrl;
-			if (defaultBaseUrlDictionary.TryGetValue(typeof(T), out baseUrl))
+			// ReSharper disable once InconsistentlySynchronizedField
+			var url = _defaultBaseUrlDictionary.GetOrAdd(typeof(T), () =>
 			{
-				return new Uri(baseUrl);
-			}
+				var clientConfigItem = RpcLiteConfigSection.Instance.Clients
+					.FirstOrDefault(it => it.TypeName == typeof(T).FullName);
 
-			var clientConfigItem = RpcLiteConfigSection.Instance.Clients
-				.FirstOrDefault(it => it.TypeName == typeof(T).FullName);
-
-			if (clientConfigItem != null)
-			{
-				var registryClientConfigItem = RpcLiteConfigSection.Instance.Clients
-					.FirstOrDefault(it => it.TypeName == typeof(IRegistryService).FullName);
-
-				if (registryClientConfigItem != null && !string.IsNullOrWhiteSpace(registryClientConfigItem.Path))
+				if (clientConfigItem != null)
 				{
-					var client = RpcClientBase<IRegistryService>.GetInstance(registryClientConfigItem.Path);
-					var request = new GetServiceAddressRequest
-					{
-						ServiceName = clientConfigItem.Name,
-						Namespace = clientConfigItem.Namespace,
-						Environment = RpcLiteConfigSection.Instance.ClientEnvironment,
-					};
-					var response = client.Client.GetServiceAddress(request);
-					return string.IsNullOrWhiteSpace(response.Address)
-						? null
-						: new Uri(response.Address);
-				}
-			}
+					var registryClientConfigItem = RpcLiteConfigSection.Instance.Clients
+						.FirstOrDefault(it => it.TypeName == typeof(IRegistryService).FullName);
 
-			return null;
+					if (registryClientConfigItem != null && !string.IsNullOrWhiteSpace(registryClientConfigItem.Path))
+					{
+						var client = RpcClientBase<IRegistryService>.GetInstance(registryClientConfigItem.Path);
+						var request = new GetServiceAddressRequest
+						{
+							ServiceName = clientConfigItem.Name,
+							Namespace = clientConfigItem.Namespace,
+							Environment = RpcLiteConfigSection.Instance.ClientEnvironment,
+						};
+						var response = client.Client.GetServiceAddress(request);
+						var uri = response == null || string.IsNullOrWhiteSpace(response.Address)
+							? null
+							: response.Address;
+
+						return uri;
+					}
+				}
+
+				return null;
+			});
+
+			return string.IsNullOrEmpty(url)
+				? null
+				: new Uri(url);
 		}
 
 		public void OnConfigChanged()
 		{
 			InitilizeBaseUrlsSafe();
 		}
+
 	}
 }
