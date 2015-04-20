@@ -1,16 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
-using System.Web.Script.Serialization;
-using System.Xml.Serialization;
+using System.Threading.Tasks;
 using ClientImpl;
 using Contracts;
 using Model;
-using Newtonsoft.Json;
-using RpcLite;
 using RpcLite.Client;
 
 namespace WebApiClient
@@ -19,51 +15,138 @@ namespace WebApiClient
 	{
 		static void Main(string[] args)
 		{
+
+			if (false)
 			{
-				var product = new Model.Product
+
+				var types = new[]
 				{
-					Id = 1,
-					Category = DateTime.Now.ToString(),
-					Name = DateTime.Now.ToString(),
-					Price = 123123,
-					ListDate = DateTime.Now,
+					//typeof (Ctrip.API.Cruise.H5.Contract.GetShipPOIHomeResponseType),
+					//typeof (Ctrip.API.Cruise.H5.Contract.GetShipCategoryPOIResponseType),
+					//typeof (Ctrip.API.Cruise.H5.Contract.GetShipFacilityPOIResponseType),
+					//typeof (Ctrip.API.Cruise.H5.Contract.GetShipServicePOIResponseType),
+					//typeof (Ctrip.API.Cruise.H5.Contract.GetCompanyPOIResponseType)
+					typeof (Ctrip.API.Cruise.H5.Contract.GetSearchItemResponseType),
+					typeof (Ctrip.API.Cruise.H5.Contract.GetShipCategoryPOIResponseType),
+					typeof (Ctrip.API.Cruise.H5.Contract.GetShipFacilityPOIResponseType),
+					typeof (Ctrip.API.Cruise.H5.Contract.GetShipServicePOIResponseType),
+					typeof (Ctrip.API.Cruise.H5.Contract.GetCompanyPOIResponseType)
 				};
 
-				var stream = new StringWriter();
-				var xmlSerializer = new XmlSerializer(product.GetType());
-				xmlSerializer.Serialize(stream, product);
-				var result = stream.ToString();
+				foreach (var type in types)
+				{
+					var obj = SerializationTest.CreateObject(type);
+					var json = Newtonsoft.Json.JsonConvert.SerializeObject(obj);
+					json = json.Replace("\"", "'");
+					File.WriteAllText(string.Format("c:\\{0}.txt", type.Name), json);
+				}
+
+			}
+
+			ClientTestForResolverConcurrency();
+			//ClientTest();
+			//ClientTest2();
+		}
+
+		private static void ClientTestForResolverConcurrency()
+		{
+			{
+				var task1 = Task.Factory.StartNew(() =>
+				{
+					var client = RpcClientBase<IProduct>.GetInstance();
+				});
+
+				var task2 = Task.Factory.StartNew(() =>
+				{
+					var client = RpcClientBase<IProduct>.GetInstance();
+				});
+
+				Task.WaitAll(task1, task2);
+			}
+			{
+				var client = new ProductClient();
+			}
+
+			{
+				var client = RpcClientBase<IProduct>.GetInstance();
+			}
+
+			//client.AddProduct(2, new Product(), 4, 5, 6, 7);
+			{
+				//RpcLite.NetChannelHelper.GetResponse("Hello", 11);
+				//var type = ClientWrapper.WrapInterface<IProduct>();
+
+				var client2 = RpcClientBase<IProduct>.GetInstance("http://localhost:4098/api/");
+				client2.BaseUrl = "http://localhost:4098/api/";
+
+				client2 = RpcClientBase<IProduct>.GetInstance();
+
+				var ip = client2 as IProduct;
+
+				var p1 = new Product { Id = 2, Name = "Chris" };
+				var result = ip.AddProduct(1, p1, 5, 6, 7, 8);
+				var r2 = ip.GetById(1);
+				ip.Delete(1);
+				var ps1 = ip.Get();
+				var ar11 = ip.AddProduct(1, p1);
+				var arr2223 = ip.Add(p1);
 			}
 
 			//{
-			//	var ex = new Exception("TEST");
-			//	var je = JsonConvert.SerializeObject(ex);
-			//	var jo = JsonConvert.DeserializeObject<Exception>(je);
 
-			//	var exbs = Encoding.UTF8.GetBytes(je);
-			//	var msEx = new MemoryStream(exbs);
-			//	TextReader sr = new StringReader(je);
-			//	sr = new StreamReader(msEx);
-			//	var jr = new JsonTextReader(sr);
-			//	var jc = new JsonSerializer();
-			//	var o = jc.Deserialize(jr, ex.GetType());
+			//	var tw = new WrapperHelper<IProduct>(new object());
 
-			//	je = "{\"Message\":\"An error has occurred.\",\"ExceptionMessage\":\"TEST EXCEPTION\",\"ExceptionType\":\"System.Exception\",\"StackTrace\":\"   at WebApiTest.ProductController.Get(Int32 id) in e:\\Documents\\Visual Studio 2010\\Projects\\WebApiTest\\WebApiTest\\Controllers\\ProductsController.cs:line 38\r\n   at lambda_method(Closure , Object , Object[] )\r\n   at System.Web.Http.Controllers.ReflectedHttpActionDescriptor.ActionExecutor.<>c__DisplayClass13.<GetExecutor>b__c(Object instance, Object[] methodParameters)\r\n   at System.Web.Http.Controllers.ReflectedHttpActionDescriptor.ActionExecutor.Execute(Object instance, Object[] arguments)\r\n   at System.Web.Http.Controllers.ReflectedHttpActionDescriptor.<>c__DisplayClass5.<ExecuteAsync>b__4()\r\n   at System.Threading.Tasks.TaskHelpers.RunSynchronously[TResult](Func`1 func, CancellationToken cancellationToken)\"}";
-			//	var ser = new JavaScriptSerializer();
-			//	var jo2 = JsonConvert.DeserializeObject(je);
+			//	var type = tw.GetWrapperType();
+			//	var obj = Activator.CreateInstance(type);
+			//	var ip = obj as IProduct;
 			//}
-			////var si = new ServiceImpl.ProductService();
-			//var rpcConfig = RpcLite.RpcLiteConfigSection.Instance;
-			////AssemblyBuilderDemo.Main22();
-			//var services = RpcLite.RpcLiteConfigSection.Instance.Services;
 
+		}
 
-			ClientTest();
-			return;
-			//DynamicProxyTest.TestClass.Test();
+		private static void ClientTest()
+		{
+			{
+				var client = new ProductClient();
+			}
 
-			//TestDynamicType();
+			{
+				var client = RpcClientBase<IProduct>.GetInstance();
+			}
 
+			//client.AddProduct(2, new Product(), 4, 5, 6, 7);
+			{
+				//RpcLite.NetChannelHelper.GetResponse("Hello", 11);
+				//var type = ClientWrapper.WrapInterface<IProduct>();
+
+				var client2 = RpcClientBase<IProduct>.GetInstance("http://localhost:4098/api/");
+				client2.BaseUrl = "http://localhost:4098/api/";
+
+				client2 = RpcClientBase<IProduct>.GetInstance();
+
+				var ip = client2 as IProduct;
+
+				var p1 = new Product { Id = 2, Name = "Chris" };
+				var result = ip.AddProduct(1, p1, 5, 6, 7, 8);
+				var r2 = ip.GetById(1);
+				ip.Delete(1);
+				var ps1 = ip.Get();
+				var ar11 = ip.AddProduct(1, p1);
+				var arr2223 = ip.Add(p1);
+			}
+
+			//{
+
+			//	var tw = new WrapperHelper<IProduct>(new object());
+
+			//	var type = tw.GetWrapperType();
+			//	var obj = Activator.CreateInstance(type);
+			//	var ip = obj as IProduct;
+			//}
+
+		}
+
+		private static void ClientTest2()
+		{
 			var str1 = DateTime.Now + "-hh";
 			var str2 = DateTime.Now.ToString() + "-hh";
 
@@ -148,69 +231,6 @@ namespace WebApiClient
 					Console.WriteLine("{0} ({1})", (int)response.StatusCode, response.ReasonPhrase);
 				}
 			}
-		}
-
-		private static void ClientTest()
-		{
-			{
-				var client = new ProductClient();
-
-			}
-			{
-				var client = RpcClientBase<IProduct>.GetInstance();
-			}
-			//client.AddProduct(2, new Product(), 4, 5, 6, 7);
-			{
-				//RpcLite.NetChannelHelper.GetResponse("Hello", 11);
-				//var type = ClientWrapper.WrapInterface<IProduct>();
-
-				var client2 = RpcClientBase<IProduct>.GetInstance("http://localhost:4098/api/");
-				client2.BaseUrl = "http://localhost:4098/api/";
-
-				client2 = RpcClientBase<IProduct>.GetInstance();
-
-				var ip = client2 as IProduct;
-
-				var p1 = new Product { Id = 2, Name = "Chris" };
-				var result = ip.AddProduct(1, p1, 5, 6, 7, 8);
-				var r2 = ip.GetById(1);
-				ip.Delete(1);
-				var ps1 = ip.Get();
-				var ar11 = ip.AddProduct(1, p1);
-				var arr2223 = ip.Add(p1);
-
-				return;
-			}
-
-			//{
-
-			//	var tw = new WrapperHelper<IProduct>(new object());
-
-			//	var type = tw.GetWrapperType();
-			//	var obj = Activator.CreateInstance(type);
-			//	var ip = obj as IProduct;
-			//}
-
-		}
-
-		private static object Test22()
-		{
-			return null;
-		}
-
-		public static void TestDynamicType()
-		{
-			//新类型的名称：随便定一个
-			const string newTypeName = "Imp_" + "MMTT";
-
-			var propeties = new List<PropertyItemInfo>
-			{
-				new PropertyItemInfo {Name = "Name", Type = typeof (string)},
-				new PropertyItemInfo {Name = "Age", Type = typeof (int)}
-			};
-
-			var type = TypeCreator.CreateType(newTypeName, propeties);
-			var obj = Activator.CreateInstance(type);
 		}
 
 	}
