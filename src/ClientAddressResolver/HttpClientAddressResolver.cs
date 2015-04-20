@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using RpcLite.Client;
@@ -10,6 +9,7 @@ namespace RpcLite.Resolvers
 {
 	public class HttpClientAddressResolver : IAddressResolver
 	{
+		private static readonly object initializeLocker = new object();
 		private static QuickReadConcurrentDictionary<Type, string> _defaultBaseUrlDictionary = new QuickReadConcurrentDictionary<Type, string>();
 
 		static HttpClientAddressResolver()
@@ -17,7 +17,6 @@ namespace RpcLite.Resolvers
 			InitilizeBaseUrlsSafe();
 		}
 
-		private static readonly object initializeLocker = new object();
 		private static void InitilizeBaseUrlsSafe()
 		{
 			lock (initializeLocker)

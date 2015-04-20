@@ -20,6 +20,9 @@ namespace RpcLite.Service
 
 			lock (containerLock)
 			{
+				if (pool.TryGetValue(action, out container))
+					return container.GetInstanceContainer();
+
 				container = new ServiceInstanceContainerPool(action.ServiceCreator) { Size = 1000 };
 				pool.Add(action, container);
 				return container.GetInstanceContainer();

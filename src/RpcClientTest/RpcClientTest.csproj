@@ -97,12 +97,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
-    <Compile Include="Copy of Class1.cs" />
+    <Compile Include="DynamicProxyTest.cs" />
+    <Compile Include="AssemblyBuilderDemo.cs" />
     <Compile Include="DAL\ApiServiceBase.cs" />
     <Compile Include="DAL\ProductService.cs" />
+    <Compile Include="DynamicTypeTest.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SerializationTest.cs" />
     <Compile Include="WebApiClient.cs" />
   </ItemGroup>
   <ItemGroup>
