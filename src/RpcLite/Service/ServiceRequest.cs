@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Web;
 
 namespace RpcLite.Service
 {
@@ -11,7 +12,7 @@ namespace RpcLite.Service
 		/// <summary>
 		/// 
 		/// </summary>
-		public Stream InputStream { get; set; }
+		public Stream RequestStream { get; set; }
 
 		/// <summary>
 		/// 
@@ -28,14 +29,5 @@ namespace RpcLite.Service
 		/// </summary>
 		public RpcAction ActionInfo { get; set; }
 
-		/// <summary>
-		/// 
-		/// </summary>
-		public Formatters.IFormatter Formatter { get; set; }
-
-		/// <summary>
-		/// 
-		/// </summary>
-		public object RequestObject { get; set; }
 	}
 }

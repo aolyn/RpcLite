@@ -42,6 +42,7 @@
   <ItemGroup>
     <Compile Include="Contract\GetServiceAddressRequest.cs" />
     <Compile Include="Contract\IRegistryService.cs" />
+    <Compile Include="ExtensionFunc.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
