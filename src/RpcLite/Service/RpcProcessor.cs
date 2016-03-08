@@ -1,6 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Linq;
+﻿using System.Linq;
 using RpcLite.Config;
 using RpcLite.Formatters;
 

@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace RpcLite.Logging
 {
@@ -19,7 +16,7 @@ namespace RpcLite.Logging
 
 		internal static void Error(Exception ex)
 		{
-			throw new NotImplementedException();
+
 		}
 	}
 }
