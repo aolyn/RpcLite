@@ -11,7 +11,7 @@ namespace RpcLite.Config
 	/// </summary>
 	public class RpcLiteConfigSection : IConfigurationSectionHandler
 	{
-		private string _clientEnvironmentAttributeValue;
+		//private string _clientEnvironmentAttributeValue;
 
 		private static RpcLiteConfigSection _instance;
 		/// <summary>
@@ -82,6 +82,13 @@ namespace RpcLite.Config
 			}
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="parent"></param>
+		/// <param name="configContext"></param>
+		/// <param name="section"></param>
+		/// <returns></returns>
 		public object Create(object parent, object configContext, XmlNode section)
 		{
 			if (_instance != null)
@@ -120,12 +127,12 @@ namespace RpcLite.Config
 					if (environment != null && !string.IsNullOrWhiteSpace(environment.Value))
 					{
 						ClientEnvironment = environment.Value;
-						_clientEnvironmentAttributeValue = environment.Value;
+						//_clientEnvironmentAttributeValue = environment.Value;
 					}
 					else
 					{
 						ClientEnvironment = Environment;
-						_clientEnvironmentAttributeValue = null;
+						//_clientEnvironmentAttributeValue = null;
 					}
 				}
 
@@ -310,11 +317,7 @@ namespace RpcLite.Config
 			if (node == null)
 				throw new ArgumentNullException("node");
 
-			var attribute = node.Attributes[attributeName];
-
-			return attribute == null
-				? null
-				: attribute.Value;
+			return node.Attributes?[attributeName]?.Value;
 		}
 	}
 }

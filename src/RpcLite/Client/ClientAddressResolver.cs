@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using RpcLite.Logging;
 
 namespace RpcLite.Client
 {
@@ -30,6 +28,7 @@ namespace RpcLite.Client
 				}
 				catch (Exception ex)
 				{
+					LogHelper.Error("InitializeResolver error", ex);
 				}
 			}
 		}
@@ -39,7 +38,7 @@ namespace RpcLite.Client
 			if (Resolver == null)
 				InitializeResolver();
 
-			return Resolver.GetAddress<T>();
+			return Resolver?.GetAddress<T>();
 		}
 	}
 

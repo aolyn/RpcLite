@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Threading.Tasks;
 using RpcLite.Formatters;
 using RpcLite.Logging;
 
@@ -46,48 +45,39 @@ namespace RpcLite.Service
 		/// <returns></returns>
 		public override string ToString()
 		{
-			return string.Format("{0}, {1}, {2}", Name, Path, Type);
+			return $"{Name}, {Path}, {Type}";
 		}
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="request"></param>
-		/// <param name="response"></param>
+		/// <param name="context"></param>
 		/// <param name="cb"></param>
-		/// <param name="state"></param>
 		/// <returns></returns>
-		public IAsyncResult BeginProcessRequest(ServiceRequest request, ServiceResponse response, AsyncCallback cb, object state)
+		public IAsyncResult BeginProcessRequest(ServiceContext context, AsyncCallback cb)
 		{
 			LogHelper.Debug("RpcService.BeginProcessRequest");
 
 			LogHelper.Debug("RpcService.BeginProcessRequest: start ActionHelper.GetActionInfo");
-			var actionInfo = ActionHelper.GetActionInfo(request.ServiceType, request.ActionName);
+			var actionInfo = ActionHelper.GetActionInfo(context.Request.ServiceType, context.Request.ActionName);
 			LogHelper.Debug("RpcService.BeginProcessRequest: end ActionHelper.GetActionInfo");
 			if (actionInfo == null)
 			{
-				LogHelper.Debug("Action Not Found: " + request.ActionName);
-				throw new ServiceException("Action Not Found: " + request.ActionName);
+				LogHelper.Debug("Action Not Found: " + context.Request.ActionName);
+				throw new ActionNotFoundException(context.Request.ActionName);
 			}
 
 			object requestObject = null;
 			if (actionInfo.ArgumentCount > 0)
-				requestObject = GetRequestObject(request.InputStream, request.Formatter, actionInfo.ArgumentType);
+				requestObject = GetRequestObject(context.Request.RequestStream, context.Formatter, actionInfo.ArgumentType);
 
 			LogHelper.Debug("RpcService.BeginProcessRequest: got requestObject");
 
-			var context = new ServiceContext
-			{
-				Service = this,
-				Request = request,
-				Response = response,
-				Action = actionInfo,
-				Argument = requestObject,
-				State = state,
-			};
+			context.Service = this;
+			context.Action = actionInfo;
+			context.Argument = requestObject;
 
-			if (BeforeInvoke != null)
-				BeforeInvoke(context);
+			BeforeInvoke?.Invoke(context);
 
 			var ar = actionInfo.Execute(context, cb);
 
@@ -110,26 +100,26 @@ namespace RpcLite.Service
 			}
 		}
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="serviceRequest"></param>
-		/// <returns></returns>
-		public object ProcessRequest(ServiceRequest serviceRequest)
-		{
-			var actionInfo = ActionHelper.GetActionInfo(serviceRequest.ServiceType, serviceRequest.ActionName);
-			if (actionInfo == null)
-				throw new ServiceException("Action Not Found: " + serviceRequest.ActionName);
+		///// <summary>
+		///// 
+		///// </summary>
+		///// <param name="serviceRequest"></param>
+		///// <returns></returns>
+		//public object ProcessRequest(ServiceRequest serviceRequest)
+		//{
+		//	var actionInfo = ActionHelper.GetActionInfo(serviceRequest.ServiceType, serviceRequest.ActionName);
+		//	if (actionInfo == null)
+		//		throw new ServiceException("Action Not Found: " + serviceRequest.ActionName);
 
-			object requestObject = null;
-			if (actionInfo.ArgumentCount > 0)
-				requestObject = GetRequestObject(serviceRequest.InputStream, serviceRequest.Formatter, actionInfo.ArgumentType);
+		//	object requestObject = null;
+		//	if (actionInfo.ArgumentCount > 0)
+		//		requestObject = GetRequestObject(serviceRequest.RequestStream, serviceRequest.Formatter, actionInfo.ArgumentType);
 
-			var result = ActionHelper.InvokeAction(actionInfo, requestObject);
-			return actionInfo.HasReturnValue
-				? result
-				: NullResponse.Value;
-		}
+		//	var result = ActionHelper.InvokeAction(actionInfo, requestObject);
+		//	return actionInfo.HasReturnValue
+		//		? result
+		//		: NullResponse.Value;
+		//}
 
 		/// <summary>
 		/// 
@@ -138,7 +128,11 @@ namespace RpcLite.Service
 		public static void EndProcessRequest(IAsyncResult result)
 		{
 			var state = result.AsyncState as ServiceContext;
-			if (state == null) return;
+			if (state == null)
+			{
+				LogHelper.Error("ServiceContext is null", null);
+				return;
+			}
 
 			if (state.Service == null)
 				throw new InvalidOperationException("not implement, RpcLite bug");
@@ -148,15 +142,36 @@ namespace RpcLite.Service
 
 		private void EndProcessRequest(IAsyncResult ar, ServiceContext context)
 		{
-			object resultObject = RpcAction.GetResultObject(ar, context);
-
-			if (AfterInvoke != null)
-				AfterInvoke(context);
-
-			if (context.Action.HasReturnValue)
+			//object resultObject = null;
+			try
 			{
-				context.Response.Formatter.Serialize(context.Response.ResponseStream, resultObject);
+				//resultObject = RpcAction.GetResultObject(ar, context);
+				context.Result = RpcAction.GetResultObject(ar, context);
 			}
+			//catch (Exception)
+			//{
+			//	//var exObj = new ServiceExcepionResponse
+			//	//{
+			//	//	ErrorCode = 500,
+			//	//	ExceptionAssembly = ex.GetType().Assembly.FullName,
+			//	//	ExceptionType = ex.GetType().FullName,
+			//	//	InnerException = ex,
+			//	//	IsFrameworkExecption = ex is ServiceException,
+			//	//};
+			//	//context.Formatter.Serialize(context.Response.ResponseStream, exObj);
+			//	//var httpContext = context.State as HttpContext;
+			//	//if (httpContext != null)
+			//	//{
+			//	//	httpContext.Response.StatusCode = 500;
+			//	//}
+			//	throw;
+			//}
+			finally
+			{
+				AfterInvoke?.Invoke(context);
+
+			}
+
 		}
 	}
 }

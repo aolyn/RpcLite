@@ -16,9 +16,5 @@ namespace RpcLite.Service
 		/// </summary>
 		public Stream ResponseStream { get; set; }
 
-		/// <summary>
-		/// 
-		/// </summary>
-		public Formatters.IFormatter Formatter { get; set; }
 	}
 }

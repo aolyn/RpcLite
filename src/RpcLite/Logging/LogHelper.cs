@@ -11,5 +11,15 @@ namespace RpcLite.Logging
 		{
 
 		}
+
+		public static void Error(string v, Exception ex)
+		{
+
+		}
+
+		internal static void Error(Exception ex)
+		{
+			throw new NotImplementedException();
+		}
 	}
 }

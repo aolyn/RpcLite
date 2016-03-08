@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Model;
 
 namespace Contracts
@@ -22,5 +23,8 @@ namespace Contracts
 		//Product[] Get();
 		//Product GetById(int id);
 		//Product Get(int id);
+
+		Task<string> GetHtml(string url);
+
 	}
 }
