@@ -1,18 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace RpcLite.Config
+﻿namespace RpcLite.Config
 {
+	/// <summary>
+	/// ResolverConfigItem
+	/// </summary>
 	public class ResolverConfigItem
 	{
+		/// <summary>
+		/// Assembly Name of Resolver
+		/// </summary>
 		public string AssemblyName { get; set; }
 
+		/// <summary>
+		/// full service type name, eg: ServiceImpl.ProductAsyncService
+		/// </summary>
 		public string TypeName { get; set; }
 
+		/// <summary>
+		/// original configured type name, eg: ServiceImpl.ProductAsyncService,ServiceImpl
+		/// </summary>
 		public string Type { get; set; }
 
+		/// <summary>
+		/// name of Resolver
+		/// </summary>
 		public string Name { get; set; }
 	}
 }

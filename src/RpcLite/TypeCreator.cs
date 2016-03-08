@@ -4,6 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Threading.Tasks;
 
 namespace RpcLite
 {
@@ -13,14 +14,14 @@ namespace RpcLite
 	public class TypeCreator
 	{
 		private static readonly ModuleBuilder ModBuilder;
-		private static readonly AssemblyBuilder AssemblyBuilder;
+		private static readonly AssemblyBuilder assemblyBuilder;
 
 		static TypeCreator()
 		{
 			var assmName = new AssemblyName { Name = "TypeCreateAssembly"/* + Guid.NewGuid().ToString().Replace("-", "") */};
 			var assmFileName = assmName.Name + ".dll";
-			AssemblyBuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(assmName, AssemblyBuilderAccess.RunAndSave);
-			ModBuilder = AssemblyBuilder.DefineDynamicModule(assmFileName, assmFileName, false);
+			assemblyBuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(assmName, AssemblyBuilderAccess.RunAndSave);
+			ModBuilder = assemblyBuilder.DefineDynamicModule(assmFileName, assmFileName, false);
 		}
 
 		/// <summary>
@@ -28,17 +29,17 @@ namespace RpcLite
 		/// </summary>
 		public static Type CreateType(string name, List<PropertyItemInfo> propeties)
 		{
+			if (propeties == null)
+				return null;
+
 			const TypeAttributes typeAttribute = TypeAttributes.Class | TypeAttributes.Public | TypeAttributes.Serializable;
 
 			var typeBuilder = ModBuilder.DefineType(name, typeAttribute);
 
 			var fieldBuilders = new List<FieldBuilder>();
-			if (propeties != null)
+			foreach (var propety in propeties)
 			{
-				foreach (var propety in propeties)
-				{
-					fieldBuilders.Add(AddProperty(propety.Name, propety.Type, typeBuilder));
-				}
+				fieldBuilders.Add(AddProperty(propety.Name, propety.Type, typeBuilder));
 			}
 
 			typeBuilder.DefineDefaultConstructor(MethodAttributes.Public);
@@ -157,16 +158,17 @@ namespace RpcLite
 
 			//真正创建，并返回
 			implementType = typeBuilder.CreateType();
-//#if DEBUG
-//			AssemblyBuilder.Save(AssemblyBuilder.GetName().Name + ".dll");//for test
-//#endif
+			//#if DEBUG
+			//			AssemblyBuilder.Save(AssemblyBuilder.GetName().Name + ".dll");//for test
+			//#endif
 			InterfaceImplementTypes.Add(interfaceType, implementType);
+			//assemblyBuilder.Save(@"rpc2.dll");
 			return implementType;
 		}
 
 		private static void BuildMethod(TypeBuilder typeBuilder, MethodInfo method)
 		{
-			if (typeBuilder == null) throw new ArgumentNullException("typeBuilder");
+			if (typeBuilder == null) throw new ArgumentNullException(nameof(typeBuilder));
 
 			if (typeBuilder.BaseType == null) throw new ArgumentException("typeBuilder.BaseType is null");
 
@@ -179,7 +181,27 @@ namespace RpcLite
 			methodIL.Emit(OpCodes.Nop);
 
 			var methodGetTypeFromHandle = typeof(Type).GetMethod("GetTypeFromHandle");
-			var getResponse = typeBuilder.BaseType.GetMethod("GetResponse", BindingFlags.Instance | BindingFlags.NonPublic);
+
+			Type taskParam = null;
+			string callMethodName;
+			if (method.ReturnType == typeof(Task))
+			{
+				callMethodName = "GetResponseAsync";
+			}
+			else if (method.ReturnType.IsGenericType && method.ReturnType.BaseType == typeof(Task))
+			{
+				callMethodName = "GetResponseAsync";
+				taskParam = method.ReturnType.GetGenericArguments()[0];
+			}
+			else
+			{
+				callMethodName = "GetResponse";
+			}
+
+			// ReSharper disable once PossibleNullReferenceException
+			var getResponse = typeBuilder.BaseType.GetMethod(callMethodName, BindingFlags.Instance | BindingFlags.NonPublic);
+			if (taskParam != null)
+				getResponse = getResponse.MakeGenericMethod(taskParam);
 			var returnType = method.ReturnType;
 			var hasReturn = (returnType != typeof(void));
 			var paramCount = paramTypes.Length;
@@ -188,6 +210,9 @@ namespace RpcLite
 			if (paramCount > 1)
 			{
 				var ctor = paramType.GetConstructor(Type.EmptyTypes);
+				if (ctor == null)
+					throw new Exception(paramType.Name + " has no constructor without parameters");
+
 				var setValues = paramType.GetMethod("SetValues", paramTypes);
 
 				methodIL.DeclareLocal(paramType);
@@ -283,21 +308,25 @@ namespace RpcLite
 		public static Type GetParameterType(MethodBase method, ParameterInfo[] paras)
 		{
 			var declareType = method.DeclaringType;
+			if (declareType == null) return null;
+
 			var methodName = method.Name;
-			return GetParameterType(paras, declareType, methodName);
+			var newTypeName = $"{declareType.FullName}RequestTypes.{methodName}RequestType";
+			newTypeName = null;
+			return GetParameterType(newTypeName, paras, declareType, methodName);
 		}
 
 		/// <summary>
 		/// 
 		/// </summary>
-		public static Type GetParameterType(ParameterInfo[] paras, Type declareType, string methodName)
+		public static Type GetParameterType(string newTypeName, ParameterInfo[] paras, Type declareType, string methodName)
 		{
 			Type parameterType = null;
 			//prepare call parameter
 			if (paras.Length > 1)
 			{
-				var paraTypeName = string.Format("{0}_{1}_{2}_ParameterType",
-					declareType.FullName.Replace(".", "_").Replace("+", "__"), methodName, paras.Length);
+				var paraTypeName = newTypeName
+					?? string.Format("{0}_{1}_{2}_ParameterType", declareType.FullName.Replace(".", "_").Replace("+", "__"), methodName, paras.Length);
 				if (!ActionParameterTypes.TryGetValue(paraTypeName, out parameterType))
 				{
 					var properties = paras
@@ -331,7 +360,7 @@ namespace RpcLite
 		public static Func<object> GetCreateInstanceFunc(Type serviceType)
 		{
 			if (serviceType == null)
-				throw new ArgumentNullException("serviceType");
+				throw new ArgumentNullException(nameof(serviceType));
 
 			Func<object> func;
 			if (CreateInstanceFuncs.TryGetValue(serviceType, out func))
@@ -350,6 +379,12 @@ namespace RpcLite
 			return del;
 		}
 
+		/// <summary>
+		/// Get type from assembly
+		/// </summary>
+		/// <param name="typeName"></param>
+		/// <param name="assemblyName"></param>
+		/// <returns></returns>
 		public static Type GetTypeFromName(string typeName, string assemblyName)
 		{
 			Assembly assembly;
