@@ -19,32 +19,33 @@ namespace WebApiClient
 			if (false)
 			{
 
-				var types = new[]
-				{
-					//typeof (Ctrip.API.Cruise.H5.Contract.GetShipPOIHomeResponseType),
-					//typeof (Ctrip.API.Cruise.H5.Contract.GetShipCategoryPOIResponseType),
-					//typeof (Ctrip.API.Cruise.H5.Contract.GetShipFacilityPOIResponseType),
-					//typeof (Ctrip.API.Cruise.H5.Contract.GetShipServicePOIResponseType),
-					//typeof (Ctrip.API.Cruise.H5.Contract.GetCompanyPOIResponseType)
-					typeof (Ctrip.API.Cruise.H5.Contract.GetSearchItemResponseType),
-					typeof (Ctrip.API.Cruise.H5.Contract.GetShipCategoryPOIResponseType),
-					typeof (Ctrip.API.Cruise.H5.Contract.GetShipFacilityPOIResponseType),
-					typeof (Ctrip.API.Cruise.H5.Contract.GetShipServicePOIResponseType),
-					typeof (Ctrip.API.Cruise.H5.Contract.GetCompanyPOIResponseType)
-				};
+				//var types = new[]
+				//{
+				//	//typeof (Ctrip.API.Cruise.H5.Contract.GetShipPOIHomeResponseType),
+				//	//typeof (Ctrip.API.Cruise.H5.Contract.GetShipCategoryPOIResponseType),
+				//	//typeof (Ctrip.API.Cruise.H5.Contract.GetShipFacilityPOIResponseType),
+				//	//typeof (Ctrip.API.Cruise.H5.Contract.GetShipServicePOIResponseType),
+				//	//typeof (Ctrip.API.Cruise.H5.Contract.GetCompanyPOIResponseType)
 
-				foreach (var type in types)
-				{
-					var obj = SerializationTest.CreateObject(type);
-					var json = Newtonsoft.Json.JsonConvert.SerializeObject(obj);
-					json = json.Replace("\"", "'");
-					File.WriteAllText(string.Format("c:\\{0}.txt", type.Name), json);
-				}
+				//	typeof (Ctrip.API.Cruise.H5.Contract.GetSearchItemResponseType),
+				//	typeof (Ctrip.API.Cruise.H5.Contract.GetShipCategoryPOIResponseType),
+				//	typeof (Ctrip.API.Cruise.H5.Contract.GetShipFacilityPOIResponseType),
+				//	typeof (Ctrip.API.Cruise.H5.Contract.GetShipServicePOIResponseType),
+				//	typeof (Ctrip.API.Cruise.H5.Contract.GetCompanyPOIResponseType)
+				//};
+
+				//foreach (var type in types)
+				//{
+				//	var obj = SerializationTest.CreateObject(type);
+				//	var json = Newtonsoft.Json.JsonConvert.SerializeObject(obj);
+				//	json = json.Replace("\"", "'");
+				//	File.WriteAllText(string.Format("c:\\{0}.txt", type.Name), json);
+				//}
 
 			}
 
-			ClientTestForResolverConcurrency();
-			//ClientTest();
+			//ClientTestForResolverConcurrency();
+			ClientTest();
 			//ClientTest2();
 		}
 
@@ -76,8 +77,8 @@ namespace WebApiClient
 				//RpcLite.NetChannelHelper.GetResponse("Hello", 11);
 				//var type = ClientWrapper.WrapInterface<IProduct>();
 
-				var client2 = RpcClientBase<IProduct>.GetInstance("http://localhost:4098/api/");
-				client2.BaseUrl = "http://localhost:4098/api/";
+				var client2 = RpcClientBase<IProduct>.GetInstance("http://localhost:37330/api/");
+				client2.BaseUrl = "http://localhost:37330/api/";
 
 				client2 = RpcClientBase<IProduct>.GetInstance();
 
@@ -106,6 +107,22 @@ namespace WebApiClient
 		private static void ClientTest()
 		{
 			{
+				var apiBaseUrl = "http://localhost:37330/api/async-product/";
+
+				var client2 = RpcClientBase<IProductAsync>.GetInstance(apiBaseUrl);
+				client2.BaseUrl = apiBaseUrl;
+
+				var ip = client2 as IProductAsync;
+
+				//var html = ip.GetHtml("http://www.baidu.com").Result;
+				var html = ip.GetHtml("http://www.baidu.com").Result;
+				var html2 = ip.GetHtml("http://www.baiduA54sf4we.com").Result;
+
+				//var p1 = new Product { Id = 2, Name = "Chris" };
+				//var result = ip.AddProduct(1, p1);
+			}
+
+			{
 				var client = new ProductClient();
 			}
 
@@ -118,10 +135,12 @@ namespace WebApiClient
 				//RpcLite.NetChannelHelper.GetResponse("Hello", 11);
 				//var type = ClientWrapper.WrapInterface<IProduct>();
 
-				var client2 = RpcClientBase<IProduct>.GetInstance("http://localhost:4098/api/");
-				client2.BaseUrl = "http://localhost:4098/api/";
+				var apiBaseUrl = "http://localhost:37330/api/async-product/";
 
-				client2 = RpcClientBase<IProduct>.GetInstance();
+				var client2 = RpcClientBase<IProduct>.GetInstance(apiBaseUrl);
+				client2.BaseUrl = apiBaseUrl;
+
+				//client2 = RpcClientBase<IProduct>.GetInstance();
 
 				var ip = client2 as IProduct;
 

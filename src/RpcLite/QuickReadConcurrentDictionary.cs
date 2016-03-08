@@ -24,7 +24,7 @@ namespace RpcLite
 		{
 			if (key == null)
 			{
-				throw new ArgumentNullException("key");
+				throw new ArgumentNullException(nameof(key));
 			}
 
 			return GetOrAdd(key, () => value);
@@ -40,7 +40,7 @@ namespace RpcLite
 		{
 			if (key == null)
 			{
-				throw new ArgumentNullException("key");
+				throw new ArgumentNullException(nameof(key));
 			}
 
 			TValue value;
@@ -69,7 +69,10 @@ namespace RpcLite
 
 				value = valueFactory();
 				Add(key, value);
-				_itemLocks.Remove(key);
+				lock (_allLocker)
+				{
+					_itemLocks.Remove(key);
+				}
 				return value;
 			}
 		}

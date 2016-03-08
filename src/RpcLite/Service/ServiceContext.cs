@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Web;
 
 namespace RpcLite.Service
 {
@@ -56,5 +57,25 @@ namespace RpcLite.Service
 		/// 
 		/// </summary>
 		public RpcService Service { get; set; }
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public Formatters.IFormatter Formatter { get; set; }
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public object ExtraData { get; internal set; }
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public HttpContext HttpContext { get; internal set; }
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public Exception Exception { get; internal set; }
 	}
 }

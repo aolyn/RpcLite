@@ -174,10 +174,10 @@ namespace WebApiClient
 				return false;
 			}
 
-			public override Newtonsoft.Json.Schema.JsonSchema GetSchema()
-			{
-				return base.GetSchema();
-			}
+			//public override Newtonsoft.Json.Schema.JsonSchema GetSchema()
+			//{
+			//	return base.GetSchema();
+			//}
 
 			public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
 			{
