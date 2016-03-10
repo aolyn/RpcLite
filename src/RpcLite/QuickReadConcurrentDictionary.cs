@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace RpcLite
 {
@@ -13,6 +14,7 @@ namespace RpcLite
 		//private readonly Dictionary<TKey, TValue> _innerDictionary = new Dictionary<TKey, TValue>();
 		private readonly object _allLocker = new object();
 		private readonly Dictionary<TKey, object> _itemLocks = new Dictionary<TKey, object>();
+		private readonly ReaderWriterLockSlim _readWriteLock = new ReaderWriterLockSlim();
 
 		/// <summary>
 		/// [thread safe] Adds a key/value pair if the key does not already exist.
@@ -44,9 +46,17 @@ namespace RpcLite
 			}
 
 			TValue value;
-			if (TryGetValue(key, out value))
+			try
 			{
-				return value;
+				_readWriteLock.EnterReadLock();
+				if (TryGetValue(key, out value))
+				{
+					return value;
+				}
+			}
+			finally
+			{
+				_readWriteLock.ExitReadLock();
 			}
 
 			object locker;
@@ -61,14 +71,30 @@ namespace RpcLite
 
 			lock (locker)
 			{
-				if (TryGetValue(key, out value))
+				try
 				{
-					_itemLocks.Remove(key);
-					return value;
+					_readWriteLock.EnterReadLock();
+					if (TryGetValue(key, out value))
+					{
+						return value;
+					}
+				}
+				finally
+				{
+					_readWriteLock.ExitReadLock();
 				}
 
 				value = valueFactory();
-				Add(key, value);
+				try
+				{
+					_readWriteLock.EnterWriteLock();
+					Add(key, value);
+				}
+				finally
+				{
+					_readWriteLock.ExitWriteLock();
+				}
+
 				lock (_allLocker)
 				{
 					_itemLocks.Remove(key);

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.Serialization;
 
 namespace RpcLite
 {
@@ -11,6 +12,15 @@ namespace RpcLite
 		/// Initializes a new instance of RpcLite.ServiceException class
 		/// </summary>
 		public ServiceException() { }
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="info"></param>
+		/// <param name="context"></param>
+		protected ServiceException(SerializationInfo info, StreamingContext context) : base(info, context)
+		{
+		}
 
 		/// <summary>
 		/// Initializes a new instance of RpcLite.ServiceException with specifid message and inner exception
@@ -44,6 +54,16 @@ namespace RpcLite
 		public ActionNotFoundException(string actionName, Exception innerException)
 			: base($"Action {actionName} Not Found", innerException)
 		{ }
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="info"></param>
+		/// <param name="context"></param>
+		protected ActionNotFoundException(SerializationInfo info, StreamingContext context) : base(info, context)
+		{
+		}
+
 
 		/// <summary>
 		/// Initializes a new instance of RpcLite.ServiceException with specifid message and inner exception
