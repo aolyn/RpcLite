@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using ClientImpl;
 using Contracts;
 using Model;
+using Newtonsoft.Json;
 using RpcLite.Client;
 
 namespace WebApiClient
@@ -14,6 +15,21 @@ namespace WebApiClient
 	{
 		static void Main(string[] args)
 		{
+			{
+				var inEx = new ArgumentOutOfRangeException("args111");
+
+				var ex = new AggregateException(new ArgumentException("args", inEx), new NullReferenceException("a is null"));
+				var str = JsonConvert.SerializeObject(ex);
+
+				var dExObj = (AggregateException)JsonConvert.DeserializeObject(str, typeof(AggregateException));
+
+				var ex1 = dExObj.InnerExceptions[0];
+				var ex1Type = ex1.GetType();
+
+				var ex2 = dExObj.InnerExceptions[1];
+				var ex2Type = ex2.GetType();
+
+			}
 
 			if (false)
 			{
@@ -114,8 +130,19 @@ namespace WebApiClient
 				var ip = client2 as IProductAsync;
 
 				//var html = ip.GetHtml("http://www.baidu.com").Result;
-				var html = ip.GetHtml("http://www.baidu.com").Result;
-				var html2 = ip.GetHtml("http://www.baiduA54sf4we.com").Result;
+				try
+				{
+					var html = ip.GetHtml("http://www.baidu.com").Result;
+				}
+				catch (Exception ex)
+				{
+					var exType = ex.GetType();
+					if (ex.InnerException != null)
+					{
+						var type = ex.InnerException.GetType();
+					}
+				}
+				//var html2 = ip.GetHtml("http://www.baiduA54sf4we.com").Result;
 
 				//var p1 = new Product { Id = 2, Name = "Chris" };
 				//var result = ip.AddProduct(1, p1);

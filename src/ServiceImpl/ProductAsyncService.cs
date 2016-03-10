@@ -128,6 +128,7 @@ namespace ServiceImpl
 
 		public async Task<string> GetHtml(string url)
 		{
+			throw new ArgumentException("test ex");
 			var client = WebRequest.Create(url);
 			//var result = Task.Factory.FromAsync(client.BeginGetResponse, client.EndGetResponse);
 			var resp = await client.GetResponseAsync();
