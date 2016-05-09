@@ -76,9 +76,18 @@ namespace RpcLite.Service
 			var request = context.Request;
 			var response = context.Response;
 
+			var requestPath = request.Path;
+			// ReSharper disable once PossibleNullReferenceException
+			requestPath = request.ApplicationPath.Length == 1
+				? "~" + requestPath
+				: "~" + requestPath.Substring(request.ApplicationPath.Length);
+
 			var serviceRequest = new ServiceRequest
 			{
 				RequestStream = request.InputStream,
+				Path = requestPath,
+				ContentType = request.ContentType,
+				ContentLength = request.ContentLength,
 			};
 
 			var serviceResponse = new ServiceResponse
@@ -86,39 +95,19 @@ namespace RpcLite.Service
 				ResponseStream = response.OutputStream,
 			};
 
-			var serviceContext = new ServiceContext()
+			var serviceContext = new ServiceContext
 			{
 				Request = serviceRequest,
 				Response = serviceResponse,
 				ExtraData = extraData,
-				HttpContext = context,
+				ExecutingContext = context,
 			};
 
 			LogHelper.Debug("BeginProcessRequest: " + request.Url);
 
 			try
 			{
-
-				//get formatter from content type
-				var formatter = RpcProcessor.GetFormatter(request.ContentType);
-				if (formatter != null)
-					response.ContentType = request.ContentType;
-
-				serviceContext.Formatter = formatter;
-
-				var requestPath = request.Path;
-				// ReSharper disable once PossibleNullReferenceException
-				requestPath = request.ApplicationPath.Length == 1
-					? "~" + requestPath
-					: "~" + requestPath.Substring(request.ApplicationPath.Length);
-
-				var ar = BeginProcessRequest(serviceContext, requestPath, cb);
-				LogHelper.Debug("RpcAsyncHandler.BeginProcessRequest end return"
-					+ $"ar.IsCompleted: {ar.IsCompleted}"); //JsonConvert.SerializeObject(ar));
-
-				//if (ar.IsCompleted)
-				//	cb(ar);
-				return ar;
+				return Process(serviceContext, cb);
 			}
 			//catch (ThreadAbortException ex)
 			//{
@@ -155,6 +144,24 @@ namespace RpcLite.Service
 			}
 		}
 
+		private static IAsyncResult Process(ServiceContext serviceContext, AsyncCallback cb)
+		{
+			//get formatter from content type
+			var formatter = RpcProcessor.GetFormatter(serviceContext.Request.ContentType);
+			if (formatter != null)
+				serviceContext.Response.ContentType = serviceContext.Request.ContentType;
+
+			serviceContext.Formatter = formatter;
+
+			var ar = BeginProcessRequest(serviceContext, serviceContext.Request.Path, cb);
+			LogHelper.Debug("RpcAsyncHandler.BeginProcessRequest end return"
+				+ $"ar.IsCompleted: {ar.IsCompleted}"); //JsonConvert.SerializeObject(ar));
+
+			//if (ar.IsCompleted)
+			//	cb(ar);
+			return ar;
+		}
+
 		private static IAsyncResult BeginProcessRequest(ServiceContext context, string requestPath, AsyncCallback cb)
 		{
 			LogHelper.Debug("BeginProcessReques 2");
@@ -182,9 +189,11 @@ namespace RpcLite.Service
 				try
 				{
 					LogHelper.Debug("RpcAsyncHandler.BeginProcessRequest start service.BeginProcessRequest(request, response, cb, requestContext) " + requestPath);
-					var result = service.BeginProcessRequest(context, cb);
+					var result = service.BeginProcessRequest(context);
 					LogHelper.Debug("RpcAsyncHandler.BeginProcessRequest end service.BeginProcessRequest(request, response, cb, requestContext) " + requestPath);
-					return result;
+					var ar = RpcAction.ToBegin(result, cb, context);
+					return ar;
+					//return result;
 				}
 				catch (RpcLiteException)
 				{
@@ -235,7 +244,8 @@ namespace RpcLite.Service
 				context.Exception = ex;
 			}
 
-			var httpContext = context.HttpContext;
+			var httpContext = (HttpContext)context.ExecutingContext;
+			httpContext.Response.ContentType = context.Response.ContentType;
 			if (context.Exception != null)
 			{
 				httpContext.Response.AddHeader("RpcLite-ExceptionType", context.Exception.GetType().FullName);
@@ -254,7 +264,6 @@ namespace RpcLite.Service
 					context.Formatter.Serialize(context.Response.ResponseStream, context.Result);
 
 				httpContext.Response.AddHeader("RpcLite-StatusCode", ((int)HttpStatusCode.OK).ToString());
-
 			}
 
 			LogHelper.Debug("RpcAsyncHandler.EndProcessRequest end RpcService.EndProcessRequest(result);");

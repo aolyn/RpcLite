@@ -28,10 +28,10 @@ namespace ServiceImpl
 			}
 		}
 
-		//public Product[] Get()
-		//{
-		//	return Products.ToArray();
-		//}
+		public Product[] Get()
+		{
+			return Products.ToArray();
+		}
 
 		//public Product Get(int id)
 		//{
@@ -128,7 +128,7 @@ namespace ServiceImpl
 
 		public async Task<string> GetHtml(string url)
 		{
-			throw new ArgumentException("test ex");
+			//throw new ArgumentException("test ex");
 			var client = WebRequest.Create(url);
 			//var result = Task.Factory.FromAsync(client.BeginGetResponse, client.EndGetResponse);
 			var resp = await client.GetResponseAsync();
@@ -139,5 +139,20 @@ namespace ServiceImpl
 			var str = System.Text.Encoding.UTF8.GetString(buffer, 0, result2);
 			return str;
 		}
+
+		public async Task GetVoidHtml(string url)
+		{
+			//throw new ArgumentException("test ex");
+			var client = WebRequest.Create(url);
+			//var result = Task.Factory.FromAsync(client.BeginGetResponse, client.EndGetResponse);
+			var resp = await client.GetResponseAsync();
+			var stream = resp.GetResponseStream();
+			var buffer = new byte[(int)resp.ContentLength];
+
+			var result2 = await stream.ReadAsync(buffer, 0, buffer.Length);
+			var str = System.Text.Encoding.UTF8.GetString(buffer, 0, result2);
+			//return str;
+		}
+
 	}
 }
