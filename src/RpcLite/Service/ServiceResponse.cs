@@ -12,5 +12,9 @@ namespace RpcLite.Service
 		/// </summary>
 		public Stream ResponseStream { get; set; }
 
+		/// <summary>
+		/// 
+		/// </summary>
+		public string ContentType { get; set; }
 	}
 }

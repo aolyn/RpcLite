@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Threading.Tasks;
 using RpcLite.Formatters;
 using RpcLite.Logging;
 
@@ -54,7 +55,7 @@ namespace RpcLite.Service
 		/// <param name="context"></param>
 		/// <param name="cb"></param>
 		/// <returns></returns>
-		public IAsyncResult BeginProcessRequest(ServiceContext context, AsyncCallback cb)
+		public Task BeginProcessRequest(ServiceContext context)
 		{
 			LogHelper.Debug("RpcService.BeginProcessRequest");
 
@@ -79,7 +80,7 @@ namespace RpcLite.Service
 
 			BeforeInvoke?.Invoke(context);
 
-			var ar = actionInfo.Execute(context, cb);
+			var ar = actionInfo.ExecuteAsync(context);
 
 			return ar;
 		}

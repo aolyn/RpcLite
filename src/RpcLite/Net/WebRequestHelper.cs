@@ -164,115 +164,6 @@ namespace RpcLite.Net
 		}
 
 		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="url"></param>
-		/// <param name="postData"></param>
-		/// <param name="encoding"></param>
-		/// <param name="headDic"></param>
-		/// <returns></returns>
-		public static Task<ServiceReponseMessage> PostAsync2(string url, string postData, Encoding encoding, Dictionary<string, string> headDic)
-		{
-			var tcs = new TaskCompletionSource<ServiceReponseMessage>();
-
-			var client = new HttpClient();
-
-			var content = new StringContent(postData);
-			if (headDic != null)
-			{
-				foreach (var head in headDic)
-				{
-					if (head.Key == "Content-Type")
-						content.Headers.ContentType = new MediaTypeHeaderValue(head.Value);
-					else if (head.Key == "Accept")
-						continue;
-					else
-						client.DefaultRequestHeaders.Add(head.Key, head.Value);
-				}
-			}
-
-			var task = client.PostAsync(url, content);
-			var procTask2 = task.ContinueWith(tsk =>
-			{
-				if (tsk.Exception != null)
-				{
-					tcs.SetException(tsk.Exception);
-				}
-				else
-				{
-					var responseMessage = tsk.Result;
-					var readTask = responseMessage.Content.ReadAsStringAsync();
-					var procReadTask = readTask.ContinueWith(rtsk =>
-					{
-						if (rtsk.Exception != null)
-						{
-							tcs.SetException(rtsk.Exception);
-						}
-						else
-						{
-
-							var headers = responseMessage.Headers
-								.Where(it => it.Key.StartsWith("RpcLite-"))
-								.ToDictionary(item => item.Key, item => item.Value.FirstOrDefault());
-
-							var resp = rtsk.Result;
-
-							//string jsonResult = null;
-
-							//if (response.ContentLength > 0)
-							//{
-							//	var stream = response.GetResponseStream();
-							//	if (stream != null)
-							//	{
-							//		var reader = new StreamReader(stream, encoding);
-							//		jsonResult = reader.ReadToEnd();
-							//	}
-							//}
-
-							var re = new ServiceReponseMessage
-							{
-								IsSuccess = responseMessage.StatusCode == HttpStatusCode.OK,
-								Result = resp,
-								Header = headers,
-							};
-							tcs.SetResult(re);
-							//return responseMessage;
-
-						}
-					});
-				}
-			});
-
-			//var procTask = task.ContinueWith(tsk =>
-			//{
-			//	var response = tsk.Result;
-			//	WebRequestReponseMessage responseMessage = null;
-
-			//	try
-			//	{
-			//		//var rv = response.Content.
-			//		//		responseMessage = GetResponseMessage(encoding, response);
-			//	}
-			//	catch (WebException ex)
-			//	{
-			//		if (ex.Response != null)
-			//		{
-			//			responseMessage = GetResponseMessage(encoding, (HttpWebResponse)ex.Response);
-			//			ex.Response.Close();
-			//		}
-			//		else
-			//		{
-			//			throw;
-			//		}
-			//	}
-			//	return responseMessage;
-
-			//});
-
-			return tcs.Task;
-		}
-
-		/// <summary>
 		/// post data to web server and get retrieve response data
 		/// </summary>
 		/// <param name="url"></param>
@@ -362,37 +253,6 @@ namespace RpcLite.Net
 			return responseMessage;
 		}
 
-		//private static Task<ServiceReponseMessage> GetResponseMessageAsync(Encoding encoding, HttpWebResponse response)
-		//{
-		//	var headers = response.Headers
-		//		.Cast<string>()
-		//		.Where(it => it.StartsWith("RpcLite-"))
-		//		.ToDictionary(item => item, item => response.Headers[item]);
-
-		//	var responseMessage = new ServiceReponseMessage
-		//	{
-		//		IsSuccess = response.StatusCode == HttpStatusCode.OK,
-		//		Header = headers,
-		//	};
-
-		//	if (response.ContentLength == 0)
-		//	{
-		//		return Task.Factory.StartNew(() => responseMessage);
-		//	}
-
-		//	string jsonResult = null;
-		//	var stream = response.GetResponseStream();
-		//	if (stream != null)
-		//	{
-		//		var reader = new StreamReader(stream, encoding);
-		//		jsonResult = reader.ReadToEnd();
-		//	}
-
-		//	responseMessage.Result = jsonResult;
-
-		//	return responseMessage;
-		//}
-
 		/// <summary>
 		/// 
 		/// </summary>
@@ -411,5 +271,6 @@ namespace RpcLite.Net
 			/// </summary>
 			public string Result { get; set; }
 		}
+
 	}
 }

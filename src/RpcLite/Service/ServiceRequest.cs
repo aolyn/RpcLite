@@ -28,5 +28,19 @@ namespace RpcLite.Service
 		/// </summary>
 		public RpcAction ActionInfo { get; set; }
 
+		/// <summary>
+		/// 
+		/// </summary>
+		public string Path { get; set; }
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public string ContentType { get; set; }
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public int ContentLength { get; set; }
 	}
 }
