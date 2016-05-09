@@ -50,43 +50,43 @@ namespace RpcLite.Service
 		/// </summary>
 		public Func<object, object, object> Func { get; set; }
 
-		/// <summary>
-		/// T: service, argument, callback, state, return
-		/// </summary>
-		public Func<object, object, AsyncCallback, object, IAsyncResult> BeginFunc { get; set; }
+		///// <summary>
+		///// T: service, argument, callback, state, return
+		///// </summary>
+		//public Func<object, object, AsyncCallback, object, IAsyncResult> BeginFunc { get; set; }
 
-		//public Func<object, object, object, object, object> BeginFunc { get; set; }
+		////public Func<object, object, object, object, object> BeginFunc { get; set; }
 
-		/// <summary>
-		/// 
-		/// </summary>
-		public Func<object, IAsyncResult, object> EndFunc { get; set; }
+		///// <summary>
+		///// 
+		///// </summary>
+		//public Func<object, IAsyncResult, object> EndFunc { get; set; }
 
 		/// <summary>
 		/// 
 		/// </summary>
 		public Action<object, object> Action { get; set; }
 
-		/// <summary>
-		/// 
-		/// </summary>
-		public Func<object, object, AsyncCallback, object, IAsyncResult> BeginAction { get; set; }
-		//public Func<object, object, object, object, object> BeginAction { get; set; }
+		///// <summary>
+		///// 
+		///// </summary>
+		//public Func<object, object, AsyncCallback, object, IAsyncResult> BeginAction { get; set; }
+		////public Func<object, object, object, object, object> BeginAction { get; set; }
 
-		/// <summary>
-		/// 
-		/// </summary>
-		public Action<object, IAsyncResult> EndAction { get; set; }
+		///// <summary>
+		///// 
+		///// </summary>
+		//public Action<object, IAsyncResult> EndAction { get; set; }
 
 		/// <summary>
 		/// 
 		/// </summary>
 		public Func<object> ServiceCreator { get; set; }
 
-		/// <summary>
-		/// 
-		/// </summary>
-		public bool IsAsync { get; set; }
+		///// <summary>
+		///// 
+		///// </summary>
+		//public bool IsAsync { get; set; }
 
 		/// <summary>
 		/// 
@@ -105,42 +105,59 @@ namespace RpcLite.Service
 
 		#endregion
 
-		internal Task ExecuteTask(ServiceResponse response, object requestObject, AsyncCallback cb, ServiceContext context)
-		{
-			var task = (Task)ActionHelper.InvokeTask(context, cb);
-			return task;
-		}
+		//internal Task ExecuteTask(ServiceContext context)
+		//{
+		//	var task = ActionHelper.InvokeTask(context);
+		//	return task;
+		//}
 
-		internal IAsyncResult Execute(ServiceContext context, AsyncCallback callback)
+		internal Task ExecuteAsync(ServiceContext context)
 		{
-			IAsyncResult ar;
+			//IAsyncResult ar;
 			if (IsTask)
 			{
 				//var task = (Task)ActionHelper.InvokeTask(actionInfo, response, requestObject, cb, context);
-				var task = ExecuteTask(context.Response, context.Argument, callback, context);
-				ar = ToBegin(task, callback, context/*, actionInfo.TaskResultType*/);
+				//var task = ExecuteTask(context);
+				var task = ActionHelper.InvokeTask(context);
+				return task;
+				//var task2 = task.ContinueWith(tsk =>
+				// {
+
+				// });
+				//task2.Wait();
+				//var waitTask = task.ContinueWith(tsk =>
+				//{
+
+				//});
+				//return waitTask;
+				//ar = ToBegin(task, callback, context/*, actionInfo.TaskResultType*/);
 			}
-			else if (IsAsync)
-			{
-				ar = ActionHelper.BeginInvokeAction(context.Action, context.Response, context.Argument, callback, context);
-			}
+			//else if (IsAsync)
+			//{
+			//	ar = ActionHelper.BeginInvokeAction(context.Action, context.Response, context.Argument, callback, context);
+			//}
 			else
 			{
 				LogHelper.Debug("RpcService.BeginProcessRequest: start ActionHelper.InvokeAction");
 				context.Result = ActionHelper.InvokeAction(context.Action, context.Argument);
 				LogHelper.Debug("RpcService.BeginProcessRequest: end ActionHelper.InvokeAction");
-				ar = new ServiceAsyncResult
-				{
-					AsyncState = context,
-					IsCompleted = true,
-					CompletedSynchronously = true,
-					AsyncWaitHandle = null,
-				};
+
+				var tcs = new TaskCompletionSource<object>();
+				tcs.SetResult(context.Result);
+				return tcs.Task;
+
+				//ar = new ServiceAsyncResult
+				//{
+				//	AsyncState = context,
+				//	IsCompleted = true,
+				//	CompletedSynchronously = true,
+				//	AsyncWaitHandle = null,
+				//};
 			}
-			return ar;
+			//return ar;
 		}
 
-		private static IAsyncResult ToBegin(Task task, AsyncCallback callback, object state)
+		public static IAsyncResult ToBegin(Task task, AsyncCallback callback, object state)
 		{
 			if (task == null)
 				throw new ArgumentNullException(nameof(task));
@@ -165,7 +182,7 @@ namespace RpcLite.Service
 
 				callback?.Invoke(tcs.Task);
 				//callback?.Invoke(task);
-			}, TaskScheduler.Default);
+			}/*, TaskScheduler.Default*/);
 
 			return tcs.Task;
 		}
@@ -227,31 +244,31 @@ namespace RpcLite.Service
 
 					resultObject = GetTaskResult(task);
 				}
-				else if (!context.Action.IsAsync)
+				else // if (!context.Action.IsAsync)
 				{
 					if (context.Action.HasReturnValue)
 					{
 						resultObject = context.Result;
 					}
 				}
-				else
-				{
-					if (context.Action.HasReturnValue)
-					{
-						try
-						{
-							resultObject = context.Action.EndFunc(serviceContainer.ServiceObject, ar);
-						}
-						catch (Exception ex)
-						{
-							resultObject = ex;
-						}
-					}
-					else
-					{
-						context.Action.EndAction(serviceContainer.ServiceObject, ar);
-					}
-				}
+				//else
+				//{
+				//	if (context.Action.HasReturnValue)
+				//	{
+				//		try
+				//		{
+				//			resultObject = context.Action.EndFunc(serviceContainer.ServiceObject, ar);
+				//		}
+				//		catch (Exception ex)
+				//		{
+				//			resultObject = ex;
+				//		}
+				//	}
+				//	else
+				//	{
+				//		context.Action.EndAction(serviceContainer.ServiceObject, ar);
+				//	}
+				//}
 			}
 			//catch (Exception ex)
 			//{
@@ -259,7 +276,7 @@ namespace RpcLite.Service
 			//}
 			finally
 			{
-				if (context.Action.IsAsync && !context.Action.IsStatic)
+				if (/*context.Action.IsAsync &&*/ serviceContainer != null && !context.Action.IsStatic)
 				{
 					serviceContainer.Dispose();
 				}

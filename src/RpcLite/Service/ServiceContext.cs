@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Web;
 
 namespace RpcLite.Service
 {
@@ -68,7 +67,7 @@ namespace RpcLite.Service
 		/// <summary>
 		/// 
 		/// </summary>
-		public HttpContext HttpContext { get; internal set; }
+		public object ExecutingContext { get; internal set; }
 
 		/// <summary>
 		/// 
