@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Net;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Web;
-using RpcLite.Config;
 using RpcLite.Logging;
 
 namespace RpcLite.Service
@@ -76,9 +76,18 @@ namespace RpcLite.Service
 			var request = context.Request;
 			var response = context.Response;
 
+			var requestPath = request.Path;
+			// ReSharper disable once PossibleNullReferenceException
+			requestPath = request.ApplicationPath.Length == 1
+				? "~" + requestPath
+				: "~" + requestPath.Substring(request.ApplicationPath.Length);
+
 			var serviceRequest = new ServiceRequest
 			{
 				RequestStream = request.InputStream,
+				Path = requestPath,
+				ContentType = request.ContentType,
+				ContentLength = request.ContentLength,
 			};
 
 			var serviceResponse = new ServiceResponse
@@ -86,62 +95,22 @@ namespace RpcLite.Service
 				ResponseStream = response.OutputStream,
 			};
 
-			var serviceContext = new ServiceContext()
+			var serviceContext = new ServiceContext
 			{
 				Request = serviceRequest,
 				Response = serviceResponse,
 				ExtraData = extraData,
-				HttpContext = context,
+				ExecutingContext = context,
 			};
 
 			LogHelper.Debug("BeginProcessRequest: " + request.Url);
 
 			try
 			{
-
-				//get formatter from content type
-				var formatter = RpcProcessor.GetFormatter(request.ContentType);
-				if (formatter != null)
-					response.ContentType = request.ContentType;
-
-				serviceContext.Formatter = formatter;
-
-				var requestPath = request.Path;
-				// ReSharper disable once PossibleNullReferenceException
-				requestPath = request.ApplicationPath.Length == 1
-					? "~" + requestPath
-					: "~" + requestPath.Substring(request.ApplicationPath.Length);
-
-				var ar = BeginProcessRequest(serviceContext, requestPath, cb);
-				LogHelper.Debug("RpcAsyncHandler.BeginProcessRequest end return"
-					+ $"ar.IsCompleted: {ar.IsCompleted}"); //JsonConvert.SerializeObject(ar));
-
-				//if (ar.IsCompleted)
-				//	cb(ar);
+				var result = RpcProcessor.ProcessAsync(serviceContext);
+				var ar = ToBegin(result, cb, serviceContext);
 				return ar;
 			}
-			//catch (ThreadAbortException ex)
-			//{
-			//	serviceContext.Exception = ex;
-			//	return new ServiceAsyncResult
-			//	{
-			//		AsyncState = context,
-			//		IsCompleted = true,
-			//		CompletedSynchronously = true,
-			//		AsyncWaitHandle = null,
-			//	};
-			//}
-			//catch (TypeInitializationException ex)
-			//{
-			//	serviceContext.Exception = ex;
-			//	return new ServiceAsyncResult
-			//	{
-			//		AsyncState = serviceContext,
-			//		IsCompleted = true,
-			//		CompletedSynchronously = true,
-			//		AsyncWaitHandle = null,
-			//	};
-			//}
 			catch (Exception ex)
 			{
 				serviceContext.Exception = ex;
@@ -155,52 +124,42 @@ namespace RpcLite.Service
 			}
 		}
 
-		private static IAsyncResult BeginProcessRequest(ServiceContext context, string requestPath, AsyncCallback cb)
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="task"></param>
+		/// <param name="callback"></param>
+		/// <param name="state"></param>
+		/// <returns></returns>
+		public static IAsyncResult ToBegin(Task task, AsyncCallback callback, object state)
 		{
-			LogHelper.Debug("BeginProcessReques 2");
+			if (task == null)
+				throw new ArgumentNullException(nameof(task));
 
-			if (string.IsNullOrWhiteSpace(requestPath))
-				throw new ArgumentException("request.AppRelativeCurrentExecutionFilePath is null or white space");
-
-			var service = RpcServiceFactory.GetService(requestPath);
-
-			if (service == null)
+			var tcs = new TaskCompletionSource<object>(state);
+			task.ContinueWith(t =>
 			{
-				LogHelper.Debug("BeginProcessReques Can't find service " + requestPath);
-				throw new ConfigException("Configuration error service not found");
-			}
-
-			try
-			{
-				var actionName = requestPath.Substring(service.Path.Length);
-				if (string.IsNullOrEmpty(actionName))
-					throw new RequestException("Bad request: not action name");
-
-				context.Request.ActionName = actionName;
-				context.Request.ServiceType = service.Type;
-
-				try
+				if (task.IsFaulted)
 				{
-					LogHelper.Debug("RpcAsyncHandler.BeginProcessRequest start service.BeginProcessRequest(request, response, cb, requestContext) " + requestPath);
-					var result = service.BeginProcessRequest(context, cb);
-					LogHelper.Debug("RpcAsyncHandler.BeginProcessRequest end service.BeginProcessRequest(request, response, cb, requestContext) " + requestPath);
-					return result;
+					if (task.Exception != null)
+						tcs.TrySetException(task.Exception.InnerExceptions);
 				}
-				catch (RpcLiteException)
+				else if (task.IsCanceled)
 				{
-					throw;
+					tcs.TrySetCanceled();
 				}
-				catch (Exception ex)
+				else
 				{
-					throw new ProcessRequestException(ex.Message, ex);
+					tcs.TrySetResult(null);
+					//tcs.TrySetResult(RpcAction.GetTaskResult(t));
 				}
-			}
-			catch (Exception ex)
-			{
-				LogHelper.Error(ex);
-				throw;
-			}
+
+				callback?.Invoke(tcs.Task);
+			}/*, TaskScheduler.Default*/);
+
+			return tcs.Task;
 		}
+
 
 		/// <summary>
 		/// 
@@ -222,20 +181,8 @@ namespace RpcLite.Service
 				return;
 			}
 
-			try
-			{
-				if (!result.CompletedSynchronously)
-				{
-					RpcService.EndProcessRequest(result);
-				}
-
-			}
-			catch (Exception ex)
-			{
-				context.Exception = ex;
-			}
-
-			var httpContext = context.HttpContext;
+			var httpContext = (HttpContext)context.ExecutingContext;
+			httpContext.Response.ContentType = context.Response.ContentType;
 			if (context.Exception != null)
 			{
 				httpContext.Response.AddHeader("RpcLite-ExceptionType", context.Exception.GetType().FullName);
@@ -254,7 +201,6 @@ namespace RpcLite.Service
 					context.Formatter.Serialize(context.Response.ResponseStream, context.Result);
 
 				httpContext.Response.AddHeader("RpcLite-StatusCode", ((int)HttpStatusCode.OK).ToString());
-
 			}
 
 			LogHelper.Debug("RpcAsyncHandler.EndProcessRequest end RpcService.EndProcessRequest(result);");

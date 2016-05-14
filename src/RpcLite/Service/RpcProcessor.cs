@@ -1,8 +1,9 @@
 ﻿using System;
-using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using RpcLite.Config;
 using RpcLite.Formatters;
+using RpcLite.Logging;
 
 namespace RpcLite.Service
 {
@@ -36,5 +37,74 @@ namespace RpcLite.Service
 			}
 			return formatter;
 		}
+
+		public static Task ProcessAsync(ServiceContext serviceContext)
+		{
+			//get formatter from content type
+			var formatter = GetFormatter(serviceContext.Request.ContentType);
+			if (formatter != null)
+				serviceContext.Response.ContentType = serviceContext.Request.ContentType;
+
+			serviceContext.Formatter = formatter;
+
+			var ar = ProcessRequestAsync(serviceContext);
+
+			LogHelper.Debug("RpcAsyncHandler.BeginProcessRequest end return"
+				+ $"ar.IsCompleted: {ar.IsCompleted}"); //JsonConvert.SerializeObject(ar));
+
+			//if (ar.IsCompleted)
+			//	cb(ar);
+			return ar;
+		}
+
+		private static Task ProcessRequestAsync(ServiceContext context)
+		{
+			LogHelper.Debug("BeginProcessReques 2");
+
+			var requestPath = context.Request.Path;
+
+			if (string.IsNullOrWhiteSpace(requestPath))
+				throw new ArgumentException("request.AppRelativeCurrentExecutionFilePath is null or white space");
+
+			var service = RpcServiceFactory.GetService(requestPath);
+
+			if (service == null)
+			{
+				LogHelper.Debug("BeginProcessReques Can't find service " + requestPath);
+				throw new ConfigException("Configuration error service not found");
+			}
+
+			try
+			{
+				var actionName = requestPath.Substring(service.Path.Length);
+				if (string.IsNullOrEmpty(actionName))
+					throw new RequestException("Bad request: not action name");
+
+				context.Request.ActionName = actionName;
+				context.Request.ServiceType = service.Type;
+
+				try
+				{
+					LogHelper.Debug("RpcAsyncHandler.BeginProcessRequest start service.BeginProcessRequest(request, response, cb, requestContext) " + requestPath);
+					var result = service.ProcessRequestAsync(context);
+					LogHelper.Debug("RpcAsyncHandler.BeginProcessRequest end service.BeginProcessRequest(request, response, cb, requestContext) " + requestPath);
+					return result;
+				}
+				catch (RpcLiteException)
+				{
+					throw;
+				}
+				catch (Exception ex)
+				{
+					throw new ProcessRequestException(ex.Message, ex);
+				}
+			}
+			catch (Exception ex)
+			{
+				LogHelper.Error(ex);
+				throw;
+			}
+		}
+
 	}
 }

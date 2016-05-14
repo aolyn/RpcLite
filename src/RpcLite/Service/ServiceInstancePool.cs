@@ -5,44 +5,48 @@ namespace RpcLite.Service
 {
 	internal class ServiceFactory
 	{
-		private static readonly Dictionary<RpcAction, ServiceInstanceContainerPool> pool = new Dictionary<RpcAction, ServiceInstanceContainerPool>();
-		private static readonly object containerLock = new object();
+		private static readonly QuickReadConcurrentDictionary<RpcAction, ServiceInstanceContainerPool> Pool = new QuickReadConcurrentDictionary<RpcAction, ServiceInstanceContainerPool>();
+		//private static readonly object ContainerLock = new object();
 
 		public static ServiceInstanceContainer GetService(RpcAction action)
 		{
-			if (action == null) throw new ArgumentNullException("action");
+			if (action == null) throw new ArgumentNullException(nameof(action));
 			if (action.ServiceCreator == null) throw new ArgumentException("action.ServiceCreator can't be null");
 
 			//var serviceCreator = action.ServiceCreator;
-			ServiceInstanceContainerPool container;
-			if (pool.TryGetValue(action, out container))
-				return container.GetInstanceContainer();
+			//ServiceInstanceContainerPool container;
+			var container = Pool.GetOrAdd(action, () =>
+				new ServiceInstanceContainerPool(action.ServiceCreator) { Size = 1000 });
+			return container.GetInstanceContainer();
 
-			lock (containerLock)
-			{
-				if (pool.TryGetValue(action, out container))
-					return container.GetInstanceContainer();
+			//if (Pool.TryGetValue(action, out container))
+			//	return container.GetInstanceContainer();
 
-				container = new ServiceInstanceContainerPool(action.ServiceCreator) { Size = 1000 };
-				pool.Add(action, container);
-				return container.GetInstanceContainer();
-			}
+			//lock (ContainerLock)
+			//{
+			//	if (Pool.TryGetValue(action, out container))
+			//		return container.GetInstanceContainer();
+
+			//	container = new ServiceInstanceContainerPool(action.ServiceCreator) { Size = 1000 };
+			//	Pool.Add(action, container);
+			//	return container.GetInstanceContainer();
+			//}
 		}
 	}
 
 	internal class ServiceInstanceContainerPool : IDisposable
 	{
-		private readonly Func<object> serviceCreator;
+		private readonly Func<object> _serviceCreator;
 
-		public static readonly Stack<ServiceInstanceContainer> Pool = new Stack<ServiceInstanceContainer>();
+		public readonly Stack<ServiceInstanceContainer> Pool = new Stack<ServiceInstanceContainer>();
 		public int Size { get; set; }
 
 		public ServiceInstanceContainerPool(Func<object> serviceCreator)
 		{
 			if (serviceCreator == null)
-				throw new ArgumentNullException("serviceCreator");
+				throw new ArgumentNullException(nameof(serviceCreator));
 
-			this.serviceCreator = serviceCreator;
+			_serviceCreator = serviceCreator;
 		}
 
 		public void Dispose()
@@ -50,15 +54,15 @@ namespace RpcLite.Service
 			Pool.Clear();
 		}
 
-		private readonly object poolLock = new object();
+		private readonly object _poolLock = new object();
 		public ServiceInstanceContainer GetInstanceContainer()
 		{
-			lock (poolLock)
+			lock (_poolLock)
 			{
 				if (Pool.Count > 0)
 					return Pool.Pop();
 
-				var serviceInstance = serviceCreator();
+				var serviceInstance = _serviceCreator();
 				var container = new ServiceInstanceContainer(this, serviceInstance);
 				return container;
 			}
@@ -66,7 +70,7 @@ namespace RpcLite.Service
 
 		public void ReleaseInstanceContainer(ServiceInstanceContainer instance)
 		{
-			lock (poolLock)
+			lock (_poolLock)
 			{
 				if (Pool.Count <= Size)
 				{
