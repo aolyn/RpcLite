@@ -103,88 +103,39 @@ namespace RpcLite.Service
 		/// </summary>
 		public Type TaskResultType { get; set; }
 
-		#endregion
+		/// <summary>
+		/// 
+		/// </summary>
+		public Type ServiceType { get; set; }
 
-		//internal Task ExecuteTask(ServiceContext context)
-		//{
-		//	var task = ActionHelper.InvokeTask(context);
-		//	return task;
-		//}
+		#endregion
 
 		internal Task ExecuteAsync(ServiceContext context)
 		{
-			//IAsyncResult ar;
 			if (IsTask)
 			{
-				//var task = (Task)ActionHelper.InvokeTask(actionInfo, response, requestObject, cb, context);
-				//var task = ExecuteTask(context);
 				var task = ActionHelper.InvokeTask(context);
 				return task;
-				//var task2 = task.ContinueWith(tsk =>
-				// {
-
-				// });
-				//task2.Wait();
-				//var waitTask = task.ContinueWith(tsk =>
-				//{
-
-				//});
-				//return waitTask;
-				//ar = ToBegin(task, callback, context/*, actionInfo.TaskResultType*/);
 			}
-			//else if (IsAsync)
-			//{
-			//	ar = ActionHelper.BeginInvokeAction(context.Action, context.Response, context.Argument, callback, context);
-			//}
 			else
 			{
 				LogHelper.Debug("RpcService.BeginProcessRequest: start ActionHelper.InvokeAction");
-				context.Result = ActionHelper.InvokeAction(context.Action, context.Argument);
+				try
+				{
+					context.Result = ActionHelper.InvokeAction(context.Action, context.Argument);
+				}
+				catch (Exception ex)
+				{
+					var tcs = new TaskCompletionSource<object>();
+					tcs.SetException(ex);
+					return tcs.Task;
+				}
 				LogHelper.Debug("RpcService.BeginProcessRequest: end ActionHelper.InvokeAction");
 
-				var tcs = new TaskCompletionSource<object>();
-				tcs.SetResult(context.Result);
-				return tcs.Task;
-
-				//ar = new ServiceAsyncResult
-				//{
-				//	AsyncState = context,
-				//	IsCompleted = true,
-				//	CompletedSynchronously = true,
-				//	AsyncWaitHandle = null,
-				//};
+				var task = new Task<object>(() => context.Result);
+				task.RunSynchronously();
+				return task;
 			}
-			//return ar;
-		}
-
-		public static IAsyncResult ToBegin(Task task, AsyncCallback callback, object state)
-		{
-			if (task == null)
-				throw new ArgumentNullException(nameof(task));
-
-			var tcs = new TaskCompletionSource<object>(state);
-			task.ContinueWith(t =>
-			{
-				if (task.IsFaulted)
-				{
-					if (task.Exception != null)
-						tcs.TrySetException(task.Exception.InnerExceptions);
-				}
-				else if (task.IsCanceled)
-				{
-					tcs.TrySetCanceled();
-				}
-				else
-				{
-					//tcs.TrySetResult(null);
-					tcs.TrySetResult(GetTaskResult(t));
-				}
-
-				callback?.Invoke(tcs.Task);
-				//callback?.Invoke(task);
-			}/*, TaskScheduler.Default*/);
-
-			return tcs.Task;
 		}
 
 		private static readonly QuickReadConcurrentDictionary<Type, Func<object, object>> GetTaskResultFuncs = new QuickReadConcurrentDictionary<Type, Func<object, object>>();
@@ -285,5 +236,13 @@ namespace RpcLite.Service
 			return resultObject;
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		public override string ToString()
+		{
+			return Name;
+		}
 	}
 }

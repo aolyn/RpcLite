@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Net;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Web;
-using RpcLite.Config;
 using RpcLite.Logging;
 
 namespace RpcLite.Service
@@ -107,30 +107,10 @@ namespace RpcLite.Service
 
 			try
 			{
-				return Process(serviceContext, cb);
+				var result = RpcProcessor.ProcessAsync(serviceContext);
+				var ar = ToBegin(result, cb, serviceContext);
+				return ar;
 			}
-			//catch (ThreadAbortException ex)
-			//{
-			//	serviceContext.Exception = ex;
-			//	return new ServiceAsyncResult
-			//	{
-			//		AsyncState = context,
-			//		IsCompleted = true,
-			//		CompletedSynchronously = true,
-			//		AsyncWaitHandle = null,
-			//	};
-			//}
-			//catch (TypeInitializationException ex)
-			//{
-			//	serviceContext.Exception = ex;
-			//	return new ServiceAsyncResult
-			//	{
-			//		AsyncState = serviceContext,
-			//		IsCompleted = true,
-			//		CompletedSynchronously = true,
-			//		AsyncWaitHandle = null,
-			//	};
-			//}
 			catch (Exception ex)
 			{
 				serviceContext.Exception = ex;
@@ -144,72 +124,42 @@ namespace RpcLite.Service
 			}
 		}
 
-		private static IAsyncResult Process(ServiceContext serviceContext, AsyncCallback cb)
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="task"></param>
+		/// <param name="callback"></param>
+		/// <param name="state"></param>
+		/// <returns></returns>
+		public static IAsyncResult ToBegin(Task task, AsyncCallback callback, object state)
 		{
-			//get formatter from content type
-			var formatter = RpcProcessor.GetFormatter(serviceContext.Request.ContentType);
-			if (formatter != null)
-				serviceContext.Response.ContentType = serviceContext.Request.ContentType;
+			if (task == null)
+				throw new ArgumentNullException(nameof(task));
 
-			serviceContext.Formatter = formatter;
+			var tcs = new TaskCompletionSource<object>(state);
+			task.ContinueWith(t =>
+			{
+				if (task.IsFaulted)
+				{
+					if (task.Exception != null)
+						tcs.TrySetException(task.Exception.InnerExceptions);
+				}
+				else if (task.IsCanceled)
+				{
+					tcs.TrySetCanceled();
+				}
+				else
+				{
+					tcs.TrySetResult(null);
+					//tcs.TrySetResult(RpcAction.GetTaskResult(t));
+				}
 
-			var ar = BeginProcessRequest(serviceContext, serviceContext.Request.Path, cb);
-			LogHelper.Debug("RpcAsyncHandler.BeginProcessRequest end return"
-				+ $"ar.IsCompleted: {ar.IsCompleted}"); //JsonConvert.SerializeObject(ar));
+				callback?.Invoke(tcs.Task);
+			}/*, TaskScheduler.Default*/);
 
-			//if (ar.IsCompleted)
-			//	cb(ar);
-			return ar;
+			return tcs.Task;
 		}
 
-		private static IAsyncResult BeginProcessRequest(ServiceContext context, string requestPath, AsyncCallback cb)
-		{
-			LogHelper.Debug("BeginProcessReques 2");
-
-			if (string.IsNullOrWhiteSpace(requestPath))
-				throw new ArgumentException("request.AppRelativeCurrentExecutionFilePath is null or white space");
-
-			var service = RpcServiceFactory.GetService(requestPath);
-
-			if (service == null)
-			{
-				LogHelper.Debug("BeginProcessReques Can't find service " + requestPath);
-				throw new ConfigException("Configuration error service not found");
-			}
-
-			try
-			{
-				var actionName = requestPath.Substring(service.Path.Length);
-				if (string.IsNullOrEmpty(actionName))
-					throw new RequestException("Bad request: not action name");
-
-				context.Request.ActionName = actionName;
-				context.Request.ServiceType = service.Type;
-
-				try
-				{
-					LogHelper.Debug("RpcAsyncHandler.BeginProcessRequest start service.BeginProcessRequest(request, response, cb, requestContext) " + requestPath);
-					var result = service.BeginProcessRequest(context);
-					LogHelper.Debug("RpcAsyncHandler.BeginProcessRequest end service.BeginProcessRequest(request, response, cb, requestContext) " + requestPath);
-					var ar = RpcAction.ToBegin(result, cb, context);
-					return ar;
-					//return result;
-				}
-				catch (RpcLiteException)
-				{
-					throw;
-				}
-				catch (Exception ex)
-				{
-					throw new ProcessRequestException(ex.Message, ex);
-				}
-			}
-			catch (Exception ex)
-			{
-				LogHelper.Error(ex);
-				throw;
-			}
-		}
 
 		/// <summary>
 		/// 
@@ -229,19 +179,6 @@ namespace RpcLite.Service
 			{
 				LogHelper.Error("ServiceContext is null", null);
 				return;
-			}
-
-			try
-			{
-				if (!result.CompletedSynchronously)
-				{
-					RpcService.EndProcessRequest(result);
-				}
-
-			}
-			catch (Exception ex)
-			{
-				context.Exception = ex;
 			}
 
 			var httpContext = (HttpContext)context.ExecutingContext;

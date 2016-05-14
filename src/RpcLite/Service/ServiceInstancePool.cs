@@ -38,7 +38,7 @@ namespace RpcLite.Service
 	{
 		private readonly Func<object> _serviceCreator;
 
-		public static readonly Stack<ServiceInstanceContainer> Pool = new Stack<ServiceInstanceContainer>();
+		public readonly Stack<ServiceInstanceContainer> Pool = new Stack<ServiceInstanceContainer>();
 		public int Size { get; set; }
 
 		public ServiceInstanceContainerPool(Func<object> serviceCreator)
