@@ -50,43 +50,43 @@ namespace RpcLite.Service
 		/// </summary>
 		public Func<object, object, object> Func { get; set; }
 
-		/// <summary>
-		/// T: service, argument, callback, state, return
-		/// </summary>
-		public Func<object, object, AsyncCallback, object, IAsyncResult> BeginFunc { get; set; }
+		///// <summary>
+		///// T: service, argument, callback, state, return
+		///// </summary>
+		//public Func<object, object, AsyncCallback, object, IAsyncResult> BeginFunc { get; set; }
 
-		//public Func<object, object, object, object, object> BeginFunc { get; set; }
+		////public Func<object, object, object, object, object> BeginFunc { get; set; }
 
-		/// <summary>
-		/// 
-		/// </summary>
-		public Func<object, IAsyncResult, object> EndFunc { get; set; }
+		///// <summary>
+		///// 
+		///// </summary>
+		//public Func<object, IAsyncResult, object> EndFunc { get; set; }
 
 		/// <summary>
 		/// 
 		/// </summary>
 		public Action<object, object> Action { get; set; }
 
-		/// <summary>
-		/// 
-		/// </summary>
-		public Func<object, object, AsyncCallback, object, IAsyncResult> BeginAction { get; set; }
-		//public Func<object, object, object, object, object> BeginAction { get; set; }
+		///// <summary>
+		///// 
+		///// </summary>
+		//public Func<object, object, AsyncCallback, object, IAsyncResult> BeginAction { get; set; }
+		////public Func<object, object, object, object, object> BeginAction { get; set; }
 
-		/// <summary>
-		/// 
-		/// </summary>
-		public Action<object, IAsyncResult> EndAction { get; set; }
+		///// <summary>
+		///// 
+		///// </summary>
+		//public Action<object, IAsyncResult> EndAction { get; set; }
 
 		/// <summary>
 		/// 
 		/// </summary>
 		public Func<object> ServiceCreator { get; set; }
 
-		/// <summary>
-		/// 
-		/// </summary>
-		public bool IsAsync { get; set; }
+		///// <summary>
+		///// 
+		///// </summary>
+		//public bool IsAsync { get; set; }
 
 		/// <summary>
 		/// 
@@ -103,71 +103,39 @@ namespace RpcLite.Service
 		/// </summary>
 		public Type TaskResultType { get; set; }
 
+		/// <summary>
+		/// 
+		/// </summary>
+		public Type ServiceType { get; set; }
+
 		#endregion
 
-		internal Task ExecuteTask(ServiceResponse response, object requestObject, AsyncCallback cb, ServiceContext context)
+		internal Task ExecuteAsync(ServiceContext context)
 		{
-			var task = (Task)ActionHelper.InvokeTask(context, cb);
-			return task;
-		}
-
-		internal IAsyncResult Execute(ServiceContext context, AsyncCallback callback)
-		{
-			IAsyncResult ar;
 			if (IsTask)
 			{
-				//var task = (Task)ActionHelper.InvokeTask(actionInfo, response, requestObject, cb, context);
-				var task = ExecuteTask(context.Response, context.Argument, callback, context);
-				ar = ToBegin(task, callback, context/*, actionInfo.TaskResultType*/);
-			}
-			else if (IsAsync)
-			{
-				ar = ActionHelper.BeginInvokeAction(context.Action, context.Response, context.Argument, callback, context);
+				var task = ActionHelper.InvokeTask(context);
+				return task;
 			}
 			else
 			{
 				LogHelper.Debug("RpcService.BeginProcessRequest: start ActionHelper.InvokeAction");
-				context.Result = ActionHelper.InvokeAction(context.Action, context.Argument);
+				try
+				{
+					context.Result = ActionHelper.InvokeAction(context.Action, context.Argument);
+				}
+				catch (Exception ex)
+				{
+					var tcs = new TaskCompletionSource<object>();
+					tcs.SetException(ex);
+					return tcs.Task;
+				}
 				LogHelper.Debug("RpcService.BeginProcessRequest: end ActionHelper.InvokeAction");
-				ar = new ServiceAsyncResult
-				{
-					AsyncState = context,
-					IsCompleted = true,
-					CompletedSynchronously = true,
-					AsyncWaitHandle = null,
-				};
+
+				var task = new Task<object>(() => context.Result);
+				task.RunSynchronously();
+				return task;
 			}
-			return ar;
-		}
-
-		private static IAsyncResult ToBegin(Task task, AsyncCallback callback, object state)
-		{
-			if (task == null)
-				throw new ArgumentNullException(nameof(task));
-
-			var tcs = new TaskCompletionSource<object>(state);
-			task.ContinueWith(t =>
-			{
-				if (task.IsFaulted)
-				{
-					if (task.Exception != null)
-						tcs.TrySetException(task.Exception.InnerExceptions);
-				}
-				else if (task.IsCanceled)
-				{
-					tcs.TrySetCanceled();
-				}
-				else
-				{
-					//tcs.TrySetResult(null);
-					tcs.TrySetResult(GetTaskResult(t));
-				}
-
-				callback?.Invoke(tcs.Task);
-				//callback?.Invoke(task);
-			}, TaskScheduler.Default);
-
-			return tcs.Task;
 		}
 
 		private static readonly QuickReadConcurrentDictionary<Type, Func<object, object>> GetTaskResultFuncs = new QuickReadConcurrentDictionary<Type, Func<object, object>>();
@@ -227,31 +195,31 @@ namespace RpcLite.Service
 
 					resultObject = GetTaskResult(task);
 				}
-				else if (!context.Action.IsAsync)
+				else // if (!context.Action.IsAsync)
 				{
 					if (context.Action.HasReturnValue)
 					{
 						resultObject = context.Result;
 					}
 				}
-				else
-				{
-					if (context.Action.HasReturnValue)
-					{
-						try
-						{
-							resultObject = context.Action.EndFunc(serviceContainer.ServiceObject, ar);
-						}
-						catch (Exception ex)
-						{
-							resultObject = ex;
-						}
-					}
-					else
-					{
-						context.Action.EndAction(serviceContainer.ServiceObject, ar);
-					}
-				}
+				//else
+				//{
+				//	if (context.Action.HasReturnValue)
+				//	{
+				//		try
+				//		{
+				//			resultObject = context.Action.EndFunc(serviceContainer.ServiceObject, ar);
+				//		}
+				//		catch (Exception ex)
+				//		{
+				//			resultObject = ex;
+				//		}
+				//	}
+				//	else
+				//	{
+				//		context.Action.EndAction(serviceContainer.ServiceObject, ar);
+				//	}
+				//}
 			}
 			//catch (Exception ex)
 			//{
@@ -259,7 +227,7 @@ namespace RpcLite.Service
 			//}
 			finally
 			{
-				if (context.Action.IsAsync && !context.Action.IsStatic)
+				if (/*context.Action.IsAsync &&*/ serviceContainer != null && !context.Action.IsStatic)
 				{
 					serviceContainer.Dispose();
 				}
@@ -268,5 +236,13 @@ namespace RpcLite.Service
 			return resultObject;
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		public override string ToString()
+		{
+			return Name;
+		}
 	}
 }

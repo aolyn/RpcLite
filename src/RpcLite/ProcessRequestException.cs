@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.Serialization;
 
 namespace RpcLite
 {
@@ -11,6 +12,15 @@ namespace RpcLite
 		/// Initializes a new instance of RpcLite.ProcessRequestException class
 		/// </summary>
 		public ProcessRequestException() { }
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="info"></param>
+		/// <param name="context"></param>
+		protected ProcessRequestException(SerializationInfo info, StreamingContext context) : base(info, context)
+		{
+		}
 
 		/// <summary>
 		/// Initializes a new instance of RpcLite.ProcessRequestException class with specifid message and inner exception

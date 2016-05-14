@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
+﻿using System.IO;
 
 namespace RpcLite.Service
 {
@@ -16,5 +12,9 @@ namespace RpcLite.Service
 		/// </summary>
 		public Stream ResponseStream { get; set; }
 
+		/// <summary>
+		/// 
+		/// </summary>
+		public string ContentType { get; set; }
 	}
 }
