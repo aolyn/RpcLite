@@ -87,6 +87,7 @@ namespace RpcLite.Service
 				HasReturnValue = hasReturn,
 				ServiceCreator = TypeCreator.GetCreateInstanceFunc(serviceType),
 				//IsAsync = isAsync,
+				ServiceType = serviceType,
 				IsStatic = method.IsStatic,
 				IsTask = isTask,
 			};

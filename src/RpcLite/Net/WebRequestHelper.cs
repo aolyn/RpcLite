@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -173,52 +171,52 @@ namespace RpcLite.Net
 		/// <returns></returns>
 		public static ServiceReponseMessage Post(string url, string postData, Encoding encoding, Dictionary<string, string> headDic)
 		{
-			ServiceReponseMessage responseMessage = null;
+			ServiceReponseMessage responseMessage;
 			var request = WebRequest.Create(url) as HttpWebRequest;
-			if (request != null)
+			if (request == null) return null;
+
+			request.Timeout = 3000 * 1000;
+			request.Method = "POST";
+			if (headDic != null)
 			{
-				request.Method = "POST";
-				if (headDic != null)
+				foreach (var head in headDic)
 				{
-					foreach (var head in headDic)
-					{
-						if (head.Key == "Content-Type")
-							request.ContentType = head.Value;
-						else if (head.Key == "Accept")
-							request.Accept = head.Value;
-						else
-							request.Headers.Add(head.Key, head.Value);
-					}
-				}
-
-				if (!string.IsNullOrEmpty(postData))
-				{
-					var requestStream = request.GetRequestStream();
-					if (encoding == null)
-						encoding = Encoding.UTF8;
-					var writer = new StreamWriter(requestStream, encoding);
-					writer.Write(postData);
-					writer.Close();
-				}
-
-				try
-				{
-					using (var response = (HttpWebResponse)request.GetResponse())
-					{
-						responseMessage = GetResponseMessage(encoding, response);
-					}
-				}
-				catch (WebException ex)
-				{
-					if (ex.Response != null)
-					{
-						responseMessage = GetResponseMessage(encoding, (HttpWebResponse)ex.Response);
-						ex.Response.Close();
-					}
+					if (head.Key == "Content-Type")
+						request.ContentType = head.Value;
+					else if (head.Key == "Accept")
+						request.Accept = head.Value;
 					else
-					{
-						throw;
-					}
+						request.Headers.Add(head.Key, head.Value);
+				}
+			}
+
+			if (!string.IsNullOrEmpty(postData))
+			{
+				var requestStream = request.GetRequestStream();
+				if (encoding == null)
+					encoding = Encoding.UTF8;
+				var writer = new StreamWriter(requestStream, encoding);
+				writer.Write(postData);
+				writer.Close();
+			}
+
+			try
+			{
+				using (var response = (HttpWebResponse)request.GetResponse())
+				{
+					responseMessage = GetResponseMessage(encoding, response);
+				}
+			}
+			catch (WebException ex)
+			{
+				if (ex.Response != null)
+				{
+					responseMessage = GetResponseMessage(encoding, (HttpWebResponse)ex.Response);
+					ex.Response.Close();
+				}
+				else
+				{
+					throw;
 				}
 			}
 			return responseMessage;

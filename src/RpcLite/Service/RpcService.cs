@@ -38,8 +38,6 @@ namespace RpcLite.Service
 		/// </summary>
 		public event Action<ServiceContext> AfterInvoke;
 
-		#endregion
-
 		/// <summary>
 		/// Convert to string
 		/// </summary>
@@ -49,13 +47,14 @@ namespace RpcLite.Service
 			return $"{Name}, {Path}, {Type}";
 		}
 
+		#endregion
+
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="context"></param>
-		/// <param name="cb"></param>
 		/// <returns></returns>
-		public Task BeginProcessRequest(ServiceContext context)
+		public Task ProcessRequestAsync(ServiceContext context)
 		{
 			LogHelper.Debug("RpcService.BeginProcessRequest");
 
@@ -78,16 +77,40 @@ namespace RpcLite.Service
 			context.Action = actionInfo;
 			context.Argument = requestObject;
 
-			BeforeInvoke?.Invoke(context);
+			try
+			{
+				BeforeInvoke?.Invoke(context);
+			}
+			catch (Exception ex)
+			{
+				LogHelper.Error(ex);
+			}
 
 			var ar = actionInfo.ExecuteAsync(context);
+			var waitTask = ar.ContinueWith(tsk =>
+			{
+				try
+				{
+					AfterInvoke?.Invoke(context);
+				}
+				catch (Exception ex)
+				{
+					LogHelper.Error(ex);
+				}
 
-			return ar;
+				if (tsk.IsFaulted)
+				{
+					context.Exception = tsk.Exception.InnerException;
+				}
+				else
+				{
+					var result = RpcAction.GetResultObject(tsk, context);
+					context.Result = result;
+				}
+			});
+
+			return waitTask;
 		}
-
-
-		//private static readonly QuickReadConcurrentDictionary<Type, Func<Task, object>> GetTaskResultFuncs 
-		//	= new QuickReadConcurrentDictionary<Type, Func<Task, object>>();
 
 		private static object GetRequestObject(Stream stream, IFormatter formatter, Type type)
 		{
@@ -104,75 +127,35 @@ namespace RpcLite.Service
 		///// <summary>
 		///// 
 		///// </summary>
-		///// <param name="serviceRequest"></param>
-		///// <returns></returns>
-		//public object ProcessRequest(ServiceRequest serviceRequest)
+		///// <param name="result"></param>
+		//public static void EndProcessRequest(IAsyncResult result)
 		//{
-		//	var actionInfo = ActionHelper.GetActionInfo(serviceRequest.ServiceType, serviceRequest.ActionName);
-		//	if (actionInfo == null)
-		//		throw new ServiceException("Action Not Found: " + serviceRequest.ActionName);
+		//	var state = result.AsyncState as ServiceContext;
+		//	if (state == null)
+		//	{
+		//		LogHelper.Error("ServiceContext is null", null);
+		//		return;
+		//	}
 
-		//	object requestObject = null;
-		//	if (actionInfo.ArgumentCount > 0)
-		//		requestObject = GetRequestObject(serviceRequest.RequestStream, serviceRequest.Formatter, actionInfo.ArgumentType);
+		//	if (state.Service == null)
+		//		throw new InvalidOperationException("not implement, RpcLite bug");
 
-		//	var result = ActionHelper.InvokeAction(actionInfo, requestObject);
-		//	return actionInfo.HasReturnValue
-		//		? result
-		//		: NullResponse.Value;
+		//	state.Service.EndProcessRequest(result, state);
 		//}
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="result"></param>
-		public static void EndProcessRequest(IAsyncResult result)
-		{
-			var state = result.AsyncState as ServiceContext;
-			if (state == null)
-			{
-				LogHelper.Error("ServiceContext is null", null);
-				return;
-			}
+		//private void EndProcessRequest(IAsyncResult ar, ServiceContext context)
+		//{
+		//	//object resultObject = null;
+		//	try
+		//	{
+		//		//resultObject = RpcAction.GetResultObject(ar, context);
+		//		//context.Result = RpcAction.GetResultObject(ar, context);
+		//	}
+		//	finally
+		//	{
+		//		AfterInvoke?.Invoke(context);
+		//	}
+		//}
 
-			if (state.Service == null)
-				throw new InvalidOperationException("not implement, RpcLite bug");
-
-			state.Service.EndProcessRequest(result, state);
-		}
-
-		private void EndProcessRequest(IAsyncResult ar, ServiceContext context)
-		{
-			//object resultObject = null;
-			try
-			{
-				//resultObject = RpcAction.GetResultObject(ar, context);
-				context.Result = RpcAction.GetResultObject(ar, context);
-			}
-			//catch (Exception)
-			//{
-			//	//var exObj = new ServiceExcepionResponse
-			//	//{
-			//	//	ErrorCode = 500,
-			//	//	ExceptionAssembly = ex.GetType().Assembly.FullName,
-			//	//	ExceptionType = ex.GetType().FullName,
-			//	//	InnerException = ex,
-			//	//	IsFrameworkExecption = ex is ServiceException,
-			//	//};
-			//	//context.Formatter.Serialize(context.Response.ResponseStream, exObj);
-			//	//var httpContext = context.State as HttpContext;
-			//	//if (httpContext != null)
-			//	//{
-			//	//	httpContext.Response.StatusCode = 500;
-			//	//}
-			//	throw;
-			//}
-			finally
-			{
-				AfterInvoke?.Invoke(context);
-
-			}
-
-		}
 	}
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
@@ -16,6 +17,33 @@ namespace WebApiClient
 		static void Main(string[] args)
 		{
 			{
+				var client = new WebClient();
+				client.Proxy = new WebProxy("http://localhost:8888");
+				var html = client.DownloadString("http://mic:37330/");
+				//html = client.DownloadString("http://127.0.0.1:37330/");
+				html = client.DownloadString("https://www.baidu.com/");
+
+				//var request = (HttpWebRequest)WebRequest.Create("https://www.baidu.com/");
+				var request = (HttpWebRequest)WebRequest.Create("http://localhost:37330/");
+				request.Proxy = new WebProxy("http://localhost:8888");
+				var iar = request.BeginGetResponse(ar =>
+				{
+					var result = request.EndGetResponse(ar);
+					Console.WriteLine(result.ContentLength);
+				}, null);
+				//var resp = request.GetResponse();
+				Console.ReadLine();
+			}
+
+			{
+				var html = new WebClient().DownloadString("https://www.baidu.com/");
+
+				var request = (HttpWebRequest)WebRequest.Create("https://www.baidu.com/");
+
+				var resp = request.GetResponse();
+			}
+
+			{
 				var inEx = new ArgumentOutOfRangeException("args111");
 
 				var ex = new AggregateException(new ArgumentException("args", inEx), new NullReferenceException("a is null"));
@@ -28,12 +56,10 @@ namespace WebApiClient
 
 				var ex2 = dExObj.InnerExceptions[1];
 				var ex2Type = ex2.GetType();
-
 			}
 
 			if (false)
 			{
-
 				//var types = new[]
 				//{
 				//	//typeof (Ctrip.API.Cruise.H5.Contract.GetShipPOIHomeResponseType),
@@ -56,7 +82,6 @@ namespace WebApiClient
 				//	json = json.Replace("\"", "'");
 				//	File.WriteAllText(string.Format("c:\\{0}.txt", type.Name), json);
 				//}
-
 			}
 
 			//ClientTestForResolverConcurrency();
@@ -67,15 +92,9 @@ namespace WebApiClient
 		private static void ClientTestForResolverConcurrency()
 		{
 			{
-				var task1 = Task.Factory.StartNew(() =>
-				{
-					var client = RpcClientBase<IProduct>.GetInstance();
-				});
+				var task1 = Task.Factory.StartNew(() => { var client = RpcClientBase<IProduct>.GetInstance(); });
 
-				var task2 = Task.Factory.StartNew(() =>
-				{
-					var client = RpcClientBase<IProduct>.GetInstance();
-				});
+				var task2 = Task.Factory.StartNew(() => { var client = RpcClientBase<IProduct>.GetInstance(); });
 
 				Task.WaitAll(task1, task2);
 			}
@@ -116,7 +135,6 @@ namespace WebApiClient
 			//	var obj = Activator.CreateInstance(type);
 			//	var ip = obj as IProduct;
 			//}
-
 		}
 
 		private static void ClientTest()
@@ -161,7 +179,7 @@ namespace WebApiClient
 				//RpcLite.NetChannelHelper.GetResponse("Hello", 11);
 				//var type = ClientWrapper.WrapInterface<IProduct>();
 
-				var apiBaseUrl = "http://localhost:37330/api/async-product/";
+				var apiBaseUrl = "http://localhost:37330/api/product/";
 
 				var client2 = RpcClientBase<IProduct>.GetInstance(apiBaseUrl);
 				client2.BaseUrl = apiBaseUrl;
@@ -170,13 +188,20 @@ namespace WebApiClient
 
 				var ip = client2 as IProduct;
 
-				var p1 = new Product { Id = 2, Name = "Chris" };
-				var result = ip.AddProduct(1, p1, 5, 6, 7, 8);
-				var r2 = ip.GetById(1);
-				ip.Delete(1);
-				var ps1 = ip.Get();
-				var ar11 = ip.AddProduct(1, p1);
-				var arr2223 = ip.Add(p1);
+				try
+				{
+					var p1 = new Product { Id = 2, Name = "Chris" };
+					var result = ip.AddProduct(1, p1, 5, 6, 7, 8);
+					var r2 = ip.GetById(1);
+					ip.Delete(1);
+					var ps1 = ip.Get();
+					var ar11 = ip.AddProduct(1, p1);
+					var arr2223 = ip.Add(p1);
+				}
+				catch (Exception ex)
+				{
+					throw;
+				}
 			}
 
 			//{
@@ -187,7 +212,6 @@ namespace WebApiClient
 			//	var obj = Activator.CreateInstance(type);
 			//	var ip = obj as IProduct;
 			//}
-
 		}
 
 		private static void ClientTest2()
@@ -235,7 +259,7 @@ namespace WebApiClient
 				// 列出所有产品
 				var url = apiUrl;
 				url += "/11";
-				HttpResponseMessage response = client.GetAsync(url).Result;  // Blocking call（阻塞调用）! 
+				HttpResponseMessage response = client.GetAsync(url).Result; // Blocking call（阻塞调用）! 
 				if (response.IsSuccessStatusCode)
 				{
 					// Parse the response body. Blocking!
@@ -277,6 +301,5 @@ namespace WebApiClient
 				}
 			}
 		}
-
 	}
 }
