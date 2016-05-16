@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Globalization;
 
-namespace RpcLite.TestWeb
+namespace TestWebCoreFx
 {
-	public class TestService1
+	public class TestService
 	{
 		public string GetDateTimeString()
 		{
 			return DateTime.Now.ToString(CultureInfo.InvariantCulture);
-
 		}
 	}
 }
