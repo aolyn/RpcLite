@@ -185,9 +185,9 @@ namespace RpcLite.Service
 			httpContext.Response.ContentType = context.Response.ContentType;
 			if (context.Exception != null)
 			{
-				httpContext.Response.AddHeader("RpcLite-ExceptionType", context.Exception.GetType().FullName);
-				httpContext.Response.AddHeader("RpcLite-ExceptionAssembly", context.Exception.GetType().Assembly.FullName);
-				httpContext.Response.AddHeader("RpcLite-StatusCode", ((int)HttpStatusCode.InternalServerError).ToString());
+				httpContext.Response.Headers["RpcLite-ExceptionType"] = context.Exception.GetType().FullName;
+				httpContext.Response.Headers["RpcLite-ExceptionAssembly"] = context.Exception.GetType().GetTypeInfo().Assembly.FullName;
+				httpContext.Response.Headers["RpcLite-StatusCode"] = ((int)HttpStatusCode.InternalServerError).ToString();
 				httpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
 
 				if (context.Formatter == null)
@@ -197,10 +197,10 @@ namespace RpcLite.Service
 			}
 			else
 			{
+				httpContext.Response.Headers["RpcLite-StatusCode"] = ((int)HttpStatusCode.OK).ToString();
+
 				if (context.Result != null && context.Action.HasReturnValue)
 					context.Formatter.Serialize(context.Response.ResponseStream, context.Result);
-
-				httpContext.Response.AddHeader("RpcLite-StatusCode", ((int)HttpStatusCode.OK).ToString());
 			}
 
 			LogHelper.Debug("RpcAsyncHandler.EndProcessRequest end RpcService.EndProcessRequest(result);");

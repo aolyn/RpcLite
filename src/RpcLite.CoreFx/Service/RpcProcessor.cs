@@ -10,7 +10,7 @@ namespace RpcLite.Service
 	/// <summary>
 	/// 
 	/// </summary>
-	internal static class RpcProcessor
+	public static class RpcProcessor
 	{
 		/// <summary>
 		/// 

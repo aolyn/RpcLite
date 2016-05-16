@@ -22,7 +22,7 @@ namespace RpcLite.Service
 		/// <summary>
 		/// 
 		/// </summary>
-		internal RpcAction Action { get; set; }
+		public RpcAction Action { get; set; }
 
 		/// <summary>
 		/// 
@@ -67,11 +67,11 @@ namespace RpcLite.Service
 		/// <summary>
 		/// 
 		/// </summary>
-		public object ExecutingContext { get; internal set; }
+		public object ExecutingContext { get; set; }
 
 		/// <summary>
 		/// 
 		/// </summary>
-		public Exception Exception { get; internal set; }
+		public Exception Exception { get; set; }
 	}
 }
