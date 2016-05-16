@@ -108,49 +108,6 @@ namespace RpcLite.Client
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="action"></param>
-		/// <param name="request"></param>
-		/// <param name="returnType"></param>
-		/// <returns></returns>
-		protected object BeginGetResponse(string action, object request, Type returnType)
-		{
-			if (_formatter == null)
-				throw new ServiceException("Formatter can't be null");
-
-			var mime = _formatter.SupportMimes.First();
-
-			var headDic = new Dictionary<string, string>
-			{
-				{"Content-Type",mime},
-				{"Accept",mime},
-			};
-
-			var json = JsonConvert.SerializeObject(request);
-
-			var url = BaseUrl + action;
-			var result = WebRequestHelper.PostData(url, json, Encoding.UTF8, headDic);
-			if (string.IsNullOrEmpty(result) || returnType == null)
-				return null;
-
-			var resultObj = JsonConvert.DeserializeObject(result, returnType);
-			return resultObj;
-		}
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="action"></param>
-		/// <param name="request"></param>
-		/// <param name="returnType"></param>
-		/// <returns></returns>
-		protected object EndGetResponse(string action, object request, Type returnType)
-		{
-			throw new NotImplementedException();
-		}
-
-		/// <summary>
-		/// 
-		/// </summary>
 		public TContract Client
 		{
 			get { return this as TContract; }
