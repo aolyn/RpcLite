@@ -17,6 +17,6 @@
   </metadata>
     <files>
         <file src="content\web.config.transform" target="content" />
-        <file src="content\TestService1.cs" target="" />
+        <file src="content\TestService1.cs" target="content" />
     </files>
 </package>

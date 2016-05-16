@@ -81,6 +81,7 @@
     <Reference Include="System.Configuration" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Client\ClientFactory.cs" />
     <Compile Include="Client\IAddressResolver.cs" />
     <Compile Include="Client\ClientAddressResolver.cs" />
     <Compile Include="Config\ResolverConfigItem.cs" />
@@ -121,6 +122,9 @@
     <Compile Include="Service\ServiceRequest.cs" />
     <Compile Include="Service\ServiceResponse.cs" />
     <Compile Include="Service\ServiceContext.cs" />
+    <Compile Include="TestService\Product.cs" />
+    <Compile Include="TestService\RpcLiteTestService.cs" />
+    <Compile Include="TestService\IRpcLiteTestService.cs" />
     <Compile Include="TypeCreator.cs" />
     <Compile Include="Utility\JsonHelper.cs" />
   </ItemGroup>
