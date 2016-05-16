@@ -104,6 +104,10 @@
       <Project>{2D6E36EC-3E98-4C98-98E8-34AFA8C75F1A}</Project>
       <Name>Model</Name>
     </ProjectReference>
+    <ProjectReference Include="..\RpcLite.AspNet\RpcLite.AspNet.csproj">
+      <Project>{314f05a6-06c2-476c-be16-52e068e91229}</Project>
+      <Name>RpcLite.AspNet</Name>
+    </ProjectReference>
     <ProjectReference Include="..\RpcLite\RpcLite.csproj">
       <Project>{EFA8DBF7-4300-4599-9C35-E716E25D7CCD}</Project>
       <Name>RpcLite</Name>

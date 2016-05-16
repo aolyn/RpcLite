@@ -22,7 +22,7 @@ namespace RpcLite.Service
 
 		static RpcServiceFactory()
 		{
-			foreach (var item in RpcLiteConfigSection.Instance.Services)
+			foreach (var item in RpcLiteConfig.Instance.Services)
 			{
 				var typeInfo = TypeCreator.GetTypeFromName(item.TypeName, item.AssemblyName);
 				if (typeInfo == null)

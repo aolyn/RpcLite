@@ -12,17 +12,17 @@ namespace RpcLite.Service
 		/// <summary>
 		/// 
 		/// </summary>
-		internal object ServiceContainer { get; set; }
+		public object ServiceContainer { get; set; }
 
 		/// <summary>
 		/// 
 		/// </summary>
-		internal object State { get; set; }
+		public object State { get; set; }
 
 		/// <summary>
 		/// 
 		/// </summary>
-		internal RpcAction Action { get; set; }
+		public RpcAction Action { get; set; }
 
 		/// <summary>
 		/// 
@@ -62,16 +62,16 @@ namespace RpcLite.Service
 		/// <summary>
 		/// 
 		/// </summary>
-		public object ExtraData { get; internal set; }
+		public object ExtraData { get; set; }
 
 		/// <summary>
 		/// 
 		/// </summary>
-		public object ExecutingContext { get; internal set; }
+		public object ExecutingContext { get; set; }
 
 		/// <summary>
 		/// 
 		/// </summary>
-		public Exception Exception { get; internal set; }
+		public Exception Exception { get; set; }
 	}
 }

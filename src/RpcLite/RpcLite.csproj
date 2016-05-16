@@ -76,9 +76,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Web" />
     <Reference Include="System.Xml" />
-    <Reference Include="System.Configuration" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Client\ClientFactory.cs" />
@@ -109,11 +107,8 @@
     <Compile Include="Service\RpcAction.cs" />
     <Compile Include="Config\ConfigException.cs" />
     <Compile Include="Service\Config\GlobalConfig.cs" />
-    <Compile Include="Config\RpcLiteConfigSection.cs" />
+    <Compile Include="Config\RpcLiteConfig.cs" />
     <Compile Include="Service\MethodHelper.cs" />
-    <Compile Include="Service\RpcAsyncHandler.cs" />
-    <Compile Include="Service\RpcHandler.cs" />
-    <Compile Include="Service\RpcLiteModule.cs" />
     <Compile Include="Service\RpcProcessor.cs" />
     <Compile Include="Service\RpcServiceFactory.cs" />
     <Compile Include="Service\ServiceAsyncResult.cs" />

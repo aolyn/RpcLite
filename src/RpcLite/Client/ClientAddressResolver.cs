@@ -16,7 +16,7 @@ namespace RpcLite.Client
 
 		private static void InitializeResolver()
 		{
-			var resolverItem = RpcLiteConfigSection.Instance.Resover;
+			var resolverItem = RpcLiteConfig.Instance.Resover;
 			if (resolverItem == null) return;
 
 			try

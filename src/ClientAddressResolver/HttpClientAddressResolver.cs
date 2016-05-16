@@ -28,7 +28,7 @@ namespace RpcLite.Resolvers
 		private static void InitilizeBaseUrls()
 		{
 			var tempDic = new QuickReadConcurrentDictionary<Type, string>();
-			foreach (var item in RpcLiteConfigSection.Instance.Clients)
+			foreach (var item in RpcLiteConfig.Instance.Clients)
 			{
 				Assembly assembly;
 
@@ -68,12 +68,12 @@ namespace RpcLite.Resolvers
 			// ReSharper disable once InconsistentlySynchronizedField
 			var url = _defaultBaseUrlDictionary.GetOrAdd(typeof(T), () =>
 			{
-				var clientConfigItem = RpcLiteConfigSection.Instance.Clients
+				var clientConfigItem = RpcLiteConfig.Instance.Clients
 					.FirstOrDefault(it => it.TypeName == typeof(T).FullName);
 
 				if (clientConfigItem != null)
 				{
-					var registryClientConfigItem = RpcLiteConfigSection.Instance.Clients
+					var registryClientConfigItem = RpcLiteConfig.Instance.Clients
 						.FirstOrDefault(it => it.TypeName == typeof(IRegistryService).FullName);
 
 					if (registryClientConfigItem != null && !string.IsNullOrWhiteSpace(registryClientConfigItem.Path))
@@ -83,7 +83,7 @@ namespace RpcLite.Resolvers
 						{
 							ServiceName = clientConfigItem.Name,
 							Namespace = clientConfigItem.Namespace,
-							Environment = RpcLiteConfigSection.Instance.ClientEnvironment,
+							Environment = RpcLiteConfig.Instance.ClientEnvironment,
 						};
 						var response = client.Client.GetServiceAddress(request);
 						var uri = response == null || string.IsNullOrWhiteSpace(response.Address)
