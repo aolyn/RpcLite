@@ -50,10 +50,8 @@ namespace RpcLite.Service
 			var ar = ProcessRequestAsync(serviceContext);
 
 			LogHelper.Debug("RpcAsyncHandler.BeginProcessRequest end return"
-				+ $"ar.IsCompleted: {ar.IsCompleted}"); //JsonConvert.SerializeObject(ar));
+				+ $"ar.IsCompleted: {ar.IsCompleted}");
 
-			//if (ar.IsCompleted)
-			//	cb(ar);
 			return ar;
 		}
 
