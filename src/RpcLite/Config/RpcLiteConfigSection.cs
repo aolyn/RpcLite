@@ -265,11 +265,11 @@ namespace RpcLite.Config
 						var type = item.Attributes.Cast<XmlAttribute>().Where(it => it.Name == "type").Select(it => it.Value).FirstOrDefault();
 
 						if (string.IsNullOrEmpty(name))
-							throw new ConfigurationErrorsException("name of  RpcLite configuration service node can't be null or empty");
+							throw new ConfigurationErrorsException("name of RpcLite service configuration node can't be null or empty");
 						if (string.IsNullOrEmpty(path))
-							throw new ConfigurationErrorsException("path of  RpcLite configuration service node " + name + " can't be null or empty");
+							throw new ConfigurationErrorsException("path of RpcLite service configuration node " + name + " can't be null or empty");
 						if (string.IsNullOrEmpty(type))
-							throw new ConfigurationErrorsException("type of  RpcLite configuration service node " + name + " can't be null or empty");
+							throw new ConfigurationErrorsException("type of RpcLite service configuration node " + name + " can't be null or empty");
 
 						string typeName;
 						string assemblyName;
@@ -285,6 +285,9 @@ namespace RpcLite.Config
 							typeName = type;
 							assemblyName = null;
 						}
+
+						if (string.IsNullOrWhiteSpace(assemblyName))
+							throw new ConfigurationErrorsException("assembly can't be null or empty, in RpcLite service configuration node " + name);
 
 						var serviceConfigItem = new ServiceConfigItem
 						{
