@@ -100,7 +100,7 @@ namespace RpcLite.Service
 				Request = serviceRequest,
 				Response = serviceResponse,
 				ExtraData = extraData,
-				ExecutingContext = (object)context,
+				ExecutingContext = context,
 			};
 
 			LogHelper.Debug("BeginProcessRequest: " + request.Url);
@@ -186,7 +186,7 @@ namespace RpcLite.Service
 			if (context.Exception != null)
 			{
 				httpContext.Response.Headers["RpcLite-ExceptionType"] = context.Exception.GetType().FullName;
-				httpContext.Response.Headers["RpcLite-ExceptionAssembly"] = context.Exception.GetType().GetTypeInfo().Assembly.FullName;
+				httpContext.Response.Headers["RpcLite-ExceptionAssembly"] = context.Exception.GetType().Assembly.FullName;
 				httpContext.Response.Headers["RpcLite-StatusCode"] = ((int)HttpStatusCode.InternalServerError).ToString();
 				httpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
 

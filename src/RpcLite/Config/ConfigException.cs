@@ -13,6 +13,8 @@ namespace RpcLite.Config
 		/// </summary>
 		public ConfigException() { }
 
+#if NETCORE
+#else
 		/// <summary>
 		/// 
 		/// </summary>
@@ -21,6 +23,7 @@ namespace RpcLite.Config
 		protected ConfigException(SerializationInfo info, StreamingContext context) : base(info, context)
 		{
 		}
+#endif
 
 		/// <summary>
 		/// Initializes a new instance of RpcLite.RequestException class with specifid message and inner exception

@@ -92,7 +92,11 @@ namespace RpcLite.Client
 					return (TResult)resultObj;
 				}
 
+#if NETCORE
+				var asm = Assembly.Load(new AssemblyName(resultMessage.Header["RpcLite-ExceptionAssembly"]));
+#else
 				var asm = Assembly.Load(resultMessage.Header["RpcLite-ExceptionAssembly"]);
+#endif
 				var exType = asm.GetType(resultMessage.Header["RpcLite-ExceptionType"]);
 
 				var exObj = JsonConvert.DeserializeObject(resultMessage.Result, exType);
@@ -144,15 +148,25 @@ namespace RpcLite.Client
 				if (string.IsNullOrEmpty(resultMessage.Result) || returnType == null)
 					return null;
 
+#if NETCORE
+				var objType = returnType.GetTypeInfo().BaseType == typeof(Task)
+					? returnType.GetGenericArguments()[0]
+					: returnType;
+#else
 				var objType = returnType.BaseType == typeof(Task)
 					? returnType.GetGenericArguments()[0]
 					: returnType;
+#endif
 
 				var resultObj = JsonConvert.DeserializeObject(resultMessage.Result, objType);
 				return resultObj;
 			}
 
+#if NETCORE
+			var asm = Assembly.Load(new AssemblyName(resultMessage.Header["RpcLite-ExceptionAssembly"]));
+#else
 			var asm = Assembly.Load(resultMessage.Header["RpcLite-ExceptionAssembly"]);
+#endif
 			var exType = asm.GetType(resultMessage.Header["RpcLite-ExceptionType"]);
 
 			var exObj = JsonConvert.DeserializeObject(resultMessage.Result, exType);
