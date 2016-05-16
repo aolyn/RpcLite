@@ -17,6 +17,7 @@
     },
     "web": {
       "commandName": "web",
+      "launchUrl": "http://localhost:5480/",
       "environmentVariables": {
         "Hosting:Environment": "Development"
       },
