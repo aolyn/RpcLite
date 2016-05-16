@@ -1,76 +1,29 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 using System.Xml;
 
 namespace RpcLite.Config
 {
-	/// <summary>
-	/// RpcLite Config Section
-	/// </summary>
 	public class RpcLiteConfigSection : IConfigurationSectionHandler
 	{
-		//private string _clientEnvironmentAttributeValue;
-
-		private static RpcLiteConfigSection _instance;
 		/// <summary>
 		/// Instance of RpcLiteConfigSection
 		/// </summary>
-		public static RpcLiteConfigSection Instance
+		public static RpcLiteConfig Instance { get; private set; }
+
+		public static void Initialize()
 		{
-			get
-			{
-				if (_instance != null)
-					return _instance;
 
-				_instance = new RpcLiteConfigSection();
-
-				return _instance;
-			}
 		}
-
-		private readonly List<ServiceConfigItem> _services = new List<ServiceConfigItem>();
-		/// <summary>
-		/// Service config items
-		/// </summary>
-		public List<ServiceConfigItem> Services { get { return _services; } }
-
-		/// <summary>
-		/// Current app environment
-		/// </summary>
-		public string Environment { get; private set; }
-
-		/// <summary>
-		/// Default environment of ServiceClient used to get ServiceClientAddress
-		/// </summary>
-		public string ClientEnvironment { get; private set; }
-
-		private readonly List<ClientConfigItem> _clients = new List<ClientConfigItem>();
-		/// <summary>
-		/// Client config items
-		/// </summary>
-		public List<ClientConfigItem> Clients
-		{
-			get { return _clients; }
-		}
-
-		/// <summary>
-		/// Client Address Resover
-		/// </summary>
-		public ResolverConfigItem Resover { get; private set; }
-
-		/// <summary>
-		/// App Id of current app
-		/// </summary>
-		public string AppId { get; private set; }
 
 		static RpcLiteConfigSection()
 		{
 			try
 			{
 				var sec = ConfigurationManager.GetSection("RpcLite");
-				_instance = sec as RpcLiteConfigSection;
+				Instance = sec as RpcLiteConfig;
+				RpcLiteConfig.SetInstance(Instance);
 			}
 			catch (ConfigurationErrorsException)
 			{
@@ -91,32 +44,42 @@ namespace RpcLite.Config
 		/// <returns></returns>
 		public object Create(object parent, object configContext, XmlNode section)
 		{
-			if (_instance != null)
-				return _instance;
+			if (Instance != null)
+				return Instance;
 
-			_instance = new RpcLiteConfigSection();
+			Instance = SeriveConfigHelper.GetConfig(section);
+
+			return Instance;
+		}
+	}
+
+	internal class SeriveConfigHelper
+	{
+		public static RpcLiteConfig GetConfig(XmlNode section)
+		{
+			var instance = new RpcLiteConfig();
 
 			var appIdNode = section.SelectSingleNode("appId");
 			if (appIdNode != null)
 			{
-				AppId = appIdNode.InnerText.Trim();
+				instance.AppId = appIdNode.InnerText.Trim();
 			}
 
 			var envNode = section.SelectSingleNode("environment");
 			if (envNode != null)
 			{
-				Environment = envNode.InnerText.Trim();
+				instance.Environment = envNode.InnerText.Trim();
 			}
 
-			InitializeResolverConfig(section);
-			InitializeServiceConfig(section);
-			InitializeClientConfig(section);
+			InitializeResolverConfig(section, instance);
+			InitializeServiceConfig(section, instance);
+			InitializeClientConfig(section, instance);
 
-			return this;
+			return instance;
 		}
 
 		// ReSharper disable once FunctionComplexityOverflow
-		private void InitializeClientConfig(XmlNode section)
+		private static void InitializeClientConfig(XmlNode section, RpcLiteConfig instance)
 		{
 			var clientsNode = section.SelectSingleNode("clients");
 			if (clientsNode != null)
@@ -126,12 +89,12 @@ namespace RpcLite.Config
 					var environment = clientsNode.Attributes["environment"];
 					if (environment != null && !string.IsNullOrWhiteSpace(environment.Value))
 					{
-						ClientEnvironment = environment.Value;
+						instance.ClientEnvironment = environment.Value;
 						//_clientEnvironmentAttributeValue = environment.Value;
 					}
 					else
 					{
-						ClientEnvironment = Environment;
+						instance.ClientEnvironment = instance.Environment;
 						//_clientEnvironmentAttributeValue = null;
 					}
 				}
@@ -181,7 +144,7 @@ namespace RpcLite.Config
 						Path = path,
 						Namespace = nameSpace,
 					};
-					Clients.Add(serviceConfigItem);
+					instance.Clients.Add(serviceConfigItem);
 					//}
 					//catch (ConfigurationErrorsException)
 					//{
@@ -196,7 +159,7 @@ namespace RpcLite.Config
 
 		}
 
-		private void InitializeResolverConfig(XmlNode section)
+		private static void InitializeResolverConfig(XmlNode section, RpcLiteConfig instance)
 		{
 			try
 			{
@@ -238,7 +201,7 @@ namespace RpcLite.Config
 							TypeName = typeName,
 							AssemblyName = assemblyName,
 						};
-						Resover = resolver;
+						instance.Resover = resolver;
 					}
 				}
 			}
@@ -248,7 +211,7 @@ namespace RpcLite.Config
 			}
 		}
 
-		private void InitializeServiceConfig(XmlNode section)
+		private static void InitializeServiceConfig(XmlNode section, RpcLiteConfig instance)
 		{
 			try
 			{
@@ -297,7 +260,7 @@ namespace RpcLite.Config
 							AssemblyName = assemblyName,
 							Path = path,
 						};
-						Services.Add(serviceConfigItem);
+						instance.Services.Add(serviceConfigItem);
 					}
 				}
 			}
@@ -322,5 +285,7 @@ namespace RpcLite.Config
 
 			return node.Attributes?[attributeName]?.Value;
 		}
+
 	}
+
 }

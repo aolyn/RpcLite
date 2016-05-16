@@ -100,7 +100,7 @@ namespace RpcLite.Service
 				Request = serviceRequest,
 				Response = serviceResponse,
 				ExtraData = extraData,
-				ExecutingContext = context,
+				ExecutingContext = (object)context,
 			};
 
 			LogHelper.Debug("BeginProcessRequest: " + request.Url);
