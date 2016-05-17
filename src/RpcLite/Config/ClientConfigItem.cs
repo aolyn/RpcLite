@@ -39,5 +39,14 @@
 		/// namespace
 		/// </summary>
 		public string Namespace { get; set; }
+
+		/// <summary>
+		/// get description string
+		/// </summary>
+		/// <returns></returns>
+		public override string ToString()
+		{
+			return $"{Name}, { TypeName }, {Path}";
+		}
 	}
 }
