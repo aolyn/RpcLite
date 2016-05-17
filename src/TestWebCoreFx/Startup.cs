@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Hosting;
 using Microsoft.AspNet.Http;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using RpcLite.Config;
 
@@ -24,25 +25,36 @@ namespace TestWebCoreFx
 			//	await context.Response.WriteAsync("Hello World!");
 			//});
 
-			var serviceConfigItem = new ServiceConfigItem
-			{
-				Name = "product",
-				Type = "RpcLite.TestService.RpcLiteTestService,RpcLite.CoreFx",
-				TypeName = "RpcLite.TestService.RpcLiteTestService",
-				AssemblyName = "RpcLite.CoreFx",
+			//var serviceConfigItem = new ServiceConfigItem
+			//{
+			//	Name = "product",
+			//	Type = "RpcLite.TestService.RpcLiteTestService,RpcLite.CoreFx",
+			//	TypeName = "RpcLite.TestService.RpcLiteTestService",
+			//	AssemblyName = "RpcLite.CoreFx",
 
-				//Type = "TestWebCoreFx.TestService,TestWebCoreFx",
-				//TypeName = "TestWebCoreFx.TestService",
-				//AssemblyName = "TestWebCoreFx",
-				Path = "/api/test/",
-			};
+			//	//Type = "TestWebCoreFx.TestService,TestWebCoreFx",
+			//	//TypeName = "TestWebCoreFx.TestService",
+			//	//AssemblyName = "TestWebCoreFx",
+			//	Path = "/api/test/",
+			//};
 
-			var config = new RpcLiteConfig
-			{
-				AppId = "10000",
-			};
-			config.Services.Add(serviceConfigItem);
-			RpcLiteConfig.SetInstance(config);
+			//var config = new RpcLiteConfig
+			//{
+			//	AppId = "10000",
+			//};
+			//config.Services.Add(serviceConfigItem);
+			//RpcLiteConfig.SetInstance(config);
+
+			//var config = new ConfigurationBuilder()
+			//	.AddJsonFile("rpclite.config.json")
+			//	.Build();
+
+			var config = new ConfigurationBuilder()
+				.AddXmlFile("rpclite.config.xml")
+				.Build();
+
+			var rpcConfig = RpcLiteConfigurationHelper.GetConfig(new CoreConfigurationSection(config));
+			RpcLiteConfig.SetInstance(rpcConfig);
 
 			//app.UseMiddleware<RpcLiteMiddleware>();
 			app.UseRpcLiteMiddleware();

@@ -25,7 +25,7 @@ namespace RpcLite.Config
 				Instance = sec as RpcLiteConfig;
 				RpcLiteConfig.SetInstance(Instance);
 			}
-			catch (ConfigurationErrorsException)
+			catch (RpcLiteConfigurationErrorException)
 			{
 				throw;
 			}
@@ -47,7 +47,7 @@ namespace RpcLite.Config
 			if (Instance != null)
 				return Instance;
 
-			Instance = RpcLiteConfigurationHelper.GetConfig(section);
+			Instance = RpcLiteConfigurationHelper.GetConfig(new XmlConfigurationSection(section));
 
 			return Instance;
 		}

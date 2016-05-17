@@ -1,0 +1,17 @@
+<RpcLite>
+	<appId>10000</appId>
+	<services>
+		<!--<add name="ProductService" path="~/api/products/" type="ServiceImpl.ProductService,ServiceImpl"/>-->
+		<add name="ProductService" path="~/api/async-product/" type="ServiceImpl.ProductAsyncService,ServiceImpl"/>
+		<add name="ProductServiceSync" path="~/api/product/" type="ServiceImpl.ProductService,ServiceImpl"/>
+		<add name="TestService" path="~/api/test/" type="RpcLite.TestWeb.TestService1, RpcLite.TestWeb"/>
+		<add name="ProductService2" path="~/api/" type="ServiceImpl.ProductAsyncService,ServiceImpl"/>
+		<!--<add name="ProductServiceSync2" path="~/api/" type="ServiceImpl.ProductAsyncService,ServiceImpl"/>-->
+	</services>
+	<clients>
+		<!--<add name="ProductService" path="~/api/products/" type="ServiceImpl.ProductService,ServiceImpl"/>-->
+		<add name="ProductService" path="~/api/async-product/" type="ServiceImpl.ProductAsyncService,ServiceImpl" namespace="v1"/>
+		<add name="ProductServiceSync" path="~/api/product/" type="ServiceImpl.ProductService,ServiceImpl" namespace="v1"/>
+		<add name="ProductService2" path="~/api/" type="ServiceImpl.ProductAsyncService,ServiceImpl" namespace="v1"/>
+	</clients>
+</RpcLite>

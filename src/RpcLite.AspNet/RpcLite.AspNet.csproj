@@ -41,13 +41,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Config\IConfigurationSection.cs" />
-    <Compile Include="Config\IConfiguration.cs" />
     <Compile Include="Config\XmlConfigurationSection.cs" />
     <Compile Include="Config\XmlConfiguration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Config\RpcLiteConfigSection.cs" />
-    <Compile Include="Config\RpcLiteConfigurationHelper.cs" />
     <Compile Include="Service\RpcAsyncHandler.cs" />
     <Compile Include="Service\RpcHandler.cs" />
     <Compile Include="Service\RpcLiteModule.cs" />

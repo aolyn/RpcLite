@@ -2,50 +2,37 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
+using CoreConfig = Microsoft.Extensions.Configuration;
 
 namespace RpcLite.Config
 {
-	public class XmlConfiguration : IConfiguration
+	public class CoreConfiguration : IConfiguration
 	{
-		private XmlNode _node;
+		protected CoreConfig.IConfiguration _node;
 
-		public XmlConfiguration(XmlNode node)
+		public CoreConfiguration(CoreConfig.IConfiguration node)
 		{
 			_node = node;
 		}
 
 		public string this[string key]
 		{
-			get
-			{
-				var attrValue = GetAttribute(key, _node);
-				if (attrValue != null)
-					return attrValue;
-
-				var node = _node[key];
-				return node?.InnerText;
-			}
-
-			set
-			{
-				throw new NotImplementedException();
-			}
+			get { return _node[key]; }
+			set { _node[key] = value; }
 		}
 
 		public IEnumerable<IConfigurationSection> GetChildren()
 		{
-			return _node.ChildNodes
-				.Cast<XmlNode>()
-				.Where(it => it.NodeType != XmlNodeType.Comment)
-				.Select(it => new XmlConfigurationSection(it));
+			return _node.GetChildren()
+				.Select(it => new CoreConfigurationSection(it));
 		}
 
 		public IConfigurationSection GetSection(string key)
 		{
-			var node = _node[key];
+			var node = _node.GetSection(key);
 			return node == null
 				? null
-				: new XmlConfigurationSection(node);
+				: new CoreConfigurationSection(node);
 		}
 
 		/// <summary>
