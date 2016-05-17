@@ -8,14 +8,16 @@
   "services": [
     {
       "name": "ProductService",
-      "path": "~/api/products-sync/", /* test commont */
-      "type": "ServiceImpl.ProductService,ServiceImpl"
-    },
+      "path": "/api/test/", /* test commont */
+      "type": "RpcLite.TestService.RpcLiteTestService,RpcLite.CoreFx"
+    }
+    /*
+    ,
     {
       "name": "ProductServiceSync",
       "path": "~/api/products/",
       "type": "ServiceImpl.ProductAsyncService,ServiceImpl"
-    }
+    }*/
   ],
   "clients": [
     {

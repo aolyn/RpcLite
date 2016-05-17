@@ -38,6 +38,11 @@ namespace RpcLite.Service
 			return formatter;
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="serviceContext"></param>
+		/// <returns></returns>
 		public static Task ProcessAsync(ServiceContext serviceContext)
 		{
 			//get formatter from content type

@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Hosting;
-using Microsoft.AspNet.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using RpcLite.Config;
@@ -45,13 +44,13 @@ namespace TestWebCoreFx
 			//config.Services.Add(serviceConfigItem);
 			//RpcLiteConfig.SetInstance(config);
 
-			//var config = new ConfigurationBuilder()
-			//	.AddJsonFile("rpclite.config.json")
-			//	.Build();
-
 			var config = new ConfigurationBuilder()
-				.AddXmlFile("rpclite.config.xml")
+				.AddJsonFile("rpclite.config.json")
 				.Build();
+
+			//var config = new ConfigurationBuilder()
+			//	.AddXmlFile("rpclite.config.xml")
+			//	.Build();
 
 			var rpcConfig = RpcLiteConfigurationHelper.GetConfig(new CoreConfigurationSection(config));
 			RpcLiteConfig.SetInstance(rpcConfig);

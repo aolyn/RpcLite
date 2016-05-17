@@ -40,19 +40,27 @@ namespace RpcLite.Service
 
 		public static Task ProcessAsync(ServiceContext serviceContext)
 		{
-			//get formatter from content type
-			var formatter = GetFormatter(serviceContext.Request.ContentType);
-			if (formatter != null)
-				serviceContext.Response.ContentType = serviceContext.Request.ContentType;
+			try
+			{
+				//get formatter from content type
+				var formatter = GetFormatter(serviceContext.Request.ContentType);
+				if (formatter != null)
+					serviceContext.Response.ContentType = serviceContext.Request.ContentType;
 
-			serviceContext.Formatter = formatter;
+				serviceContext.Formatter = formatter;
 
-			var ar = ProcessRequestAsync(serviceContext);
+				var ar = ProcessRequestAsync(serviceContext);
 
-			LogHelper.Debug("RpcAsyncHandler.BeginProcessRequest end return"
-				+ $"ar.IsCompleted: {ar.IsCompleted}");
+				LogHelper.Debug("RpcAsyncHandler.BeginProcessRequest end return"
+					+ $"ar.IsCompleted: {ar.IsCompleted}");
 
-			return ar;
+				return ar;
+			}
+			catch (Exception ex)
+			{
+				serviceContext.Exception = ex;
+				return Task.FromResult<object>(null);
+			}
 		}
 
 		private static Task ProcessRequestAsync(ServiceContext context)
