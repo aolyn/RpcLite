@@ -108,9 +108,9 @@
       <Project>{314f05a6-06c2-476c-be16-52e068e91229}</Project>
       <Name>RpcLite.AspNet</Name>
     </ProjectReference>
-    <ProjectReference Include="..\RpcLite\RpcLite.csproj">
-      <Project>{EFA8DBF7-4300-4599-9C35-E716E25D7CCD}</Project>
-      <Name>RpcLite</Name>
+    <ProjectReference Include="..\RpcLite.Net40\RpcLite.Net40.csproj">
+      <Project>{6e2205f4-2050-424f-abf5-93b9f5f0f8e4}</Project>
+      <Name>RpcLite.Net40</Name>
     </ProjectReference>
     <ProjectReference Include="..\ServiceImpl\ServiceImpl.csproj">
       <Project>{B31033F4-8003-47CE-A9B0-E5251B88C5EC}</Project>

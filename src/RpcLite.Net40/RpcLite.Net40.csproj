@@ -1,0 +1,211 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{6E2205F4-2050-424F-ABF5-93B9F5F0F8E4}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>RpcLite</RootNamespace>
+    <AssemblyName>RpcLite</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.8.0.3\lib\net40\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\RpcLite.CoreFx\Client\ClientAddressResolver.cs">
+      <Link>Client\ClientAddressResolver.cs</Link>
+    </Compile>
+    <Compile Include="..\RpcLite.CoreFx\Client\ClientException.cs">
+      <Link>Client\ClientException.cs</Link>
+    </Compile>
+    <Compile Include="..\RpcLite.CoreFx\Client\ClientFactory.cs">
+      <Link>Client\ClientFactory.cs</Link>
+    </Compile>
+    <Compile Include="..\RpcLite.CoreFx\Client\ClientWrapper.cs">
+      <Link>Client\ClientWrapper.cs</Link>
+    </Compile>
+    <Compile Include="..\RpcLite.CoreFx\Client\IAddressResolver.cs">
+      <Link>Client\IAddressResolver.cs</Link>
+    </Compile>
+    <Compile Include="..\RpcLite.CoreFx\Client\RpcClientBase.cs">
+      <Link>Client\RpcClientBase.cs</Link>
+    </Compile>
+    <Compile Include="..\RpcLite.CoreFx\Config\ClientConfigItem.cs">
+      <Link>Config\ClientConfigItem.cs</Link>
+    </Compile>
+    <Compile Include="..\RpcLite.CoreFx\Config\ConfigException.cs">
+      <Link>Config\ConfigException.cs</Link>
+    </Compile>
+    <Compile Include="..\RpcLite.CoreFx\Config\IConfiguration.cs">
+      <Link>Config\IConfiguration.cs</Link>
+    </Compile>
+    <Compile Include="..\RpcLite.CoreFx\Config\IConfigurationSection.cs">
+      <Link>Config\IConfigurationSection.cs</Link>
+    </Compile>
+    <Compile Include="..\RpcLite.CoreFx\Config\ResolverConfigItem.cs">
+      <Link>Config\ResolverConfigItem.cs</Link>
+    </Compile>
+    <Compile Include="..\RpcLite.CoreFx\Config\RpcLiteConfig.cs">
+      <Link>Config\RpcLiteConfig.cs</Link>
+    </Compile>
+    <Compile Include="..\RpcLite.CoreFx\Config\RpcLiteConfigurationErrorException.cs">
+      <Link>Config\RpcLiteConfigurationErrorException.cs</Link>
+    </Compile>
+    <Compile Include="..\RpcLite.CoreFx\Config\RpcLiteConfigurationHelper.cs">
+      <Link>Config\RpcLiteConfigurationHelper.cs</Link>
+    </Compile>
+    <Compile Include="..\RpcLite.CoreFx\Config\ServiceConfigItem.cs">
+      <Link>Config\ServiceConfigItem.cs</Link>
+    </Compile>
+    <Compile Include="..\RpcLite.CoreFx\content\TestService1.cs">
+      <Link>content\TestService1.cs</Link>
+    </Compile>
+    <Compile Include="..\RpcLite.CoreFx\Formatters\IFormater.cs">
+      <Link>Formatters\IFormater.cs</Link>
+    </Compile>
+    <Compile Include="..\RpcLite.CoreFx\Formatters\JsonFormater.cs">
+      <Link>Formatters\JsonFormater.cs</Link>
+    </Compile>
+    <Compile Include="..\RpcLite.CoreFx\Formatters\XmlFormater.cs">
+      <Link>Formatters\XmlFormater.cs</Link>
+    </Compile>
+    <Compile Include="..\RpcLite.CoreFx\Logging\LogHelper.cs">
+      <Link>Logging\LogHelper.cs</Link>
+    </Compile>
+    <Compile Include="..\RpcLite.CoreFx\Net\WebRequestHelper.cs">
+      <Link>Net\WebRequestHelper.cs</Link>
+    </Compile>
+    <Compile Include="..\RpcLite.CoreFx\NullResponse.cs">
+      <Link>NullResponse.cs</Link>
+    </Compile>
+    <Compile Include="..\RpcLite.CoreFx\ProcessRequestException.cs">
+      <Link>ProcessRequestException.cs</Link>
+    </Compile>
+    <Compile Include="..\RpcLite.CoreFx\Properties\AssemblyInfo.cs">
+      <Link>Properties\AssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\RpcLite.CoreFx\PropertyItemInfo.cs">
+      <Link>PropertyItemInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\RpcLite.CoreFx\QuickReadConcurrentDictionary.cs">
+      <Link>QuickReadConcurrentDictionary.cs</Link>
+    </Compile>
+    <Compile Include="..\RpcLite.CoreFx\RequestException.cs">
+      <Link>RequestException.cs</Link>
+    </Compile>
+    <Compile Include="..\RpcLite.CoreFx\RpcLiteException.cs">
+      <Link>RpcLiteException.cs</Link>
+    </Compile>
+    <Compile Include="..\RpcLite.CoreFx\ServiceChannel.cs">
+      <Link>ServiceChannel.cs</Link>
+    </Compile>
+    <Compile Include="..\RpcLite.CoreFx\ServiceExcepionResponse.cs">
+      <Link>ServiceExcepionResponse.cs</Link>
+    </Compile>
+    <Compile Include="..\RpcLite.CoreFx\ServiceException.cs">
+      <Link>ServiceException.cs</Link>
+    </Compile>
+    <Compile Include="..\RpcLite.CoreFx\Service\ActionHelper.cs">
+      <Link>Service\ActionHelper.cs</Link>
+    </Compile>
+    <Compile Include="..\RpcLite.CoreFx\Service\Config\GlobalConfig.cs">
+      <Link>Service\Config\GlobalConfig.cs</Link>
+    </Compile>
+    <Compile Include="..\RpcLite.CoreFx\Service\MethodHelper.cs">
+      <Link>Service\MethodHelper.cs</Link>
+    </Compile>
+    <Compile Include="..\RpcLite.CoreFx\Service\RpcAction.cs">
+      <Link>Service\RpcAction.cs</Link>
+    </Compile>
+    <Compile Include="..\RpcLite.CoreFx\Service\RpcProcessor.cs">
+      <Link>Service\RpcProcessor.cs</Link>
+    </Compile>
+    <Compile Include="..\RpcLite.CoreFx\Service\RpcService.cs">
+      <Link>Service\RpcService.cs</Link>
+    </Compile>
+    <Compile Include="..\RpcLite.CoreFx\Service\RpcServiceFactory.cs">
+      <Link>Service\RpcServiceFactory.cs</Link>
+    </Compile>
+    <Compile Include="..\RpcLite.CoreFx\Service\RpcServiceHelper.cs">
+      <Link>Service\RpcServiceHelper.cs</Link>
+    </Compile>
+    <Compile Include="..\RpcLite.CoreFx\Service\ServiceAsyncResult.cs">
+      <Link>Service\ServiceAsyncResult.cs</Link>
+    </Compile>
+    <Compile Include="..\RpcLite.CoreFx\Service\ServiceContext.cs">
+      <Link>Service\ServiceContext.cs</Link>
+    </Compile>
+    <Compile Include="..\RpcLite.CoreFx\Service\ServiceInstancePool.cs">
+      <Link>Service\ServiceInstancePool.cs</Link>
+    </Compile>
+    <Compile Include="..\RpcLite.CoreFx\Service\ServiceRequest.cs">
+      <Link>Service\ServiceRequest.cs</Link>
+    </Compile>
+    <Compile Include="..\RpcLite.CoreFx\Service\ServiceResponse.cs">
+      <Link>Service\ServiceResponse.cs</Link>
+    </Compile>
+    <Compile Include="..\RpcLite.CoreFx\TestService\IRpcLiteTestService.cs">
+      <Link>TestService\IRpcLiteTestService.cs</Link>
+    </Compile>
+    <Compile Include="..\RpcLite.CoreFx\TestService\Product.cs">
+      <Link>TestService\Product.cs</Link>
+    </Compile>
+    <Compile Include="..\RpcLite.CoreFx\TestService\RpcLiteTestService.cs">
+      <Link>TestService\RpcLiteTestService.cs</Link>
+    </Compile>
+    <Compile Include="..\RpcLite.CoreFx\TypeCreator.cs">
+      <Link>TypeCreator.cs</Link>
+    </Compile>
+    <Compile Include="..\RpcLite.CoreFx\Utility\JsonHelper.cs">
+      <Link>Utility\JsonHelper.cs</Link>
+    </Compile>
+    <Compile Include="..\RpcLite.CoreFx\WrapperHelper.cs">
+      <Link>WrapperHelper.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\RpcLite.CoreFx\content\web.config.transform">
+      <Link>content\web.config.transform</Link>
+    </None>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

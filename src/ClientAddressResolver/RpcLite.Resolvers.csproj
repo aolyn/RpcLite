@@ -46,9 +46,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\RpcLite\RpcLite.csproj">
-      <Project>{efa8dbf7-4300-4599-9c35-e716e25d7ccd}</Project>
-      <Name>RpcLite</Name>
+    <ProjectReference Include="..\RpcLite.Net40\RpcLite.Net40.csproj">
+      <Project>{6e2205f4-2050-424f-abf5-93b9f5f0f8e4}</Project>
+      <Name>RpcLite.Net40</Name>
     </ProjectReference>
     <ProjectReference Include="..\ServiceRegistery.Common\ServiceRegistery.Common.csproj">
       <Project>{9284345c-1c32-4d92-a6d2-583fddbf1110}</Project>

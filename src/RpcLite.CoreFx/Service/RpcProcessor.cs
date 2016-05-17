@@ -59,7 +59,11 @@ namespace RpcLite.Service
 			catch (Exception ex)
 			{
 				serviceContext.Exception = ex;
+#if NETCORE
 				return Task.FromResult<object>(null);
+#else
+				return Task.Factory.StartNew(() => (object)null);
+#endif
 			}
 		}
 
