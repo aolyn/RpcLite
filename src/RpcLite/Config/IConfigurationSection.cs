@@ -5,22 +5,24 @@ using System.Text;
 
 namespace RpcLite.Config
 {
-	//
-	// Summary:
-	//     Represents a section of application configuration values.
+	/// <summary>
+	/// Represents a section of application configuration values.
+	/// </summary>
 	public interface IConfigurationSection : IConfiguration
 	{
-		//
-		// Summary:
-		//     Gets the key this section occupies in its parent.
+		/// <summary>
+		///  Gets the key this section occupies in its parent.
+		/// </summary>
 		string Key { get; }
-		//
-		// Summary:
-		//     Gets the full path to this section within the Microsoft.Extensions.Configuration.IConfiguration.
+
+		/// <summary>
+		///  Gets the full path to this section within the Microsoft.Extensions.Configuration.IConfiguration.
+		/// </summary>
 		string Path { get; }
-		//
-		// Summary:
-		//     Gets or sets the section value.
+
+		/// <summary>
+		/// Gets or sets the section value.
+		/// </summary>
 		string Value { get; set; }
 	}
 }

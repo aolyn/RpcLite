@@ -2,43 +2,30 @@
 
 namespace RpcLite.Config
 {
+	/// <summary>
+	/// 
+	/// </summary>
 	public interface IConfiguration
 	{
-		//
-		// Summary:
-		//     Gets the immediate descendant configuration sub-sections.
-		//
-		// Returns:
-		//     The configuration sub-sections.
+
+		/// <summary>
+		/// Gets the immediate descendant configuration sub-sections.
+		/// </summary>
+		/// <returns>The configuration sub-sections.</returns>
 		IEnumerable<IConfigurationSection> GetChildren();
 
-		//
-		// Summary:
-		//     Gets or sets a configuration value.
-		//
-		// Parameters:
-		//   key:
-		//     The configuration key.
-		//
-		// Returns:
-		//     The configuration value.
+		/// <summary>
+		/// Gets or sets a configuration value.
+		/// </summary>
+		/// <param name="key">The configuration key.</param>
+		/// <returns>The configuration value.</returns>
 		string this[string key] { get; set; }
 
-		//
-		// Summary:
-		//     Gets a configuration sub-section with the specified key.
-		//
-		// Parameters:
-		//   key:
-		//     The key of the configuration section.
-		//
-		// Returns:
-		//     The Microsoft.Extensions.Configuration.IConfigurationSection.
-		//
-		// Remarks:
-		//     This method will never return null. If no matching sub-section is found with
-		//     the specified key, an empty Microsoft.Extensions.Configuration.IConfigurationSection
-		//     will be returned.
+		/// <summary>
+		/// Gets a configuration sub-section with the specified key.
+		/// </summary>
+		/// <param name="key">The key of the configuration section.</param>
+		/// <returns>The Microsoft.Extensions.Configuration.IConfigurationSection.</returns>
 		IConfigurationSection GetSection(string key);
 	}
 }

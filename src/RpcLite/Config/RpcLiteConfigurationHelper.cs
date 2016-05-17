@@ -3,8 +3,16 @@ using System.Configuration;
 
 namespace RpcLite.Config
 {
+	/// <summary>
+	/// 
+	/// </summary>
 	public class RpcLiteConfigurationHelper
 	{
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="config"></param>
+		/// <returns></returns>
 		public static RpcLiteConfig GetConfig(IConfiguration config)
 		{
 			var instance = new RpcLiteConfig

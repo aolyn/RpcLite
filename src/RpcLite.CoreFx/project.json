@@ -6,7 +6,7 @@
   "compilationOptions": {
     "define": [
       "NETCORE"
-    ],
+    ]
   },
   "projectUrl": "",
   "licenseUrl": "",
