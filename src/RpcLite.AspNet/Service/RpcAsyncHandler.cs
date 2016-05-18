@@ -159,8 +159,7 @@ namespace RpcLite.Service
 
 			return tcs.Task;
 		}
-
-
+		
 		/// <summary>
 		/// 
 		/// </summary>

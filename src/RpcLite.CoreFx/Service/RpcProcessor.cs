@@ -13,7 +13,7 @@ namespace RpcLite.Service
 	public static class RpcProcessor
 	{
 		/// <summary>
-		/// 
+		/// get formatter by content type
 		/// </summary>
 		/// <param name="contentType"></param>
 		/// <returns></returns>
@@ -38,6 +38,11 @@ namespace RpcLite.Service
 			return formatter;
 		}
 
+		/// <summary>
+		/// process request
+		/// </summary>
+		/// <param name="serviceContext"></param>
+		/// <returns></returns>
 		public static Task ProcessAsync(ServiceContext serviceContext)
 		{
 			try

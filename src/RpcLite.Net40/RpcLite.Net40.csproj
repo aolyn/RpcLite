@@ -20,6 +20,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Debug\RpcLite.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -28,6 +29,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Release\RpcLite.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
@@ -136,8 +138,8 @@
     <Compile Include="..\RpcLite.CoreFx\ServiceException.cs">
       <Link>ServiceException.cs</Link>
     </Compile>
-    <Compile Include="..\RpcLite.CoreFx\Service\ActionHelper.cs">
-      <Link>Service\ActionHelper.cs</Link>
+    <Compile Include="..\RpcLite.CoreFx\Service\ActionManager.cs">
+      <Link>Service\ActionManager.cs</Link>
     </Compile>
     <Compile Include="..\RpcLite.CoreFx\Service\Config\GlobalConfig.cs">
       <Link>Service\Config\GlobalConfig.cs</Link>
@@ -156,9 +158,6 @@
     </Compile>
     <Compile Include="..\RpcLite.CoreFx\Service\RpcServiceFactory.cs">
       <Link>Service\RpcServiceFactory.cs</Link>
-    </Compile>
-    <Compile Include="..\RpcLite.CoreFx\Service\RpcServiceHelper.cs">
-      <Link>Service\RpcServiceHelper.cs</Link>
     </Compile>
     <Compile Include="..\RpcLite.CoreFx\Service\ServiceAsyncResult.cs">
       <Link>Service\ServiceAsyncResult.cs</Link>
@@ -189,9 +188,6 @@
     </Compile>
     <Compile Include="..\RpcLite.CoreFx\Utility\JsonHelper.cs">
       <Link>Utility\JsonHelper.cs</Link>
-    </Compile>
-    <Compile Include="..\RpcLite.CoreFx\WrapperHelper.cs">
-      <Link>WrapperHelper.cs</Link>
     </Compile>
   </ItemGroup>
   <ItemGroup>

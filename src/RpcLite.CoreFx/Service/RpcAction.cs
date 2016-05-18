@@ -114,7 +114,7 @@ namespace RpcLite.Service
 		{
 			if (IsTask)
 			{
-				var task = ActionHelper.InvokeTask(context);
+				var task = InvokeTaskInternal(context);
 				return task;
 			}
 			else
@@ -122,7 +122,7 @@ namespace RpcLite.Service
 				LogHelper.Debug("RpcService.BeginProcessRequest: start ActionHelper.InvokeAction");
 				try
 				{
-					context.Result = ActionHelper.InvokeAction(context.Action, context.Argument);
+					context.Result = InvokeAction(context.Argument);
 				}
 				catch (Exception ex)
 				{
@@ -236,6 +236,48 @@ namespace RpcLite.Service
 			return resultObject;
 		}
 
+		private object InvokeAction(object reqArg)
+		{
+			if (IsStatic)
+			{
+				return InvokeAcion(reqArg, null);
+			}
+
+			using (var serviceInstance = ServiceFactory.GetService(this))
+			{
+				return InvokeAcion(reqArg, serviceInstance.ServiceObject);
+			}
+		}
+
+		private object InvokeAcion(object requestObject, object serviceObject)
+		{
+			object resultObj;
+			if (HasReturnValue)
+			{
+				resultObj = Func(serviceObject, requestObject);
+			}
+			else
+			{
+				Action(serviceObject, requestObject);
+				resultObj = null;
+			}
+			return resultObj;
+		}
+
+		private static Task InvokeTaskInternal(ServiceContext context)
+		{
+			object serviceObject = null;
+			if (!context.Action.IsStatic)
+			{
+				var serviceContainer = ServiceFactory.GetService(context.Action);
+				context.ServiceContainer = serviceContainer;
+				serviceObject = serviceContainer.ServiceObject;
+			}
+
+			var ar = (Task)context.Action.InvokeTask(serviceObject, context.Argument);
+			return ar;
+		}
+
 		/// <summary>
 		/// 
 		/// </summary>
@@ -244,5 +286,6 @@ namespace RpcLite.Service
 		{
 			return Name;
 		}
+
 	}
 }

@@ -4,9 +4,9 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Http;
-using RpcLite.Service;
+using RpcLite.Logging;
 
-namespace TestWebCoreFx
+namespace RpcLite.Service
 {
 	// You may need to install the Microsoft.AspNet.Http.Abstractions package into your project
 	public class RpcLiteMiddleware
@@ -51,6 +51,7 @@ namespace TestWebCoreFx
 				}
 				catch (Exception ex)
 				{
+					LogHelper.Error("process request error in RpcLiteMiddleware", ex);
 				}
 			}
 

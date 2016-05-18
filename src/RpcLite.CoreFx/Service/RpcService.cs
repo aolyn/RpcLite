@@ -59,7 +59,7 @@ namespace RpcLite.Service
 			LogHelper.Debug("RpcService.BeginProcessRequest");
 
 			LogHelper.Debug("RpcService.BeginProcessRequest: start ActionHelper.GetActionInfo");
-			var actionInfo = ActionHelper.GetActionInfo(context.Request.ServiceType, context.Request.ActionName);
+			var actionInfo = ActionManager.GetAction(context.Request.ServiceType, context.Request.ActionName);
 			LogHelper.Debug("RpcService.BeginProcessRequest: end ActionHelper.GetActionInfo");
 			if (actionInfo == null)
 			{
