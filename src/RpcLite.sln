@@ -19,13 +19,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientImpl", "ClientImpl\Cl
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "demos", "demos", "{C5A4AB03-645B-4F72-9727-365198593E4F}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{B1FAD391-8230-4949-873F-D1B9581A9271}"
-	ProjectSection(SolutionItems) = preProject
-		.nuget\NuGet.Config = .nuget\NuGet.Config
-		.nuget\NuGet.exe = .nuget\NuGet.exe
-		.nuget\NuGet.targets = .nuget\NuGet.targets
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RpcLite.Resolvers", "ClientAddressResolver\RpcLite.Resolvers.csproj", "{7AE9591B-8465-4D8A-B27D-51E2EC6FE82C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceRepository", "ServiceRepository\ServiceRepository.csproj", "{B96C8A9E-71F3-4143-8FC9-76D5AD70B9B3}"
