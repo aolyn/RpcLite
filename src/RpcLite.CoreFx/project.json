@@ -1,12 +1,17 @@
 {
-  "version": "1.0.0-*",
-  "description": "RpcLite.CoreFx Class Library",
+  "version": "1.0.1-*",
+  "description": "RpcLite Class Library",
   "authors": [ "chrishwang" ],
   "tags": [ "" ],
   "compilationOptions": {
     "define": [
       "NETCORE"
-    ]
+    ],
+    "outputName": "RpcLite"
+  },
+  "buildOptions": {
+    "define": [ "NETCORE" ],
+    "outputName": "RpcLite"
   },
   "projectUrl": "",
   "licenseUrl": "",
@@ -29,8 +34,6 @@
     "System.Reflection.Emit.ILGeneration": "4.0.0",
     "System.Runtime": "4.0.20",
     "System.Runtime.Serialization.Json": "4.0.1",
-    "System.Runtime.Serialization.Primitives": "4.1.0",
-    "System.Runtime.Serialization.Xml": "4.1.0",
-    "System.Xml.XmlDocument": "4.0.0"
+    "System.Runtime.Serialization.Primitives": "4.1.0"
   }
 }

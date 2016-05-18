@@ -204,7 +204,5 @@ namespace RpcLite.Service
 				return method;
 			});
 		}
-
-
 	}
 }

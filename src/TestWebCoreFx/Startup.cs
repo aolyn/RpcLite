@@ -3,6 +3,7 @@ using Microsoft.AspNet.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using RpcLite.Config;
+using RpcLite.Service;
 
 namespace TestWebCoreFx
 {
