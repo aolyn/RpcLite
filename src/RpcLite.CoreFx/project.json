@@ -1,39 +1,40 @@
 {
-  "version": "1.0.1-*",
-  "description": "RpcLite Class Library",
   "authors": [ "chrishwang" ],
-  "tags": [ "" ],
+  "description": "RpcLite Class Library",
+  "buildOptions": {
+    "define": [ "NETCORE" ],
+    "outputName": "RpcLite"
+  },
   "compilationOptions": {
     "define": [
       "NETCORE"
     ],
     "outputName": "RpcLite"
   },
-  "buildOptions": {
-    "define": [ "NETCORE" ],
-    "outputName": "RpcLite"
-  },
-  "projectUrl": "",
-  "licenseUrl": "",
-  "frameworks": {
-    "dnxcore50": {
-      "dependencies": {
-        "Microsoft.CSharp": "4.0.1-beta-23516",
-        "System.Collections": "4.0.11-beta-23516",
-        "System.Console": "4.0.0-beta-23516",
-        "System.Linq": "4.0.1-beta-23516",
-        "System.Reflection": "4.0.10",
-        "System.Threading": "4.0.11-beta-23516"
-      }
-    }
-  },
   "dependencies": {
+    "Microsoft.CSharp": "4.0.1-beta-23516",
     "Newtonsoft.Json": "8.0.3",
+    "System.Collections": "4.0.11-beta-23516",
+    "System.Console": "4.0.0-beta-23516",
+    "System.Linq": "4.0.1-beta-23516",
     "System.Net.Requests": "4.0.10",
+    "System.Reflection": "4.0.10",
     "System.Reflection.Emit": "4.0.0",
     "System.Reflection.Emit.ILGeneration": "4.0.0",
-    "System.Runtime": "4.0.20",
+    "System.Runtime": "4.0.21-rc3-23915",
     "System.Runtime.Serialization.Json": "4.0.1",
-    "System.Runtime.Serialization.Primitives": "4.1.0"
-  }
+    "System.Runtime.Serialization.Primitives": "4.1.0",
+    "System.Threading": "4.0.11-beta-23516"
+  },
+  "frameworks": {
+    "netstandard1.3": {
+      "imports": "dnxcore50"
+    }
+  },
+  "packOptions": {
+    "projectUrl": "",
+    "licenseUrl": "",
+    "tags": [ "" ]
+  },
+  "version": "1.0.1-*"
 }

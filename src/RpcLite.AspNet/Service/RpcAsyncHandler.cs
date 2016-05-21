@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Diagnostics;
+using System.Globalization;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
@@ -107,7 +109,16 @@ namespace RpcLite.Service
 
 			try
 			{
+#if DEBUG
+				serviceContext.SetExtensionData("StartTime", DateTime.Now);
+#endif
 				var result = RpcProcessor.ProcessAsync(serviceContext);
+#if DEBUG
+				result = result.ContinueWith(tsk =>
+				{
+					serviceContext.SetExtensionData("EndTime", DateTime.Now);
+				});
+#endif
 				var ar = ToBegin(result, cb, serviceContext);
 				return ar;
 			}
@@ -159,7 +170,7 @@ namespace RpcLite.Service
 
 			return tcs.Task;
 		}
-		
+
 		/// <summary>
 		/// 
 		/// </summary>
@@ -182,6 +193,17 @@ namespace RpcLite.Service
 
 			var httpContext = (HttpContext)context.ExecutingContext;
 			httpContext.Response.ContentType = context.Response.ContentType;
+
+#if DEBUG
+			var startTimeObj = context.GetExtensionData("StartTime");
+			var endTimeObj = context.GetExtensionData("EndTime");
+			if (startTimeObj != null && endTimeObj != null)
+			{
+				httpContext.Response.Headers["RpcLite-ExecutionDuration"] =
+					((DateTime)endTimeObj - (DateTime)startTimeObj).TotalMilliseconds.ToString(CultureInfo.InvariantCulture);
+			}
+#endif
+
 			if (context.Exception != null)
 			{
 				httpContext.Response.Headers["RpcLite-ExceptionType"] = context.Exception.GetType().FullName;
@@ -192,7 +214,9 @@ namespace RpcLite.Service
 				if (context.Formatter == null)
 					throw context.Exception;
 
+				var stopwatch = Stopwatch.StartNew();
 				context.Formatter.Serialize(context.Response.ResponseStream, context.Exception);
+				stopwatch.Stop();
 			}
 			else
 			{

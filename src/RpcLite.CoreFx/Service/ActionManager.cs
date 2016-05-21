@@ -74,6 +74,7 @@ namespace RpcLite.Service
 				Name = actionKey,
 				ArgumentCount = arguments.Length,
 				ArgumentType = argumentType,
+				DefaultArgument = GetDefaultValue(argumentType),
 				MethodInfo = method,
 				HasReturnValue = hasReturn,
 				ServiceCreator = TypeCreator.GetCreateInstanceFunc(serviceType),
@@ -97,6 +98,17 @@ namespace RpcLite.Service
 			}
 
 			return actionInfo;
+		}
+
+		private static object GetDefaultValue(Type type)
+		{
+			if (type == null || !type
+#if NETCORE
+				.GetTypeInfo()
+#endif
+				.IsValueType) return null;
+
+			return Activator.CreateInstance(type);
 		}
 
 	}

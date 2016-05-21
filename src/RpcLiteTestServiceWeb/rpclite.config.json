@@ -9,12 +9,12 @@
     {
       "name": "ProductService",
       "path": "/api/test/", /* test commont */
-      "type": "RpcLite.TestService.RpcLiteTestService,RpcLite.CoreFx"
+      "type": "RpcLite.TestService.RpcLiteTestService,RpcLite"
     },
     {
       "name": "TestService",
       "path": "/api/product/", /* test commont */
-      "type": "RpcLite.TestService.RpcLiteTestService,RpcLite.CoreFx"
+      "type": "RpcLite.TestService.RpcLiteTestService,RpcLite"
     }
 
     /*
