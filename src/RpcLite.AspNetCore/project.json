@@ -1,23 +1,24 @@
 ﻿{
-  "version": "1.0.1-*",
-  "description": "RpcLite.AspNetCore Class Library",
   "authors": [ "chrishwang" ],
-  "tags": [ "" ],
-  "projectUrl": "",
-  "licenseUrl": "",
-
-
   "dependencies": {
     "Microsoft.AspNet.IISPlatformHandler": "1.0.0-rc1-final",
     "Microsoft.AspNet.Server.Kestrel": "1.0.0-rc1-final",
     "System.Runtime.Serialization.Xml": "4.1.0",
     "System.Xml.XmlDocument": "4.0.0",
-    "RpcLite.CoreFx": "1.0.0-*"
+    "Microsoft.AspNetCore.Http.Abstractions": "1.0.0-rc2-final",
+    "RpcLite.CoreFx": "1.0.1-*"
   },
-
-
+  "description": "RpcLite.AspNetCore Class Library",
   "frameworks": {
-    "dnxcore50": { }
-  }
+    "netstandard1.3": {
+      "imports": "dnxcore50"
+    }
+  },
+  "packOptions": {
+    "licenseUrl": "",
+    "projectUrl": "",
+    "tags": [ "" ]
 
+  },
+  "version": "1.0.1-*"
 }

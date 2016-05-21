@@ -1,4 +1,6 @@
-﻿namespace RpcLite.TestService
+﻿using System.Threading.Tasks;
+
+namespace RpcLite.TestService
 {
 	/// <summary>
 	/// 
@@ -30,6 +32,13 @@
 		/// <param name="id"></param>
 		/// <returns></returns>
 		Product GetProductById(int id);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="id"></param>
+		/// <returns></returns>
+		Task<Product> GetProductByIdAsync(int id);
 
 	}
 }

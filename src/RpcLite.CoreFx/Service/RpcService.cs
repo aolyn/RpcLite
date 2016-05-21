@@ -59,23 +59,18 @@ namespace RpcLite.Service
 			LogHelper.Debug("RpcService.BeginProcessRequest");
 
 			LogHelper.Debug("RpcService.BeginProcessRequest: start ActionHelper.GetActionInfo");
-			var actionInfo = ActionManager.GetAction(context.Request.ServiceType, context.Request.ActionName);
+			var action = ActionManager.GetAction(context.Request.ServiceType, context.Request.ActionName);
 			LogHelper.Debug("RpcService.BeginProcessRequest: end ActionHelper.GetActionInfo");
-			if (actionInfo == null)
+			if (action == null)
 			{
 				LogHelper.Debug("Action Not Found: " + context.Request.ActionName);
 				throw new ActionNotFoundException(context.Request.ActionName);
 			}
 
-			object requestObject = null;
-			if (actionInfo.ArgumentCount > 0)
-				requestObject = GetRequestObject(context.Request.RequestStream, context.Formatter, actionInfo.ArgumentType);
-
 			LogHelper.Debug("RpcService.BeginProcessRequest: got requestObject");
 
 			context.Service = this;
-			context.Action = actionInfo;
-			context.Argument = requestObject;
+			context.Action = action;
 
 			try
 			{
@@ -86,8 +81,8 @@ namespace RpcLite.Service
 				LogHelper.Error(ex);
 			}
 
-			var ar = actionInfo.ExecuteAsync(context);
-			var waitTask = ar.ContinueWith(tsk =>
+			var task = action.ExecuteAsync(context);
+			var waitTask = task.ContinueWith(tsk =>
 			{
 				try
 				{
@@ -98,30 +93,18 @@ namespace RpcLite.Service
 					LogHelper.Error(ex);
 				}
 
-				if (tsk.IsFaulted)
-				{
-					context.Exception = tsk.Exception.InnerException;
-				}
-				else
-				{
-					var result = RpcAction.GetResultObject(tsk, context);
-					context.Result = result;
-				}
+				//if (tsk.IsFaulted)
+				//{
+				//	context.Exception = tsk.Exception.InnerException;
+				//}
+				//else
+				//{
+				//	var result = RpcAction.GetResultObject(tsk, context);
+				//	context.Result = result;
+				//}
 			});
 
 			return waitTask;
-		}
-
-		private static object GetRequestObject(Stream stream, IFormatter formatter, Type type)
-		{
-			try
-			{
-				return formatter.Deserilize(stream, type);
-			}
-			catch (Exception)
-			{
-				throw new RequestException("Parse request content to object error.");
-			}
 		}
 
 		///// <summary>

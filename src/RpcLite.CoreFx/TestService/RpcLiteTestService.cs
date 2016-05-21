@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using System.Threading.Tasks;
 
 namespace RpcLite.TestService
 {
@@ -53,6 +54,20 @@ namespace RpcLite.TestService
 			};
 		}
 
-	}
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="id"></param>
+		/// <returns></returns>
+		public Task<Product> GetProductByIdAsync(int id)
+		{
+			return Task.Factory.StartNew(() => new Product
+			{
+				Id = id,
+				Name = "Access to RpcLite",
+				Price = 50,
+			});
+		}
 
+	}
 }

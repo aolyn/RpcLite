@@ -1,7 +1,9 @@
 ﻿using System;
+using System.IO;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Threading.Tasks;
+using RpcLite.Formatters;
 using RpcLite.Logging;
 
 namespace RpcLite.Service
@@ -108,14 +110,40 @@ namespace RpcLite.Service
 		/// </summary>
 		public Type ServiceType { get; set; }
 
+		/// <summary>
+		/// default value or argument type
+		/// </summary>
+		public object DefaultArgument { get; set; }
+
 		#endregion
 
 		internal Task ExecuteAsync(ServiceContext context)
 		{
+			if (ArgumentCount > 0)
+			{
+				context.Argument = context.Request.ContentLength > 0
+					? GetRequestObject(context.Request.RequestStream, context.Formatter, ArgumentType)
+					: DefaultArgument;
+			}
+
 			if (IsTask)
 			{
 				var task = InvokeTaskInternal(context);
-				return task;
+
+				var waitTask = task.ContinueWith(tsk =>
+				{
+					if (tsk.IsFaulted)
+					{
+						context.Exception = tsk.Exception.InnerException;
+					}
+					else
+					{
+						var result = GetResultObject(tsk, context);
+						context.Result = result;
+					}
+				});
+
+				return waitTask;
 			}
 			else
 			{
@@ -138,6 +166,18 @@ namespace RpcLite.Service
 			}
 		}
 
+		private static object GetRequestObject(Stream stream, IFormatter formatter, Type type)
+		{
+			try
+			{
+				return formatter.Deserilize(stream, type);
+			}
+			catch (Exception)
+			{
+				throw new RequestException("Parse request content to object error.");
+			}
+		}
+
 		private static readonly QuickReadConcurrentDictionary<Type, Func<object, object>> GetTaskResultFuncs = new QuickReadConcurrentDictionary<Type, Func<object, object>>();
 
 		/// <summary>
@@ -147,16 +187,11 @@ namespace RpcLite.Service
 		/// <returns></returns>
 		internal static object GetTaskResult(Task task)
 		{
-			//return task.GetType() == typeof(Task)
-			//	? null
-			//	: ((dynamic)task).Result;
-
 			try
 			{
 				var type = task.GetType();
 				var func = GetTaskResultFuncs.GetOrAdd(type, () =>
 				{
-					//var taskType = typeof(Task<>).MakeGenericType(type);
 					var arg = Expression.Parameter(typeof(object), "task");
 					var argConvert = Expression.Convert(arg, type);
 					var expProp = Expression.Property(argConvert, "Result");
@@ -177,7 +212,6 @@ namespace RpcLite.Service
 					throw ex.InnerException;
 				throw;
 			}
-			//return null;
 		}
 
 		internal static object GetResultObject(IAsyncResult ar, ServiceContext context)
@@ -195,39 +229,17 @@ namespace RpcLite.Service
 
 					resultObject = GetTaskResult(task);
 				}
-				else // if (!context.Action.IsAsync)
+				else
 				{
 					if (context.Action.HasReturnValue)
 					{
 						resultObject = context.Result;
 					}
 				}
-				//else
-				//{
-				//	if (context.Action.HasReturnValue)
-				//	{
-				//		try
-				//		{
-				//			resultObject = context.Action.EndFunc(serviceContainer.ServiceObject, ar);
-				//		}
-				//		catch (Exception ex)
-				//		{
-				//			resultObject = ex;
-				//		}
-				//	}
-				//	else
-				//	{
-				//		context.Action.EndAction(serviceContainer.ServiceObject, ar);
-				//	}
-				//}
 			}
-			//catch (Exception ex)
-			//{
-			//	resultObject = ex;
-			//}
 			finally
 			{
-				if (/*context.Action.IsAsync &&*/ serviceContainer != null && !context.Action.IsStatic)
+				if (serviceContainer != null && !context.Action.IsStatic)
 				{
 					serviceContainer.Dispose();
 				}
