@@ -206,9 +206,7 @@ namespace WebApiClient
 			}
 
 			//{
-
 			//	var tw = new WrapperHelper<IProduct>(new object());
-
 			//	var type = tw.GetWrapperType();
 			//	var obj = Activator.CreateInstance(type);
 			//	var ip = obj as IProduct;
