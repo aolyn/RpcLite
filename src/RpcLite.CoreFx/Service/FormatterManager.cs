@@ -18,6 +18,11 @@ namespace RpcLite.Service
 		private static readonly object FormatterLock = new object();
 		private static Dictionary<string, IFormatter> _typeToFormatterDictionary = new Dictionary<string, IFormatter>();
 
+		/// <summary>
+		/// get formatter by content type
+		/// </summary>
+		/// <param name="contentType"></param>
+		/// <returns></returns>
 		public static IFormatter GetFormatter(string contentType)
 		{
 			if (_formaters == null || _formaters.Count == 0)
