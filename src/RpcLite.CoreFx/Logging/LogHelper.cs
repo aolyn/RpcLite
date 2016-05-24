@@ -10,6 +10,11 @@ namespace RpcLite.Logging
 
 		}
 
+		public static void Error(string message)
+		{
+
+		}
+
 		public static void Error(string v, Exception ex)
 		{
 

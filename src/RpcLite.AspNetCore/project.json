@@ -1,5 +1,8 @@
 ﻿{
   "authors": [ "chrishwang" ],
+  "description": "RpcLite.AspNetCore Class Library",
+  "version": "1.0.1-*",
+
   "dependencies": {
     "Microsoft.AspNet.IISPlatformHandler": "1.0.0-rc1-final",
     "Microsoft.AspNet.Server.Kestrel": "1.0.0-rc1-final",
@@ -8,17 +11,17 @@
     "Microsoft.AspNetCore.Http.Abstractions": "1.0.0-rc2-final",
     "RpcLite.CoreFx": "1.0.1-*"
   },
-  "description": "RpcLite.AspNetCore Class Library",
+
   "frameworks": {
     "netstandard1.3": {
       "imports": "dnxcore50"
     }
   },
+
   "packOptions": {
     "licenseUrl": "",
     "projectUrl": "",
     "tags": [ "" ]
 
-  },
-  "version": "1.0.1-*"
+  }
 }
