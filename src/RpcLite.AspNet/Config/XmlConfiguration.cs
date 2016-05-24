@@ -64,6 +64,5 @@ namespace RpcLite.Config
 			return node.Attributes?[attributeName]?.Value;
 		}
 
-
 	}
 }

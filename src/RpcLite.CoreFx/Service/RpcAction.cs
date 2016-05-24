@@ -105,10 +105,10 @@ namespace RpcLite.Service
 		/// </summary>
 		public Type TaskResultType { get; set; }
 
-		/// <summary>
-		/// 
-		/// </summary>
-		public Type ServiceType { get; set; }
+		///// <summary>
+		///// 
+		///// </summary>
+		//public Type ServiceType { get; set; }
 
 		/// <summary>
 		/// default value or argument type

@@ -1,5 +1,4 @@
-﻿
-namespace ServiceRegistery.Contract
+﻿namespace ServiceRegistry.Contract
 {
 	public class GetServiceAddressRequest
 	{

@@ -1,7 +1,5 @@
 ﻿using System;
-using System.IO;
 using System.Threading.Tasks;
-using RpcLite.Formatters;
 using RpcLite.Logging;
 
 namespace RpcLite.Service
@@ -106,39 +104,6 @@ namespace RpcLite.Service
 
 			return waitTask;
 		}
-
-		///// <summary>
-		///// 
-		///// </summary>
-		///// <param name="result"></param>
-		//public static void EndProcessRequest(IAsyncResult result)
-		//{
-		//	var state = result.AsyncState as ServiceContext;
-		//	if (state == null)
-		//	{
-		//		LogHelper.Error("ServiceContext is null", null);
-		//		return;
-		//	}
-
-		//	if (state.Service == null)
-		//		throw new InvalidOperationException("not implement, RpcLite bug");
-
-		//	state.Service.EndProcessRequest(result, state);
-		//}
-
-		//private void EndProcessRequest(IAsyncResult ar, ServiceContext context)
-		//{
-		//	//object resultObject = null;
-		//	try
-		//	{
-		//		//resultObject = RpcAction.GetResultObject(ar, context);
-		//		//context.Result = RpcAction.GetResultObject(ar, context);
-		//	}
-		//	finally
-		//	{
-		//		AfterInvoke?.Invoke(context);
-		//	}
-		//}
 
 	}
 }

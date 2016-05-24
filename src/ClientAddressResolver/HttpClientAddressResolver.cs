@@ -3,13 +3,14 @@ using System.Linq;
 using System.Reflection;
 using RpcLite.Client;
 using RpcLite.Config;
+using RpcLite.Logging;
 using ServiceRegistery.Contract;
 
 namespace RpcLite.Resolvers
 {
 	public class HttpClientAddressResolver : IAddressResolver
 	{
-		private static readonly object initializeLocker = new object();
+		private static readonly object InitializeLocker = new object();
 		private static QuickReadConcurrentDictionary<Type, string> _defaultBaseUrlDictionary = new QuickReadConcurrentDictionary<Type, string>();
 
 		static HttpClientAddressResolver()
@@ -19,7 +20,7 @@ namespace RpcLite.Resolvers
 
 		private static void InitilizeBaseUrlsSafe()
 		{
-			lock (initializeLocker)
+			lock (InitializeLocker)
 			{
 				InitilizeBaseUrls();
 			}
@@ -63,6 +64,23 @@ namespace RpcLite.Resolvers
 			return GetAddressInternal<T>();
 		}
 
+		private static Lazy<RpcClientBase<IRegistryService>> _registryClient =
+			new Lazy<RpcClientBase<IRegistryService>>(() =>
+			{
+				var registryClientConfigItem = RpcLiteConfig.Instance.Clients
+					.FirstOrDefault(it => it.TypeName == typeof(IRegistryService).FullName);
+
+				if (string.IsNullOrWhiteSpace(registryClientConfigItem?.Path))
+				{
+					LogHelper.Error("Registry Client Config Error: not exist or path is empty");
+					return null;
+				}
+
+				var client = ClientFactory.GetInstance<IRegistryService>(registryClientConfigItem.Path);
+				return client;
+			});
+
+
 		private static Uri GetAddressInternal<T>() where T : class
 		{
 			// ReSharper disable once InconsistentlySynchronizedField
@@ -71,30 +89,21 @@ namespace RpcLite.Resolvers
 				var clientConfigItem = RpcLiteConfig.Instance.Clients
 					.FirstOrDefault(it => it.TypeName == typeof(T).FullName);
 
-				if (clientConfigItem != null)
+				if (clientConfigItem == null) return null;
+				if (_registryClient.Value == null) return null;
+
+				var request = new GetServiceAddressRequest
 				{
-					var registryClientConfigItem = RpcLiteConfig.Instance.Clients
-						.FirstOrDefault(it => it.TypeName == typeof(IRegistryService).FullName);
+					ServiceName = clientConfigItem.Name,
+					Namespace = clientConfigItem.Namespace,
+					Environment = RpcLiteConfig.Instance.ClientEnvironment,
+				};
+				var response = _registryClient.Value.Client.GetServiceAddress(request);
+				var uri = response == null || string.IsNullOrWhiteSpace(response.Address)
+					? null
+					: response.Address;
 
-					if (registryClientConfigItem != null && !string.IsNullOrWhiteSpace(registryClientConfigItem.Path))
-					{
-						var client = RpcClientBase<IRegistryService>.GetInstance(registryClientConfigItem.Path);
-						var request = new GetServiceAddressRequest
-						{
-							ServiceName = clientConfigItem.Name,
-							Namespace = clientConfigItem.Namespace,
-							Environment = RpcLiteConfig.Instance.ClientEnvironment,
-						};
-						var response = client.Client.GetServiceAddress(request);
-						var uri = response == null || string.IsNullOrWhiteSpace(response.Address)
-							? null
-							: response.Address;
-
-						return uri;
-					}
-				}
-
-				return null;
+				return uri;
 			});
 
 			return string.IsNullOrEmpty(url)
