@@ -259,6 +259,13 @@ namespace RpcLite.Config
 			InitializeServiceConfig(config, instance);
 			InitializeClientConfig(config, instance);
 
+			if (instance.Services != null)
+			{
+				instance.ServicePaths = instance.Services
+					.Select(it => it.Path)
+					.ToArray();
+			}
+
 			return instance;
 		}
 
@@ -268,7 +275,7 @@ namespace RpcLite.Config
 			var clientNode = config.GetSection("client");
 			if (clientNode == null) return;
 
-			var clientsNode = config.GetSection("clients");
+			var clientsNode = clientNode.GetSection("clients");
 			if (clientsNode != null)
 			{
 				var environment = clientsNode["environment"];
@@ -321,18 +328,18 @@ namespace RpcLite.Config
 				}
 			}
 
-			var resolverNode = config.GetSection("resolver");
+			var resolverNode = clientNode.GetSection("resolver");
 			if (resolverNode != null)
 			{
 				InitializeResolverConfig(resolverNode, instance);
 			}
 		}
 
-		private static void InitializeResolverConfig(IConfiguration config, RpcLiteConfig instance)
+		private static void InitializeResolverConfig(IConfiguration resolverNode, RpcLiteConfig instance)
 		{
 			try
 			{
-				var resolverNode = config.GetSection("resolver");
+				//var resolverNode = config.GetSection("resolver");
 				if (resolverNode != null && resolverNode.GetChildren().Any())
 				{
 					//foreach (XmlNode item in resolverNode.ChildNodes)
@@ -387,7 +394,15 @@ namespace RpcLite.Config
 				var serviceNode = config.GetSection("service");
 				if (serviceNode == null) return;
 
-				var servicesNode = config.GetSection("services");
+				//var pathNode = serviceNode.GetSection("paths");
+				//if (pathNode.GetChildren().Any())
+				//{
+				//	instance.ServicePaths = pathNode.GetChildren()
+				//		.Select(it => it.Value)
+				//		.ToArray();
+				//}
+
+				var servicesNode = serviceNode.GetSection("services");
 				if (servicesNode != null)
 				{
 					var serviceItemNodes = servicesNode.GetChildren();

@@ -13,18 +13,12 @@ namespace RpcLite.Service
 		/// <param name="context"></param>
 		public void ProcessRequest(HttpContext context)
 		{
-			RpcAsyncHandler.ProcessRequestInternal(context);
+			RpcProcessor.ProcessAsync(new AspNetServerContext(context)).Wait();
 		}
 
 		/// <summary>
 		/// 
 		/// </summary>
-		public bool IsReusable
-		{
-			get
-			{
-				return true;
-			}
-		}
+		public bool IsReusable { get { return true; } }
 	}
 }

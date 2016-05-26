@@ -13,18 +13,12 @@
 
   "frameworks": {
     "netstandard1.3": {
-      "imports": "dnxcore50",
-      //"dependencies": {
-      //  "NETStandard.Library": "1.5.0-rc4-24126-00"
-      //}
+      "imports": "dnxcore50"
     },
     "netcoreapp1.0": {
       "imports": [
         "dnxcore50"
-      ],
-      //"dependencies": {
-      //  "Microsoft.NETCore.App": "1.0.0-rc3-004309"
-      //}
+      ]
     }
   },
 
