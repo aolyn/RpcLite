@@ -154,8 +154,10 @@ namespace RpcLite.Service
 				}
 				catch (Exception ex)
 				{
+					context.Exception = ex;
+
 					var tcs = new TaskCompletionSource<object>();
-					tcs.SetException(ex);
+					tcs.SetResult(null);
 					return tcs.Task;
 				}
 				LogHelper.Debug("RpcService.BeginProcessRequest: end ActionHelper.InvokeAction");

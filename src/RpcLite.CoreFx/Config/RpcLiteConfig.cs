@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace RpcLite.Config
 {
@@ -70,6 +71,11 @@ namespace RpcLite.Config
 		/// App Id of current app
 		/// </summary>
 		public string AppId { get; set; }
+
+		/// <summary>
+		/// config file version
+		/// </summary>
+		public Version Version { get; internal set; }
 
 
 		//static RpcLiteConfig()

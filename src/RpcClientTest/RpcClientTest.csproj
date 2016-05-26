@@ -73,7 +73,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.8.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.8.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -118,9 +118,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ClientAddressResolver\RpcLite.Resolvers.csproj">
+    <ProjectReference Include="..\ClientAddressResolver\RpcLite.Resolvers.Net40.csproj">
       <Project>{7ae9591b-8465-4d8a-b27d-51e2ec6fe82c}</Project>
-      <Name>RpcLite.Resolvers</Name>
+      <Name>RpcLite.Resolvers.Net40</Name>
     </ProjectReference>
     <ProjectReference Include="..\ClientImpl\ClientImpl.csproj">
       <Project>{42520B20-6F74-4BCB-926F-BDA46B3388F1}</Project>
