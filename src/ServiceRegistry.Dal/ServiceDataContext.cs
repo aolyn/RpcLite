@@ -16,45 +16,28 @@ namespace ServiceRegistry.Dal
 			modelBuilder.Entity<ServiceMapping>().ToTable(nameof(ServiceMapping));
 			modelBuilder.Entity<ServiceEnvironment>().ToTable(nameof(ServiceEnvironment));
 
+			modelBuilder.Entity<Service>().HasKey(b => b.Id);
+			modelBuilder.Entity<Service>().Property(it => it.Name).HasMaxLength(64).IsRequired();
+
 			modelBuilder.Entity<ServiceMapping>().HasKey(b => b.Id);
-			//modelBuilder.Entity<ServiceMapping>().Property(it => it.Name).HasMaxLength(128).IsRequired();
-			//modelBuilder.Entity<ServiceMapping>().Property(it => it.Url).HasMaxLength(128).IsRequired();
+			modelBuilder.Entity<ServiceMapping>().Property(it => it.Namespace).HasMaxLength(128).IsRequired();
+			modelBuilder.Entity<ServiceMapping>().Property(it => it.Environment).HasMaxLength(64).IsRequired();
+			modelBuilder.Entity<ServiceMapping>().Property(it => it.Address).HasMaxLength(255).IsRequired();
 
-			//modelBuilder.Entity<Category>().HasKey(b => b.Id);
-			//modelBuilder.Entity<Category>().Property(it => it.Name).HasMaxLength(128).IsRequired();
-			//modelBuilder.Entity<Category>().Property(it => it.Url).HasMaxLength(128).IsRequired();
+			modelBuilder.Entity<ServiceEnvironment>().Property(it => it.Id).HasMaxLength(64).HasColumnName("Name").IsRequired();
 
-			////modelBuilder.Entity<Video>().HasMany(it => it.VideoCategories)
-			////	.WithOne(it => it.Video)
-			////	.HasForeignKey(it => it.VideoId);
-			//modelBuilder.Entity<Video>().HasKey(b => b.Id);
-			//modelBuilder.Entity<Video>().Property(it => it.Name).HasMaxLength(128).IsRequired();
-			//modelBuilder.Entity<Video>().Property(it => it.NameCn).HasMaxLength(128).IsRequired();
-			//modelBuilder.Entity<Video>().Property(it => it.NameEn).HasMaxLength(255);
-			//modelBuilder.Entity<Video>().Property(it => it.NameCnAlias).HasMaxLength(255);
-			//modelBuilder.Entity<Video>().Property(it => it.Url).HasMaxLength(128).IsRequired();
+			modelBuilder.Entity<ServiceEnvironment>()
+				.HasMany(it => it.ServiceMappings)
+				.WithOne(t => t.ServiceEnvironment)
+				.HasForeignKey(it => it.Environment);
 
-			//modelBuilder.Entity<Video>().HasIndex(it => it.DateCreated);
+			//modelBuilder.Entity<ServiceMapping>()
+			//	.Property(e => e.ServiceId)
+			//	.HasAnnotation(
+			//		IndexAnnotation.AnnotationName,
+			//		new IndexAnnotation(new IndexAttribute("ServiceMapping_UK_ServiceId_Environment_Namespace", 2)));
 
-
-			//modelBuilder.Entity<Actor>().Property(it => it.Name).HasMaxLength(128).IsRequired();
-			//modelBuilder.Entity<Actor>().Property(it => it.Url).HasMaxLength(128).IsRequired();
-
-
-			//modelBuilder.Entity<Director>().Property(it => it.Name).HasMaxLength(128).IsRequired();
-			//modelBuilder.Entity<Director>().Property(it => it.Url).HasMaxLength(128).IsRequired();
-
-
-			//modelBuilder.Entity<Tag>().Property(it => it.Name).HasMaxLength(128).IsRequired();
-			//modelBuilder.Entity<Tag>().Property(it => it.Url).HasMaxLength(128).IsRequired();
-
-			//modelBuilder.Entity<VideoTag>().HasAlternateKey(it => new { it.VideoId, it.TagId });
-			//modelBuilder.Entity<VideoActor>().HasAlternateKey(it => new { it.VideoId, it.ActorId });
-			//modelBuilder.Entity<VideoCategory>().HasAlternateKey(it => new { it.VideoId, it.CategoryId });
-
-			//modelBuilder.Entity<CategoryType>()
-			//	.HasMany(it => it.)
-			//	.WithOne();
+			//TODO: add index ServiceMapping_UK_ServiceId_Environment_Namespace
 
 			//modelBuilder.Entity<Post>()
 			//	.HasOne(p => p.Blog)
@@ -64,9 +47,10 @@ namespace ServiceRegistry.Dal
 		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 		{
 			//optionsBuilder.use
-			optionsBuilder.UseNpgsql("server=localhost;user id=chris;password=chris123;database=ShareVideo");
-			//optionsBuilder.UseSqlite("Data Source=filename;Version=3;");
-			//optionsBuilder.UseSqlServer("server=localhost;user id=chris;password=chris123;database=Blog");
+			//optionsBuilder.UseNpgsql("server=localhost;user id=chris;password=chris123;database=ShareVideo");
+			//optionsBuilder.UseSqlite("Data Source=rpclite.db;Version=3;");
+			//optionsBuilder.UseSqlServer("server=localhost;user id=chris;password=chris123;database=RpcLite");
+			optionsBuilder.UseSqlServer("Data Source=.;Initial Catalog=RpcLite;Integrated Security=True");
 			base.OnConfiguring(optionsBuilder);
 		}
 	}

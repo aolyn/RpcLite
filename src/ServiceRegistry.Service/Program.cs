@@ -1,24 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.IO;
 using Microsoft.AspNetCore.Hosting;
 
 namespace ServiceRegistry.Service
 {
-    public class Program
-    {
-        public static void Main(string[] args)
-        {
-            var host = new WebHostBuilder()
-                .UseKestrel()
-                .UseContentRoot(Directory.GetCurrentDirectory())
-                .UseIISIntegration()
-                .UseStartup<Startup>()
-                .Build();
+	public class Program
+	{
+		public static void Main(string[] args)
+		{
+			var host = new WebHostBuilder()
+				.UseKestrel()
+				.UseUrls("http://localhost:12974/")
+				.UseContentRoot(Directory.GetCurrentDirectory())
+				.UseIISIntegration()
+				.UseStartup<Startup>()
+				.Build();
 
-            host.Run();
-        }
-    }
+			host.Run();
+		}
+	}
 }

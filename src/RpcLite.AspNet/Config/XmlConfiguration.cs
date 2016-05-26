@@ -40,6 +40,8 @@ namespace RpcLite.Config
 				.Select(it => new XmlConfigurationSection(it));
 		}
 
+		public IEnumerable<IConfigurationSection> Children => GetChildren();
+
 		public IConfigurationSection GetSection(string key)
 		{
 			var node = _node[key];
