@@ -27,6 +27,8 @@ namespace RpcLite.Config
 				.Select(it => new CoreConfigurationSection(it));
 		}
 
+		public IEnumerable<IConfigurationSection> Children => GetChildren();
+
 		public IConfigurationSection GetSection(string key)
 		{
 			var node = _node.GetSection(key);

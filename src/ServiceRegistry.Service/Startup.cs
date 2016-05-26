@@ -1,5 +1,4 @@
-﻿using System.IO;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
@@ -32,7 +31,6 @@ namespace ServiceRegistry.Service
 			});
 
 			//var jsonFile = Path.Combine(_env.ContentRootPath, "rpclite.config.json");
-
 
 		}
 	}

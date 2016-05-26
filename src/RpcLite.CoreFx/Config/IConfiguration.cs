@@ -14,6 +14,11 @@ namespace RpcLite.Config
 		IEnumerable<IConfigurationSection> GetChildren();
 
 		/// <summary>
+		/// 
+		/// </summary>
+		IEnumerable<IConfigurationSection> Children { get; }
+
+		/// <summary>
 		/// Gets or sets a configuration value.
 		/// </summary>
 		/// <param name="key">The configuration key.</param>

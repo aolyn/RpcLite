@@ -16,6 +16,5 @@ namespace RpcLite.Config
 		public string Key { get { return _node.Name; } }
 		public string Path { get; }
 		public string Value { get; set; }
-		public IEnumerable<IConfigurationSection> Children => GetChildren();
 	}
 }

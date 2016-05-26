@@ -157,6 +157,9 @@
     <Compile Include="..\RpcLite.CoreFx\Service\FormatterManager.cs">
       <Link>Service\FormatterManager.cs</Link>
     </Compile>
+    <Compile Include="..\RpcLite.CoreFx\Service\IServerContext.cs">
+      <Link>Service\IServerContext.cs</Link>
+    </Compile>
     <Compile Include="..\RpcLite.CoreFx\Service\MethodHelper.cs">
       <Link>Service\MethodHelper.cs</Link>
     </Compile>
