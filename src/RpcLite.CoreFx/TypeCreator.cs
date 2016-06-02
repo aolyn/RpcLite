@@ -118,7 +118,7 @@ namespace RpcLite
 			#endregion
 
 #if NETCORE
-			var type = typeBuilder.AsType();
+			var type = typeBuilder.CreateTypeInfo().AsType();
 #else
 			var type = typeBuilder.CreateType();
 #endif
@@ -207,7 +207,7 @@ namespace RpcLite
 
 			//真正创建，并返回
 #if NETCORE
-			implementType = typeBuilder.AsType();
+			implementType = typeBuilder.CreateTypeInfo().AsType();
 #else
 			implementType = typeBuilder.CreateType();
 #endif
@@ -434,6 +434,11 @@ namespace RpcLite
 			Func<object> func;
 			if (CreateInstanceFuncs.TryGetValue(serviceType, out func))
 				return func;
+
+			//#if NETCORE
+			//			var ctor1 = serviceType.GetConstructors();
+			//#else
+			//#endif
 
 			var ctor = serviceType.GetConstructor(Type.EmptyTypes);
 			if (ctor == null)

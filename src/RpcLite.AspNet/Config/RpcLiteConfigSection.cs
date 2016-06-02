@@ -13,7 +13,6 @@ namespace RpcLite.Config
 
 		public static void Initialize()
 		{
-
 		}
 
 		static RpcLiteConfigSection()
