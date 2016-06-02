@@ -22,7 +22,7 @@ namespace RpcLiteTestServiceWeb
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
 		public void Configure(IApplicationBuilder app)
 		{
-			ConfigurationInitializer.Initialize(app);
+			RpcLiteInitializer.Initialize(app);
 			//InitializeRpcLite(app);
 
 			//app.UseMiddleware<Middleware2>();
@@ -50,7 +50,7 @@ namespace RpcLiteTestServiceWeb
 			//var rpcConfig = RpcLiteConfigurationHelper.GetConfig(new CoreConfigurationSection(config));
 			//RpcLiteConfig.SetInstance(rpcConfig);
 
-			ConfigurationInitializer.Initialize(config);
+			RpcLiteInitializer.Initialize(config);
 		}
 
 	}

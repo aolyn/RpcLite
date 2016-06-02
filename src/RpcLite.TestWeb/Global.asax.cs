@@ -9,7 +9,7 @@ namespace RpcLite.TestWeb
 		{
 			//RpcHandler.Services.Add(new ServiceInfo { Name = "Products", Path = "~/api/products/", Type = typeof(ProductService) });
 			//RpcHandler.Services.Add(new ServiceInfo { Name = "Products", Path = "~/api/", Type = typeof(ProductService) });
-			RpcLiteConfigSection.Initialize();
+			RpcLiteInitializer.Initialize();
 		}
 
 		protected void Session_Start(object sender, EventArgs e)

@@ -9,7 +9,7 @@ namespace ServiceRegistry.Service
 		{
 			var host = new WebHostBuilder()
 				.UseKestrel()
-				.UseUrls("http://localhost:12974/")
+				.UseUrls("http://*:12974/")
 				.UseContentRoot(Directory.GetCurrentDirectory())
 				.UseIISIntegration()
 				.UseStartup<Startup>()

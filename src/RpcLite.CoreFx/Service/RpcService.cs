@@ -61,6 +61,11 @@ namespace RpcLite.Service
 			LogHelper.Debug("RpcService.BeginProcessRequest: end ActionHelper.GetActionInfo");
 			if (action == null)
 			{
+				if (context.Request.ActionName == "?meta")
+				{
+
+				}
+
 				LogHelper.Debug("Action Not Found: " + context.Request.ActionName);
 				throw new ActionNotFoundException(context.Request.ActionName);
 			}

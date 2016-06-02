@@ -42,6 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Config\RpcLiteInitializer.cs" />
     <Compile Include="Config\XmlConfigurationSection.cs" />
     <Compile Include="Config\XmlConfiguration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

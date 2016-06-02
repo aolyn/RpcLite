@@ -44,6 +44,7 @@ namespace RpcLite.Net
 			var tcs = new TaskCompletionSource<ServiceReponseMessage>();
 
 			var request = (HttpWebRequest)WebRequest.Create(url);
+			//request.Proxy = new WebProxy("http://localhost:8888/");
 			request.Method = "POST";
 			if (headDic != null)
 			{
@@ -62,6 +63,7 @@ namespace RpcLite.Net
 			{
 				var getResponseTask = Task.Factory.FromAsync(request.BeginGetResponse, request.EndGetResponse, null);
 
+				// ReSharper disable once UnusedVariable
 				var task1 = getResponseTask.ContinueWith(tsk =>
 				{
 					ServiceReponseMessage responseMessage;
@@ -126,6 +128,7 @@ namespace RpcLite.Net
 			if (!string.IsNullOrEmpty(postData))
 			{
 				var getRequestStreamTask = Task.Factory.FromAsync(request.BeginGetRequestStream, request.EndGetRequestStream, null);
+				// ReSharper disable once UnusedVariable
 				var task1 = getRequestStreamTask.ContinueWith(tsk =>
 				{
 					if (tsk.Exception != null)
@@ -173,7 +176,18 @@ namespace RpcLite.Net
 		public static ServiceReponseMessage Post(string url, string postData, Encoding encoding, Dictionary<string, string> headDic)
 		{
 			var task = PostAsync(url, postData, encoding, headDic);
-			return task.Result;
+			try
+			{
+				return task.Result;
+			}
+			catch (AggregateException ex)
+			{
+				throw ex.InnerException;
+			}
+			//if (task.Exception != null)
+			//{
+			//}
+			//return task.Result;
 
 			#region 
 			//			ServiceReponseMessage responseMessage;
@@ -244,7 +258,8 @@ namespace RpcLite.Net
 
 			string jsonResult = null;
 
-			if (response.ContentLength > 0)
+			var contentEncoding = response.Headers[HttpRequestHeader.TransferEncoding];
+			if (response.ContentLength > 0 || contentEncoding == "chunked")
 			{
 				var stream = response.GetResponseStream();
 				if (stream != null)
