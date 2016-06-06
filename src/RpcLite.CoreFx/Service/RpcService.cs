@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Reflection;
+using System.Text;
 using System.Threading.Tasks;
 using RpcLite.Logging;
 
@@ -9,6 +11,17 @@ namespace RpcLite.Service
 	/// </summary>
 	public class RpcService
 	{
+		private readonly ActionManager _actionManager;
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="serviceType"></param>
+		public RpcService(Type serviceType)
+		{
+			Type = serviceType;
+			_actionManager = new ActionManager(serviceType);
+		}
+
 		#region properties
 
 		/// <summary>
@@ -19,7 +32,7 @@ namespace RpcLite.Service
 		/// <summary>
 		/// Service's Type
 		/// </summary>
-		public Type Type { get; set; }
+		public Type Type { get; }
 
 		/// <summary>
 		/// Name of Service
@@ -54,25 +67,38 @@ namespace RpcLite.Service
 		/// <returns></returns>
 		public Task ProcessRequestAsync(ServiceContext context)
 		{
+			context.Service = this;
 			LogHelper.Debug("RpcService.BeginProcessRequest");
 
+			if (context.Request.ActionName == "?meta")
+			{
+				LogHelper.Debug("RpcService.BeginProcessRequest: start ActionHelper.InvokeAction");
+				try
+				{
+					var metaInfo = GetMetaInfo(context.Service);
+					context.Result = metaInfo;
+					context.Request.RequestType = RequestType.MetaData;
+				}
+				catch (Exception ex)
+				{
+					context.Exception = ex;
+				}
+				LogHelper.Debug("RpcService.BeginProcessRequest: end ActionHelper.InvokeAction");
+
+				return TaskHelper.FromResult((object)null);
+			}
+
 			LogHelper.Debug("RpcService.BeginProcessRequest: start ActionHelper.GetActionInfo");
-			var action = ActionManager.GetAction(context.Request.ServiceType, context.Request.ActionName);
+			var action = _actionManager.GetAction(context.Request.ServiceType, context.Request.ActionName);
 			LogHelper.Debug("RpcService.BeginProcessRequest: end ActionHelper.GetActionInfo");
 			if (action == null)
 			{
-				if (context.Request.ActionName == "?meta")
-				{
-
-				}
-
 				LogHelper.Debug("Action Not Found: " + context.Request.ActionName);
 				throw new ActionNotFoundException(context.Request.ActionName);
 			}
 
 			LogHelper.Debug("RpcService.BeginProcessRequest: got requestObject");
 
-			context.Service = this;
 			context.Action = action;
 
 			try
@@ -110,5 +136,46 @@ namespace RpcLite.Service
 			return waitTask;
 		}
 
+		private object GetMetaInfo(RpcService service)
+		{
+			var type = service.Type;
+			var sb = new StringBuilder();
+			sb.AppendFormat("{0}", type.Name);
+
+			var typeInfo =
+#if NETCORE
+				type.GetTypeInfo();
+#else
+				type;
+#endif
+
+			var methods = type.GetMethods(BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
+
+			foreach (var method in methods)
+			{
+				sb.AppendLine();
+				sb.Append(method.ReturnType.Name);
+				sb.Append(" ");
+				sb.AppendFormat("{0}(", method.Name);
+
+				bool isFirstArgument = true;
+				foreach (var arg in method.GetParameters())
+				{
+					if (isFirstArgument)
+						isFirstArgument = false;
+					else
+						sb.Append(", ");
+
+					sb.Append(arg.ParameterType.Name);
+					sb.Append(" ");
+					sb.Append(arg.Name);
+				}
+
+				sb.AppendFormat(");", method.Name);
+
+			}
+
+			return sb.ToString();
+		}
 	}
 }

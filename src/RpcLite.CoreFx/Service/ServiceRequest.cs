@@ -42,5 +42,10 @@ namespace RpcLite.Service
 		/// 
 		/// </summary>
 		public int ContentLength { get; set; }
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public RequestType RequestType { get; set; }
 	}
 }

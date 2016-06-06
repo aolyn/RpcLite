@@ -10,7 +10,6 @@
       "type": "platform"
     },
     "RpcLite.AspNetCore": "1.0.1-*",
-    //"RpcLite.AspNetCore": "1.0.1-*",
     "RpcLite.CoreFx": "1.0.1-*",
     "RpcLite.Resolvers": "1.0.0-*",
     "ServiceRegistry.Contract": "1.0.0-*"

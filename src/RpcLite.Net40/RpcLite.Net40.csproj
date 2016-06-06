@@ -163,6 +163,9 @@
     <Compile Include="..\RpcLite.CoreFx\Service\MethodHelper.cs">
       <Link>Service\MethodHelper.cs</Link>
     </Compile>
+    <Compile Include="..\RpcLite.CoreFx\Service\RequestType.cs">
+      <Link>Service\RequestType.cs</Link>
+    </Compile>
     <Compile Include="..\RpcLite.CoreFx\Service\RpcAction.cs">
       <Link>Service\RpcAction.cs</Link>
     </Compile>
@@ -189,6 +192,9 @@
     </Compile>
     <Compile Include="..\RpcLite.CoreFx\Service\ServiceResponse.cs">
       <Link>Service\ServiceResponse.cs</Link>
+    </Compile>
+    <Compile Include="..\RpcLite.CoreFx\TaskHelper.cs">
+      <Link>TaskHelper.cs</Link>
     </Compile>
     <Compile Include="..\RpcLite.CoreFx\TestService\IRpcLiteTestService.cs">
       <Link>TestService\IRpcLiteTestService.cs</Link>

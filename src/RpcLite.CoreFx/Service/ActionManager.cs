@@ -12,7 +12,24 @@ namespace RpcLite.Service
 	/// </summary>
 	public class ActionManager
 	{
-		private static readonly QuickReadConcurrentDictionary<string, RpcAction> Actions = new QuickReadConcurrentDictionary<string, RpcAction>();
+		//public static ActionManager Instance = new ActionManager();
+
+		private readonly QuickReadConcurrentDictionary<string, RpcAction> _actions = new QuickReadConcurrentDictionary<string, RpcAction>();
+		private readonly Type _defaultServiceType;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public ActionManager() { }
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="serviceType"></param>
+		public ActionManager(Type serviceType)
+		{
+			_defaultServiceType = serviceType;
+		}
 
 		/// <summary>
 		/// 
@@ -20,13 +37,29 @@ namespace RpcLite.Service
 		/// <param name="serviceType"></param>
 		/// <param name="actionName"></param>
 		/// <returns></returns>
-		public static RpcAction GetAction(Type serviceType, string actionName)
+		public RpcAction GetAction(Type serviceType, string actionName)
 		{
+			if (serviceType == null && _defaultServiceType == null)
+			{
+				throw new ArgumentOutOfRangeException(nameof(serviceType), "parameter serviceType can't be null when defaultServiceType is null");
+			}
+
+			serviceType = serviceType ?? _defaultServiceType;
 			var actionKey = serviceType.FullName + "." + actionName;
-			return Actions.GetOrAdd(actionKey, () => GetActionInternal(serviceType, actionName, actionKey));
+			return _actions.GetOrAdd(actionKey, () => GetActionInternal(serviceType, actionName, actionKey));
 		}
 
-		private static RpcAction GetActionInternal(Type serviceType, string actionName, string actionKey)
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="actionName"></param>
+		/// <returns></returns>
+		public RpcAction GetAction(string actionName)
+		{
+			return GetAction(_defaultServiceType, actionName);
+		}
+
+		private RpcAction GetActionInternal(Type serviceType, string actionName, string actionKey)
 		{
 			var method = MethodHelper.GetActionMethod(serviceType, actionName);
 
