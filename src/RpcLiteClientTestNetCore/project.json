@@ -1,0 +1,32 @@
+{
+  "version": "1.0.0-*",
+  "buildOptions": {
+    "emitEntryPoint": true
+  },
+
+  "dependencies": {
+    "Microsoft.NETCore.App": {
+      "version": "1.0.0-rc2-3002702",
+      "type": "platform"
+    },
+    "RpcLite.AspNetCore": "1.0.1-*",
+    "RpcLite.CoreFx": "1.0.1-*",
+    "RpcLite.Resolvers": "1.0.0-*",
+    "ServiceRegistry.Contract": "1.0.0-*"
+  },
+
+  "frameworks": {
+    "netcoreapp1.0": {
+      "imports": "dnxcore50"
+    }
+  },
+
+  "publishOptions": {
+    "include": [
+      "wwwroot",
+      "web.config",
+      "rpclite.config.json"
+    ]
+  }
+
+}

@@ -4,7 +4,6 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
-using ClientImpl;
 using Contracts;
 using Model;
 using Newtonsoft.Json;
@@ -99,7 +98,7 @@ namespace WebApiClient
 				Task.WaitAll(task1, task2);
 			}
 			{
-				var client = new ProductClient();
+				//var client = new ProductClient();
 			}
 
 			{
@@ -145,6 +144,8 @@ namespace WebApiClient
 				var client2 = RpcClientBase<IProductAsync>.GetInstance(apiBaseUrl);
 				client2.BaseUrl = apiBaseUrl;
 
+				var client332 = ClientFactory.GetInstance<IProductAsync>(apiBaseUrl);
+
 				var ip = client2 as IProductAsync;
 
 				//var html = ip.GetHtml("http://www.baidu.com").Result;
@@ -167,7 +168,7 @@ namespace WebApiClient
 			}
 
 			{
-				var client = new ProductClient();
+				//var client = new ProductClient();
 			}
 
 			{
@@ -205,9 +206,7 @@ namespace WebApiClient
 			}
 
 			//{
-
 			//	var tw = new WrapperHelper<IProduct>(new object());
-
 			//	var type = tw.GetWrapperType();
 			//	var obj = Activator.CreateInstance(type);
 			//	var ip = obj as IProduct;

@@ -5,7 +5,7 @@ namespace RpcLite.TestWeb
 {
 	public class TestService1
 	{
-		public string GetDateTimeTimeString()
+		public string GetDateTimeString()
 		{
 			return DateTime.Now.ToString(CultureInfo.InvariantCulture);
 
