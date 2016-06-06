@@ -30,11 +30,11 @@ namespace RpcLite.Service
 					throw new ServiceException("can't load service type: " + item.Type);
 				}
 
-				Services.Add(new RpcService
+				Services.Add(new RpcService(typeInfo)
 				{
 					Name = item.Name,
 					Path = item.Path,
-					Type = typeInfo,
+					//Type = typeInfo,
 				});
 			}
 		}

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reflection;
@@ -233,8 +234,31 @@ namespace RpcLite.Service
 			{
 				httpContext.SetResponseHeader("RpcLite-StatusCode", ((int)HttpStatusCode.OK).ToString());
 
-				if (context.Result != null && context.Action.HasReturnValue)
-					context.Formatter.Serialize(context.Response.ResponseStream, context.Result);
+				if (context.Result != null)
+				{
+					if (context.Request.RequestType == RequestType.MetaData)
+					{
+						if (context.Request.ContentType == null)
+						{
+							httpContext.SetResponseContentType("text/html");
+							using (var writer = new StreamWriter(context.Response.ResponseStream))
+							{
+								var value = context.Result.ToString();
+								var html = WebUtility.HtmlEncode(value);
+								html = html
+									.Replace(" ", "&nbsp;")
+									.Replace("\r\n", "<br />");
+								writer.Write(html);
+							}
+						}
+						else
+						{
+							context.Formatter.Serialize(context.Response.ResponseStream, context.Result);
+						}
+					}
+					else if (context.Action != null && context.Action.HasReturnValue)
+						context.Formatter.Serialize(context.Response.ResponseStream, context.Result);
+				}
 			}
 
 			//LogHelper.Debug("RpcAsyncHandler.EndProcessRequest end RpcService.EndProcessRequest(result);");

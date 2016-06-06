@@ -162,9 +162,11 @@ namespace RpcLite.Service
 				}
 				LogHelper.Debug("RpcService.BeginProcessRequest: end ActionHelper.InvokeAction");
 
-				var task = new Task<object>(() => context.Result);
-				task.RunSynchronously();
-				return task;
+				//var task = new Task<object>(() => context.Result);
+				//task.RunSynchronously();
+				//return task;
+
+				return TaskHelper.FromResult(context.Result);
 			}
 		}
 
