@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System.IO;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,7 +23,7 @@ namespace RpcLiteTestServiceWeb
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
 		public void Configure(IApplicationBuilder app)
 		{
-			RpcLiteInitializer.Initialize(app);
+			RpcLiteInitializer.Initialize(app, Directory.GetCurrentDirectory());
 			//InitializeRpcLite(app);
 
 			//app.UseMiddleware<Middleware2>();
