@@ -1,0 +1,43 @@
+{
+  "title": "RpcLite.NetCore",
+  "authors": [ "chrishwang" ],
+  "description": "RpcLite.NetCore Class Library",
+  "version": "1.0.1-*",
+
+  "publishOptions": {
+  },
+
+  "dependencies": {
+    "System.Runtime.Serialization.Xml": "4.1.0",
+    "System.Xml.XmlDocument": "4.0.0",
+    "Microsoft.Extensions.Configuration.Json": "1.0.0-rc2-final",
+    "Microsoft.AspNetCore.Http.Abstractions": "1.0.0-rc2-final",
+    "RpcLite.CoreFx": "1.0.1-*"
+  },
+
+  "frameworks": {
+    "netstandard1.3": {
+      "imports": "dnxcore50"
+    },
+    "netstandard1.5": {
+      "imports": "dnxcore50"
+    },
+    "netcoreapp1.0": {
+      "imports": [
+        "dnxcore50"
+      ]
+    }
+  },
+
+  "buildOptions": {
+    "outputName": "RpcLite.NetCore"
+  },
+
+
+  "packOptions": {
+    "licenseUrl": "",
+    "projectUrl": "",
+    "tags": [ "" ]
+  }
+
+}

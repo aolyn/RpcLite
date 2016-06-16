@@ -1,12 +1,13 @@
 ﻿using System;
+using RpcLite.Config;
 using RpcLite.Logging;
 
 namespace RpcLite.Client
 {
-	class ClientAddressResolver<T> where T : class
+	internal class ClientAddressResolver<T> where T : class
 	{
-		Type type = typeof(T);
-		static IAddressResolver Resolver = null;
+		// ReSharper disable once StaticMemberInGenericType
+		static IAddressResolver _resolver;
 
 		static ClientAddressResolver()
 		{
@@ -15,30 +16,29 @@ namespace RpcLite.Client
 
 		private static void InitializeResolver()
 		{
-			var resolverItem = RpcLite.Config.RpcLiteConfigSection.Instance.Resover;
-			if (resolverItem != null)
+			var resolverItem = RpcLiteConfig.Instance.Resover;
+			if (resolverItem == null) return;
+
+			try
 			{
-				try
+				var type = TypeCreator.GetTypeFromName(resolverItem.TypeName, resolverItem.AssemblyName);
+				if (type != null)
 				{
-					var type = TypeCreator.GetTypeFromName(resolverItem.TypeName, resolverItem.AssemblyName);
-					if (type != null)
-					{
-						Resolver = Activator.CreateInstance(type) as IAddressResolver;
-					}
+					_resolver = Activator.CreateInstance(type) as IAddressResolver;
 				}
-				catch (Exception ex)
-				{
-					LogHelper.Error("InitializeResolver error", ex);
-				}
+			}
+			catch (Exception ex)
+			{
+				LogHelper.Error("InitializeResolver error", ex);
 			}
 		}
 
 		public static Uri GetAddress()
 		{
-			if (Resolver == null)
+			if (_resolver == null)
 				InitializeResolver();
 
-			return Resolver?.GetAddress<T>();
+			return _resolver?.GetAddress<T>();
 		}
 	}
 

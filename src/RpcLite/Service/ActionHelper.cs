@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace RpcLite.Service
@@ -46,8 +47,13 @@ namespace RpcLite.Service
 			//Delegate endMethodFunc = null;
 
 			var isTask = false;
+#if NETCORE
+			if (method.ReturnType == typeof(Task)
+				|| (method.ReturnType.GetTypeInfo().IsGenericType && method.ReturnType.GetTypeInfo().BaseType == typeof(Task)))
+#else
 			if (method.ReturnType == typeof(Task)
 				|| (method.ReturnType.IsGenericType && method.ReturnType.BaseType == typeof(Task)))
+#endif
 			{
 				isTask = true;
 				//isAsync = true;

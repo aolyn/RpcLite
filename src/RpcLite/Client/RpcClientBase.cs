@@ -92,7 +92,11 @@ namespace RpcLite.Client
 					return (TResult)resultObj;
 				}
 
+#if NETCORE
+				var asm = Assembly.Load(new AssemblyName(resultMessage.Header["RpcLite-ExceptionAssembly"]));
+#else
 				var asm = Assembly.Load(resultMessage.Header["RpcLite-ExceptionAssembly"]);
+#endif
 				var exType = asm.GetType(resultMessage.Header["RpcLite-ExceptionType"]);
 
 				var exObj = JsonConvert.DeserializeObject(resultMessage.Result, exType);
@@ -103,49 +107,6 @@ namespace RpcLite.Client
 			});
 
 			return task;
-		}
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="action"></param>
-		/// <param name="request"></param>
-		/// <param name="returnType"></param>
-		/// <returns></returns>
-		protected object BeginGetResponse(string action, object request, Type returnType)
-		{
-			if (_formatter == null)
-				throw new ServiceException("Formatter can't be null");
-
-			var mime = _formatter.SupportMimes.First();
-
-			var headDic = new Dictionary<string, string>
-			{
-				{"Content-Type",mime},
-				{"Accept",mime},
-			};
-
-			var json = JsonConvert.SerializeObject(request);
-
-			var url = BaseUrl + action;
-			var result = WebRequestHelper.PostData(url, json, Encoding.UTF8, headDic);
-			if (string.IsNullOrEmpty(result) || returnType == null)
-				return null;
-
-			var resultObj = JsonConvert.DeserializeObject(result, returnType);
-			return resultObj;
-		}
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="action"></param>
-		/// <param name="request"></param>
-		/// <param name="returnType"></param>
-		/// <returns></returns>
-		protected object EndGetResponse(string action, object request, Type returnType)
-		{
-			throw new NotImplementedException();
 		}
 
 		/// <summary>
@@ -187,15 +148,25 @@ namespace RpcLite.Client
 				if (string.IsNullOrEmpty(resultMessage.Result) || returnType == null)
 					return null;
 
+#if NETCORE
+				var objType = returnType.GetTypeInfo().BaseType == typeof(Task)
+					? returnType.GetGenericArguments()[0]
+					: returnType;
+#else
 				var objType = returnType.BaseType == typeof(Task)
 					? returnType.GetGenericArguments()[0]
 					: returnType;
+#endif
 
 				var resultObj = JsonConvert.DeserializeObject(resultMessage.Result, objType);
 				return resultObj;
 			}
 
+#if NETCORE
+			var asm = Assembly.Load(new AssemblyName(resultMessage.Header["RpcLite-ExceptionAssembly"]));
+#else
 			var asm = Assembly.Load(resultMessage.Header["RpcLite-ExceptionAssembly"]);
+#endif
 			var exType = asm.GetType(resultMessage.Header["RpcLite-ExceptionType"]);
 
 			var exObj = JsonConvert.DeserializeObject(resultMessage.Result, exType);

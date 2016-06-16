@@ -54,13 +54,14 @@ namespace RpcLite.Net
 					else if (head.Key == "Accept")
 						request.Accept = head.Value;
 					else
-						request.Headers.Add(head.Key, head.Value);
+						request.Headers[head.Key] = head.Value;
 				}
 			}
 
 			Action setp2 = () =>
 			{
 				var getResponseTask = Task.Factory.FromAsync(request.BeginGetResponse, request.EndGetResponse, null);
+
 				var task1 = getResponseTask.ContinueWith(tsk =>
 				{
 					ServiceReponseMessage responseMessage;
@@ -87,7 +88,7 @@ namespace RpcLite.Net
 							}
 							finally
 							{
-								webException.Response.Close();
+								((IDisposable)webException.Response).Dispose();
 							}
 						}
 						else
@@ -110,7 +111,7 @@ namespace RpcLite.Net
 						if (ex.Response != null)
 						{
 							responseMessage = GetResponseMessage(encoding, (HttpWebResponse)ex.Response);
-							ex.Response.Close();
+							((IDisposable)ex.Response).Dispose();
 						}
 						else
 						{
@@ -142,7 +143,7 @@ namespace RpcLite.Net
 					try
 					{
 						requestStream.Write(bytes, 0, bytes.Length);
-						requestStream.Close();
+						requestStream.Dispose();
 					}
 					catch (Exception ex)
 					{
@@ -171,55 +172,67 @@ namespace RpcLite.Net
 		/// <returns></returns>
 		public static ServiceReponseMessage Post(string url, string postData, Encoding encoding, Dictionary<string, string> headDic)
 		{
-			ServiceReponseMessage responseMessage;
-			var request = WebRequest.Create(url) as HttpWebRequest;
-			if (request == null) return null;
+			var task = PostAsync(url, postData, encoding, headDic);
+			return task.Result;
 
-			request.Timeout = 3000 * 1000;
-			request.Method = "POST";
-			if (headDic != null)
-			{
-				foreach (var head in headDic)
-				{
-					if (head.Key == "Content-Type")
-						request.ContentType = head.Value;
-					else if (head.Key == "Accept")
-						request.Accept = head.Value;
-					else
-						request.Headers.Add(head.Key, head.Value);
-				}
-			}
+			#region 
+			//			ServiceReponseMessage responseMessage;
+			//			var request = WebRequest.Create(url) as HttpWebRequest;
+			//			if (request == null) return null;
 
-			if (!string.IsNullOrEmpty(postData))
-			{
-				var requestStream = request.GetRequestStream();
-				if (encoding == null)
-					encoding = Encoding.UTF8;
-				var writer = new StreamWriter(requestStream, encoding);
-				writer.Write(postData);
-				writer.Close();
-			}
+			//#if NETCORE
+			//			request.ContinueTimeout = 3000 * 1000;
+			//#else
+			//			request.Timeout = 3000 * 1000;
+			//#endif
+			//			request.Method = "POST";
+			//			if (headDic != null)
+			//			{
+			//				foreach (var head in headDic)
+			//				{
+			//					if (head.Key == "Content-Type")
+			//						request.ContentType = head.Value;
+			//					else if (head.Key == "Accept")
+			//						request.Accept = head.Value;
+			//					else
+			//						request.Headers[head.Key] = head.Value;
+			//				}
+			//			}
 
-			try
-			{
-				using (var response = (HttpWebResponse)request.GetResponse())
-				{
-					responseMessage = GetResponseMessage(encoding, response);
-				}
-			}
-			catch (WebException ex)
-			{
-				if (ex.Response != null)
-				{
-					responseMessage = GetResponseMessage(encoding, (HttpWebResponse)ex.Response);
-					ex.Response.Close();
-				}
-				else
-				{
-					throw;
-				}
-			}
-			return responseMessage;
+			//			if (!string.IsNullOrEmpty(postData))
+			//			{
+
+			//				var requestStream = request.GetRequestStream();
+
+			//				if (encoding == null)
+			//					encoding = Encoding.UTF8;
+			//				var writer = new StreamWriter(requestStream, encoding);
+			//				writer.Write(postData);
+			//				writer.Dispose();
+			//			}
+
+			//			try
+			//			{
+			//				using (var response = (HttpWebResponse)request.GetResponse())
+			//				{
+			//					responseMessage = GetResponseMessage(encoding, response);
+			//				}
+			//			}
+			//			catch (WebException ex)
+			//			{
+			//				if (ex.Response != null)
+			//				{
+			//					responseMessage = GetResponseMessage(encoding, (HttpWebResponse)ex.Response);
+			//					((IDisposable)ex.Response).Dispose();
+			//				}
+			//				else
+			//				{
+			//					throw;
+			//				}
+			//			}
+			//			return responseMessage;
+
+			#endregion
 		}
 
 		private static ServiceReponseMessage GetResponseMessage(Encoding encoding, HttpWebResponse response)

@@ -18,20 +18,24 @@ namespace RpcLite
 
 		private static T GetWrapperCore<T>(object obj) where T : class
 		{
-			Type t = typeof(T);
-			if (!t.IsInterface)
+			var type = typeof(T);
+#if NETCORE
+			if (!type.GetTypeInfo().IsInterface)
+#else
+			if (!type.IsInterface)
+#endif
 				return obj as T;
-			Type wrapperType = new WrapperHelper<T>(obj).GetWrapperType();
+			var wrapperType = new WrapperHelper<T>(obj).GetWrapperType();
 			if (wrapperType == null)
 				return null;
-			object result = Activator.CreateInstance(wrapperType, obj);
+			var result = Activator.CreateInstance(wrapperType, obj);
 			return result as T;
 		}
 	}
 
 	//---------------------InterfaceNotImplementedException错误类----------------------
 	public sealed class InterfaceNotImplementedException
-	    : Exception
+		: Exception
 	{
 		public InterfaceNotImplementedException() { }
 	}
@@ -65,13 +69,18 @@ namespace RpcLite
 		#region Private Methods
 		private void PrepareType()
 		{
-			AssemblyName myAssemblyName = new AssemblyName();
-			myAssemblyName.Name = RandomName;
-			AssemblyBuilder myAssembly = AppDomain.CurrentDomain.DefineDynamicAssembly(
-			    myAssemblyName, AssemblyBuilderAccess.RunAndSave);
-			ModuleBuilder myModule = myAssembly.DefineDynamicModule(RandomName, true);
-			_type = myModule.DefineType(RandomName,
-			    TYPE_ATTRIBUTES, typeof(object), new Type[] { _interfaceType });
+			var myAssemblyName = new AssemblyName { Name = RandomName };
+
+#if NETCORE
+			var assemblyBuilder = AssemblyBuilder.DefineDynamicAssembly(myAssemblyName, AssemblyBuilderAccess.Run);
+			var moduleBuilder = assemblyBuilder.DefineDynamicModule(RandomName);
+#else
+			AssemblyBuilder myAssembly = AppDomain.CurrentDomain
+				.DefineDynamicAssembly(myAssemblyName, AssemblyBuilderAccess.RunAndSave);
+			var moduleBuilder = myAssembly.DefineDynamicModule(RandomName, true);
+#endif
+
+			_type = moduleBuilder.DefineType(RandomName, TYPE_ATTRIBUTES, typeof(object), new[] { _interfaceType });
 		}
 		private void PrepareField()
 		{
@@ -79,12 +88,12 @@ namespace RpcLite
 		}
 		private void PrepareCtor()
 		{
-			Type[] myConstructorArgs = new Type[] { _objType };
-			ConstructorBuilder myConstructor = _type.DefineConstructor(
-			    MethodAttributes.Public, CallingConventions.Standard, myConstructorArgs);
-			ILGenerator myConstructorIL = myConstructor.GetILGenerator();
+			var myConstructorArgs = new Type[] { _objType };
+			var myConstructor = _type.DefineConstructor(
+				MethodAttributes.Public, CallingConventions.Standard, myConstructorArgs);
+			var myConstructorIL = myConstructor.GetILGenerator();
 			myConstructorIL.Emit(OpCodes.Ldarg_0);
-			ConstructorInfo mySuperConstructor = typeof(object).GetConstructor(new Type[0]);
+			var mySuperConstructor = typeof(object).GetConstructor(new Type[0]);
 			myConstructorIL.Emit(OpCodes.Call, mySuperConstructor);
 			myConstructorIL.Emit(OpCodes.Ldarg_0);
 			myConstructorIL.Emit(OpCodes.Ldarg_1);
@@ -93,7 +102,7 @@ namespace RpcLite
 		}
 		private void PrepareMethods()
 		{
-			foreach (MethodInfo mi in _interfaceType.GetMethods())
+			foreach (var mi in _interfaceType.GetMethods())
 				GenMethod(mi);
 		}
 
@@ -102,7 +111,7 @@ namespace RpcLite
 			MethodBuilder result;
 			Type[] paramTypes;
 			ILGenerator ilGen;
-			MethodInfo implMi = FindImplementedMethod(mi);
+			var implMi = FindImplementedMethod(mi);
 			paramTypes = GetParameterTypes(mi.GetParameters());
 			result = _type.DefineMethod(mi.Name, METHOD_ATTRIBUTES, CallingConventions.Standard, mi.ReturnType, paramTypes);
 			ilGen = result.GetILGenerator();
@@ -110,7 +119,7 @@ namespace RpcLite
 				ilGen.DeclareLocal(_objType);
 			ilGen.Emit(OpCodes.Ldarg_0);
 			ilGen.Emit(OpCodes.Ldfld, _field);
-			for (int i = 0; i < paramTypes.Length; i++)
+			for (var i = 0; i < paramTypes.Length; i++)
 			{
 				if (i == 0)
 					ilGen.Emit(OpCodes.Ldarg_1);
@@ -133,16 +142,16 @@ namespace RpcLite
 
 		private void PrepareProperties()
 		{
-			foreach (PropertyInfo pi in _interfaceType.GetProperties())
+			foreach (var pi in _interfaceType.GetProperties())
 				GenProperty(pi);
 		}
 
 		private void GenProperty(PropertyInfo pi)
 		{
-			Type[] paramTypes = GetParameterTypes(pi.GetIndexParameters());
+			var paramTypes = GetParameterTypes(pi.GetIndexParameters());
 			MethodBuilder mb;
-			PropertyBuilder pb = _type.DefineProperty(
-			    pi.Name, pi.Attributes, pi.PropertyType, paramTypes);
+			var pb = _type.DefineProperty(
+				pi.Name, pi.Attributes, pi.PropertyType, paramTypes);
 			if (pi.CanRead)
 			{
 				mb = GenMethod(pi.GetGetMethod());
@@ -157,15 +166,15 @@ namespace RpcLite
 
 		private void PrepareEvents()
 		{
-			foreach (EventInfo ei in _interfaceType.GetEvents())
+			foreach (var ei in _interfaceType.GetEvents())
 				GenEvent(ei);
 		}
 
 		private void GenEvent(EventInfo pi)
 		{
 			MethodBuilder mb;
-			EventBuilder eb = _type.DefineEvent(
-			    pi.Name, pi.Attributes, pi.EventHandlerType);
+			var eb = _type.DefineEvent(
+				pi.Name, pi.Attributes, pi.EventHandlerType);
 			mb = GenMethod(pi.GetAddMethod());
 			eb.SetAddOnMethod(mb);
 			mb = GenMethod(pi.GetRemoveMethod());
@@ -175,10 +184,15 @@ namespace RpcLite
 		private MethodInfo FindImplementedMethod(MethodInfo mi)
 		{
 			MethodInfo result;
+#if NETCORE
+			result = _objType.GetTypeInfo().GetDeclaredMethod(mi.Name);
+#else
 			result = _objType.GetMethod(mi.Name,
-			    BindingFlags.Instance | BindingFlags.Public,
-			    null, CallingConventions.Standard,
-			    GetParameterTypes(mi.GetParameters()), null);
+				BindingFlags.Instance | BindingFlags.Public,
+				null, CallingConventions.Standard,
+				GetParameterTypes(mi.GetParameters()), null);
+#endif
+
 			if (result == null || result.ReturnType != mi.ReturnType)
 				throw new InterfaceNotImplementedException();
 			return result;
@@ -201,7 +215,11 @@ namespace RpcLite
 			{
 				return null;
 			}
+#if NETCORE
+			return _type.AsType();
+#else
 			return _type.CreateType();
+#endif
 		}
 		#endregion
 
@@ -214,18 +232,18 @@ namespace RpcLite
 
 		private static string GetRandomName(int count)
 		{
-			Random r = new Random();
-			byte[] b = new byte[count];
+			var r = new Random();
+			var b = new byte[count];
 			r.NextBytes(b);
-			string result = Convert.ToBase64String(b);
+			var result = Convert.ToBase64String(b);
 			result = result.Replace('=', '_').Replace('/', '_').Replace('+', '_');
 			return result;
 		}
 
 		private static Type[] GetParameterTypes(ParameterInfo[] pis)
 		{
-			Type[] result = new Type[pis.Length];
-			for (int i = 0; i < pis.Length; i++)
+			var result = new Type[pis.Length];
+			for (var i = 0; i < pis.Length; i++)
 				result[i] = pis[i].ParameterType;
 			return result;
 		}

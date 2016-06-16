@@ -85,6 +85,9 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Handler1.ashx.cs">
+      <DependentUpon>Handler1.ashx</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestService1.cs" />
     <Compile Include="WebForm1.aspx.cs">
@@ -104,14 +107,21 @@
       <Project>{2D6E36EC-3E98-4C98-98E8-34AFA8C75F1A}</Project>
       <Name>Model</Name>
     </ProjectReference>
-    <ProjectReference Include="..\RpcLite\RpcLite.csproj">
-      <Project>{EFA8DBF7-4300-4599-9C35-E716E25D7CCD}</Project>
-      <Name>RpcLite</Name>
+    <ProjectReference Include="..\RpcLite.AspNet\RpcLite.Net.csproj">
+      <Project>{314f05a6-06c2-476c-be16-52e068e91229}</Project>
+      <Name>RpcLite.Net</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RpcLite.Net40\RpcLite.Net40.csproj">
+      <Project>{6e2205f4-2050-424f-abf5-93b9f5f0f8e4}</Project>
+      <Name>RpcLite.Net40</Name>
     </ProjectReference>
     <ProjectReference Include="..\ServiceImpl\ServiceImpl.csproj">
       <Project>{B31033F4-8003-47CE-A9B0-E5251B88C5EC}</Project>
       <Name>ServiceImpl</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Handler1.ashx" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
