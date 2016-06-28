@@ -27,7 +27,8 @@ namespace RpcLiteClientTestNetCore
 			}
 			catch (Exception ex)
 			{
-				throw;
+				Console.WriteLine(ex);
+				//throw;
 			}
 		}
 	}
