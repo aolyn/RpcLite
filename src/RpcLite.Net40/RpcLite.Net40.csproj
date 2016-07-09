@@ -58,6 +58,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\RpcLite.CoreFx\ClientException.cs">
+      <Link>ClientException.cs</Link>
+    </Compile>
     <Compile Include="..\RpcLite.CoreFx\Client\ClientAddressResolver.cs">
       <Link>Client\ClientAddressResolver.cs</Link>
     </Compile>
@@ -102,6 +105,9 @@
     </Compile>
     <Compile Include="..\RpcLite.CoreFx\Config\ServiceConfigItem.cs">
       <Link>Config\ServiceConfigItem.cs</Link>
+    </Compile>
+    <Compile Include="..\RpcLite.CoreFx\ConnectionException.cs">
+      <Link>ConnectionException.cs</Link>
     </Compile>
     <Compile Include="..\RpcLite.CoreFx\content\TestService1.cs">
       <Link>content\TestService1.cs</Link>

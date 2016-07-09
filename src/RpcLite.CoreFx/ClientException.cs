@@ -1,6 +1,5 @@
 ﻿using System;
-#if NETCORE
-#else
+#if !NETCORE
 using System.Runtime.Serialization;
 #endif
 
@@ -9,12 +8,12 @@ namespace RpcLite
 	/// <summary>
 	/// Represents errors that occor during application execution in RpcLite server
 	/// </summary>
-	public class RpcLiteException : Exception
+	public class ClientException : RpcLiteException
 	{
 		/// <summary>
 		/// Initializes a new instance of RpcLite.ServiceException class
 		/// </summary>
-		public RpcLiteException() { }
+		public ClientException() { }
 
 #if NETCORE
 #else
@@ -23,7 +22,7 @@ namespace RpcLite
 		/// </summary>
 		/// <param name="info"></param>
 		/// <param name="context"></param>
-		protected RpcLiteException(SerializationInfo info, StreamingContext context) : base(info, context)
+		protected ClientException(SerializationInfo info, StreamingContext context) : base(info, context)
 		{
 		}
 #endif
@@ -33,7 +32,7 @@ namespace RpcLite
 		/// </summary>
 		/// <param name="message">message</param>
 		/// <param name="innerException">inner exception</param>
-		public RpcLiteException(string message, Exception innerException)
+		public ClientException(string message, Exception innerException)
 			: base(message, innerException)
 		{ }
 
@@ -41,8 +40,9 @@ namespace RpcLite
 		/// Initializes a new instance of RpcLite.ServiceException with specifid message
 		/// </summary>
 		/// <param name="message"></param>
-		public RpcLiteException(string message)
+		public ClientException(string message)
 			: base(message)
 		{ }
 	}
+
 }

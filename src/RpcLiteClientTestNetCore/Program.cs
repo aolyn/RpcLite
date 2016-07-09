@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
+using RpcLite;
 using RpcLite.Client;
 using RpcLite.Config;
 using ServiceRegistry.Contract;
@@ -24,6 +25,13 @@ namespace RpcLiteClientTestNetCore
 					Namespace = "v1",
 					Environment = "IT",
 				});
+
+				Console.WriteLine(resp.ToString());
+			}
+			catch (ConnectionException ex)
+			{
+				Console.WriteLine(ex);
+				//throw;
 			}
 			catch (Exception ex)
 			{

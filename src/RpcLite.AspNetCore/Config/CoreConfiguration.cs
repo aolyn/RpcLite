@@ -8,22 +8,22 @@ namespace RpcLite.Config
 {
 	public class CoreConfiguration : IConfiguration
 	{
-		protected CoreConfig.IConfiguration _node;
+		protected CoreConfig.IConfiguration Node;
 
 		public CoreConfiguration(CoreConfig.IConfiguration node)
 		{
-			_node = node;
+			Node = node;
 		}
 
 		public string this[string key]
 		{
-			get { return _node[key]; }
-			set { _node[key] = value; }
+			get { return Node[key]; }
+			set { Node[key] = value; }
 		}
 
 		public IEnumerable<IConfigurationSection> GetChildren()
 		{
-			return _node.GetChildren()
+			return Node.GetChildren()
 				.Select(it => new CoreConfigurationSection(it));
 		}
 
@@ -31,7 +31,7 @@ namespace RpcLite.Config
 
 		public IConfigurationSection GetSection(string key)
 		{
-			var node = _node.GetSection(key);
+			var node = Node.GetSection(key);
 			return node == null
 				? null
 				: new CoreConfigurationSection(node);

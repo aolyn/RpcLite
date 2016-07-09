@@ -73,7 +73,7 @@ namespace RpcLite.Net
 						var webException = tsk.Exception.InnerException as WebException;
 						if (webException == null)
 						{
-							tcs.SetException(tsk.Exception);
+							tcs.SetException(tsk.Exception.InnerException);
 							return;
 						}
 
@@ -95,7 +95,7 @@ namespace RpcLite.Net
 						}
 						else
 						{
-							tcs.SetException(webException);
+							tcs.SetException(new ConnectionException("connection error when transport data with server", webException));
 						}
 
 						return;

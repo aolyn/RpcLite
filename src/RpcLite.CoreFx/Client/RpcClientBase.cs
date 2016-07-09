@@ -1,11 +1,14 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using RpcLite.Formatters;
+using RpcLite.Logging;
 using RpcLite.Net;
 
 namespace RpcLite.Client
@@ -170,16 +173,34 @@ namespace RpcLite.Client
 				return resultObj;
 			}
 
+			Type exceptionType;
+			var assemblyName = resultMessage.Header["RpcLite-ExceptionAssembly"];
+			if (string.IsNullOrWhiteSpace(assemblyName) || StaticDataHolder.DotFoundAssemblyDictionary.ContainsKey(assemblyName))
+			{
+				exceptionType = typeof(Exception);
+			}
+			else
+			{
+				try
+				{
 #if NETCORE
-			var asm = Assembly.Load(new AssemblyName(resultMessage.Header["RpcLite-ExceptionAssembly"]));
+					var asm = Assembly.Load(new AssemblyName(assemblyName));
 #else
-			var asm = Assembly.Load(resultMessage.Header["RpcLite-ExceptionAssembly"]);
+					var asm = Assembly.Load(assemblyName);
 #endif
-			var exType = asm.GetType(resultMessage.Header["RpcLite-ExceptionType"]);
+					exceptionType = asm.GetType(resultMessage.Header["RpcLite-ExceptionType"]);
+				}
+				catch (FileNotFoundException ex)
+				{
+					LogHelper.Error("load exception assebmly error, exception assmbly not found", ex);
+					exceptionType = typeof(Exception);
+					StaticDataHolder.DotFoundAssemblyDictionary.TryAdd(assemblyName, DateTime.Now);
+				}
+			}
 
-			var exObj = JsonConvert.DeserializeObject(resultMessage.Result, exType);
-			if (exObj != null)
-				throw (Exception)exObj;
+			var exceptionObject = JsonConvert.DeserializeObject(resultMessage.Result, exceptionType);
+			if (exceptionObject != null)
+				throw (Exception)exceptionObject;
 
 			return null;
 		}
@@ -220,5 +241,11 @@ namespace RpcLite.Client
 			client.BaseUrl = baseUrl;
 			return client;
 		}
+
+	}
+
+	internal static class StaticDataHolder
+	{
+		internal static readonly ConcurrentDictionary<string, DateTime> DotFoundAssemblyDictionary = new ConcurrentDictionary<string, DateTime>();
 	}
 }

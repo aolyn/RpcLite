@@ -125,7 +125,7 @@ namespace RpcLite.Service
 			{
 				var isServicePath = RpcLiteConfig.Instance.ServicePaths == null
 					|| (RpcLiteConfig.Instance.ServicePaths != null && RpcLiteConfig.Instance.ServicePaths
-						.Any(it => httpContext.RequestPath.StartsWith(it)));
+						.Any(it => httpContext.RequestPath.StartsWith(it, StringComparison.OrdinalIgnoreCase)));
 
 				if (!isServicePath)
 				{
@@ -155,11 +155,14 @@ namespace RpcLite.Service
 						serviceContext.SetExtensionData("StartTime", DateTime.Now);
 #endif
 						var result = ProcessAsync(serviceContext);
-#if DEBUG
-						result = result.ContinueWith(tsk => { serviceContext.SetExtensionData("EndTime", DateTime.Now); });
-#endif
+//#if DEBUG
+//						result = result.ContinueWith(tsk => { serviceContext.SetExtensionData("EndTime", DateTime.Now); });
+//#endif
 						result.ContinueWith(tsk =>
 						{
+#if DEBUG
+							serviceContext.SetExtensionData("EndTime", DateTime.Now);  
+#endif
 							try
 							{
 								EndProcessRequest(serviceContext);
@@ -173,7 +176,7 @@ namespace RpcLite.Service
 					}
 					catch (Exception ex)
 					{
-						LogHelper.Error("process request error in RpcLiteMiddleware", ex);
+						LogHelper.Error("process request error in RpcProcessor", ex);
 						tcs.SetResult(true);
 					}
 				}
