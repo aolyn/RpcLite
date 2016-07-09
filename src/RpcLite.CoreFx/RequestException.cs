@@ -1,10 +1,12 @@
 ﻿using System;
+#if !NETCORE
 using System.Runtime.Serialization;
+#endif
 
 namespace RpcLite
 {
 	/// <summary>
-	/// Respresnts request error that occor during application in server side
+	/// Respresents request error that occored during application in server side
 	/// </summary>
 	public class RequestException : ServiceException
 	{
