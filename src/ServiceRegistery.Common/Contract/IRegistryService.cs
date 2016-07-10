@@ -1,5 +1,5 @@
 ﻿
-namespace ServiceRegistery.Contract
+namespace ServiceRegistry.Contract
 {
 	public interface IRegistryService
 	{

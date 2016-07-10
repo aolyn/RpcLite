@@ -7,12 +7,12 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ServiceRegistery.Dal
+namespace ServiceRegistry.Dal
 {
     using System;
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
-    using ServiceRegistery.Model;
+    using ServiceRegistry.Model;
     
     public partial class ServiceRepositoryEntities : DbContext
     {

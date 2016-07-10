@@ -1,7 +1,7 @@
-﻿using ServiceRegistery.Contract;
-using ServiceRegistery.Dal;
+﻿using ServiceRegistry.Contract;
+using ServiceRegistry.Dal;
 
-namespace ServiceRegistery.Services
+namespace ServiceRegistry.Services
 {
 	public class RegistryService : IRegistryService
 	{

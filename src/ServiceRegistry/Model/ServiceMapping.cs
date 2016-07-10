@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ServiceRegistery.Model
+namespace ServiceRegistry.Model
 {
     using System;
     using System.Collections.Generic;

@@ -39,22 +39,26 @@ namespace RpcLite.Utility
 		/// </summary>
 		public static void Serialize(Stream stream, object source)
 		{
-			using (var writer = new StreamWriter(stream))
-			{
-				Serialize(source, writer);
-			}
+			//using (var writer = new StreamWriter(stream))
+			//{
+			var writer = new StreamWriter(stream);
+			Serialize(source, writer);
+			//writer.Flush();
+			//}
 		}
 
 		private static void Serialize(object source, TextWriter writer)
 		{
-			using (var jsonWriter = new JsonTextWriter(writer))
+			//using (var jsonWriter = new JsonTextWriter(writer))
+			//{
+			var jsonWriter = new JsonTextWriter(writer);
+			var jsonSerializer = new JsonSerializer
 			{
-				var jsonSerializer = new JsonSerializer
-				{
-					NullValueHandling = NullValueHandling.Ignore
-				};
-				jsonSerializer.Serialize(jsonWriter, source);
-			}
+				NullValueHandling = NullValueHandling.Ignore
+			};
+			jsonSerializer.Serialize(jsonWriter, source);
+			writer.Flush();
+			//}
 		}
 	}
 }

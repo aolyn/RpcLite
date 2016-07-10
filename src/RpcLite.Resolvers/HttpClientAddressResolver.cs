@@ -80,7 +80,7 @@ namespace RpcLite.Resolvers
 					return null;
 				}
 
-				var client = ClientFactory.GetInstance<IRegistryService>(registryClientConfigItem.Path);
+				var client = ClientFactory.GetInstance<IRegistryService>(registryClientConfigItem.Path) as RpcClientBase<IRegistryService>;
 				return client;
 			});
 

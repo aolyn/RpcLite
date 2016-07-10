@@ -11,7 +11,7 @@
     <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ServiceRegistery</RootNamespace>
+    <RootNamespace>ServiceRegistry</RootNamespace>
     <AssemblyName>ServiceRegistery</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <UseIISExpress>true</UseIISExpress>
@@ -168,9 +168,9 @@
       <Project>{6e2205f4-2050-424f-abf5-93b9f5f0f8e4}</Project>
       <Name>RpcLite.Net40</Name>
     </ProjectReference>
-    <ProjectReference Include="..\ServiceRegistery.Common\ServiceRegistery.Common.csproj">
+    <ProjectReference Include="..\ServiceRegistery.Common\ServiceRegistry.Common.csproj">
       <Project>{9284345c-1c32-4d92-a6d2-583fddbf1110}</Project>
-      <Name>ServiceRegistery.Common</Name>
+      <Name>ServiceRegistry.Common</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

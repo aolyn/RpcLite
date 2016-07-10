@@ -1,4 +1,6 @@
-﻿//#define SAVE_DLL
+﻿#if !NETCORE
+//#define SAVE_DLL
+#endif
 
 using System;
 using System.Collections.Generic;
@@ -234,6 +236,9 @@ namespace RpcLite
 
 			var paramTypes = method.GetParameters().Select(it => it.ParameterType).ToArray();
 			var methodBuilder = typeBuilder.DefineMethod(method.Name, methodAttributes, method.ReturnType, paramTypes);
+
+			//var body1 =
+
 			var methodIL = methodBuilder.GetILGenerator();
 			methodIL.Emit(OpCodes.Nop);
 
@@ -241,9 +246,11 @@ namespace RpcLite
 
 			Type taskParam = null;
 			string callMethodName;
+			var isTask = false;
 			if (method.ReturnType == typeof(Task))
 			{
 				callMethodName = "GetResponseAsync";
+				isTask = true;
 			}
 #if NETCORE
 			else if (method.ReturnType.GetTypeInfo().IsGenericType && method.ReturnType.GetTypeInfo().BaseType == typeof(Task))
@@ -253,19 +260,29 @@ namespace RpcLite
 			{
 				callMethodName = "GetResponseAsync";
 				taskParam = method.ReturnType.GetGenericArguments()[0];
+				isTask = true;
 			}
 			else
 			{
 				callMethodName = "GetResponse";
 			}
-
-			// ReSharper disable once PossibleNullReferenceException
-			var getResponse = typeBuilder.BaseType.GetMethod(callMethodName, BindingFlags.Instance | BindingFlags.NonPublic);
-			if (taskParam != null)
-				getResponse = getResponse.MakeGenericMethod(taskParam);
 			var returnType = method.ReturnType;
 			var hasReturn = (returnType != typeof(void));
 			var paramCount = paramTypes.Length;
+
+			//taskParam = taskParam ?? returnType;
+			// ReSharper disable once PossibleNullReferenceException
+			var getResponse = typeBuilder.BaseType.GetMethod(callMethodName, BindingFlags.Instance | BindingFlags.NonPublic);
+			if (isTask)
+			{
+				var callTResultType = taskParam ?? typeof(object);
+				getResponse = getResponse.MakeGenericMethod(callTResultType);
+			}
+			else
+			{
+				var callTResultType = hasReturn ? returnType : typeof(object);
+				getResponse = getResponse.MakeGenericMethod(callTResultType);
+			}
 
 			var paramType = GetParameterType(method);
 			if (paramCount > 1)

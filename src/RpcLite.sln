@@ -21,9 +21,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RpcLite.Resolvers.Net40", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceRepository", "ServiceRepository\ServiceRepository.csproj", "{B96C8A9E-71F3-4143-8FC9-76D5AD70B9B3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceRegistery", "ServiceRigistery\ServiceRegistery.csproj", "{B95BEAEC-B6E1-4F31-BCAD-342B78589251}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceRegistry", "ServiceRegistry\ServiceRegistry.csproj", "{B95BEAEC-B6E1-4F31-BCAD-342B78589251}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceRegistery.Common", "ServiceRegistery.Common\ServiceRegistery.Common.csproj", "{9284345C-1C32-4D92-A6D2-583FDDBF1110}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceRegistry.Common", "ServiceRegistery.Common\ServiceRegistry.Common.csproj", "{9284345C-1C32-4D92-A6D2-583FDDBF1110}"
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "RpcLite.CoreFx", "RpcLite.CoreFx\RpcLite.CoreFx.xproj", "{C155D138-FAE3-4080-A2BF-F5483BF0B226}"
 EndProject
@@ -62,6 +62,8 @@ EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "RpcLiteClientTestNetCore", "RpcLiteClientTestNetCore\RpcLiteClientTestNetCore.xproj", "{435AA3F0-F09F-43AD-A9A0-C48CF77A186B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionItems", "{75350063-69ED-4B37-9FE8-86FBEB7BAB34}"
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "RpcLiteTestService.Contract", "RpcLiteTestService.Contract\RpcLiteTestService.Contract.xproj", "{38C45090-C949-48BB-BC7A-57ECBA03A412}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -323,6 +325,18 @@ Global
 		{435AA3F0-F09F-43AD-A9A0-C48CF77A186B}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{435AA3F0-F09F-43AD-A9A0-C48CF77A186B}.Release|x86.ActiveCfg = Release|Any CPU
 		{435AA3F0-F09F-43AD-A9A0-C48CF77A186B}.Release|x86.Build.0 = Release|Any CPU
+		{38C45090-C949-48BB-BC7A-57ECBA03A412}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{38C45090-C949-48BB-BC7A-57ECBA03A412}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{38C45090-C949-48BB-BC7A-57ECBA03A412}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{38C45090-C949-48BB-BC7A-57ECBA03A412}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{38C45090-C949-48BB-BC7A-57ECBA03A412}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{38C45090-C949-48BB-BC7A-57ECBA03A412}.Debug|x86.Build.0 = Debug|Any CPU
+		{38C45090-C949-48BB-BC7A-57ECBA03A412}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{38C45090-C949-48BB-BC7A-57ECBA03A412}.Release|Any CPU.Build.0 = Release|Any CPU
+		{38C45090-C949-48BB-BC7A-57ECBA03A412}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{38C45090-C949-48BB-BC7A-57ECBA03A412}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{38C45090-C949-48BB-BC7A-57ECBA03A412}.Release|x86.ActiveCfg = Release|Any CPU
+		{38C45090-C949-48BB-BC7A-57ECBA03A412}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -354,5 +368,6 @@ Global
 		{FD34E138-11FF-42C7-A559-BF8C1F31528B} = {663AFE2C-E1E1-476A-B168-64E385C1032E}
 		{DDFBB2BD-A403-4FF7-BDED-AA22237E73F7} = {663AFE2C-E1E1-476A-B168-64E385C1032E}
 		{435AA3F0-F09F-43AD-A9A0-C48CF77A186B} = {DDFBB2BD-A403-4FF7-BDED-AA22237E73F7}
+		{38C45090-C949-48BB-BC7A-57ECBA03A412} = {DDFBB2BD-A403-4FF7-BDED-AA22237E73F7}
 	EndGlobalSection
 EndGlobal

@@ -9,8 +9,8 @@ var ef = new MetadataTools(this);
 var typeMapper = new TypeMapper(code, ef, textTransform.Errors);
 var loader = new EdmMetadataLoader(textTransform.Host, textTransform.Errors);
 var itemCollection = loader.CreateEdmItemCollection(inputFile);
-var modelNamespace = "ServiceRegistery.Model"; //loader.GetModelNamespace(inputFile);
-var codeNamespace = "ServiceRegistery.Dal"; //code.VsNamespaceSuggestion();
+var modelNamespace = "ServiceRegistry.Model"; //loader.GetModelNamespace(inputFile);
+var codeNamespace = "ServiceRegistry.Dal"; //code.VsNamespaceSuggestion();
 var codeStringGenerator = new CodeStringGenerator(code, typeMapper, ef);
 
 var container = itemCollection.OfType<EntityContainer>().FirstOrDefault();
