@@ -7,18 +7,19 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ServiceRegistery.Model
+namespace ServiceRegistry.Model
 {
     using System;
     using System.Collections.Generic;
     
-    public partial class ServiceEnvironment
+    public partial class Service
     {
-        public ServiceEnvironment()
+        public Service()
         {
             this.ServiceMapping = new HashSet<ServiceMapping>();
         }
     
+        public int Id { get; set; }
         public string Name { get; set; }
     
         public virtual ICollection<ServiceMapping> ServiceMapping { get; set; }

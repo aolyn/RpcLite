@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 
-namespace ServiceRegistery.Dal
+namespace ServiceRegistry.Dal
 {
 	public class ServiceDal
 	{

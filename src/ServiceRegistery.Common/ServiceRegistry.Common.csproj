@@ -7,7 +7,7 @@
     <ProjectGuid>{9284345C-1C32-4D92-A6D2-583FDDBF1110}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ServiceRegistery</RootNamespace>
+    <RootNamespace>ServiceRegistry</RootNamespace>
     <AssemblyName>ServiceRegistery.Common</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
