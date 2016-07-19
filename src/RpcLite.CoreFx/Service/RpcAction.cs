@@ -128,22 +128,33 @@ namespace RpcLite.Service
 
 			if (IsTask)
 			{
-				var task = InvokeTaskInternal(context);
-
-				var waitTask = task.ContinueWith(tsk =>
+				try
 				{
-					if (tsk.IsFaulted)
-					{
-						context.Exception = tsk.Exception.InnerException;
-					}
-					else
-					{
-						var result = GetResultObject(tsk, context);
-						context.Result = result;
-					}
-				});
+					var task = InvokeTaskInternal(context);
 
-				return waitTask;
+					var waitTask = task.ContinueWith(tsk =>
+					{
+						if (tsk.IsFaulted)
+						{
+							context.Exception = tsk.Exception.InnerException;
+						}
+						else
+						{
+							var result = GetResultObject(tsk, context);
+							context.Result = result;
+						}
+					});
+
+					return waitTask;
+				}
+				catch (Exception ex)
+				{
+					context.Exception = ex;
+
+					var tcs = new TaskCompletionSource<object>();
+					tcs.SetResult(null);
+					return tcs.Task;
+				}
 			}
 			else
 			{
@@ -174,7 +185,7 @@ namespace RpcLite.Service
 		{
 			try
 			{
-				return formatter.Deserilize(stream, type);
+				return formatter.Deserialize(stream, type);
 			}
 			catch (Exception)
 			{

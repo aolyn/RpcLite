@@ -72,8 +72,8 @@ namespace RpcLite.Service
 #else
 			//AddFormatter(new NetJsonFormater());
 			AddFormatter(new JsonFormatter());
+			AddFormatter(new XmlFormatter());
 #endif
-			//AddFormatter(new XmlFormatter());
 		}
 	}
 }
