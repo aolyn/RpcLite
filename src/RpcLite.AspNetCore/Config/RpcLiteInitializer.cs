@@ -7,6 +7,14 @@ namespace RpcLite.Config
 {
 	public class RpcLiteInitializer
 	{
+		/// <summary>
+		/// initialize with default config file "rpclite.config.json"
+		/// </summary>
+		public static void Initialize()
+		{
+			Initialize(null, null);
+		}
+
 		public static void Initialize(CoreConfig.IConfiguration config)
 		{
 			var rpcConfig = RpcLiteConfigurationHelper.GetConfig(new CoreConfigurationSection(config));

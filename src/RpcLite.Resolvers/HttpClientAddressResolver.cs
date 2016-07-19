@@ -33,6 +33,7 @@ namespace RpcLite.Resolvers
 			{
 				Assembly assembly;
 
+				//find ClientType Assembly
 				if (!string.IsNullOrWhiteSpace(item.AssemblyName))
 				{
 #if NETCORE
@@ -55,21 +56,20 @@ namespace RpcLite.Resolvers
 			}
 
 			_defaultBaseUrlDictionary = tempDic;
-			//defaultBaseUrlDictionary.Clear();
-			//foreach (var item in tempDic)
-			//{
-			//	defaultBaseUrlDictionary.Add(item.Key, item.Value);
-			//}
-			//tempDic.Clear();
 		}
 
-		public Uri GetAddress<T>() where T : class
+		public Uri GetAddress<TClient>() where TClient : class
 		{
-			return GetAddressInternal<T>();
+			return GetAddressInternal<TClient>();
 		}
 
-		private static Lazy<RpcClientBase<IRegistryService>> _registryClient =
-			new Lazy<RpcClientBase<IRegistryService>>(() =>
+		public Uri GetAddress(Type clientType)
+		{
+			return GetAddressInternal(clientType);
+		}
+
+		private static readonly Lazy<IRegistryService> RegistryClient =
+			new Lazy<IRegistryService>(() =>
 			{
 				var registryClientConfigItem = RpcLiteConfig.Instance.Clients
 					.FirstOrDefault(it => it.TypeName == typeof(IRegistryService).FullName);
@@ -87,14 +87,20 @@ namespace RpcLite.Resolvers
 
 		private static Uri GetAddressInternal<T>() where T : class
 		{
+			var type = typeof(T);
+			return GetAddressInternal(type);
+		}
+
+		private static Uri GetAddressInternal(Type type)
+		{
 			// ReSharper disable once InconsistentlySynchronizedField
-			var url = _defaultBaseUrlDictionary.GetOrAdd(typeof(T), () =>
+			var url = _defaultBaseUrlDictionary.GetOrAdd(type, () =>
 			{
 				var clientConfigItem = RpcLiteConfig.Instance.Clients
-					.FirstOrDefault(it => it.TypeName == typeof(T).FullName);
+					.FirstOrDefault(it => it.TypeName == type.FullName);
 
 				if (clientConfigItem == null) return null;
-				if (_registryClient.Value == null) return null;
+				if (RegistryClient.Value == null) return null;
 
 				var request = new GetServiceAddressRequest
 				{
@@ -102,8 +108,8 @@ namespace RpcLite.Resolvers
 					Namespace = clientConfigItem.Namespace,
 					Environment = RpcLiteConfig.Instance.ClientEnvironment,
 				};
-				var response = _registryClient.Value.Client.GetServiceAddress(request);
-				var uri = response == null || string.IsNullOrWhiteSpace(response.Address)
+				var response = RegistryClient.Value.GetServiceAddress(request);
+				var uri = string.IsNullOrWhiteSpace(response?.Address)
 					? null
 					: response.Address;
 

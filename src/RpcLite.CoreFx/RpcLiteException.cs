@@ -1,5 +1,8 @@
 ﻿using System;
+#if NETCORE
+#else
 using System.Runtime.Serialization;
+#endif
 
 namespace RpcLite
 {

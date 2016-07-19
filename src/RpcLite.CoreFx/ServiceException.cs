@@ -1,5 +1,7 @@
 ﻿using System;
+#if !NETCORE
 using System.Runtime.Serialization;
+#endif
 
 namespace RpcLite
 {
@@ -48,7 +50,6 @@ namespace RpcLite
 	/// </summary>
 	public class ActionNotFoundException : ServiceException
 	{
-
 		/// <summary>
 		/// Initializes a new instance of RpcLite.ServiceException with specifid message and inner exception
 		/// </summary>

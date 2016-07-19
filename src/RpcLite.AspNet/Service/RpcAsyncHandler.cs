@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using System.Web;
+using RpcLite.Config;
 
 namespace RpcLite.Service
 {
@@ -10,6 +11,11 @@ namespace RpcLite.Service
 	/// </summary>
 	public class RpcAsyncHandler : IHttpAsyncHandler
 	{
+		static RpcAsyncHandler()
+		{
+			RpcLiteInitializer.Initialize();
+		}
+
 		#region Sync
 
 		/// <summary>

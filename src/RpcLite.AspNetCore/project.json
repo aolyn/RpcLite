@@ -1,18 +1,18 @@
 {
-  "title": "RpcLite.NetCore",
+  "title": "RpcLite.AspNetCore",
   "authors": [ "chrishwang" ],
-  "description": "RpcLite.NetCore Class Library",
+  "description": "RpcLite.AspNetCore Class Library",
   "version": "1.0.1-*",
 
   "publishOptions": {
   },
 
   "dependencies": {
-    "System.Runtime.Serialization.Xml": "4.1.0",
-    "System.Xml.XmlDocument": "4.0.0",
-    "Microsoft.Extensions.Configuration.Json": "1.0.0-rc2-final",
-    "Microsoft.AspNetCore.Http.Abstractions": "1.0.0-rc2-final",
-    "RpcLite.CoreFx": "1.0.1-*"
+    "RpcLite.CoreFx": "1.0.1-*",
+    "Microsoft.AspNetCore.Http.Abstractions": "1.0.0",
+    "Microsoft.Extensions.Configuration.Json": "1.0.0",
+    "System.Runtime.Serialization.Xml": "4.1.1",
+    "System.Xml.XmlDocument": "4.0.1"
   },
 
   "frameworks": {

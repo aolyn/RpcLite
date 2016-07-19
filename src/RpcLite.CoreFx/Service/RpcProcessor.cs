@@ -1,4 +1,7 @@
-﻿using System;
+﻿//#define OUTPUT_SERIALIZATION_TIME
+
+using System;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -125,7 +128,7 @@ namespace RpcLite.Service
 			{
 				var isServicePath = RpcLiteConfig.Instance.ServicePaths == null
 					|| (RpcLiteConfig.Instance.ServicePaths != null && RpcLiteConfig.Instance.ServicePaths
-						.Any(it => httpContext.RequestPath.StartsWith(it)));
+						.Any(it => httpContext.RequestPath.StartsWith(it, StringComparison.OrdinalIgnoreCase)));
 
 				if (!isServicePath)
 				{
@@ -155,11 +158,14 @@ namespace RpcLite.Service
 						serviceContext.SetExtensionData("StartTime", DateTime.Now);
 #endif
 						var result = ProcessAsync(serviceContext);
-#if DEBUG
-						result = result.ContinueWith(tsk => { serviceContext.SetExtensionData("EndTime", DateTime.Now); });
-#endif
+						//#if DEBUG
+						//						result = result.ContinueWith(tsk => { serviceContext.SetExtensionData("EndTime", DateTime.Now); });
+						//#endif
 						result.ContinueWith(tsk =>
 						{
+#if DEBUG
+							serviceContext.SetExtensionData("EndTime", DateTime.Now);
+#endif
 							try
 							{
 								EndProcessRequest(serviceContext);
@@ -173,7 +179,7 @@ namespace RpcLite.Service
 					}
 					catch (Exception ex)
 					{
-						LogHelper.Error("process request error in RpcLiteMiddleware", ex);
+						LogHelper.Error("process request error in RpcProcessor", ex);
 						tcs.SetResult(true);
 					}
 				}
@@ -223,12 +229,22 @@ namespace RpcLite.Service
 #endif
 					.Assembly.FullName);
 				httpContext.SetResponseHeader("RpcLite-StatusCode", ((int)HttpStatusCode.InternalServerError).ToString());
-				httpContext.SetResponseStatusCode((int)HttpStatusCode.InternalServerError);
+				//httpContext.SetResponseStatusCode((int)HttpStatusCode.InternalServerError);
 
 				if (context.Formatter == null)
 					throw context.Exception;
 
+				//var stream = new MemoryStream();
+				//context.Formatter.Serialize(stream, context.Exception);
+
+#if OUTPUT_SERIALIZATION_TIME
+				var serializationStopwatch = Stopwatch.StartNew();
+#endif
 				context.Formatter.Serialize(context.Response.ResponseStream, context.Exception);
+#if OUTPUT_SERIALIZATION_TIME
+				serializationStopwatch.Stop();
+				Console.WriteLine("serializationStopwatch.ElapsedMilliseconds {0}", serializationStopwatch.ElapsedMilliseconds);
+#endif
 			}
 			else
 			{
@@ -238,7 +254,7 @@ namespace RpcLite.Service
 				{
 					if (context.Request.RequestType == RequestType.MetaData)
 					{
-						if (context.Request.ContentType == null)
+						if (string.IsNullOrWhiteSpace(context.Request.ContentType))
 						{
 							httpContext.SetResponseContentType("text/html");
 							using (var writer = new StreamWriter(context.Response.ResponseStream))
@@ -253,11 +269,27 @@ namespace RpcLite.Service
 						}
 						else
 						{
+#if OUTPUT_SERIALIZATION_TIME
+							var serializationStopwatch = Stopwatch.StartNew();
+#endif
 							context.Formatter.Serialize(context.Response.ResponseStream, context.Result);
+#if OUTPUT_SERIALIZATION_TIME
+							serializationStopwatch.Stop();
+							Console.WriteLine("serializationStopwatch.ElapsedMilliseconds {0}", serializationStopwatch.ElapsedMilliseconds);
+#endif
 						}
 					}
 					else if (context.Action != null && context.Action.HasReturnValue)
+					{
+#if OUTPUT_SERIALIZATION_TIME
+						var serializationStopwatch = Stopwatch.StartNew();
+#endif
 						context.Formatter.Serialize(context.Response.ResponseStream, context.Result);
+#if OUTPUT_SERIALIZATION_TIME
+						serializationStopwatch.Stop();
+						Console.WriteLine("serializationStopwatch.ElapsedMilliseconds {0}", serializationStopwatch.ElapsedMilliseconds);
+#endif
+					}
 				}
 			}
 

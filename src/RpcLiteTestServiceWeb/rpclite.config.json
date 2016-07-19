@@ -2,18 +2,18 @@
   "version": "1.1",
   "appId": 10000,
 
-  //"service": {
-  //  "services": [
-  //    {
-  //      "name": "RegistryService",
-  //      "path": "/api/service/",
-  //      "type": "ServiceRegistry.Service.Services.RegistryService,ServiceRegistry.Service"
-  //    }
-  //  ],
-  //  "paths": [
-  //    ""
-  //  ]
-  //},
+  "service": {
+    "services": [
+      {
+        "name": "TestService",
+        "path": "/api/service/",
+        "type": "RpcLiteTestServiceWeb.TestService,RpcLiteTestServiceWeb"
+      }
+    ],
+    "paths": [
+      ""
+    ]
+  },
 
   "client": {
     "resolver": {
