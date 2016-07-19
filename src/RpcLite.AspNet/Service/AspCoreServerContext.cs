@@ -7,7 +7,20 @@ namespace RpcLite.Service
 	{
 		private readonly HttpContext _httpContext;
 
-		public string RequestPath => _httpContext.Request.Path;
+		private string _requestPath;
+		public string RequestPath
+		{
+			get
+			{
+				if (_requestPath == null)
+				{
+					_requestPath = _httpContext.Request.QueryString.Count == 0
+						? _httpContext.Request.Path
+						: _httpContext.Request.Path + "?" + _httpContext.Request.QueryString;
+				}
+				return _requestPath;
+			}
+		}
 
 		public int RequestContentLength => _httpContext.Request.ContentLength;
 

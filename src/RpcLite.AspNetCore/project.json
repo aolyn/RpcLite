@@ -1,7 +1,7 @@
 {
-  "title": "RpcLite.NetCore",
+  "title": "RpcLite.AspNetCore",
   "authors": [ "chrishwang" ],
-  "description": "RpcLite.NetCore Class Library",
+  "description": "RpcLite.AspNetCore Class Library",
   "version": "1.0.1-*",
 
   "publishOptions": {
@@ -16,9 +16,9 @@
   },
 
   "frameworks": {
-    //"netstandard1.3": {
-    //  "imports": "dnxcore50"
-    //},
+    "netstandard1.3": {
+      "imports": "dnxcore50"
+    },
     "netstandard1.5": {
       "imports": "dnxcore50"
     },

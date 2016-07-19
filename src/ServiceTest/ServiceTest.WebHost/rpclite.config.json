@@ -1,0 +1,38 @@
+{
+  "version": "1.1",
+  "appId": 10000,
+
+  "service": {
+    "services": [
+      {
+        "name": "ProductService",
+        "path": "/api/service/",
+        "type": "ServiceTest.ServiceImpl.ProductService, ServiceTest.ServiceImpl"
+      },
+      {
+        "name": "TestService",
+        "path": "/api/test/",
+        "type": "ServiceTest.WebHost.TestService, ServiceTest.WebHost"
+      }
+    ],
+    "paths": [
+      "/api/service/"
+    ]
+  },
+
+  "client": {
+    "resolver": {
+      "name": "default",
+      "type": "RpcLite.Resolvers.HttpClientAddressResolver, RpcLite.Resolvers"
+    },
+    "clients": [
+      {
+        "name": "ProductServiceSync",
+        "path": "~/api/products/",
+        "type": "ServiceImpl.ProductAsyncService,ServiceImpl",
+        "namespace": "v1"
+      }
+    ]
+  }
+
+}

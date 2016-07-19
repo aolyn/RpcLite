@@ -23,7 +23,7 @@ namespace RpcLite.Formatters
 		/// <param name="inputStream"></param>
 		/// <param name="targetType"></param>
 		/// <returns></returns>
-		public object Deserilize(Stream inputStream, Type targetType)
+		public object Deserialize(Stream inputStream, Type targetType)
 		{
 			using (var reader = new StreamReader(inputStream))
 			{

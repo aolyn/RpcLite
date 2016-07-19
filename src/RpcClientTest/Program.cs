@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -15,6 +16,33 @@ namespace WebApiClient
 	{
 		static void Main(string[] args)
 		{
+			{
+				try
+				{
+#if DEBUG
+					var stopwatch1 = Stopwatch.StartNew();
+#endif
+
+					var client = ClientFactory.GetInstance<IPersonService>("http://localhost:37330/api/person/");
+					var age = client.GetAge();
+#if DEBUG
+					var duration1 = stopwatch1.GetAndRest();
+#endif
+					client.SetAge(33);
+#if DEBUG
+					var duration2 = stopwatch1.GetAndRest();
+#endif
+					client.SetAgeAsync(234);
+#if DEBUG
+					var duration3 = stopwatch1.GetAndRest();
+#endif
+				}
+				catch (Exception ex)
+				{
+					Console.WriteLine(ex);
+				}
+			}
+
 			{
 				var client = new WebClient();
 				client.Proxy = new WebProxy("http://localhost:8888");
@@ -201,6 +229,7 @@ namespace WebApiClient
 				}
 				catch (Exception ex)
 				{
+					Console.WriteLine(ex);
 					throw;
 				}
 			}

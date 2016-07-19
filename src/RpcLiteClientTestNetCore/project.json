@@ -1,7 +1,10 @@
 {
   "version": "1.0.0-*",
   "buildOptions": {
-    "emitEntryPoint": true
+    "emitEntryPoint": true,
+    "copyToOutput": [
+      "rpclite.config.json"
+    ]
   },
 
   "dependencies": {
@@ -10,9 +13,10 @@
       "type": "platform"
     },
     "RpcLite.AspNetCore": "1.0.1-*",
-    //"RpcLite.CoreFx": "1.0.1-*",
     "RpcLite.Resolvers": "1.0.0-*",
-    "ServiceRegistry.Contract": "1.0.0-*"
+    "RpcLiteTestService.Contract": "1.0.0-*",
+    "ServiceRegistry.Contract": "1.0.0-*",
+    "System.Net.Http": "4.1.0"
   },
 
   "frameworks": {

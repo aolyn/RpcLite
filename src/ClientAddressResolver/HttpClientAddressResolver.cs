@@ -4,7 +4,7 @@ using System.Reflection;
 using RpcLite.Client;
 using RpcLite.Config;
 using RpcLite.Logging;
-using ServiceRegistery.Contract;
+using ServiceRegistry.Contract;
 
 namespace RpcLite.Resolvers
 {
@@ -64,8 +64,8 @@ namespace RpcLite.Resolvers
 			return GetAddressInternal<T>();
 		}
 
-		private static Lazy<RpcClientBase<IRegistryService>> _registryClient =
-			new Lazy<RpcClientBase<IRegistryService>>(() =>
+		private static Lazy<IRegistryService> _registryClient =
+			new Lazy<IRegistryService>(() =>
 			{
 				var registryClientConfigItem = RpcLiteConfig.Instance.Clients
 					.FirstOrDefault(it => it.TypeName == typeof(IRegistryService).FullName);
@@ -98,7 +98,7 @@ namespace RpcLite.Resolvers
 					Namespace = clientConfigItem.Namespace,
 					Environment = RpcLiteConfig.Instance.ClientEnvironment,
 				};
-				var response = _registryClient.Value.Client.GetServiceAddress(request);
+				var response = _registryClient.Value.GetServiceAddress(request);
 				var uri = response == null || string.IsNullOrWhiteSpace(response.Address)
 					? null
 					: response.Address;

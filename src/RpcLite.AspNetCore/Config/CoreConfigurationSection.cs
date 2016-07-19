@@ -7,7 +7,7 @@ namespace RpcLite.Config
 		public CoreConfigurationSection(CoreConfig.IConfiguration config)
 			: base(config)
 		{
-			//_node = node;
+			//Node = node;
 		}
 
 		public string Key { get { return ""; } }
