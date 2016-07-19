@@ -9,12 +9,13 @@ namespace ServiceTest.WebHost
 		{
 			var host = new WebHostBuilder()
 				.UseKestrel()
-				//.UseContentRoot(Directory.GetCurrentDirectory())
-				//.UseIISIntegration()
-				.UseKestrel((options) =>
-				{
-					options.ThreadCount = 16;
-				})
+				.UseContentRoot(Directory.GetCurrentDirectory())
+				.UseIISIntegration()
+				.UseUrls("http://*:5000")
+				//.UseKestrel((options) =>
+				//{
+				//	options.ThreadCount = 16;
+				//})
 				.UseStartup<Startup>()
 				.Build();
 
