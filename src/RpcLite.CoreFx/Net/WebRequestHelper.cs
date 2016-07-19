@@ -11,6 +11,7 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using RpcLite.Logging;
 
 namespace RpcLite.Net
 {
@@ -335,9 +336,13 @@ namespace RpcLite.Net
 				.Where(it => it.StartsWith("RpcLite-"))
 				.ToDictionary(item => item, item => response.Headers[item]);
 
+			string statusCode;
+			var isSuccess = headers.TryGetValue("RpcLite-StatusCode", out statusCode)
+				&& statusCode == ((int)HttpStatusCode.OK).ToString();
+
 			var responseMessage = new ResponseMessage(response)
 			{
-				IsSuccess = response.StatusCode == HttpStatusCode.OK,
+				IsSuccess = isSuccess,
 				Result = response.GetResponseStream(),
 				Header = headers,
 			};
@@ -453,15 +458,21 @@ namespace RpcLite.Net
 				}
 			}
 
+			string statusCode;
+			var isSuccess = headers.TryGetValue("RpcLite-StatusCode", out statusCode)
+				&& statusCode == ((int)HttpStatusCode.OK).ToString();
+
 			var responseMessage = new ServiceReponseMessage
 			{
-				IsSuccess = response.StatusCode == HttpStatusCode.OK,
+				IsSuccess = isSuccess,
 				Result = jsonResult,
 				Header = headers,
 			};
 
 			return responseMessage;
 		}
+
+		private static readonly HttpClient HttpClient = new HttpClient();
 		/// <summary>
 		/// post data to web server and get retrieve response data
 		/// </summary>
@@ -469,31 +480,90 @@ namespace RpcLite.Net
 		/// <param name="content"></param>
 		/// <param name="headDic"></param>
 		/// <returns></returns>
-
-
 		public static Task<ResponseMessage> PostAsync(string url, Stream content, Dictionary<string, string> headDic)
 		{
-			var httpClient = new HttpClient();
 			var requestMessage = new HttpRequestMessage(HttpMethod.Post, url)
 			{
 				Content = new StreamContent(content)
 			};
 
+			if (headDic != null && headDic.Count > 0)
+			{
+				string contentType;
+				if (headDic.TryGetValue("Content-Type", out contentType))
+				{
+					requestMessage.Headers.TryAddWithoutValidation("Content-Type", contentType);
+				}
+			}
+
 #if DEBUG && LogDuration
 			var stopwatch1 = Stopwatch.StartNew();
 #endif
 
-			var responseTask = httpClient.SendAsync(requestMessage);
+			var responseTask = HttpClient.SendAsync(requestMessage);
 			return responseTask.ContinueWith(tsk =>
 			{
 #if DEBUG && LogDuration
-				var duration1 = stopwatch1.GetAndRest();
+					var duration1 = stopwatch1.GetAndRest();
 #endif
-				var responseMessage = GetResponseMessage(tsk.Result);
-#if DEBUG && LogDuration
-				var duration2 = stopwatch1.GetAndRest();
-#endif
+
+				ResponseMessage responseMessage;
+				if (tsk.Exception != null)
+				{
+					var webException = tsk.Exception.InnerException as HttpRequestException;
+					if (webException == null)
+					{
+						throw tsk.Exception.InnerException;
+					}
+
+					//TODO check error like 500, 403
+					//if (webException.Response != null)
+					//{
+					//	try
+					//	{
+					//		responseMessage = GetResponseMessage((HttpWebResponse)webException.Response);
+					//		return responseMessage;
+					//	}
+					//	catch (Exception ex)
+					//	{
+					//		LogHelper.Error(ex);
+					//		throw;
+					//	}
+					//}
+					throw new ConnectionException("connection error when transport data with server", webException);
+				}
+
+				if (!tsk.Result.IsSuccessStatusCode)
+				{
+					throw new ConnectionException("connection error when transport data with server: " + tsk.Result.ReasonPhrase);
+				}
+
+				try
+				{
+					responseMessage = GetResponseMessage(tsk.Result);
+				}
+				catch (WebException ex)
+				{
+					if (ex.Response != null)
+					{
+						responseMessage = GetResponseMessage((HttpWebResponse)ex.Response);
+						((IDisposable)ex.Response).Dispose();
+					}
+					else
+					{
+						throw;
+					}
+				}
 				return responseMessage;
+
+				//#if DEBUG && LogDuration
+				//				var duration1 = stopwatch1.GetAndRest();
+				//#endif
+				//				var responseMessage = GetResponseMessage(tsk.Result);
+				//#if DEBUG && LogDuration
+				//				var duration2 = stopwatch1.GetAndRest();
+				//#endif
+				//				return responseMessage;
 			});
 		}
 
@@ -509,10 +579,13 @@ namespace RpcLite.Net
 				.ToDictionary(item => item.Key, item => item.Value.FirstOrDefault());
 
 			//var contentEncoding = response.Headers.GetValues("Transfer-Encoding").FirstOrDefault();
+			string statusCode;
+			var isSuccess = headers.TryGetValue("RpcLite-StatusCode", out statusCode)
+				&& statusCode == ((int)HttpStatusCode.OK).ToString();
 
 			var responseMessage = new ResponseMessage(response)
 			{
-				IsSuccess = response.StatusCode == HttpStatusCode.OK,
+				IsSuccess = isSuccess, // response.StatusCode == HttpStatusCode.OK,
 				Result = response.Content.ReadAsStreamAsync().Result,
 				Header = headers,
 			};

@@ -106,6 +106,9 @@
     <Compile Include="..\RpcLite.CoreFx\Client\IAddressResolver.cs">
       <Link>Client\IAddressResolver.cs</Link>
     </Compile>
+    <Compile Include="..\RpcLite.CoreFx\Client\IRpcClient.cs">
+      <Link>Client\IRpcClient.cs</Link>
+    </Compile>
     <Compile Include="..\RpcLite.CoreFx\Client\RpcClientBase.cs">
       <Link>Client\RpcClientBase.cs</Link>
     </Compile>
@@ -150,6 +153,9 @@
     </Compile>
     <Compile Include="..\RpcLite.CoreFx\Formatters\JsonFormater.cs">
       <Link>Formatters\JsonFormater.cs</Link>
+    </Compile>
+    <Compile Include="..\RpcLite.CoreFx\Formatters\Json\Converters.cs">
+      <Link>Formatters\Json\Converters.cs</Link>
     </Compile>
     <Compile Include="..\RpcLite.CoreFx\Formatters\XmlFormater.cs">
       <Link>Formatters\XmlFormater.cs</Link>
@@ -253,6 +259,9 @@
     <Compile Include="..\RpcLite.CoreFx\Utility\JsonHelper.cs">
       <Link>Utility\JsonHelper.cs</Link>
     </Compile>
+    <Compile Include="..\RpcLite.CoreFx\Utility\ReflectHelper.cs">
+      <Link>Utility\ReflectHelper.cs</Link>
+    </Compile>
     <Compile Include="Formatters\NetJsonFormater.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -262,6 +271,7 @@
     <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

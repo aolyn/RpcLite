@@ -1,0 +1,28 @@
+{
+  "version": "1.0.0-*",
+  "buildOptions": {
+    "emitEntryPoint": true,
+    "copyToOutput": [ "rpclite.config.json" ]
+  },
+
+  "dependencies": {
+    "Microsoft.NETCore.App": {
+      "type": "platform",
+      "version": "1.0.0"
+    },
+    "Newtonsoft.Json": "9.0.1",
+    "protobuf-net": "2.1.0",
+    "RpcLite.AspNetCore": "1.0.1-*",
+    "ServiceTest.Contract": "1.0.0-*",
+    "System.Runtime.Serialization.Json": "4.0.2",
+    "System.Runtime.Serialization.Primitives": "4.1.1",
+    "System.Runtime.Serialization.Xml": "4.1.1",
+    "System.Xml.XmlSerializer": "4.0.11"
+  },
+
+  "frameworks": {
+    "netcoreapp1.0": {
+      "imports": "dnxcore50"
+    }
+  }
+}

@@ -68,8 +68,8 @@ namespace RpcLite.Resolvers
 			return GetAddressInternal(clientType);
 		}
 
-		private static Lazy<RpcClientBase<IRegistryService>> _registryClient =
-			new Lazy<RpcClientBase<IRegistryService>>(() =>
+		private static readonly Lazy<IRegistryService> RegistryClient =
+			new Lazy<IRegistryService>(() =>
 			{
 				var registryClientConfigItem = RpcLiteConfig.Instance.Clients
 					.FirstOrDefault(it => it.TypeName == typeof(IRegistryService).FullName);
@@ -80,7 +80,7 @@ namespace RpcLite.Resolvers
 					return null;
 				}
 
-				var client = ClientFactory.GetInstance<IRegistryService>(registryClientConfigItem.Path) as RpcClientBase<IRegistryService>;
+				var client = ClientFactory.GetInstance<IRegistryService>(registryClientConfigItem.Path);
 				return client;
 			});
 
@@ -100,7 +100,7 @@ namespace RpcLite.Resolvers
 					.FirstOrDefault(it => it.TypeName == type.FullName);
 
 				if (clientConfigItem == null) return null;
-				if (_registryClient.Value == null) return null;
+				if (RegistryClient.Value == null) return null;
 
 				var request = new GetServiceAddressRequest
 				{
@@ -108,7 +108,7 @@ namespace RpcLite.Resolvers
 					Namespace = clientConfigItem.Namespace,
 					Environment = RpcLiteConfig.Instance.ClientEnvironment,
 				};
-				var response = _registryClient.Value.Client.GetServiceAddress(request);
+				var response = RegistryClient.Value.GetServiceAddress(request);
 				var uri = string.IsNullOrWhiteSpace(response?.Address)
 					? null
 					: response.Address;

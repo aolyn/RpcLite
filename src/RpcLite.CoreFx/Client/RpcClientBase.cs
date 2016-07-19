@@ -19,7 +19,7 @@ namespace RpcLite.Client
 	/// 
 	/// </summary>
 	/// <typeparam name="TContract">contract interface</typeparam>
-	public class RpcClientBase<TContract> where TContract : class
+	public class RpcClientBase<TContract> : IRpcClient where TContract : class
 	{
 		/// <summary>
 		/// base url of service
@@ -138,14 +138,15 @@ namespace RpcLite.Client
 
 					try
 					{
-						var resultObj = Formatter.Deserilize(resultMessage.Result, objType);
+						var resultObj = Formatter.Deserialize(resultMessage.Result, objType);
 						return (TResult)resultObj;
 					}
-					//catch (Exception ex)
-					//{
-					//	return default(TResult);
-					//	//throw;
-					//}
+					catch (Exception ex)
+					{
+						//return default(TResult);
+						//throw;
+						throw new ServiceException("parse data received error", ex);
+					}
 					finally
 					{
 						resultMessage.Dispose();
@@ -167,7 +168,20 @@ namespace RpcLite.Client
 #endif
 				var exType = asm.GetType(exceptionType);
 
-				var exObj = Formatter.Deserilize(resultMessage.Result, exType);
+				object exObj;
+				try
+				{
+					//var buf = new byte[8192];
+					//var readLength = resultMessage.Result.Read(buf, 0, buf.Length);
+					//var json = Encoding.UTF8.GetString(buf);
+
+					exObj = Formatter.Deserialize(resultMessage.Result, exType);
+				}
+				catch (Exception ex)
+				{
+					throw new ClientException("Deserialize Response failed", ex);
+				}
+
 				if (exObj != null)
 					throw (Exception)exObj;
 
@@ -222,7 +236,7 @@ namespace RpcLite.Client
 
 					try
 					{
-						var resultObj = Formatter.Deserilize(resultMessage.Result, objType);
+						var resultObj = Formatter.Deserialize(resultMessage.Result, objType);
 						return (TResult)resultObj;
 					}
 					//catch (Exception ex)
@@ -251,7 +265,7 @@ namespace RpcLite.Client
 #endif
 				var exType = asm.GetType(exceptionType);
 
-				var exObj = Formatter.Deserilize(resultMessage.Result, exType);
+				var exObj = Formatter.Deserialize(resultMessage.Result, exType);
 				if (exObj != null)
 					throw (Exception)exObj;
 

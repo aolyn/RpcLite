@@ -140,7 +140,9 @@ namespace RpcLite.Service
 		{
 			var type = service.Type;
 			var sb = new StringBuilder();
-			sb.AppendFormat("{0}", type.Name);
+			sb.AppendFormat("Service Name: {0}", type.Name);
+			sb.AppendLine();
+			sb.Append("Actions:");
 
 			var typeInfo =
 #if NETCORE
@@ -153,6 +155,9 @@ namespace RpcLite.Service
 
 			foreach (var method in methods)
 			{
+				if (method.DeclaringType == typeof(object))
+					continue;
+
 				sb.AppendLine();
 				sb.Append(method.ReturnType.Name);
 				sb.Append(" ");

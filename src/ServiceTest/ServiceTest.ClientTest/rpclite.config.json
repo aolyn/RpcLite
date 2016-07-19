@@ -1,0 +1,18 @@
+{
+  "version": "1.1",
+  "appId": 10000,
+  "client": {
+    "resolver": {
+      "name": "default",
+      "type": "RpcLite.Resolvers.HttpClientAddressResolver, RpcLite.Resolvers"
+    },
+    "clients": [
+      {
+        "name": "RegistryService",
+        "type": " ServiceRegistry.Contract.IRegistryService, ServiceRegistry.Contract",
+        "namespace": "v1",
+        "path": "http://localhost:12974/api/service/"
+      }
+    ]
+  }
+}

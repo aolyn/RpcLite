@@ -45,7 +45,7 @@ namespace RpcLiteClientTestNetCore
 				}
 
 				{
-					for (int i = 0; i < 3; i++)
+					for (int i = 0; i < 5; i++)
 					{
 						var client = ClientFactory.GetInstance<ITestService>("http://localhost:5000/api/service/");
 						using (new TimeRecorder())
