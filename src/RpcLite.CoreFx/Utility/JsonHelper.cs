@@ -53,7 +53,7 @@ namespace RpcLite.Utility
 		}
 
 #if USE_CUSTOMIZE_JSON_DESERIALIZE
-		static Lazy<JsonSerializer> _jsonSerializer = new Lazy<JsonSerializer>(() =>
+		private static readonly Lazy<JsonSerializer> DefaultJsonSerializer = new Lazy<JsonSerializer>(() =>
 		{
 			var jsonSerializer = new JsonSerializer
 			{
@@ -63,7 +63,7 @@ namespace RpcLite.Utility
 			return jsonSerializer;
 		});
 #else
-		static JsonSerializer _jsonSerializer = new JsonSerializer();
+		private static readonly JsonSerializer DefaultJsonSerializer = new JsonSerializer();
 #endif
 
 
@@ -77,10 +77,10 @@ namespace RpcLite.Utility
 			//jsonSerializer.Converters.Add(new ExceptionConverter());
 			//return jsonSerializer;
 
-			return _jsonSerializer.Value;
+			return DefaultJsonSerializer.Value;
 #else
 			//return new JsonSerializer();
-			return _jsonSerializer;
+			return DefaultJsonSerializer;
 #endif
 
 		}

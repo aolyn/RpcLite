@@ -11,7 +11,7 @@ namespace ServiceTest.ClientTest.net
 	{
 		static void Main(string[] args)
 		{
-			SerializeTest.ExceptionSerializationTest();
+			SerializeTest.ExceptionSerializationMultiThreadTest();
 
 		}
 	}

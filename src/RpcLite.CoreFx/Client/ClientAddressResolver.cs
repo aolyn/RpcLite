@@ -25,16 +25,17 @@ namespace RpcLite.Client
 				var type = TypeCreator.GetTypeFromName(resolverItem.TypeName, resolverItem.AssemblyName);
 				if (type != null)
 				{
-//#if NETCORE
-//					var ti = type.GetTypeInfo();
-//					//var ins = Activator.CreateInstance(ti);
-//#endif
+					//#if NETCORE
+					//					var ti = type.GetTypeInfo();
+					//					//var ins = Activator.CreateInstance(ti);
+					//#endif
 					_resolver = Activator.CreateInstance(type) as IAddressResolver;
 				}
 			}
 			catch (Exception ex)
 			{
 				LogHelper.Error("InitializeResolver error", ex);
+				throw;
 			}
 		}
 

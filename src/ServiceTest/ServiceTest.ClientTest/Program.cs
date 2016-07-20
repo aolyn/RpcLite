@@ -1,6 +1,5 @@
 ﻿using System;
 using RpcLite.Client;
-using RpcLite.Utility;
 using RpcLiteClientTestNetCore;
 using ServiceTest.ClientTest.Test;
 using ServiceTest.Contract;
@@ -11,11 +10,12 @@ namespace ServiceTest.ClientTest
 	{
 		public static void Main(string[] args)
 		{
+			RegistryTest.Test();
+
 			SerializeTest.PropertyReflectTest();
+			//SerializeTest.ExceptionSerializationMultiThreadTest();
 			SerializeTest.ExceptionSerializationTest();
-
 			PerformanceTest();
-
 
 			//SerializeTest.Test3();
 			//var exobj = new Exception();
@@ -35,7 +35,7 @@ namespace ServiceTest.ClientTest
 
 		private static void PerformanceTest()
 		{
-			var client = ClientFactory.GetInstance<IProductService>("http://localhost:5000/api/service/");
+			var client = ClientFactory.GetInstance<IProductService>(serviceBaseUrl + "/api/service/");
 			try
 			{
 				var clientInfo = client as IRpcClient;
@@ -76,12 +76,14 @@ namespace ServiceTest.ClientTest
 			}
 		}
 
+		private static string serviceBaseUrl = "http://localhost:17518";
+
 		private static void Test1()
 		{
 			//var baseUrl = @"http://localhost:50001/api/service/";
 			//var baseUrl = @"https://www.baidu.com/test/api/service/";
 			//var baseUrl = @"http://localhost/config/asfsdfs";
-			var baseUrl = @"http://localhost:5000/api/service/";
+			var baseUrl = serviceBaseUrl + @"/api/service/";
 			var client = ClientFactory.GetInstance<IProductService>(baseUrl);
 
 			try

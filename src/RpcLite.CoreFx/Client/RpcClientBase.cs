@@ -11,6 +11,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using RpcLite.Formatters;
+using RpcLite.Logging;
 using RpcLite.Net;
 
 namespace RpcLite.Client
@@ -154,19 +155,28 @@ namespace RpcLite.Client
 				}
 
 				var exceptionAssembly = resultMessage.Header["RpcLite-ExceptionAssembly"];
-				var exceptionType = resultMessage.Header["RpcLite-ExceptionType"];
+				var exceptionTypeName = resultMessage.Header["RpcLite-ExceptionType"];
 
-				if (string.IsNullOrWhiteSpace(exceptionAssembly) || string.IsNullOrWhiteSpace(exceptionType))
+				if (string.IsNullOrWhiteSpace(exceptionAssembly) || string.IsNullOrWhiteSpace(exceptionTypeName))
 				{
 					throw new ClientException("exception occored, but no ExceptionAssembly and ExceptionType returned");
 				}
 
+				Type exceptionType;
+				try
+				{
 #if NETCORE
-				var asm = Assembly.Load(new AssemblyName(exceptionAssembly));
+					var asm = Assembly.Load(new AssemblyName(exceptionAssembly));
 #else
-				var asm = Assembly.Load(exceptionAssembly);
+					var asm = Assembly.Load(exceptionAssembly);
 #endif
-				var exType = asm.GetType(exceptionType);
+					exceptionType = asm.GetType(exceptionTypeName);
+				}
+				catch (Exception ex)
+				{
+					LogHelper.Error("can't find exception type " + exceptionTypeName, ex);
+					exceptionType = typeof(Exception);
+				}
 
 				object exObj;
 				try
@@ -175,7 +185,7 @@ namespace RpcLite.Client
 					//var readLength = resultMessage.Result.Read(buf, 0, buf.Length);
 					//var json = Encoding.UTF8.GetString(buf);
 
-					exObj = Formatter.Deserialize(resultMessage.Result, exType);
+					exObj = Formatter.Deserialize(resultMessage.Result, exceptionType);
 				}
 				catch (Exception ex)
 				{
@@ -185,7 +195,8 @@ namespace RpcLite.Client
 				if (exObj != null)
 					throw (Exception)exObj;
 
-				return default(TResult);
+				//return default(TResult);
+				throw new ServiceException("exception occored but no exception data transported");
 			});
 
 			return task;

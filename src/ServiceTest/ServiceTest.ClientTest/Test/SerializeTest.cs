@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using RpcLite.Utility;
 
 namespace ServiceTest.ClientTest.Test
@@ -80,25 +82,69 @@ namespace ServiceTest.ClientTest.Test
 			}
 		}
 
-		internal static void ExceptionSerializationTest()
+		internal static void ExceptionSerializationMultiThreadTest()
 		{
 			NotImplementedException exobj;
 			try
 			{
-				throw new NotImplementedException("test exception 22222222222");
+				throw new NotImplementedException("test exception 22222222222", new InvalidOperationException("test opts"));
 			}
 			catch (NotImplementedException ex)
 			{
 				exobj = ex;
 			}
+
 			var ms = new MemoryStream();
 			JsonHelper.Serialize(ms, exobj);
 			var json = Encoding.UTF8.GetString(ms.ToArray());
+			var exBytes = ms.ToArray();
+
+			var tasks = Enumerable.Range(0, 100)
+				.Select(it => Task.Run(() =>
+				{
+					for (int i = 0; i < 10000; i++)
+					{
+						try
+						{
+							var dms = new MemoryStream(exBytes);
+							var dexobj2 = JsonHelper.Deserialize(dms, exobj.GetType());
+							if (dexobj2 == null)
+								Console.WriteLine("deserialize failed, result is null.");
+						}
+						catch (Exception ex)
+						{
+							Console.WriteLine("deserialize failed. " + ex);
+						}
+					}
+				}))
+				.ToArray();
+
+			Task.WaitAll(tasks);
 
 			ms.Position = 0;
 			var dexobj = JsonHelper.Deserialize(ms, exobj.GetType());
 		}
 
+		internal static void ExceptionSerializationTest()
+		{
+			NotImplementedException exobj;
+			try
+			{
+				throw new NotImplementedException("test exception 22222222222", new InvalidOperationException("test opts"));
+			}
+			catch (NotImplementedException ex)
+			{
+				exobj = ex;
+			}
+
+			var ms = new MemoryStream();
+			JsonHelper.Serialize(ms, exobj);
+			var json = Encoding.UTF8.GetString(ms.ToArray());
+			var exBytes = ms.ToArray();
+
+			var dms = new MemoryStream(exBytes);
+			var dexobj2 = JsonHelper.Deserialize(dms, exobj.GetType());
+		}
 
 		private static void Test2()
 		{

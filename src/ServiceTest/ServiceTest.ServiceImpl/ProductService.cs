@@ -51,7 +51,7 @@ namespace ServiceTest.ServiceImpl
 
 		public void ExceptionTest()
 		{
-			throw new NotImplementedException("test exception 22222222222");
+			throw new NotImplementedException("test exception 235", new InvalidOperationException("test InvalidOperationException"));
 		}
 
 		public Task ExceptionTestAsync()

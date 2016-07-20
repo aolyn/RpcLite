@@ -87,6 +87,8 @@ namespace RpcLite.Formatters.Json
 				? Type.GetType(_className)
 				: objectType;
 
+			type = type ?? typeof(Exception);
+
 			return (Exception)Activator.CreateInstance(type);
 		}
 	}
