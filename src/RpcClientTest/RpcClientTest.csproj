@@ -130,7 +130,7 @@
       <Project>{7ae9591b-8465-4d8a-b27d-51e2ec6fe82c}</Project>
       <Name>RpcLite.Resolvers.Net40</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Contracts\Contracts.csproj">
+    <ProjectReference Include="..\Demos\Contracts\Contracts.csproj">
       <Project>{99199B27-51C0-42D9-8DDB-4AFBE45F30CB}</Project>
       <Name>Contracts</Name>
     </ProjectReference>

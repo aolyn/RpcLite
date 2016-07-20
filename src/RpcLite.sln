@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RpcClientTest", "RpcClientT
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Model", "Demos\Model\Model.csproj", "{2D6E36EC-3E98-4C98-98E8-34AFA8C75F1A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Contracts", "Contracts\Contracts.csproj", "{99199B27-51C0-42D9-8DDB-4AFBE45F30CB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Contracts", "Demos\Contracts\Contracts.csproj", "{99199B27-51C0-42D9-8DDB-4AFBE45F30CB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceImpl", "Demos\ServiceImpl\ServiceImpl.csproj", "{B31033F4-8003-47CE-A9B0-E5251B88C5EC}"
 EndProject

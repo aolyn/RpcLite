@@ -69,7 +69,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Contracts\Contracts.csproj">
+    <ProjectReference Include="..\Contracts\Contracts.csproj">
       <Project>{99199B27-51C0-42D9-8DDB-4AFBE45F30CB}</Project>
       <Name>Contracts</Name>
     </ProjectReference>
