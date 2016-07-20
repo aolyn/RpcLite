@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RpcClientTest", "RpcClientTest\RpcClientTest.csproj", "{35BD5758-B6A5-4DC9-90DA-64E9A923753F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RpcClientTest", "Demos\RpcClientTest\RpcClientTest.csproj", "{35BD5758-B6A5-4DC9-90DA-64E9A923753F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Model", "Demos\Model\Model.csproj", "{2D6E36EC-3E98-4C98-98E8-34AFA8C75F1A}"
 EndProject
