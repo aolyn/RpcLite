@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Reflection;
 using RpcLite.Config;
 using RpcLite.Logging;
 

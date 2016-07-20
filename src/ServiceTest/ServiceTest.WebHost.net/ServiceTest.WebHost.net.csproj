@@ -96,7 +96,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\ClientAddressResolver\RpcLite.Resolvers.Net40.csproj">
+    <ProjectReference Include="..\..\RpcLite.Resolvers.Net40\RpcLite.Resolvers.Net40.csproj">
       <Project>{7ae9591b-8465-4d8a-b27d-51e2ec6fe82c}</Project>
       <Name>RpcLite.Resolvers.Net40</Name>
     </ProjectReference>

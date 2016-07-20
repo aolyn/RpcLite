@@ -37,7 +37,9 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="HttpClientAddressResolver.cs" />
+    <Compile Include="..\RpcLite.Resolvers\HttpClientAddressResolver.cs">
+      <Link>HttpClientAddressResolver.cs</Link>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
