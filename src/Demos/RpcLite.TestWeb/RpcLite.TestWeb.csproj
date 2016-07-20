@@ -99,7 +99,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Contracts\Contracts.csproj">
+    <ProjectReference Include="..\..\Contracts\Contracts.csproj">
       <Project>{99199B27-51C0-42D9-8DDB-4AFBE45F30CB}</Project>
       <Name>Contracts</Name>
     </ProjectReference>
@@ -107,11 +107,11 @@
       <Project>{2D6E36EC-3E98-4C98-98E8-34AFA8C75F1A}</Project>
       <Name>Model</Name>
     </ProjectReference>
-    <ProjectReference Include="..\RpcLite.AspNet\RpcLite.Net.csproj">
+    <ProjectReference Include="..\..\RpcLite.AspNet\RpcLite.Net.csproj">
       <Project>{314f05a6-06c2-476c-be16-52e068e91229}</Project>
       <Name>RpcLite.Net</Name>
     </ProjectReference>
-    <ProjectReference Include="..\RpcLite.Net40\RpcLite.Net40.csproj">
+    <ProjectReference Include="..\..\RpcLite.Net40\RpcLite.Net40.csproj">
       <Project>{6e2205f4-2050-424f-abf5-93b9f5f0f8e4}</Project>
       <Name>RpcLite.Net40</Name>
     </ProjectReference>

@@ -134,7 +134,7 @@
       <Project>{99199B27-51C0-42D9-8DDB-4AFBE45F30CB}</Project>
       <Name>Contracts</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Model\Model.csproj">
+    <ProjectReference Include="..\Demos\Model\Model.csproj">
       <Project>{2D6E36EC-3E98-4C98-98E8-34AFA8C75F1A}</Project>
       <Name>Model</Name>
     </ProjectReference>
@@ -142,7 +142,7 @@
       <Project>{6e2205f4-2050-424f-abf5-93b9f5f0f8e4}</Project>
       <Name>RpcLite.Net40</Name>
     </ProjectReference>
-    <ProjectReference Include="..\ServiceImpl\ServiceImpl.csproj">
+    <ProjectReference Include="..\Demos\ServiceImpl\ServiceImpl.csproj">
       <Project>{b31033f4-8003-47ce-a9b0-e5251b88c5ec}</Project>
       <Name>ServiceImpl</Name>
     </ProjectReference>
