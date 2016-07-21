@@ -29,6 +29,20 @@ namespace ServiceTest.WebHost
 		public Product[] GetAll()
 		{
 			var rnd = new Random();
+			var products = Enumerable.Range(1, 10)
+				.Select(it => new Product
+				{
+					Id = it,
+					Name = "Test Product Name",
+					Price = (decimal)(rnd.NextDouble() * 100),
+				})
+				.ToArray();
+			return products;
+		}
+
+		public Product[] GetAll100()
+		{
+			var rnd = new Random();
 			var products = Enumerable.Range(1, 100)
 				.Select(it => new Product
 				{
