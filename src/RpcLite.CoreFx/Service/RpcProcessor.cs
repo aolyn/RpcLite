@@ -263,7 +263,7 @@ namespace RpcLite.Service
 								var html = WebUtility.HtmlEncode(value);
 								html = html
 									.Replace(" ", "&nbsp;")
-									.Replace("\r\n", "<br />");
+									.Replace(Environment.NewLine, "<br />");
 								writer.Write(html);
 							}
 						}
