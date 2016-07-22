@@ -44,10 +44,12 @@ namespace ServiceTest.WebHost
 					.UseContentRoot(Directory.GetCurrentDirectory())
 					.UseIISIntegration()
 					.UseUrls("http://*:5000")
-					//.UseKestrel((options) =>
-					//{
-					//	options.ThreadCount = 16;
-					//})
+					.UseKestrel((options) =>
+					{
+						options.ThreadCount = 16;
+						options.UseHttpsTest();
+						//HttpsConnectionFilterExtensionFunc.
+					})
 					.UseStartup<Startup>()
 					.Build();
 
