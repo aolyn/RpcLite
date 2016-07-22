@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using Microsoft.AspNetCore.Hosting;
 
@@ -12,7 +13,9 @@ namespace ServiceTest.WebHost
 			Console.WriteLine(args?.Length);
 			//Console.WriteLine(args[0]);
 
-			var useHttps = args?.Length > 0 && args[0] == "ssl";
+			//var useHttps = args?.Length > 0 && args[0] == "ssl";
+			var useHttps = args?.Any(it => it == "--ssl") ?? false;
+			var useTestConnectionFilter = args?.Any(it => it == "--tcf") ?? false;
 
 			if (useHttps)
 			{
@@ -46,8 +49,9 @@ namespace ServiceTest.WebHost
 					.UseUrls("http://*:5000")
 					.UseKestrel((options) =>
 					{
-						options.ThreadCount = 16;
-						options.UseHttpsTest();
+						options.ThreadCount = 32;
+						if (useTestConnectionFilter)
+							options.UseHttpsTest();
 						//HttpsConnectionFilterExtensionFunc.
 					})
 					.UseStartup<Startup>()
