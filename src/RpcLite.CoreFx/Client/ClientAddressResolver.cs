@@ -7,7 +7,7 @@ namespace RpcLite.Client
 	internal class ClientAddressResolver<T> where T : class
 	{
 		// ReSharper disable once StaticMemberInGenericType
-		static IAddressResolver _resolver;
+		private static IAddressResolver _resolver;
 
 		static ClientAddressResolver()
 		{
@@ -24,10 +24,6 @@ namespace RpcLite.Client
 				var type = TypeCreator.GetTypeFromName(resolverItem.TypeName, resolverItem.AssemblyName);
 				if (type != null)
 				{
-					//#if NETCORE
-					//					var ti = type.GetTypeInfo();
-					//					//var ins = Activator.CreateInstance(ti);
-					//#endif
 					_resolver = Activator.CreateInstance(type) as IAddressResolver;
 				}
 			}

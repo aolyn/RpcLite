@@ -17,7 +17,7 @@ namespace RpcLite.Config
 
 		public static void Initialize(CoreConfig.IConfiguration config)
 		{
-			var rpcConfig = RpcLiteConfigurationHelper.GetConfig(new CoreConfigurationSection(config));
+			var rpcConfig = RpcConfigHelper.GetConfig(new CoreConfigurationSection(config));
 			RpcLiteConfig.SetInstance(rpcConfig);
 		}
 

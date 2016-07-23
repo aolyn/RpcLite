@@ -87,6 +87,18 @@ namespace RpcLite.Utility
 
 		/// <summary>
 		/// </summary>
+		public static string Serialize(object source)
+		{
+			using (var writer = new StringWriter())
+			{
+				Serialize(source, writer);
+				writer.Flush();
+				return writer.ToString();
+			}
+		}
+
+		/// <summary>
+		/// </summary>
 		public static void Serialize(Stream stream, object source)
 		{
 			//using (var writer = new StreamWriter(stream))

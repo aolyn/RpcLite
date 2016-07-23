@@ -6,9 +6,19 @@
 	public class ServiceConfigItem
 	{
 		/// <summary>
+		/// name of service
+		/// </summary>
+		public string Name { get; set; }
+
+		/// <summary>
 		/// relative path of service url, eg: ~/api/product
 		/// </summary>
 		public string Path { get; set; }
+
+		/// <summary>
+		/// relative path of service url, eg: ~/api/product
+		/// </summary>
+		public string Address { get; set; }
 
 		/// <summary>
 		/// assembly of service implement class
@@ -24,11 +34,6 @@
 		/// original configured type name, eg: ServiceImpl.ProductAsyncService,ServiceImpl
 		/// </summary>
 		public string Type { get; set; }
-
-		/// <summary>
-		/// name of service
-		/// </summary>
-		public string Name { get; set; }
 
 		/// <summary>
 		/// get description string

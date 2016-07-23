@@ -61,20 +61,6 @@ namespace RpcLite.Client
 			}
 		}
 
-		///// <summary>
-		///// 
-		///// </summary>
-		///// <param name="action"></param>
-		///// <param name="request"></param>
-		///// <param name="returnType"></param>
-		///// <returns></returns>
-		//protected object GetResponse(string action, object request, Type returnType)
-		//{
-		//	var response = DoRequest(action, request, returnType);
-
-		//	return response;
-		//}
-
 		/// <summary>
 		/// 
 		/// </summary>
@@ -293,87 +279,6 @@ namespace RpcLite.Client
 		{
 			get { return this as TContract; }
 		}
-
-		//private object DoRequest(string action, object param, Type returnType)
-		//{
-		//	if (_formatter == null)
-		//		throw new ServiceException("Formatter can't be null");
-
-		//	var mime = _formatter.SupportMimes.First();
-
-		//	var resultObj = DoRequest(action, param, returnType, mime);
-		//	return resultObj;
-
-		//	//var resultObj = DoRequestAsync(action, param, returnType, mime);
-		//	//return resultObj.Result;
-
-		//}
-
-		//		private object DoRequest(string action, object param, Type returnType, string mime)
-		//		{
-		//			var headDic = new Dictionary<string, string>
-		//			{
-		//				{"Content-Type",mime},
-		//				{"Accept",mime},
-		//			};
-
-		//			var json = JsonConvert.SerializeObject(param);
-
-		//			var url = BaseUrl + action;
-		//			var resultMessage = WebRequestHelper.Post(url, json, Encoding.UTF8, headDic);
-		//			if (resultMessage == null)
-		//				throw new ClientException("get service data error");
-
-		//			if (resultMessage.IsSuccess)
-		//			{
-		//				if (string.IsNullOrEmpty(resultMessage.Result) || returnType == null)
-		//					return null;
-
-		//#if NETCORE
-		//				var objType = returnType.GetTypeInfo().BaseType == typeof(Task)
-		//					? returnType.GetGenericArguments()[0]
-		//					: returnType;
-		//#else
-		//				var objType = returnType.BaseType == typeof(Task)
-		//					? returnType.GetGenericArguments()[0]
-		//					: returnType;
-		//#endif
-
-		//				var resultObj = JsonConvert.DeserializeObject(resultMessage.Result, objType);
-		//				return resultObj;
-		//			}
-
-		//			Type exceptionType;
-		//			var assemblyName = resultMessage.Header["RpcLite-ExceptionAssembly"];
-		//			if (string.IsNullOrWhiteSpace(assemblyName) || StaticDataHolder.DotFoundAssemblyDictionary.ContainsKey(assemblyName))
-		//			{
-		//				exceptionType = typeof(Exception);
-		//			}
-		//			else
-		//			{
-		//				try
-		//				{
-		//#if NETCORE
-		//					var asm = Assembly.Load(new AssemblyName(assemblyName));
-		//#else
-		//					var asm = Assembly.Load(assemblyName);
-		//#endif
-		//					exceptionType = asm.GetType(resultMessage.Header["RpcLite-ExceptionType"]);
-		//				}
-		//				catch (FileNotFoundException ex)
-		//				{
-		//					LogHelper.Error("load exception assebmly error, exception assmbly not found", ex);
-		//					exceptionType = typeof(Exception);
-		//					StaticDataHolder.DotFoundAssemblyDictionary.TryAdd(assemblyName, DateTime.Now);
-		//				}
-		//			}
-
-		//			var exceptionObject = JsonConvert.DeserializeObject(resultMessage.Result, exceptionType);
-		//			if (exceptionObject != null)
-		//				throw (Exception)exceptionObject;
-
-		//			return null;
-		//		}
 
 		private static Lazy<Func<RpcClientBase<TContract>>> _func = new Lazy<Func<RpcClientBase<TContract>>>(() =>
 		{

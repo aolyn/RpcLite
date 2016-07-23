@@ -68,6 +68,11 @@ namespace RpcLite.Config
 		public ResolverConfigItem Resover { get; set; }
 
 		/// <summary>
+		/// Registry Configuration
+		/// </summary>
+		public RegistryConfigItem Registry { get; set; }
+
+		/// <summary>
 		/// App Id of current app
 		/// </summary>
 		public string AppId { get; set; }

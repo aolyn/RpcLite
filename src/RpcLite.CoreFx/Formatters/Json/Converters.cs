@@ -5,6 +5,7 @@ using System.Reflection;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
+using RpcLite.Logging;
 using RpcLite.Utility;
 
 namespace RpcLite.Formatters.Json
@@ -60,6 +61,7 @@ namespace RpcLite.Formatters.Json
 			}
 			catch (Exception ex)
 			{
+				LogHelper.Debug(ex.ToString());
 				throw;
 			}
 
@@ -78,6 +80,11 @@ namespace RpcLite.Formatters.Json
 			};
 		}
 
+		/// <summary>
+		/// Creates an object which will then be populated by the serializer.
+		/// </summary>
+		/// <param name="objectType">Type of the object.</param>
+		/// <returns>The created object.</returns>
 		public override Exception Create(Type objectType)
 		{
 			if (_className == null)
@@ -138,18 +145,13 @@ namespace RpcLite.Formatters.Json
 		/// </summary>
 		public BufferJsonReader(JsonReader reader)
 		{
+			_reader = reader;
 		}
 
 		/// <summary>
 		/// 
 		/// </summary>
-		public override JsonToken TokenType
-		{
-			get
-			{
-				return _state != null ? _state.TokenType : _reader.TokenType;
-			}
-		}
+		public override JsonToken TokenType { get { return _state != null ? _state.TokenType : _reader.TokenType; } }
 
 		/// <summary>
 		/// 
@@ -414,12 +416,22 @@ namespace RpcLite.Formatters.Json
 			Func<TTarget, TValue> _getter;
 			Action<TTarget, TValue> _setter;
 
+			/// <summary>
+			/// 
+			/// </summary>
+			/// <param name="getter"></param>
+			/// <param name="setter"></param>
 			public GetterSetterFieldValueSource(Func<TTarget, TValue> getter, Action<TTarget, TValue> setter)
 			{
 				_getter = getter;
 				_setter = setter;
 			}
 
+			/// <summary>
+			/// 
+			/// </summary>
+			/// <param name="target"></param>
+			/// <returns></returns>
 			public TValue GetValue(object target)
 			{
 				return _getter == null
@@ -427,6 +439,11 @@ namespace RpcLite.Formatters.Json
 					: _getter((TTarget)target);
 			}
 
+			/// <summary>
+			/// 
+			/// </summary>
+			/// <param name="target"></param>
+			/// <param name="value"></param>
 			public void SetValue(object target, TValue value)
 			{
 				if (_setter != null)
@@ -449,8 +466,9 @@ namespace RpcLite.Formatters.Json
 				{
 					_source.SetValue(target, (TValue)value);
 				}
-				catch (Exception)
+				catch (Exception ex)
 				{
+					LogHelper.Debug(ex);
 					throw;
 				}
 			}
@@ -462,48 +480,51 @@ namespace RpcLite.Formatters.Json
 			}
 		}
 
-		class PropertyValueProvider : IValueProvider
-		{
-			private string _name;
-			private string _valueName;
-			private PropertyInfo _property;
-			private FieldInfo _field;
+		//		class PropertyValueProvider : IValueProvider
+		//		{
+		//			private string _name;
+		//			private string _valueName;
+		//			private PropertyInfo _property;
+		//			private FieldInfo _field;
 
-			public PropertyValueProvider(string name, string valueName, MemberInfo memberInfo)
-			{
-				_name = name;
-				_valueName = valueName;
+		//			public PropertyValueProvider(string name, string valueName, MemberInfo memberInfo)
+		//			{
+		//				_name = name;
+		//				_valueName = valueName;
 
-				_field = memberInfo.DeclaringType
-#if NETCORE
-					.GetTypeInfo()
-#endif
-					.GetField(valueName, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
-				if (_field == null)
-				{
-				}
-				_property = (PropertyInfo)memberInfo;
-			}
+		//				_field = memberInfo.DeclaringType
+		//#if NETCORE
+		//					.GetTypeInfo()
+		//#endif
+		//					.GetField(valueName, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
+		//				if (_field == null)
+		//				{
+		//				}
+		//				_property = (PropertyInfo)memberInfo;
+		//			}
 
-			public void SetValue(object target, object value)
-			{
-				try
-				{
-					_field.SetValue(target, value);
-				}
-				catch (Exception)
-				{
-					throw;
-				}
-			}
+		//			public void SetValue(object target, object value)
+		//			{
+		//				try
+		//				{
+		//					_field.SetValue(target, value);
+		//				}
+		//				catch (Exception)
+		//				{
+		//					throw;
+		//				}
+		//			}
 
-			public object GetValue(object target)
-			{
-				return _property.GetValue(target, new object[0]);
-			}
-		}
+		//			public object GetValue(object target)
+		//			{
+		//				return _property.GetValue(target, new object[0]);
+		//			}
+		//		}
 
-		class ValueProvider : IValueProvider
+		/// <summary>
+		/// 
+		/// </summary>
+		public class ValueProvider : IValueProvider
 		{
 			private readonly Func<object, object> _getter;
 			private readonly Action<object, object> _setter;
@@ -519,8 +540,16 @@ namespace RpcLite.Formatters.Json
 				_setter = setter;
 			}
 
+			/// <summary>
+			/// 
+			/// </summary>
 			public object Tag { get; set; }
 
+			/// <summary>
+			/// 
+			/// </summary>
+			/// <param name="target"></param>
+			/// <param name="value"></param>
 			public void SetValue(object target, object value)
 			{
 				if (_setter == null)
@@ -530,12 +559,18 @@ namespace RpcLite.Formatters.Json
 				{
 					_setter(target, value);
 				}
-				catch (Exception)
+				catch (Exception ex)
 				{
+					LogHelper.Debug(ex);
 					throw;
 				}
 			}
 
+			/// <summary>
+			/// 
+			/// </summary>
+			/// <param name="target"></param>
+			/// <returns></returns>
 			public object GetValue(object target)
 			{
 				return _getter?.Invoke(target);

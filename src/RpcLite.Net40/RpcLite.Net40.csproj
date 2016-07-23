@@ -124,6 +124,9 @@
     <Compile Include="..\RpcLite.CoreFx\Config\IConfigurationSection.cs">
       <Link>Config\IConfigurationSection.cs</Link>
     </Compile>
+    <Compile Include="..\RpcLite.CoreFx\Config\RegistryConfigItem.cs">
+      <Link>Config\RegistryConfigItem.cs</Link>
+    </Compile>
     <Compile Include="..\RpcLite.CoreFx\Config\ResolverConfigItem.cs">
       <Link>Config\ResolverConfigItem.cs</Link>
     </Compile>
@@ -133,8 +136,8 @@
     <Compile Include="..\RpcLite.CoreFx\Config\RpcLiteConfigurationErrorException.cs">
       <Link>Config\RpcLiteConfigurationErrorException.cs</Link>
     </Compile>
-    <Compile Include="..\RpcLite.CoreFx\Config\RpcLiteConfigurationHelper.cs">
-      <Link>Config\RpcLiteConfigurationHelper.cs</Link>
+    <Compile Include="..\RpcLite.CoreFx\Config\RpcConfigHelper.cs">
+      <Link>Config\RpcConfigHelper.cs</Link>
     </Compile>
     <Compile Include="..\RpcLite.CoreFx\Config\ServiceConfigItem.cs">
       <Link>Config\ServiceConfigItem.cs</Link>
@@ -183,6 +186,12 @@
     </Compile>
     <Compile Include="..\RpcLite.CoreFx\QuickReadConcurrentDictionary.cs">
       <Link>QuickReadConcurrentDictionary.cs</Link>
+    </Compile>
+    <Compile Include="..\RpcLite.CoreFx\Registry\IRegistry.cs">
+      <Link>Registry\IRegistry.cs</Link>
+    </Compile>
+    <Compile Include="..\RpcLite.CoreFx\Registry\IRegistryFactory.cs">
+      <Link>Registry\IRegistryFactory.cs</Link>
     </Compile>
     <Compile Include="..\RpcLite.CoreFx\RequestException.cs">
       <Link>RequestException.cs</Link>

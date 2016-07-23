@@ -2,6 +2,9 @@
 
 namespace RpcLite.Client
 {
+	/// <summary>
+	/// 
+	/// </summary>
 	public interface IRpcClient
 	{
 		/// <summary>

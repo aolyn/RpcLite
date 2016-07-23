@@ -45,7 +45,7 @@ namespace RpcLite.Config
 			if (Instance != null)
 				return Instance;
 
-			Instance = RpcLiteConfigurationHelper.GetConfig(new XmlConfigurationSection(section));
+			Instance = RpcConfigHelper.GetConfig(new XmlConfigurationSection(section));
 
 			return Instance;
 		}

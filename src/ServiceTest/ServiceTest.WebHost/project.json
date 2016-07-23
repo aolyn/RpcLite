@@ -10,7 +10,8 @@
     "Microsoft.Extensions.Logging.Console": "1.0.0",
     "RpcLite.AspNetCore": "1.0.1-*",
     "ServiceTest.ServiceImpl": "1.0.0-*",
-    "Microsoft.AspNetCore.Server.Kestrel.Https": "1.0.0"
+    "Microsoft.AspNetCore.Server.Kestrel.Https": "1.0.0",
+    "RpcLite.Registry.Zookeeper": "1.0.0-*"
   },
 
   "tools": {
@@ -41,7 +42,9 @@
   "publishOptions": {
     "include": [
       "wwwroot",
-      "web.config"
+      "web.config",
+      "rpclite.config.json",
+      "ssl.pfx"
     ]
   },
 

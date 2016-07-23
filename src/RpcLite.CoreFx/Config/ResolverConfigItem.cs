@@ -24,5 +24,11 @@
 		/// name of Resolver
 		/// </summary>
 		public string Name { get; set; }
+
+		/// <summary>
+		/// address of Resolver
+		/// </summary>
+		public string Address { get; set; }
 	}
+
 }

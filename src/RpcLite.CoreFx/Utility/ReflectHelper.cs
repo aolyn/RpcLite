@@ -5,9 +5,20 @@ using System.Reflection.Emit;
 
 namespace RpcLite.Utility
 {
+	/// <summary>
+	/// 
+	/// </summary>
 	public static class ReflectHelper
 	{
 		//private ConcurrentDictionary<FieldInfo, Func<TTarget, TValue>>
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="type"></param>
+		/// <param name="fieldName"></param>
+		/// <typeparam name="TTarget"></typeparam>
+		/// <typeparam name="TValue"></typeparam>
+		/// <returns></returns>
 		public static Func<TTarget, TValue> GetFieldGetterFunc<TTarget, TValue>(Type type, string fieldName)
 		{
 			var field = type.GetField(fieldName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
@@ -27,17 +38,31 @@ namespace RpcLite.Utility
 			return getter;
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <typeparam name="TValue"></typeparam>
 		public class PropertyGetFieldSetValueSource<TValue>
 		{
 			private FieldInfo _field;
 			private PropertyInfo _property;
 
+			/// <summary>
+			/// 
+			/// </summary>
+			/// <param name="property"></param>
+			/// <param name="field"></param>
 			public PropertyGetFieldSetValueSource(PropertyInfo property, FieldInfo field)
 			{
 				_property = property;
 				_field = field;
 			}
 
+			/// <summary>
+			/// 
+			/// </summary>
+			/// <param name="target"></param>
+			/// <returns></returns>
 			public TValue GetValue(object target)
 			{
 #if NETCORE
@@ -48,6 +73,11 @@ namespace RpcLite.Utility
 
 			}
 
+			/// <summary>
+			/// 
+			/// </summary>
+			/// <param name="target"></param>
+			/// <param name="value"></param>
 			public void SetValue(object target, TValue value)
 			{
 				_field.SetValue(target, value);
@@ -56,6 +86,11 @@ namespace RpcLite.Utility
 
 	}
 
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <typeparam name="TTarget"></typeparam>
+	/// <typeparam name="TValue"></typeparam>
 	public class PropertyReflector<TTarget, TValue>
 	{
 		private static readonly ConcurrentDictionary<FieldInfo, Func<TTarget, TValue>> FieldGetterCache = new ConcurrentDictionary<FieldInfo, Func<TTarget, TValue>>();
@@ -64,6 +99,11 @@ namespace RpcLite.Utility
 		private static readonly ConcurrentDictionary<PropertyInfo, Func<TTarget, TValue>> PropertyGetterCache = new ConcurrentDictionary<PropertyInfo, Func<TTarget, TValue>>();
 		private static readonly ConcurrentDictionary<PropertyInfo, Action<TTarget, TValue>> PropertySetterCache = new ConcurrentDictionary<PropertyInfo, Action<TTarget, TValue>>();
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="fieldName"></param>
+		/// <returns></returns>
 		public static Func<TTarget, TValue> GetFieldGetterFunc(string fieldName)
 		{
 			var type = typeof(TTarget);
@@ -82,6 +122,11 @@ namespace RpcLite.Utility
 			return getterFunc;
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="fieldName"></param>
+		/// <returns></returns>
 		public static Action<TTarget, TValue> GetFieldSetterFunc(string fieldName)
 		{
 			var type = typeof(TTarget);
@@ -99,6 +144,11 @@ namespace RpcLite.Utility
 			return getterFunc;
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="fieldName"></param>
+		/// <returns></returns>
 		public static Func<TTarget, TValue> GetPropertyGetterFunc(string fieldName)
 		{
 			var type = typeof(TTarget);
@@ -116,6 +166,11 @@ namespace RpcLite.Utility
 			return getterFunc;
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="fieldName"></param>
+		/// <returns></returns>
 		public static Action<TTarget, TValue> GetPropertySetterFunc(string fieldName)
 		{
 			var type = typeof(TTarget);
@@ -134,6 +189,9 @@ namespace RpcLite.Utility
 		}
 	}
 
+	/// <summary>
+	/// 
+	/// </summary>
 	public static class PropertyReflector
 	{
 		private static readonly ConcurrentDictionary<MemberInfo, Delegate> GetterCache = new ConcurrentDictionary<MemberInfo, Delegate>();
@@ -142,6 +200,11 @@ namespace RpcLite.Utility
 		private static readonly ConcurrentDictionary<MemberInfo, Func<object, object>> ObjectGetterCache = new ConcurrentDictionary<MemberInfo, Func<object, object>>();
 		private static readonly ConcurrentDictionary<MemberInfo, Action<object, object>> ObjectSetterCache = new ConcurrentDictionary<MemberInfo, Action<object, object>>();
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="field"></param>
+		/// <returns></returns>
 		public static Delegate MakeFieldGetter(FieldInfo field)
 		{
 			var result = GetterCache.GetOrAdd(field, m =>
@@ -165,6 +228,11 @@ namespace RpcLite.Utility
 			return result;
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="field"></param>
+		/// <returns></returns>
 		public static Delegate MakeFieldSetter(FieldInfo field)
 		{
 			var result = SetterCache.GetOrAdd(field, m =>
@@ -189,6 +257,11 @@ namespace RpcLite.Utility
 			return result;
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="field"></param>
+		/// <returns></returns>
 		public static Delegate MakePropertyGetter(PropertyInfo field)
 		{
 			var result = GetterCache.GetOrAdd(field, m =>
@@ -215,6 +288,11 @@ namespace RpcLite.Utility
 			return result;
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="field"></param>
+		/// <returns></returns>
 		public static Delegate MakePropertySetter(PropertyInfo field)
 		{
 			var result = SetterCache.GetOrAdd(field, m =>
@@ -247,6 +325,11 @@ namespace RpcLite.Utility
 
 		#region all parameters is object type
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="field"></param>
+		/// <returns></returns>
 		public static Func<object, object> MakeObjectFieldGetter(FieldInfo field)
 		{
 			var result = ObjectGetterCache.GetOrAdd(field, (MemberInfo m) =>
@@ -279,6 +362,11 @@ namespace RpcLite.Utility
 			return result;
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="field"></param>
+		/// <returns></returns>
 		public static Action<object, object> MakeObjectFieldSetter(FieldInfo field)
 		{
 			var result = ObjectSetterCache.GetOrAdd(field, m =>
@@ -313,6 +401,11 @@ namespace RpcLite.Utility
 			return result;
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="field"></param>
+		/// <returns></returns>
 		public static Func<object, object> MakeObjectPropertyGetter(PropertyInfo field)
 		{
 			var result = ObjectGetterCache.GetOrAdd(field, (MemberInfo m) =>
@@ -349,6 +442,11 @@ namespace RpcLite.Utility
 			return result;
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="field"></param>
+		/// <returns></returns>
 		public static Action<object, object> MakeObjectPropertySetter(PropertyInfo field)
 		{
 			var result = ObjectSetterCache.GetOrAdd(field, m =>
@@ -390,11 +488,23 @@ namespace RpcLite.Utility
 		#endregion
 
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="type"></param>
+		/// <param name="name"></param>
+		/// <returns></returns>
 		public static FieldInfo GetField(Type type, string name)
 		{
 			return type.GetField(name, BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="type"></param>
+		/// <param name="name"></param>
+		/// <returns></returns>
 		public static PropertyInfo GetProperty(Type type, string name)
 		{
 			return type.GetProperty(name, BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
