@@ -10,10 +10,10 @@
 		/// </summary>
 		/// <typeparam name="TContract"></typeparam>
 		/// <returns></returns>
-		public static RpcClientBase<TContract> GetInstance<TContract>()
+		public static TContract GetInstance<TContract>()
 			where TContract : class
 		{
-			return RpcClientBase<TContract>.GetInstance();
+			return RpcClientBase<TContract>.GetInstance() as TContract;
 		}
 
 		/// <summary>

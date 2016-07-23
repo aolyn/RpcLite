@@ -88,6 +88,7 @@ namespace RpcLite.Config
 					var name = item["name"]; // GetAttribute("name", item);
 					var path = item["path"]; //GetAttribute("path", item);
 					var type = item["type"]; //GetAttribute("type", item);
+					var env = item["environment"]; //GetAttribute("type", item);
 					var nameSpace = item["namespace"]; // GetAttribute("namespace", item);
 
 					if (string.IsNullOrEmpty(name))
@@ -124,6 +125,7 @@ namespace RpcLite.Config
 						AssemblyName = assemblyName,
 						Path = path,
 						Namespace = nameSpace,
+						Environment = string.IsNullOrWhiteSpace(env) ? environment : env,
 					};
 					instance.Clients.Add(serviceConfigItem);
 				}
@@ -196,6 +198,7 @@ namespace RpcLite.Config
 						var path = item["path"];
 						var type = item["type"];
 						var address = item["address"];
+						var env = item["environment"]; //GetAttribute("type", item);
 
 						if (string.IsNullOrEmpty(name))
 							throw new RpcLiteConfigurationErrorException("name of RpcLite service configuration node can't be null or empty");
@@ -230,6 +233,7 @@ namespace RpcLite.Config
 							AssemblyName = assemblyName,
 							Path = path,
 							Address = address,
+							Environment = env,
 						};
 						instance.Services.Add(serviceConfigItem);
 					}
@@ -289,6 +293,7 @@ namespace RpcLite.Config
 					var name = item["name"]; // GetAttribute("name", item);
 					var path = item["path"]; //GetAttribute("path", item);
 					var type = item["type"]; //GetAttribute("type", item);
+					var env = item["environment"]; //GetAttribute("type", item);
 					var nameSpace = item["namespace"]; // GetAttribute("namespace", item);
 
 					if (string.IsNullOrEmpty(name))
@@ -325,6 +330,7 @@ namespace RpcLite.Config
 						AssemblyName = assemblyName,
 						Path = path,
 						Namespace = nameSpace,
+						Environment = string.IsNullOrWhiteSpace(env) ? environment : env,
 					};
 					instance.Clients.Add(serviceConfigItem);
 				}
@@ -468,6 +474,8 @@ namespace RpcLite.Config
 						var name = item["name"];
 						var path = item["path"];
 						var type = item["type"];
+						var address = item["address"];
+						var env = item["environment"]; //GetAttribute("type", item);
 
 						if (string.IsNullOrEmpty(name))
 							throw new RpcLiteConfigurationErrorException("name of RpcLite service configuration node can't be null or empty");
@@ -501,6 +509,8 @@ namespace RpcLite.Config
 							TypeName = typeName,
 							AssemblyName = assemblyName,
 							Path = path,
+							Address = address,
+							Environment = env,
 						};
 						instance.Services.Add(serviceConfigItem);
 					}

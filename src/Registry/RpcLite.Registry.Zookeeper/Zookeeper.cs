@@ -23,22 +23,22 @@ namespace RpcLite.Registry.Zookeeper
 
 		public void AddAuthInfo(string scheme, byte[] auth)
 		{
-			throw new NotImplementedException();
+			_zookeeper.addAuthInfo(scheme, auth);
 		}
 
 		public Task CloseAsync()
 		{
-			throw new NotImplementedException();
+			return _zookeeper.closeAsync();
 		}
 
 		public Task<string> CreateAsync(string path, byte[] data, List<ACL> acl, CreateMode createMode)
 		{
-			throw new NotImplementedException();
+			return _zookeeper.createAsync(path, data, acl, createMode);
 		}
 
 		public Task DeleteAsync(string path, int version)
 		{
-			throw new NotImplementedException();
+			return _zookeeper.deleteAsync(path, version);
 		}
 
 		public Task<Stat> existsAsync(string path, bool watch)
@@ -48,7 +48,7 @@ namespace RpcLite.Registry.Zookeeper
 
 		public Task<Stat> ExistsAsync(string path, Watcher watcher)
 		{
-			throw new NotImplementedException();
+			return _zookeeper.existsAsync(path, watcher);
 		}
 
 		public Task<Stat> ExistsAsync(string path, bool watch = false)
@@ -58,17 +58,17 @@ namespace RpcLite.Registry.Zookeeper
 
 		public Task<ACLResult> GetAclAsync(string path)
 		{
-			throw new NotImplementedException();
+			return _zookeeper.getACLAsync(path);
 		}
 
 		public Task<ChildrenResult> GetChildrenAsync(string path, bool watch)
 		{
-			throw new NotImplementedException();
+			return _zookeeper.getChildrenAsync(path, watch);
 		}
 
 		public Task<ChildrenResult> GetChildrenAsync(string path, Watcher watcher)
 		{
-			throw new NotImplementedException();
+			return _zookeeper.getChildrenAsync(path, watcher);
 		}
 
 		public List<string> GetChildWatches()
@@ -78,7 +78,7 @@ namespace RpcLite.Registry.Zookeeper
 
 		public Task<DataResult> GetDataAsync(string path, bool watch)
 		{
-			throw new NotImplementedException();
+			return _zookeeper.getDataAsync(path, watch);
 		}
 
 		public Task<DataResult> GetDataAsync(string path, Watcher watcher)

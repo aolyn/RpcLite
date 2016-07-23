@@ -10,12 +10,14 @@ namespace ServiceTest.ClientTest
 	{
 		public static void Main(string[] args)
 		{
-			RegistryTest.Test();
+			RpcLite.Config.RpcLiteInitializer.Initialize();
 
-			SerializeTest.PropertyReflectTest();
-			//SerializeTest.ExceptionSerializationMultiThreadTest();
-			SerializeTest.ExceptionSerializationTest();
-			PerformanceTest();
+			//RegistryTest.Test();
+
+			//SerializeTest.PropertyReflectTest();
+			////SerializeTest.ExceptionSerializationMultiThreadTest();
+			//SerializeTest.ExceptionSerializationTest();
+			//PerformanceTest();
 
 			//SerializeTest.Test3();
 			//var exobj = new Exception();
@@ -83,8 +85,10 @@ namespace ServiceTest.ClientTest
 			//var baseUrl = @"http://localhost:50001/api/service/";
 			//var baseUrl = @"https://www.baidu.com/test/api/service/";
 			//var baseUrl = @"http://localhost/config/asfsdfs";
+
 			var baseUrl = serviceBaseUrl + @"/api/service/";
-			var client = ClientFactory.GetInstance<IProductService>(baseUrl);
+			//var client = ClientFactory.GetInstance<IProductService>(baseUrl);
+			var client = ClientFactory.GetInstance<IProductService>();
 
 			try
 			{

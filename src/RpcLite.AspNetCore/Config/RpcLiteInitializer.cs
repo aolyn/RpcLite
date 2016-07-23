@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
+using RpcLite.Registry;
 using RpcLite.Service;
 using CoreConfig = Microsoft.Extensions.Configuration;
 
@@ -15,10 +17,26 @@ namespace RpcLite.Config
 			Initialize(null, null);
 		}
 
+		private static readonly Lazy<object> InitializeService = new Lazy<object>(() =>
+		{
+			if (RpcLiteConfig.Instance?.Services != null)
+			{
+				foreach (var service in RpcLiteConfig.Instance.Services)
+				{
+					RegistryManager.Register(service);
+				}
+			}
+
+			return null;
+		});
+
 		public static void Initialize(CoreConfig.IConfiguration config)
 		{
 			var rpcConfig = RpcConfigHelper.GetConfig(new CoreConfigurationSection(config));
 			RpcLiteConfig.SetInstance(rpcConfig);
+
+			// ReSharper disable once UnusedVariable
+			var value = InitializeService.Value;
 		}
 
 		/// <summary>

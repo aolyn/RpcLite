@@ -21,6 +21,11 @@
 		public string Address { get; set; }
 
 		/// <summary>
+		/// Environment
+		/// </summary>
+		public string Environment { get; set; }
+
+		/// <summary>
 		/// assembly of service implement class
 		/// </summary>
 		public string AssemblyName { get; set; }

@@ -16,7 +16,7 @@ namespace ServiceTest.ClientTest
 
 				var client = ClientFactory.GetInstance<IRegistryService>();
 
-				var resp = client.Client.GetServiceAddressAsync(new GetServiceAddressRequest
+				var resp = client.GetServiceAddressAsync(new GetServiceAddressRequest
 				{
 					ServiceName = "ProductService",
 					Namespace = "v1",

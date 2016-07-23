@@ -193,6 +193,9 @@
     <Compile Include="..\RpcLite.CoreFx\Registry\IRegistryFactory.cs">
       <Link>Registry\IRegistryFactory.cs</Link>
     </Compile>
+    <Compile Include="..\RpcLite.CoreFx\Registry\RegistryManager.cs">
+      <Link>Registry\RegistryManager.cs</Link>
+    </Compile>
     <Compile Include="..\RpcLite.CoreFx\RequestException.cs">
       <Link>RequestException.cs</Link>
     </Compile>

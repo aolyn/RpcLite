@@ -1,19 +1,27 @@
 ﻿using System;
 using System.Threading.Tasks;
+using RpcLite.Config;
 
 namespace RpcLite.Registry
 {
+	/// <summary>
+	/// 
+	/// </summary>
 	public interface IRegistry : IDisposable
 	{
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="appId"></param>
-		/// <param name="address"></param>
+		/// <param name="serviceInfo"></param>
 		/// <returns></returns>
-		Task RegisterAsync(string appId, string[] address);
+		Task RegisterAsync(ServiceConfigItem serviceInfo);
 
-		Task<string[]> LookupAsync(string appId);
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="clientInfo"></param>
+		/// <returns></returns>
+		Task<Uri[]> LookupAsync(ClientConfigItem clientInfo);
 
 		/// <summary>
 		/// if or not support registry current service to registry server

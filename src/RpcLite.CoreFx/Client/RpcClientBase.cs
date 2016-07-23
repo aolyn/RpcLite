@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using RpcLite.Formatters;
 using RpcLite.Logging;
 using RpcLite.Net;
+using RpcLite.Registry;
 
 namespace RpcLite.Client
 {
@@ -298,7 +299,8 @@ namespace RpcLite.Client
 
 		private static string GetDefaultBaseUrl()
 		{
-			var uri = ClientAddressResolver<TContract>.GetAddress();
+			//var uri = ClientAddressResolver<TContract>.GetAddress();
+			var uri = RegistryManager.GetAddress<TContract>();
 			return uri == null ? null : uri.ToString();
 		}
 

@@ -24,7 +24,7 @@
 
   "registry": {
     "address": "192.168.9.1:2181",
-    "type": "RpcLite.Registry.Zookeeper.ZookeeperRegistryFactory, RpcLite.Registry.Zookeeper"
+    "type": "RpcLite.Registry.Zookeeper.ZookeeperRegistry, RpcLite.Registry.Zookeeper"
   },
 
   "client": {
@@ -34,7 +34,7 @@
     },
     "clients": [
       {
-        "name": "ProductServiceSync",
+        "name": "ProductService",
         "path": "~/api/products/",
         "type": "ServiceImpl.ProductAsyncService,ServiceImpl",
         "namespace": "v1"
