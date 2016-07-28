@@ -4,7 +4,8 @@
 
   "registry": {
     "address": "192.168.9.1:2181",
-    "type": "RpcLite.Registry.Zookeeper.ZookeeperRegistry, RpcLite.Registry.Zookeeper"
+    //"type": "RpcLite.Registry.Zookeeper.ZookeeperRegistry, RpcLite.Registry.Zookeeper",
+    "type": "RpcLite.Registry.Http.HttpRegistry, RpcLite.Registry.Http"
   },
 
   "client": {
@@ -16,7 +17,7 @@
     "clients": [
       {
         "name": "RegistryService",
-        "type": " ServiceRegistry.Contract.IRegistryService, ServiceRegistry.Contract",
+        "type": "ServiceRegistry.Contract.IRegistryService, ServiceRegistry.Contract",
         "namespace": "v1",
         "path": "http://localhost:12974/api/service/"
       },
@@ -24,7 +25,8 @@
         "name": "ProductService",
         "type": "ServiceTest.Contract.IProductService, ServiceTest.Contract",
         "namespace": "v1",
-        "path": "http://localhost:12974/api/service/"
+        "environment": "IT",
+        //"path": "http://localhost:12974/api/service/"
       }
     ]
   }

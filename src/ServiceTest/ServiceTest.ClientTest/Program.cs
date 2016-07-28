@@ -90,6 +90,7 @@ namespace ServiceTest.ClientTest
 			//var client = ClientFactory.GetInstance<IProductService>(baseUrl);
 			var client = ClientFactory.GetInstance<IProductService>();
 
+
 			try
 			{
 				client.ExceptionTest();

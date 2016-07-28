@@ -13,6 +13,7 @@
     "Newtonsoft.Json": "9.0.1",
     "protobuf-net": "2.1.0",
     "RpcLite.AspNetCore": "1.0.1-*",
+    "RpcLite.Registry.Http": "1.0.0-*",
     "RpcLite.Registry.Zookeeper": "1.0.0-*",
     "RpcLite.Resolvers": "1.0.0-*",
     "ServiceRegistry.Contract": "1.0.0-*",

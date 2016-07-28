@@ -71,6 +71,12 @@ namespace RpcLite
 		/// <summary>
 		/// Initializes a new instance of RpcLite.ServiceException with specifid message and inner exception
 		/// </summary>
+		public ActionNotFoundException()
+		{ }
+
+		/// <summary>
+		/// Initializes a new instance of RpcLite.ServiceException with specifid message and inner exception
+		/// </summary>
 		/// <param name="actionName">message</param>
 		public ActionNotFoundException(string actionName)
 			: base($"Action {actionName} Not Found")

@@ -141,6 +141,9 @@ namespace RpcLite.Client
 					}
 				}
 
+				if (resultMessage.Header.Count == 0)
+					throw new ServiceException("service url is not a service address");
+
 				var exceptionAssembly = resultMessage.Header["RpcLite-ExceptionAssembly"];
 				var exceptionTypeName = resultMessage.Header["RpcLite-ExceptionType"];
 
