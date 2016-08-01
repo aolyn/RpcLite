@@ -25,7 +25,7 @@ namespace RpcLite.Logging
 
 		}
 
-		internal static void Error(Exception ex)
+		public static void Error(Exception ex)
 		{
 
 		}

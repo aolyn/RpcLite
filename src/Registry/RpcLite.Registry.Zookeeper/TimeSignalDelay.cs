@@ -13,7 +13,11 @@ namespace RpcLite.Registry.Zookeeper
 			if (_signal)
 			{
 				_signal = false;
+#if NETCORE
 				return Task.CompletedTask;
+#else
+				return Task.FromResult<object>(null);
+#endif
 			}
 
 			var task1 = Task.Delay(timeout);
