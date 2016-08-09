@@ -34,8 +34,8 @@
     <DocumentationFile>bin\Release\RpcLite.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="NetJSON, Version=1.1.0.5, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\NetJSON.1.1.0.5\lib\net40\NetJSON.dll</HintPath>
+    <Reference Include="NetJSON, Version=1.2.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\NetJSON.1.2.1.0\lib\net40\NetJSON.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">

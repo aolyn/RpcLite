@@ -12,6 +12,35 @@ namespace ServiceTest.ClientTest
 	{
 		public static void Main(string[] args)
 		{
+			//ZookeeperRegistryTest();
+
+			RpcLiteInitializer.Initialize();
+
+			//RegistryTest.Test();
+
+			//SerializeTest.PropertyReflectTest();
+			////SerializeTest.ExceptionSerializationMultiThreadTest();
+			//SerializeTest.ExceptionSerializationTest();
+			//PerformanceTest();
+
+			//SerializeTest.Test3();
+			//var exobj = new Exception();
+			//var setter = PropertyReflector.MakeObjectFieldSetter(PropertyReflector.GetField(typeof(Exception), "_HResult"));
+			//setter(exobj, 12);
+
+			//SerializeTest.Test3();
+
+			Test1();
+			PerformanceTest();
+			//PropertyReflectTest();
+
+			//ReflectTest.Test();
+			//JsonSerializerTester.JsonSerializerTest();
+			//Test2();
+		}
+
+		private static void ZookeeperRegistryTest()
+		{
 			var registry = new ZookeeperRegistry("192.168.9.1:2181", 10 * 1000);
 			if (registry.CanRegister)
 			{
@@ -66,30 +95,6 @@ namespace ServiceTest.ClientTest
 
 			Console.ReadLine();
 			registry.Dispose();
-
-			RpcLiteInitializer.Initialize();
-
-			//RegistryTest.Test();
-
-			//SerializeTest.PropertyReflectTest();
-			////SerializeTest.ExceptionSerializationMultiThreadTest();
-			//SerializeTest.ExceptionSerializationTest();
-			//PerformanceTest();
-
-			//SerializeTest.Test3();
-			//var exobj = new Exception();
-			//var setter = PropertyReflector.MakeObjectFieldSetter(PropertyReflector.GetField(typeof(Exception), "_HResult"));
-			//setter(exobj, 12);
-
-			//SerializeTest.Test3();
-
-			Test1();
-			PerformanceTest();
-			//PropertyReflectTest();
-
-			//ReflectTest.Test();
-			//JsonSerializerTester.JsonSerializerTest();
-			//Test2();
 		}
 
 		private static void PerformanceTest()
