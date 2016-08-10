@@ -16,7 +16,7 @@ namespace ServiceTest.ClientTest
 
 			RpcLiteInitializer.Initialize();
 
-			//RegistryTest.Test();
+			RegistryTest.Test();
 
 			//SerializeTest.PropertyReflectTest();
 			////SerializeTest.ExceptionSerializationMultiThreadTest();

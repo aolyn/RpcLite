@@ -9,6 +9,11 @@
   "frameworks": {
     "netcoreapp1.0": {
       "imports": [ "dnxcore50", "portable-net45+win8" ]
+    },
+    "netstandard1.3": {
+      "imports": "dnxcore50",
+      "dependencies": {
+      }
     }
   }
 }

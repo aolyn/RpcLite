@@ -47,10 +47,10 @@ namespace ServiceRegistry.Dal
 		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 		{
 			//optionsBuilder.use
-			//optionsBuilder.UseNpgsql("server=localhost;user id=chris;password=chris123;database=ShareVideo");
+			optionsBuilder.UseNpgsql("server=localhost;user id=chris;password=chris123;database=ShareVideo");
 			//optionsBuilder.UseSqlite("Data Source=rpclite.db;Version=3;");
 			//optionsBuilder.UseSqlServer("server=localhost;user id=chris;password=chris123;database=RpcLite");
-			optionsBuilder.UseSqlServer("Data Source=.;Initial Catalog=RpcLite;Integrated Security=True");
+			//optionsBuilder.UseSqlServer("Data Source=.;Initial Catalog=RpcLite;Integrated Security=True");
 			base.OnConfiguring(optionsBuilder);
 		}
 	}

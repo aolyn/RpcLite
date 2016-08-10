@@ -12,13 +12,5 @@
     "paths": [
       ""
     ]
-  },
-  "client": {
-    "resolver": {
-      "name": "default",
-      "type": "RpcLite.Resolvers.HttpClientAddressResolver, RpcLite.Resolvers"
-    },
-    "clients": [
-    ]
   }
 }

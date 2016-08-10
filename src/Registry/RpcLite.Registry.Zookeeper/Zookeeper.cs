@@ -41,10 +41,10 @@ namespace RpcLite.Registry.Zookeeper
 			return _zookeeper.deleteAsync(path, version);
 		}
 
-		public Task<Stat> existsAsync(string path, bool watch)
-		{
-			throw new NotImplementedException();
-		}
+		//public Task<Stat> existsAsync(string path, bool watch)
+		//{
+		//	throw new NotImplementedException();
+		//}
 
 		public Task<Stat> ExistsAsync(string path, Watcher watcher)
 		{
