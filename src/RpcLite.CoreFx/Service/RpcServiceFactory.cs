@@ -10,7 +10,7 @@ namespace RpcLite.Service
 	/// </summary>
 	public class RpcServiceFactory
 	{
-		private static readonly List<RpcService> Services = new List<RpcService>();
+		private readonly List<RpcService> _services = new List<RpcService>();
 
 		///// <summary>
 		///// Services
@@ -20,7 +20,12 @@ namespace RpcLite.Service
 		//	get { return _services; }
 		//}
 
-		static RpcServiceFactory()
+		//static RpcServiceFactory()
+		//{
+		//	Initialize();
+		//}
+
+		public void Initialize()
 		{
 			foreach (var item in RpcLiteConfig.Instance.Services)
 			{
@@ -30,11 +35,12 @@ namespace RpcLite.Service
 					throw new ServiceException("can't load service type: " + item.Type);
 				}
 
-				Services.Add(new RpcService(typeInfo)
+				_services.Add(new RpcService(typeInfo)
 				{
 					Name = item.Name,
 					Path = item.Path,
 					//Type = typeInfo,
+					Filters = RpcProcessor.Filters,
 				});
 			}
 		}
@@ -49,9 +55,9 @@ namespace RpcLite.Service
 		/// </summary>
 		/// <param name="requestPath"></param>
 		/// <returns></returns>
-		public static RpcService GetService(string requestPath)
+		public RpcService GetService(string requestPath)
 		{
-			var service = Services.FirstOrDefault(it =>
+			var service = _services.FirstOrDefault(it =>
 				requestPath.StartsWith(it.Path, StringComparison.OrdinalIgnoreCase));
 			return service;
 		}

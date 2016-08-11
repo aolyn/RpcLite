@@ -220,6 +220,9 @@
     <Compile Include="..\RpcLite.CoreFx\Service\IServerContext.cs">
       <Link>Service\IServerContext.cs</Link>
     </Compile>
+    <Compile Include="..\RpcLite.CoreFx\Service\IServiceFilter.cs">
+      <Link>Service\IServiceFilter.cs</Link>
+    </Compile>
     <Compile Include="..\RpcLite.CoreFx\Service\MethodHelper.cs">
       <Link>Service\MethodHelper.cs</Link>
     </Compile>

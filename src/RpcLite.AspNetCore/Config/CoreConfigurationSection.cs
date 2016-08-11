@@ -6,7 +6,7 @@ namespace RpcLite.Config
 	{
 		public CoreConfigurationSection(CoreConfig.IConfiguration config)
 			: base(config)
-		{
+		{ 
 			//Node = node;
 		}
 

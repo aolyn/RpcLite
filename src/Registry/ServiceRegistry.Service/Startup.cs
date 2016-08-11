@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using RpcLite.Config;
 
@@ -8,7 +9,7 @@ namespace ServiceRegistry.Service
 {
 	public class Startup
 	{
-		IHostingEnvironment _env;
+		private readonly IHostingEnvironment _env;
 		public Startup(IHostingEnvironment env)
 		{
 			_env = env;
@@ -24,6 +25,12 @@ namespace ServiceRegistry.Service
 		public void Configure(IApplicationBuilder app)
 		{
 			RpcLiteInitializer.Initialize(app, _env.ContentRootPath);
+
+			var configBuilder = new ConfigurationBuilder();
+			configBuilder.AddJsonFile("appsettings.json", true);
+			var config = configBuilder.Build();
+
+			ConfigurationManager.SetDefaultConfiguration(new CoreConfiguration(config));
 
 			app.Run(async (context) =>
 			{

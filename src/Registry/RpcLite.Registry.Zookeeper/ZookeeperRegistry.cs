@@ -17,12 +17,22 @@ namespace RpcLite.Registry.Zookeeper
 		{
 		}
 
+		public ZookeeperRegistry()
+		{
+			Initialize(RpcLiteConfig.Instance.Registry.Address, 30 * 1000);
+		}
+
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="address"></param>
 		/// <param name="expire">session timeout in milliseconds</param>
 		public ZookeeperRegistry(string address, int expire)
+		{
+			Initialize(address, expire);
+		}
+
+		private void Initialize(string address, int expire)
 		{
 			_registryAddress = address;
 			_zookeeper = new ZookeeperRegistryInternal(_registryAddress, expire);

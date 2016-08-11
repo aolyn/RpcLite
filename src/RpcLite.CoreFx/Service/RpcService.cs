@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
@@ -42,6 +43,11 @@ namespace RpcLite.Service
 		/// <summary>
 		/// 
 		/// </summary>
+		public List<IServiceFilter> Filters;
+
+		/// <summary>
+		/// 
+		/// </summary>
 		public event Action<ServiceContext> BeforeInvoke;
 
 		/// <summary>
@@ -67,7 +73,7 @@ namespace RpcLite.Service
 		/// <returns></returns>
 		public Task ProcessRequestAsync(ServiceContext context)
 		{
-			context.Service = this;
+			//context.Service = this;
 			LogHelper.Debug("RpcService.BeginProcessRequest");
 
 			if (context.Request.ActionName == "?meta")
@@ -101,6 +107,29 @@ namespace RpcLite.Service
 
 			context.Action = action;
 
+			Func<ServiceContext, Task> filterFunc = ProcessRequest;
+			if (Filters != null && Filters.Count > 0)
+			{
+				//TODO: confirm if Func will leak of memory
+				var preFilterFunc = filterFunc;
+				for (var idxFilter = 0; idxFilter < Filters.Count; idxFilter++)
+				{
+					var thisFilter = Filters[idxFilter];
+					if (!thisFilter.FilterInvoke) continue;
+
+					var nextFilterFunc = preFilterFunc;
+					Func<ServiceContext, Task> currentFilterFunc = sc => thisFilter.Invoke(sc, nextFilterFunc);
+
+					preFilterFunc = currentFilterFunc;
+				}
+				filterFunc = preFilterFunc;
+			}
+
+			return filterFunc(context);
+		}
+
+		private Task ProcessRequest(ServiceContext context)
+		{
 			try
 			{
 				BeforeInvoke?.Invoke(context);
@@ -110,7 +139,7 @@ namespace RpcLite.Service
 				LogHelper.Error(ex);
 			}
 
-			var task = action.ExecuteAsync(context);
+			var task = context.Action.ExecuteAsync(context);
 			var waitTask = task.ContinueWith(tsk =>
 			{
 				try
@@ -121,6 +150,9 @@ namespace RpcLite.Service
 				{
 					LogHelper.Error(ex);
 				}
+
+				//var endDate = DateTime.Now;
+				//var serviceDuration = endDate - startDate;
 
 				//if (tsk.IsFaulted)
 				//{
@@ -144,12 +176,12 @@ namespace RpcLite.Service
 			sb.AppendLine();
 			sb.Append("Actions:");
 
-			var typeInfo =
-#if NETCORE
-				type.GetTypeInfo();
-#else
-				type;
-#endif
+			//			var typeInfo =
+			//#if NETCORE
+			//				type.GetTypeInfo();
+			//#else
+			//				type;
+			//#endif
 
 			var methods = type.GetMethods(BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
 

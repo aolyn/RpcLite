@@ -104,7 +104,7 @@ namespace RpcLite.Service
 
 			var actionInfo = new RpcAction
 			{
-				Name = actionKey,
+				Name = actionName,
 				ArgumentCount = arguments.Length,
 				ArgumentType = argumentType,
 				DefaultArgument = GetDefaultValue(argumentType),

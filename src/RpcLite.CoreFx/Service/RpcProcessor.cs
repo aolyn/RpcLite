@@ -1,16 +1,22 @@
 ﻿//#define OUTPUT_SERIALIZATION_TIME
 
 using System;
-using System.Diagnostics;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Reflection;
 using System.Threading.Tasks;
 using RpcLite.Config;
 using RpcLite.Formatters;
 using RpcLite.Logging;
+
+#if OUTPUT_SERIALIZATION_TIME
+using System.Diagnostics;
+#endif
+#if NETCORE
+using System.Reflection;
+#endif
 
 namespace RpcLite.Service
 {
@@ -19,6 +25,36 @@ namespace RpcLite.Service
 	/// </summary>
 	public static class RpcProcessor
 	{
+		private static readonly RpcServiceFactory ServiceFactory = new RpcServiceFactory();
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public static List<IServiceFilter> Filters { get; internal set; } = new List<IServiceFilter>();
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="filter"></param>
+		public static void AddFilter(IServiceFilter filter)
+		{
+			Filters.Add(filter);
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="filter"></param>
+		public static void RemoveFilter(IServiceFilter filter)
+		{
+			Filters.Remove(filter);
+		}
+
+		static RpcProcessor()
+		{
+			ServiceFactory.Initialize();
+		}
+
 		/// <summary>
 		/// get formatter by content type
 		/// </summary>
@@ -75,7 +111,7 @@ namespace RpcLite.Service
 			if (string.IsNullOrWhiteSpace(requestPath))
 				throw new ArgumentException("request.AppRelativeCurrentExecutionFilePath is null or white space");
 
-			var service = RpcServiceFactory.GetService(requestPath);
+			var service = ServiceFactory.GetService(requestPath);
 
 			if (service == null)
 			{
@@ -91,6 +127,7 @@ namespace RpcLite.Service
 
 				context.Request.ActionName = actionName;
 				context.Request.ServiceType = service.Type;
+				context.Service = service;
 
 				try
 				{

@@ -46,6 +46,7 @@ namespace ServiceRegistry.Dal
 
 		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 		{
+			//optionsBuilder.Options.FindExtension<
 			//optionsBuilder.use
 			optionsBuilder.UseNpgsql("server=localhost;user id=chris;password=chris123;database=ShareVideo");
 			//optionsBuilder.UseSqlite("Data Source=rpclite.db;Version=3;");

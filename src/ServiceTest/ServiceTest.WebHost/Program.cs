@@ -56,7 +56,7 @@ namespace ServiceTest.WebHost
 					})
 					.UseStartup<Startup>()
 					.Build();
-
+				 
 				host.Run();
 			}
 		}
