@@ -111,28 +111,11 @@ namespace RpcLite.Service
 		{
 			LogHelper.Debug("BeginProcessReques 2");
 
-			//var requestPath = context.Request.Path;
-
-			//if (string.IsNullOrWhiteSpace(requestPath))
-			//	throw new ArgumentException("request.AppRelativeCurrentExecutionFilePath is null or white space");
-
-			//var service = ServiceFactory.GetService(requestPath);
-
-			//if (service == null)
-			//{
-			//	LogHelper.Debug("BeginProcessReques Can't find service " + requestPath);
-			//	throw new ConfigException("Configuration error service not found");
-			//}
-
 			try
 			{
 				//var actionName = requestPath.Substring(service.Path.Length);
 				if (string.IsNullOrEmpty(context.Request.ActionName))
 					throw new RequestException("Bad request: not action name");
-
-				//context.Request.ActionName = actionName;
-				//context.Request.ServiceType = service.Type;
-				//context.Service = service;
 
 				try
 				{
@@ -194,7 +177,7 @@ namespace RpcLite.Service
 #endif
 						var result = ProcessRequestAsync(serviceContext);
 						//#if DEBUG
-						//						result = result.ContinueWith(tsk => { serviceContext.SetExtensionData("EndTime", DateTime.Now); });
+						//result = result.ContinueWith(tsk => { serviceContext.SetExtensionData("EndTime", DateTime.Now); });
 						//#endif
 						result.ContinueWith(tsk =>
 						{
@@ -230,6 +213,17 @@ namespace RpcLite.Service
 
 		private static ServiceContext ParseServiceContext(IServerContext httpContext)
 		{
+			var requestPath = httpContext.RequestPath;
+			if (string.IsNullOrWhiteSpace(requestPath))
+				throw new ArgumentException("request.AppRelativeCurrentExecutionFilePath is null or white space");
+
+			var service = ServiceFactory.GetService(requestPath);
+			if (service == null)
+			{
+				LogHelper.Debug("BeginProcessReques Can't find service " + requestPath);
+				throw new ConfigException("Configuration error service not found");
+			}
+
 			var context = new ServiceContext
 			{
 				Request = new ServiceRequest
@@ -245,19 +239,6 @@ namespace RpcLite.Service
 				},
 				ExecutingContext = httpContext,
 			};
-
-			var requestPath = context.Request.Path;
-
-			if (string.IsNullOrWhiteSpace(requestPath))
-				throw new ArgumentException("request.AppRelativeCurrentExecutionFilePath is null or white space");
-
-			var service = ServiceFactory.GetService(requestPath);
-
-			if (service == null)
-			{
-				LogHelper.Debug("BeginProcessReques Can't find service " + requestPath);
-				throw new ConfigException("Configuration error service not found");
-			}
 
 			try
 			{
