@@ -74,7 +74,6 @@ namespace RpcLite.Service
 		/// <returns></returns>
 		public Task ProcessRequestAsync(ServiceContext context)
 		{
-			//context.Service = this;
 			LogHelper.Debug("RpcService.BeginProcessRequest");
 
 			if (context.Request.ActionName == "?meta")

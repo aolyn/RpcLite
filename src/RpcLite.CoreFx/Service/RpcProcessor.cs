@@ -68,72 +68,77 @@ namespace RpcLite.Service
 			return formatter;
 		}
 
+		//		/// <summary>
+		//		/// process request
+		//		/// </summary>
+		//		/// <param name="serviceContext"></param>
+		//		/// <returns></returns>
+		//		private static Task ProcessAsync(ServiceContext serviceContext)
+		//		{
+		//			try
+		//			{
+		//				//get formatter from content type
+		//				var formatter = GetFormatter(serviceContext.Request.ContentType);
+		//				if (formatter != null)
+		//					serviceContext.Response.ContentType = serviceContext.Request.ContentType;
+
+		//				serviceContext.Formatter = formatter;
+
+		//				var ar = ProcessRequestAsync(serviceContext);
+
+		//				LogHelper.Debug("RpcAsyncHandler.BeginProcessRequest end return"
+		//					+ $"ar.IsCompleted: {ar.IsCompleted}");
+
+		//				return ar;
+		//			}
+		//			catch (Exception ex)
+		//			{
+		//				serviceContext.Exception = ex;
+		//#if NETCORE
+		//				return Task.FromResult<object>(null);
+		//#else
+		//				return Task.Factory.StartNew(() => (object)null);
+		//#endif
+		//			}
+		//		}
+
 		/// <summary>
-		/// process request
+		/// Locate service and call Service.Process
 		/// </summary>
-		/// <param name="serviceContext"></param>
+		/// <param name="context"></param>
 		/// <returns></returns>
-		private static Task ProcessAsync(ServiceContext serviceContext)
-		{
-			try
-			{
-				//get formatter from content type
-				var formatter = GetFormatter(serviceContext.Request.ContentType);
-				if (formatter != null)
-					serviceContext.Response.ContentType = serviceContext.Request.ContentType;
-
-				serviceContext.Formatter = formatter;
-
-				var ar = ProcessRequestAsync(serviceContext);
-
-				LogHelper.Debug("RpcAsyncHandler.BeginProcessRequest end return"
-					+ $"ar.IsCompleted: {ar.IsCompleted}");
-
-				return ar;
-			}
-			catch (Exception ex)
-			{
-				serviceContext.Exception = ex;
-#if NETCORE
-				return Task.FromResult<object>(null);
-#else
-				return Task.Factory.StartNew(() => (object)null);
-#endif
-			}
-		}
-
 		private static Task ProcessRequestAsync(ServiceContext context)
 		{
 			LogHelper.Debug("BeginProcessReques 2");
 
-			var requestPath = context.Request.Path;
+			//var requestPath = context.Request.Path;
 
-			if (string.IsNullOrWhiteSpace(requestPath))
-				throw new ArgumentException("request.AppRelativeCurrentExecutionFilePath is null or white space");
+			//if (string.IsNullOrWhiteSpace(requestPath))
+			//	throw new ArgumentException("request.AppRelativeCurrentExecutionFilePath is null or white space");
 
-			var service = ServiceFactory.GetService(requestPath);
+			//var service = ServiceFactory.GetService(requestPath);
 
-			if (service == null)
-			{
-				LogHelper.Debug("BeginProcessReques Can't find service " + requestPath);
-				throw new ConfigException("Configuration error service not found");
-			}
+			//if (service == null)
+			//{
+			//	LogHelper.Debug("BeginProcessReques Can't find service " + requestPath);
+			//	throw new ConfigException("Configuration error service not found");
+			//}
 
 			try
 			{
-				var actionName = requestPath.Substring(service.Path.Length);
-				if (string.IsNullOrEmpty(actionName))
+				//var actionName = requestPath.Substring(service.Path.Length);
+				if (string.IsNullOrEmpty(context.Request.ActionName))
 					throw new RequestException("Bad request: not action name");
 
-				context.Request.ActionName = actionName;
-				context.Request.ServiceType = service.Type;
-				context.Service = service;
+				//context.Request.ActionName = actionName;
+				//context.Request.ServiceType = service.Type;
+				//context.Service = service;
 
 				try
 				{
-					LogHelper.Debug("RpcAsyncHandler.BeginProcessRequest start service.BeginProcessRequest(request, response, cb, requestContext) " + requestPath);
-					var result = service.ProcessRequestAsync(context);
-					LogHelper.Debug("RpcAsyncHandler.BeginProcessRequest end service.BeginProcessRequest(request, response, cb, requestContext) " + requestPath);
+					LogHelper.Debug("RpcAsyncHandler.BeginProcessRequest start service.BeginProcessRequest(request, response, cb, requestContext) " + context.Request.Path);
+					var result = context.Service.ProcessRequestAsync(context);
+					LogHelper.Debug("RpcAsyncHandler.BeginProcessRequest end service.BeginProcessRequest(request, response, cb, requestContext) " + context.Request.Path);
 					return result;
 				}
 				catch (RpcLiteException)
@@ -147,8 +152,15 @@ namespace RpcLite.Service
 			}
 			catch (Exception ex)
 			{
+				context.Exception = ex;
+
 				LogHelper.Error(ex);
-				throw;
+
+#if NETCORE
+				return Task.FromResult<object>(null);
+#else
+				return Task.Factory.StartNew(() => (object)null);
+#endif
 			}
 		}
 
@@ -173,28 +185,14 @@ namespace RpcLite.Service
 				}
 				else
 				{
-					var serviceContext = new ServiceContext
-					{
-						Request = new ServiceRequest
-						{
-							RequestStream = httpContext.GetRequestStream(),
-							Path = httpContext.RequestPath,
-							ContentType = httpContext.GetRequestContentType(),
-							ContentLength = httpContext.RequestContentLength,
-						},
-						Response = new ServiceResponse
-						{
-							ResponseStream = httpContext.GetResponseStream(),
-						},
-						ExecutingContext = httpContext,
-					};
+					var serviceContext = ParseServiceContext(httpContext);
 
 					try
 					{
 #if DEBUG
 						serviceContext.SetExtensionData("StartTime", DateTime.Now);
 #endif
-						var result = ProcessAsync(serviceContext);
+						var result = ProcessRequestAsync(serviceContext);
 						//#if DEBUG
 						//						result = result.ContinueWith(tsk => { serviceContext.SetExtensionData("EndTime", DateTime.Now); });
 						//#endif
@@ -228,6 +226,71 @@ namespace RpcLite.Service
 				tcs.SetResult(false);
 			}
 			return tcs.Task;
+		}
+
+		private static ServiceContext ParseServiceContext(IServerContext httpContext)
+		{
+			var context = new ServiceContext
+			{
+				Request = new ServiceRequest
+				{
+					RequestStream = httpContext.GetRequestStream(),
+					Path = httpContext.RequestPath,
+					ContentType = httpContext.GetRequestContentType(),
+					ContentLength = httpContext.RequestContentLength,
+				},
+				Response = new ServiceResponse
+				{
+					ResponseStream = httpContext.GetResponseStream(),
+				},
+				ExecutingContext = httpContext,
+			};
+
+			var requestPath = context.Request.Path;
+
+			if (string.IsNullOrWhiteSpace(requestPath))
+				throw new ArgumentException("request.AppRelativeCurrentExecutionFilePath is null or white space");
+
+			var service = ServiceFactory.GetService(requestPath);
+
+			if (service == null)
+			{
+				LogHelper.Debug("BeginProcessReques Can't find service " + requestPath);
+				throw new ConfigException("Configuration error service not found");
+			}
+
+			try
+			{
+				var actionName = requestPath.Substring(service.Path.Length);
+				//if (string.IsNullOrEmpty(actionName))
+				//	throw new RequestException("Bad request: not action name");
+
+				context.Request.ActionName = actionName;
+				context.Request.ServiceType = service.Type;
+				context.Service = service;
+
+				try
+				{
+					//get formatter from content type
+					var formatter = GetFormatter(context.Request.ContentType);
+					if (formatter != null)
+						context.Response.ContentType = context.Request.ContentType;
+
+					context.Formatter = formatter;
+				}
+				catch (Exception ex)
+				{
+					LogHelper.Error(ex);
+					throw;
+				}
+			}
+			catch (Exception ex)
+			{
+				LogHelper.Error(ex);
+				throw;
+			}
+
+			return context;
 		}
 
 		private static void EndProcessRequest(ServiceContext context)
