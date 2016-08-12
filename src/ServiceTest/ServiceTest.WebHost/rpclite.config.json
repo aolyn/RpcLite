@@ -22,10 +22,10 @@
     ]
   },
 
-  "registry": {
-    "address": "192.168.9.1:2181",
-    "type": "RpcLite.Registry.Zookeeper.ZookeeperRegistry, RpcLite.Registry.Zookeeper"
-  },
+  //"registry": {
+  //  "address": "192.168.9.1:2181",
+  //  "type": "RpcLite.Registry.Zookeeper.ZookeeperRegistry, RpcLite.Registry.Zookeeper"
+  //},
 
   "client": {
     "resolver": {

@@ -12,7 +12,7 @@ namespace ServiceTest.WebHost
 		{
 			Console.WriteLine(args?.Length);
 			//Console.WriteLine(args[0]);
-
+			 
 			//var useHttps = args?.Length > 0 && args[0] == "ssl";
 			var useHttps = args?.Any(it => it == "--ssl") ?? false;
 			var useTestConnectionFilter = args?.Any(it => it == "--tcf") ?? false;

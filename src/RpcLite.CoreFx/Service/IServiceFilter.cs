@@ -9,6 +9,11 @@ namespace RpcLite.Service
 	public interface IServiceFilter
 	{
 		/// <summary>
+		/// 
+		/// </summary>
+		string Name { get; set; }
+
+		/// <summary>
 		/// if filter invoke must call next in Invoke 
 		/// </summary>
 		bool FilterInvoke { get; }

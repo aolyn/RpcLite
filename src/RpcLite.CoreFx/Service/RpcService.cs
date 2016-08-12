@@ -13,6 +13,7 @@ namespace RpcLite.Service
 	public class RpcService
 	{
 		private readonly ActionManager _actionManager;
+
 		/// <summary>
 		/// 
 		/// </summary>
@@ -110,7 +111,6 @@ namespace RpcLite.Service
 			Func<ServiceContext, Task> filterFunc = ProcessRequest;
 			if (Filters != null && Filters.Count > 0)
 			{
-				//TODO: confirm if Func will leak of memory
 				var preFilterFunc = filterFunc;
 				for (var idxFilter = 0; idxFilter < Filters.Count; idxFilter++)
 				{
@@ -118,6 +118,7 @@ namespace RpcLite.Service
 					if (!thisFilter.FilterInvoke) continue;
 
 					var nextFilterFunc = preFilterFunc;
+					//all currentFilterFunc.GetHashCode is the same
 					Func<ServiceContext, Task> currentFilterFunc = sc => thisFilter.Invoke(sc, nextFilterFunc);
 
 					preFilterFunc = currentFilterFunc;
@@ -150,19 +151,6 @@ namespace RpcLite.Service
 				{
 					LogHelper.Error(ex);
 				}
-
-				//var endDate = DateTime.Now;
-				//var serviceDuration = endDate - startDate;
-
-				//if (tsk.IsFaulted)
-				//{
-				//	context.Exception = tsk.Exception.InnerException;
-				//}
-				//else
-				//{
-				//	var result = RpcAction.GetResultObject(tsk, context);
-				//	context.Result = result;
-				//}
 			});
 
 			return waitTask;
@@ -195,7 +183,7 @@ namespace RpcLite.Service
 				sb.Append(" ");
 				sb.AppendFormat("{0}(", method.Name);
 
-				bool isFirstArgument = true;
+				var isFirstArgument = true;
 				foreach (var arg in method.GetParameters())
 				{
 					if (isFirstArgument)
@@ -209,7 +197,6 @@ namespace RpcLite.Service
 				}
 
 				sb.AppendFormat(");", method.Name);
-
 			}
 
 			return sb.ToString();

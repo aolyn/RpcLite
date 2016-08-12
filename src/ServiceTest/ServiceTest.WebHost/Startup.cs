@@ -44,6 +44,8 @@ namespace ServiceTest.WebHost
 	{
 		public bool FilterInvoke { get; } = true;
 
+		public string Name { get; set; }
+
 		public void AfterInvoke(ServiceContext context)
 		{
 		}
@@ -57,12 +59,14 @@ namespace ServiceTest.WebHost
 			var stopwatch = Stopwatch.StartNew();
 			await next(context);
 			stopwatch.Stop();
-			Console.WriteLine($"Service: {context.Service.Name}, Action: {context.Action.Name}, Execute Duration: {stopwatch.ElapsedMilliseconds}ms");
+			//Console.WriteLine($"Service: {context.Service.Name}, Action: {context.Action.Name}, Execute Duration: {stopwatch.ElapsedMilliseconds}ms");
 		}
 	}
 
 	class LogRequestTimeFilter : IServiceFilter
 	{
+		public string Name { get; set; }
+
 		public bool FilterInvoke { get; } = true;
 
 		public void AfterInvoke(ServiceContext context)
@@ -78,9 +82,8 @@ namespace ServiceTest.WebHost
 			var stopwatch = Stopwatch.StartNew();
 			await next(context);
 			stopwatch.Stop();
-			Console.WriteLine($"Service: {context.Service.Name}, Action: {context.Action.Name}, Request Length: {context.Request.ContentLength}bytes");
+			//Console.WriteLine($"Service: {context.Service.Name}, Action: {context.Action.Name}, Request Length: {context.Request.ContentLength}bytes");
 		}
 	}
-
 
 }
