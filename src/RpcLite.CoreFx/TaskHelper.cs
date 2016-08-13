@@ -15,9 +15,14 @@ namespace RpcLite
 		/// <returns></returns>
 		public static Task<TResult> FromResult<TResult>(TResult result)
 		{
+#if NETCORE
+			return Task.FromResult(result);
+#else
 			var tcs = new TaskCompletionSource<TResult>();
 			tcs.SetResult(result);
 			return tcs.Task;
+#endif
+
 		}
 	}
 }

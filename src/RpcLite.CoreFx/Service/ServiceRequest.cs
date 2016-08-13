@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 
 namespace RpcLite.Service
 {
@@ -18,10 +17,10 @@ namespace RpcLite.Service
 		/// </summary>
 		public string ActionName { get; set; }
 
-		/// <summary>
-		/// 
-		/// </summary>
-		public Type ServiceType { get; set; }
+		///// <summary>
+		///// 
+		///// </summary>
+		//public Type ServiceType { get; set; }
 
 		/// <summary>
 		/// 

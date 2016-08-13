@@ -72,11 +72,11 @@ namespace RpcLite.Service
 		/// </summary>
 		/// <param name="context"></param>
 		/// <returns></returns>
-		public Task ProcessRequestAsync(ServiceContext context)
+		public Task ProcessAsync(ServiceContext context)
 		{
 			LogHelper.Debug("RpcService.BeginProcessRequest");
 
-			if (context.Request.ActionName == "?meta")
+			if (context.Request.ActionName == "?meta" || string.IsNullOrEmpty(context.Request.ActionName))
 			{
 				LogHelper.Debug("RpcService.BeginProcessRequest: start ActionHelper.InvokeAction");
 				try
@@ -95,7 +95,7 @@ namespace RpcLite.Service
 			}
 
 			LogHelper.Debug("RpcService.BeginProcessRequest: start ActionHelper.GetActionInfo");
-			var action = _actionManager.GetAction(context.Request.ServiceType, context.Request.ActionName);
+			var action = _actionManager.GetAction(context.Service.Type, context.Request.ActionName);
 			LogHelper.Debug("RpcService.BeginProcessRequest: end ActionHelper.GetActionInfo");
 			if (action == null)
 			{
