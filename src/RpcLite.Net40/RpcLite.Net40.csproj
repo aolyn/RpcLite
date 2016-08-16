@@ -19,7 +19,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;NET40</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;NET40 NETFX</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>bin\Debug\RpcLite.XML</DocumentationFile>
@@ -160,6 +160,9 @@
     <Compile Include="..\RpcLite.CoreFx\Formatters\Json\Converters.cs">
       <Link>Formatters\Json\Converters.cs</Link>
     </Compile>
+    <Compile Include="..\RpcLite.CoreFx\Formatters\NetJsonFormater.cs">
+      <Link>Formatters\NetJsonFormater.cs</Link>
+    </Compile>
     <Compile Include="..\RpcLite.CoreFx\Formatters\XmlFormater.cs">
       <Link>Formatters\XmlFormater.cs</Link>
     </Compile>
@@ -277,7 +280,6 @@
     <Compile Include="..\RpcLite.CoreFx\Utility\ReflectHelper.cs">
       <Link>Utility\ReflectHelper.cs</Link>
     </Compile>
-    <Compile Include="Formatters\NetJsonFormater.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\RpcLite.CoreFx\content\web.config.transform">

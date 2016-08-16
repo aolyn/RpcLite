@@ -18,13 +18,14 @@ namespace RpcLite.Formatters
 			SupportMimes.Add("application/json");
 		}
 
+
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="inputStream"></param>
 		/// <param name="targetType"></param>
 		/// <returns></returns>
-		public object Deserilize(Stream inputStream, Type targetType)
+		public object Deserialize(Stream inputStream, Type targetType)
 		{
 			return JsonHelper.Deserialize(inputStream, targetType);
 		}
@@ -45,4 +46,5 @@ namespace RpcLite.Formatters
 		/// </summary>
 		public List<string> SupportMimes { get { return _supportMimes; } }
 	}
+
 }

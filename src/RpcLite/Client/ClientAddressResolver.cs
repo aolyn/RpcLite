@@ -7,7 +7,7 @@ namespace RpcLite.Client
 	internal class ClientAddressResolver<T> where T : class
 	{
 		// ReSharper disable once StaticMemberInGenericType
-		static IAddressResolver _resolver;
+		private static IAddressResolver _resolver;
 
 		static ClientAddressResolver()
 		{
@@ -30,6 +30,7 @@ namespace RpcLite.Client
 			catch (Exception ex)
 			{
 				LogHelper.Error("InitializeResolver error", ex);
+				throw;
 			}
 		}
 

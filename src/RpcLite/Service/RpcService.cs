@@ -1,7 +1,8 @@
 ﻿using System;
-using System.IO;
+using System.Collections.Generic;
+using System.Reflection;
+using System.Text;
 using System.Threading.Tasks;
-using RpcLite.Formatters;
 using RpcLite.Logging;
 
 namespace RpcLite.Service
@@ -11,6 +12,18 @@ namespace RpcLite.Service
 	/// </summary>
 	public class RpcService
 	{
+		private readonly ActionManager _actionManager;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="serviceType"></param>
+		public RpcService(Type serviceType)
+		{
+			Type = serviceType;
+			_actionManager = new ActionManager(serviceType);
+		}
+
 		#region properties
 
 		/// <summary>
@@ -21,12 +34,17 @@ namespace RpcLite.Service
 		/// <summary>
 		/// Service's Type
 		/// </summary>
-		public Type Type { get; set; }
+		public Type Type { get; }
 
 		/// <summary>
 		/// Name of Service
 		/// </summary>
 		public string Name { get; set; }
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public List<IServiceFilter> Filters;
 
 		/// <summary>
 		/// 
@@ -54,29 +72,64 @@ namespace RpcLite.Service
 		/// </summary>
 		/// <param name="context"></param>
 		/// <returns></returns>
-		public Task ProcessRequestAsync(ServiceContext context)
+		public Task ProcessAsync(ServiceContext context)
 		{
 			LogHelper.Debug("RpcService.BeginProcessRequest");
 
+			if (context.Request.ActionName == "?meta" || string.IsNullOrEmpty(context.Request.ActionName))
+			{
+				LogHelper.Debug("RpcService.BeginProcessRequest: start ActionHelper.InvokeAction");
+				try
+				{
+					var metaInfo = GetMetaInfo(context.Service);
+					context.Result = metaInfo;
+					context.Request.RequestType = RequestType.MetaData;
+				}
+				catch (Exception ex)
+				{
+					context.Exception = ex;
+				}
+				LogHelper.Debug("RpcService.BeginProcessRequest: end ActionHelper.InvokeAction");
+
+				return TaskHelper.FromResult((object)null);
+			}
+
 			LogHelper.Debug("RpcService.BeginProcessRequest: start ActionHelper.GetActionInfo");
-			var actionInfo = ActionHelper.GetActionInfo(context.Request.ServiceType, context.Request.ActionName);
+			var action = _actionManager.GetAction(context.Service.Type, context.Request.ActionName);
 			LogHelper.Debug("RpcService.BeginProcessRequest: end ActionHelper.GetActionInfo");
-			if (actionInfo == null)
+			if (action == null)
 			{
 				LogHelper.Debug("Action Not Found: " + context.Request.ActionName);
 				throw new ActionNotFoundException(context.Request.ActionName);
 			}
 
-			object requestObject = null;
-			if (actionInfo.ArgumentCount > 0)
-				requestObject = GetRequestObject(context.Request.RequestStream, context.Formatter, actionInfo.ArgumentType);
-
 			LogHelper.Debug("RpcService.BeginProcessRequest: got requestObject");
 
-			context.Service = this;
-			context.Action = actionInfo;
-			context.Argument = requestObject;
+			context.Action = action;
 
+			Func<ServiceContext, Task> filterFunc = ProcessRequest;
+			if (Filters != null && Filters.Count > 0)
+			{
+				var preFilterFunc = filterFunc;
+				for (var idxFilter = 0; idxFilter < Filters.Count; idxFilter++)
+				{
+					var thisFilter = Filters[idxFilter];
+					if (!thisFilter.FilterInvoke) continue;
+
+					var nextFilterFunc = preFilterFunc;
+					//all currentFilterFunc.GetHashCode is the same
+					Func<ServiceContext, Task> currentFilterFunc = sc => thisFilter.Invoke(sc, nextFilterFunc);
+
+					preFilterFunc = currentFilterFunc;
+				}
+				filterFunc = preFilterFunc;
+			}
+
+			return filterFunc(context);
+		}
+
+		private Task ProcessRequest(ServiceContext context)
+		{
 			try
 			{
 				BeforeInvoke?.Invoke(context);
@@ -86,8 +139,8 @@ namespace RpcLite.Service
 				LogHelper.Error(ex);
 			}
 
-			var ar = actionInfo.ExecuteAsync(context);
-			var waitTask = ar.ContinueWith(tsk =>
+			var task = context.Action.ExecuteAsync(context);
+			var waitTask = task.ContinueWith(tsk =>
 			{
 				try
 				{
@@ -97,65 +150,55 @@ namespace RpcLite.Service
 				{
 					LogHelper.Error(ex);
 				}
-
-				if (tsk.IsFaulted)
-				{
-					context.Exception = tsk.Exception.InnerException;
-				}
-				else
-				{
-					var result = RpcAction.GetResultObject(tsk, context);
-					context.Result = result;
-				}
 			});
 
 			return waitTask;
 		}
 
-		private static object GetRequestObject(Stream stream, IFormatter formatter, Type type)
+		private object GetMetaInfo(RpcService service)
 		{
-			try
+			var type = service.Type;
+			var sb = new StringBuilder();
+			sb.AppendFormat("Service Name: {0}", type.Name);
+			sb.AppendLine();
+			sb.Append("Actions:");
+
+			//			var typeInfo =
+			//#if NETCORE
+			//				type.GetTypeInfo();
+			//#else
+			//				type;
+			//#endif
+
+			var methods = type.GetMethods(BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
+
+			foreach (var method in methods)
 			{
-				return formatter.Deserilize(stream, type);
+				if (method.DeclaringType == typeof(object))
+					continue;
+
+				sb.AppendLine();
+				sb.Append(method.ReturnType.Name);
+				sb.Append(" ");
+				sb.AppendFormat("{0}(", method.Name);
+
+				var isFirstArgument = true;
+				foreach (var arg in method.GetParameters())
+				{
+					if (isFirstArgument)
+						isFirstArgument = false;
+					else
+						sb.Append(", ");
+
+					sb.Append(arg.ParameterType.Name);
+					sb.Append(" ");
+					sb.Append(arg.Name);
+				}
+
+				sb.AppendFormat(");", method.Name);
 			}
-			catch (Exception)
-			{
-				throw new RequestException("Parse request content to object error.");
-			}
+
+			return sb.ToString();
 		}
-
-		///// <summary>
-		///// 
-		///// </summary>
-		///// <param name="result"></param>
-		//public static void EndProcessRequest(IAsyncResult result)
-		//{
-		//	var state = result.AsyncState as ServiceContext;
-		//	if (state == null)
-		//	{
-		//		LogHelper.Error("ServiceContext is null", null);
-		//		return;
-		//	}
-
-		//	if (state.Service == null)
-		//		throw new InvalidOperationException("not implement, RpcLite bug");
-
-		//	state.Service.EndProcessRequest(result, state);
-		//}
-
-		//private void EndProcessRequest(IAsyncResult ar, ServiceContext context)
-		//{
-		//	//object resultObject = null;
-		//	try
-		//	{
-		//		//resultObject = RpcAction.GetResultObject(ar, context);
-		//		//context.Result = RpcAction.GetResultObject(ar, context);
-		//	}
-		//	finally
-		//	{
-		//		AfterInvoke?.Invoke(context);
-		//	}
-		//}
-
 	}
 }

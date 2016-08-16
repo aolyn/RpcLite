@@ -15,7 +15,7 @@ namespace RpcLite.Formatters
 		/// <param name="inputStream"></param>
 		/// <param name="targetType"></param>
 		/// <returns></returns>
-		object Deserilize(Stream inputStream,Type targetType);
+		object Deserialize(Stream inputStream,Type targetType);
 
 		/// <summary>
 		/// 

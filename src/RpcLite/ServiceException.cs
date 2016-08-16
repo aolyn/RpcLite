@@ -1,5 +1,8 @@
 ﻿using System;
+
+#if !NETCORE
 using System.Runtime.Serialization;
+#endif
 
 namespace RpcLite
 {
@@ -13,6 +16,8 @@ namespace RpcLite
 		/// </summary>
 		public ServiceException() { }
 
+#if NETCORE
+#else
 		/// <summary>
 		/// 
 		/// </summary>
@@ -21,6 +26,7 @@ namespace RpcLite
 		protected ServiceException(SerializationInfo info, StreamingContext context) : base(info, context)
 		{
 		}
+#endif
 
 		/// <summary>
 		/// Initializes a new instance of RpcLite.ServiceException with specifid message and inner exception
@@ -45,7 +51,6 @@ namespace RpcLite
 	/// </summary>
 	public class ActionNotFoundException : ServiceException
 	{
-
 		/// <summary>
 		/// Initializes a new instance of RpcLite.ServiceException with specifid message and inner exception
 		/// </summary>
@@ -55,15 +60,22 @@ namespace RpcLite
 			: base($"Action {actionName} Not Found", innerException)
 		{ }
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="info"></param>
-		/// <param name="context"></param>
-		protected ActionNotFoundException(SerializationInfo info, StreamingContext context) : base(info, context)
-		{
-		}
+#if !NETCORE
+	///// <summary>
+		///// 
+		///// </summary>
+		///// <param name="info"></param>
+		///// <param name="context"></param>
+		//protected ActionNotFoundException(SerializationInfo info, StreamingContext context) : base(info, context)
+		//{
+		//}
+#endif
 
+		/// <summary>
+		/// Initializes a new instance of RpcLite.ServiceException with specifid message and inner exception
+		/// </summary>
+		public ActionNotFoundException()
+		{ }
 
 		/// <summary>
 		/// Initializes a new instance of RpcLite.ServiceException with specifid message and inner exception
@@ -71,6 +83,47 @@ namespace RpcLite
 		/// <param name="actionName">message</param>
 		public ActionNotFoundException(string actionName)
 			: base($"Action {actionName} Not Found")
+		{ }
+
+	}
+
+	/// <summary>
+	/// Represents errors that occor during application execution in RpcLite server
+	/// </summary>
+	public class ServiceNotFoundException : ServiceException
+	{
+		/// <summary>
+		/// Initializes a new instance of RpcLite.ServiceException with specifid message and inner exception
+		/// </summary>
+		/// <param name="serviceName">message</param>
+		/// <param name="innerException">inner exception</param>
+		public ServiceNotFoundException(string serviceName, Exception innerException)
+			: base($"Service {serviceName} Not Found", innerException)
+		{ }
+
+#if !NETCORE
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="info"></param>
+		/// <param name="context"></param>
+		protected ServiceNotFoundException(SerializationInfo info, StreamingContext context) : base(info, context)
+		{
+		}
+#endif
+
+		/// <summary>
+		/// Initializes a new instance of RpcLite.ServiceException with specifid message and inner exception
+		/// </summary>
+		public ServiceNotFoundException()
+		{ }
+
+		/// <summary>
+		/// Initializes a new instance of RpcLite.ServiceException with specifid message and inner exception
+		/// </summary>
+		/// <param name="serviceName">message</param>
+		public ServiceNotFoundException(string serviceName)
+			: base($"Service {serviceName} Not Found")
 		{ }
 
 	}

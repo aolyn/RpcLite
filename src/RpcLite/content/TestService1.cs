@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+#pragma warning disable 1591
 
 namespace RpcLiteServiceTest
 {

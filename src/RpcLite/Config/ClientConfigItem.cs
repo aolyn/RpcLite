@@ -6,6 +6,21 @@
 	public class ClientConfigItem
 	{
 		/// <summary>
+		/// name of service
+		/// </summary>
+		public string Name { get; set; }
+
+		/// <summary>
+		/// namespace
+		/// </summary>
+		public string Namespace { get; set; }
+
+		/// <summary>
+		/// environment
+		/// </summary>
+		public string Environment { get; set; }
+
+		/// <summary>
 		/// service url, eg: http://localhost/api/product
 		/// </summary>
 		public string Path { get; set; }
@@ -26,19 +41,9 @@
 		public string Type { get; set; }
 
 		/// <summary>
-		/// name of service
-		/// </summary>
-		public string Name { get; set; }
-
-		/// <summary>
 		/// extra attribute of service
 		/// </summary>
 		public string[] Items { get; set; }
-
-		/// <summary>
-		/// namespace
-		/// </summary>
-		public string Namespace { get; set; }
 
 		/// <summary>
 		/// get description string

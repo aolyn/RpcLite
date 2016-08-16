@@ -48,6 +48,10 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="RpcLite, Version=1.0.1.7, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\RpcLite\bin\Debug\net40\RpcLite.dll</HintPath>
+    </Reference>
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -96,18 +100,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\RpcLite.Resolvers.Net40\RpcLite.Resolvers.Net40.csproj">
-      <Project>{7ae9591b-8465-4d8a-b27d-51e2ec6fe82c}</Project>
-      <Name>RpcLite.Resolvers.Net40</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\RpcLite.AspNet\RpcLite.Net.csproj">
-      <Project>{314f05a6-06c2-476c-be16-52e068e91229}</Project>
-      <Name>RpcLite.Net</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\RpcLite.Net40\RpcLite.Net40.csproj">
-      <Project>{6e2205f4-2050-424f-abf5-93b9f5f0f8e4}</Project>
-      <Name>RpcLite.Net40</Name>
-    </ProjectReference>
     <ProjectReference Include="..\ServiceTest.ServiceImpl.net\ServiceTest.ServiceImpl.net.csproj">
       <Project>{02119d4a-06e8-4dea-bc06-4f0022c89157}</Project>
       <Name>ServiceTest.ServiceImpl.net</Name>

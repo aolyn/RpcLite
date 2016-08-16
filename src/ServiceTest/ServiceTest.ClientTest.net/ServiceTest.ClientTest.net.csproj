@@ -37,6 +37,10 @@
       <HintPath>..\..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="RpcLite, Version=1.0.1.7, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\RpcLite\bin\Debug\net40\RpcLite.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -61,10 +65,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\RpcLite.Net40\RpcLite.Net40.csproj">
-      <Project>{6e2205f4-2050-424f-abf5-93b9f5f0f8e4}</Project>
-      <Name>RpcLite.Net40</Name>
-    </ProjectReference>
     <ProjectReference Include="..\ServiceTest.Contract.net\ServiceTest.Contract.net.csproj">
       <Project>{5d2cc80c-942a-4b5a-810d-b8594eff2937}</Project>
       <Name>ServiceTest.Contract.net</Name>

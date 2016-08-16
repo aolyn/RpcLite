@@ -30,7 +30,7 @@ namespace ServiceRegistry.Service
 			configBuilder.AddJsonFile("appsettings.json", true);
 			var config = configBuilder.Build();
 
-			ConfigurationManager.SetDefaultConfiguration(new CoreConfiguration(config));
+			ConfigManager.SetDefaultConfiguration(new CoreConfiguration(config));
 
 			app.Run(async (context) =>
 			{
