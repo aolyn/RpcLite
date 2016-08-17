@@ -41,6 +41,12 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\RpcLite\bin\Debug\net40\RpcLite.dll</HintPath>
     </Reference>
+    <Reference Include="RpcLite.NetFx">
+      <HintPath>..\..\RpcLite.NetFx\bin\Debug\net40\RpcLite.NetFx.dll</HintPath>
+    </Reference>
+    <Reference Include="ServiceRegistry.Contract">
+      <HintPath>..\..\Registry\ServiceRegistry.Contract\bin\Debug\net40\ServiceRegistry.Contract.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />

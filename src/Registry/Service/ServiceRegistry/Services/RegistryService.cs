@@ -1,4 +1,6 @@
-﻿using ServiceRegistry.Contract;
+﻿using System;
+using System.Threading.Tasks;
+using ServiceRegistry.Contract;
 using ServiceRegistry.Dal;
 
 namespace ServiceRegistry.Services
@@ -20,5 +22,11 @@ namespace ServiceRegistry.Services
 
 			return response;
 		}
+
+		public Task<GetServiceAddressResponse> GetServiceAddressAsync(GetServiceAddressRequest request)
+		{
+			return Task.FromResult(GetServiceAddress(request));
+		}
+
 	}
 }
