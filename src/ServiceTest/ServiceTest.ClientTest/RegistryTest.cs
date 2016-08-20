@@ -1,7 +1,7 @@
 ﻿using System;
 using RpcLite;
+using RpcLite.AspNetCore;
 using RpcLite.Client;
-using RpcLite.Config;
 using ServiceRegistry.Contract;
 
 namespace ServiceTest.ClientTest

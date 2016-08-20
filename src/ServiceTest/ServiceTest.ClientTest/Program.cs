@@ -3,7 +3,6 @@ using RpcLite.Client;
 using RpcLite.Config;
 using RpcLite.Registry.Zookeeper;
 using RpcLiteClientTestNetCore;
-using ServiceTest.ClientTest.Test;
 using ServiceTest.Contract;
 
 namespace ServiceTest.ClientTest
@@ -14,7 +13,7 @@ namespace ServiceTest.ClientTest
 		{
 			//ZookeeperRegistryTest();
 
-			RpcLiteInitializer.Initialize();
+			RpcLite.AspNetCore.RpcLiteInitializer.Initialize();
 
 			RegistryTest.Test();
 

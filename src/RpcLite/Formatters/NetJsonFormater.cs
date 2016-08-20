@@ -1,4 +1,4 @@
-﻿#if NETFX
+﻿#if NETFX && NOUSECODE
 
 using System;
 using System.Collections.Generic;

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using RpcLite.Client;
@@ -42,10 +41,6 @@ namespace RpcLite.Registry.Http
 		private static readonly Lazy<IRegistryService> RegistryClient =
 			new Lazy<IRegistryService>(() =>
 			{
-				var a = new[] { 1 };
-				var c = new List<int>();
-				var b = a.ToList();
-
 				var registryClientConfigItem = RpcLiteConfig.Instance.Clients
 					.FirstOrDefault(it => it.TypeName == typeof(IRegistryService).FullName);
 

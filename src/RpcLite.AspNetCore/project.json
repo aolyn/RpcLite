@@ -21,18 +21,19 @@
         "Microsoft.Extensions.Configuration.Json": "1.0.0"
       },
       "buildOptions": { "define": [ "NETCORE" ] }
-    },
-    "net40": {
-      "frameworkAssemblies": {
-        "System.Configuration": "4.0.0.0",
-        "System.Web": "4.0.0.0",
-        "System.Xml": "4.0.0.0"
-      }
     }
+    //"net40": {
+    //  "frameworkAssemblies": {
+    //    "System.Configuration": "4.0.0.0",
+    //    "System.Web": "4.0.0.0",
+    //    "System.Xml": "4.0.0.0"
+    //  }
+    //}
   },
 
   "buildOptions": {
-    "outputName": "RpcLite.NetCore"
+    "outputName": "RpcLite.NetCore",
+    "xmlDoc": true
   },
 
 

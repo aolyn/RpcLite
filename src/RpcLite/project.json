@@ -38,10 +38,7 @@
         "Microsoft.Bcl": "1.1.10",
         "Microsoft.Bcl.Build": "1.0.21",
         "Microsoft.Net.Http": "2.2.29",
-        "NetJSON": "1.2.1.0",
-        "Newtonsoft.Json": "9.0.1",
-        "Sigil": "4.7.0",
-        "System.Text.Json": "2.0.0.11"
+        "Newtonsoft.Json": "9.0.1"
       },
       "buildOptions": {
         "define": [
@@ -50,15 +47,7 @@
         ],
         "outputName": "RpcLite"
       }
-    } /*,
-    "netcoreapp1.0": {
-      "imports": [
-        "dnxcore50"
-      ],
-      "dependencies": {
-        "System.Reflection.TypeExtensions": "4.1.0"
-      }
-    }*/
+    }
   },
   "packOptions": {
     "projectUrl": "",
@@ -66,5 +55,8 @@
     "tags": [
       ""
     ]
+  },
+  "buildOptions": {
+    "xmlDoc": true
   }
 }

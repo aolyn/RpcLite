@@ -8,6 +8,7 @@
     "Microsoft.AspNetCore.Server.IISIntegration": "1.0.0",
     "Microsoft.AspNetCore.Server.Kestrel": "1.0.0",
     "Microsoft.Extensions.Logging.Console": "1.0.0",
+    "RpcLite": "1.0.1-*",
     "RpcLite.AspNetCore": "1.0.1-*",
     "ServiceTest.ServiceImpl": "1.0.0-*",
     "Microsoft.AspNetCore.Server.Kestrel.Https": "1.0.0",
@@ -21,8 +22,7 @@
   "frameworks": {
     "netcoreapp1.0": {
       "imports": [
-        "dotnet5.6",
-        "portable-net45+win8"
+        "dnxcore50"
       ]
     }
   },

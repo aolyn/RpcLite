@@ -40,10 +40,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\ServiceTest.Contract\IProductService.cs">
+    <Compile Include="..\..\ServiceTest.Contract\IProductService.cs">
       <Link>IProductService.cs</Link>
     </Compile>
-    <Compile Include="..\ServiceTest.Contract\Product.cs">
+    <Compile Include="..\..\ServiceTest.Contract\Product.cs">
       <Link>Product.cs</Link>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -40,15 +40,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\ServiceTest.ServiceImpl\ProductService.cs">
+    <Compile Include="..\..\ServiceTest.ServiceImpl\ProductService.cs">
       <Link>ProductService.cs</Link>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ServiceTest.Contract.net\ServiceTest.Contract.net.csproj">
+    <ProjectReference Include="..\ServiceTest.Contract\ServiceTest.Contract.csproj">
       <Project>{5d2cc80c-942a-4b5a-810d-b8594eff2937}</Project>
-      <Name>ServiceTest.Contract.net</Name>
+      <Name>ServiceTest.Contract</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using RpcLite.Config;
+using RpcLite.AspNetCore;
 
 namespace ServiceRegistry.Service
 {
@@ -30,7 +30,7 @@ namespace ServiceRegistry.Service
 			configBuilder.AddJsonFile("appsettings.json", true);
 			var config = configBuilder.Build();
 
-			ConfigManager.SetDefaultConfiguration(new CoreConfiguration(config));
+			//ConfigManager.SetDefaultConfiguration(new CoreConfiguration(config));
 
 			app.Run(async (context) =>
 			{
