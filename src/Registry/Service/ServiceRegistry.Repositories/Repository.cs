@@ -155,5 +155,9 @@ namespace ServiceRegistry.Repositories
 			}
 		}
 
+		public void Dispose()
+		{
+
+		}
 	}
 }

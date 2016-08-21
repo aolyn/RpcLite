@@ -12,15 +12,17 @@ namespace RpcLite.Registry
 	{
 		// ReSharper disable once StaticMemberInGenericType
 		private static IRegistry _registry;
+		private readonly RpcLiteConfig _config;
 
-		static RegistryManager()
+		public RegistryManager(RpcLiteConfig config)
 		{
+			_config = config;
 			InitializeResolver();
 		}
 
-		private static void InitializeResolver()
+		private void InitializeResolver()
 		{
-			var registryItem = RpcLiteConfig.Instance.Registry;
+			var registryItem = _config.Registry;
 			if (registryItem == null) return;
 
 			try
@@ -28,7 +30,7 @@ namespace RpcLite.Registry
 				var type = TypeCreator.GetTypeFromName(registryItem.TypeName, registryItem.AssemblyName);
 				if (type != null)
 				{
-					_registry = Activator.CreateInstance(type) as IRegistry;
+					_registry = Activator.CreateInstance(type, _config) as IRegistry;
 				}
 			}
 			catch (Exception ex)
@@ -43,14 +45,14 @@ namespace RpcLite.Registry
 		/// </summary>
 		/// <typeparam name="TContract"></typeparam>
 		/// <returns></returns>
-		public static Uri GetAddress<TContract>()
+		public Uri GetAddress<TContract>()
 		{
 			if (_registry == null)
 				//InitializeResolver();
 				return null;
 
 			var type = typeof(TContract);
-			var clientConfigItem = RpcLiteConfig.Instance.Clients
+			var clientConfigItem = _config.Clients
 				.FirstOrDefault(it => it.TypeName == type.FullName);
 
 			return _registry?.LookupAsync(clientConfigItem).Result?.FirstOrDefault();
@@ -60,7 +62,7 @@ namespace RpcLite.Registry
 		/// 
 		/// </summary>
 		/// <param name="serviceInfo"></param>
-		public static void Register(ServiceConfigItem serviceInfo)
+		public void Register(ServiceConfigItem serviceInfo)
 		{
 			_registry?.RegisterAsync(serviceInfo).Wait();
 		}

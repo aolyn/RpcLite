@@ -37,9 +37,9 @@ namespace RpcLite.Registry.Zookeeper
 			_startTask = Start();
 		}
 
-		public ZookeeperRegistryInternal()
-			: this(RpcLiteConfig.Instance?.Registry?.Address, 30 * 1000)
-		{ }
+		//public ZookeeperRegistryInternal()
+		//	: this(RpcLiteConfig.Instance?.Registry?.Address, 30 * 1000)
+		//{ }
 
 		~ZookeeperRegistryInternal()
 		{

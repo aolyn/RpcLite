@@ -1,8 +1,6 @@
-﻿using System;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using RpcLite.Config;
-using RpcLite.Registry;
 using RpcLite.Service;
 using CoreConfig = Microsoft.Extensions.Configuration;
 
@@ -13,19 +11,6 @@ namespace RpcLite.AspNetCore
 	/// </summary>
 	public class RpcLiteInitializer
 	{
-		private static readonly Lazy<object> InitializeService = new Lazy<object>(() =>
-		{
-			if (RpcLiteConfig.Instance?.Services != null)
-			{
-				foreach (var service in RpcLiteConfig.Instance.Services)
-				{
-					RegistryManager.Register(service);
-				}
-			}
-
-			return null;
-		});
-
 		/// <summary>
 		/// initialize with default config file "rpclite.config.json"
 		/// </summary>
@@ -43,8 +28,7 @@ namespace RpcLite.AspNetCore
 			var rpcConfig = RpcConfigHelper.GetConfig(new CoreConfigurationSection(config));
 			RpcLiteConfig.SetInstance(rpcConfig);
 
-			// ReSharper disable once UnusedVariable
-			var value = InitializeService.Value;
+			RpcProcessor.Initialize(rpcConfig);
 		}
 
 		/// <summary>

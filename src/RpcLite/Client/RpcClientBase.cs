@@ -12,8 +12,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using RpcLite.Formatters;
 using RpcLite.Logging;
-using RpcLite.Net;
-using RpcLite.Registry;
+using RpcLite.Service;
 
 namespace RpcLite.Client
 {
@@ -21,18 +20,32 @@ namespace RpcLite.Client
 	/// 
 	/// </summary>
 	/// <typeparam name="TContract">contract interface</typeparam>
-	public class RpcClientBase<TContract> : IRpcClient where TContract : class
+	public class RpcClientBase<TContract> : IRpcClient
+		where TContract : class
 	{
 		/// <summary>
 		/// base url of service
 		/// </summary>
-		public string BaseUrl { get; set; }
+		public string Address
+		{
+			get { return Channel?.Address; }
+			set
+			{
+				if (Channel != null)
+					Channel.Address = value;
+			}
+		}
 
 		private IFormatter _formatter = new JsonFormatter();
 		/// <summary>
 		/// Formatter
 		/// </summary>
 		public IFormatter Formatter { get { return _formatter; } set { _formatter = value; } }
+
+		/// <summary>
+		/// Channel to transport data with service
+		/// </summary>
+		public IClientChannel Channel { get; set; }
 
 		/// <summary>
 		/// 
@@ -98,8 +111,7 @@ namespace RpcLite.Client
 			var stopwatch1 = Stopwatch.StartNew();
 #endif
 
-			var url = BaseUrl + action;
-			var resultMessageTask = WebRequestHelper.PostAsync(url, content, headDic);
+			var resultMessageTask = Channel.SendAsync(action, content, headDic);
 
 #if DEBUG && LogDuration
 			var duration0 = stopwatch1.GetAndRest();
@@ -193,88 +205,88 @@ namespace RpcLite.Client
 		}
 
 		// ReSharper disable once UnusedMember.Local
-		private Task<TResult> DoRequestAsync2<TResult>(string action, object param, Type returnType, string mime)
-		{
-			var headDic = new Dictionary<string, string>
-			{
-				{"Content-Type",mime},
-				{"Accept",mime},
-			};
+//		private Task<TResult> DoRequestAsync2<TResult>(string action, object param, Type returnType, string mime)
+//		{
+//			var headDic = new Dictionary<string, string>
+//			{
+//				{"Content-Type",mime},
+//				{"Accept",mime},
+//			};
 
-			//var json = JsonConvert.SerializeObject(param);
+//			//var json = JsonConvert.SerializeObject(param);
 
-			var content = new FormaterContent(Formatter, param);
+//			var content = new FormaterContent(Formatter, param);
 
-#if DEBUG && LogDuration
-			var stopwatch1 = Stopwatch.StartNew();
-#endif
+//#if DEBUG && LogDuration
+//			var stopwatch1 = Stopwatch.StartNew();
+//#endif
 
-			var url = BaseUrl + action;
-			var resultMessageTask = WebRequestHelper.PostAsync(url, content, headDic);
+//			var url = BaseUrl + action;
+//			var resultMessageTask = WebRequestHelper.PostAsync(url, content, headDic);
 
-#if DEBUG && LogDuration
-			var duration0 = stopwatch1.GetAndRest();
-#endif
+//#if DEBUG && LogDuration
+//			var duration0 = stopwatch1.GetAndRest();
+//#endif
 
-			var task = resultMessageTask.ContinueWith(tsk =>
-			{
-#if DEBUG && LogDuration
-				var duration1 = stopwatch1.GetAndRest();
-#endif
-				if (tsk.Exception != null)
-					throw tsk.Exception.InnerException;
+//			var task = resultMessageTask.ContinueWith(tsk =>
+//			{
+//#if DEBUG && LogDuration
+//				var duration1 = stopwatch1.GetAndRest();
+//#endif
+//				if (tsk.Exception != null)
+//					throw tsk.Exception.InnerException;
 
-				var resultMessage = tsk.Result;
-				if (resultMessage == null)
-					throw new ClientException("get service data error");
+//				var resultMessage = tsk.Result;
+//				if (resultMessage == null)
+//					throw new ClientException("get service data error");
 
-				if (resultMessage.IsSuccess)
-				{
-					if (resultMessage.Result == null || returnType == null)
-						return default(TResult);
+//				if (resultMessage.IsSuccess)
+//				{
+//					if (resultMessage.Result == null || returnType == null)
+//						return default(TResult);
 
-					var objType = typeof(TResult);
+//					var objType = typeof(TResult);
 
-					try
-					{
-						var resultObj = Formatter.Deserialize(resultMessage.Result, objType);
-						return (TResult)resultObj;
-					}
-					//catch (Exception ex)
-					//{
-					//	return default(TResult);
-					//	//throw;
-					//}
-					finally
-					{
-						resultMessage.Dispose();
-					}
-				}
+//					try
+//					{
+//						var resultObj = Formatter.Deserialize(resultMessage.Result, objType);
+//						return (TResult)resultObj;
+//					}
+//					//catch (Exception ex)
+//					//{
+//					//	return default(TResult);
+//					//	//throw;
+//					//}
+//					finally
+//					{
+//						resultMessage.Dispose();
+//					}
+//				}
 
-				var exceptionAssembly = resultMessage.Header["RpcLite-ExceptionAssembly"];
-				var exceptionType = resultMessage.Header["RpcLite-ExceptionType"];
+//				var exceptionAssembly = resultMessage.Header["RpcLite-ExceptionAssembly"];
+//				var exceptionType = resultMessage.Header["RpcLite-ExceptionType"];
 
-				if (string.IsNullOrWhiteSpace(exceptionAssembly) || string.IsNullOrWhiteSpace(exceptionType))
-				{
-					throw new ClientException("exception occored, but no ExceptionAssembly and ExceptionType returned");
-				}
+//				if (string.IsNullOrWhiteSpace(exceptionAssembly) || string.IsNullOrWhiteSpace(exceptionType))
+//				{
+//					throw new ClientException("exception occored, but no ExceptionAssembly and ExceptionType returned");
+//				}
 
-#if NETCORE
-				var asm = Assembly.Load(new AssemblyName(exceptionAssembly));
-#else
-				var asm = Assembly.Load(exceptionAssembly);
-#endif
-				var exType = asm.GetType(exceptionType);
+//#if NETCORE
+//				var asm = Assembly.Load(new AssemblyName(exceptionAssembly));
+//#else
+//				var asm = Assembly.Load(exceptionAssembly);
+//#endif
+//				var exType = asm.GetType(exceptionType);
 
-				var exObj = Formatter.Deserialize(resultMessage.Result, exType);
-				if (exObj != null)
-					throw (Exception)exObj;
+//				var exObj = Formatter.Deserialize(resultMessage.Result, exType);
+//				if (exObj != null)
+//					throw (Exception)exObj;
 
-				return default(TResult);
-			});
+//				return default(TResult);
+//			});
 
-			return task;
-		}
+//			return task;
+//		}
 
 		/// <summary>
 		/// 
@@ -283,6 +295,7 @@ namespace RpcLite.Client
 		{
 			get { return this as TContract; }
 		}
+
 
 		private static Lazy<Func<RpcClientBase<TContract>>> _func = new Lazy<Func<RpcClientBase<TContract>>>(() =>
 		{
@@ -303,7 +316,7 @@ namespace RpcLite.Client
 		private static string GetDefaultBaseUrl()
 		{
 			//var uri = ClientAddressResolver<TContract>.GetAddress();
-			var uri = RegistryManager.GetAddress<TContract>();
+			var uri = RpcProcessor.ServiceHost.RegistryManager.GetAddress<TContract>();
 			return uri == null ? null : uri.ToString();
 		}
 
@@ -318,7 +331,8 @@ namespace RpcLite.Client
 				throw new ClientException("GetCreateInstanceFunc Error.");
 
 			var client = _func.Value();
-			client.BaseUrl = baseUrl;
+			client.Address = baseUrl;
+			client.Channel = new HttpClientChannel(baseUrl);
 			return client;
 		}
 

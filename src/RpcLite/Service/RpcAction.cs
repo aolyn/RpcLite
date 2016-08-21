@@ -117,7 +117,12 @@ namespace RpcLite.Service
 
 		#endregion
 
-		internal Task ExecuteAsync(ServiceContext context)
+		/// <summary>
+		/// invoke methods
+		/// </summary>
+		/// <param name="context"></param>
+		/// <returns></returns>
+		public Task ExecuteAsync(ServiceContext context)
 		{
 			if (ArgumentCount > 0)
 			{
@@ -229,7 +234,7 @@ namespace RpcLite.Service
 			}
 		}
 
-		internal static object GetResultObject(IAsyncResult ar, ServiceContext context)
+		private static object GetResultObject(IAsyncResult ar, ServiceContext context)
 		{
 			object resultObject = null;
 			var serviceContainer = (ServiceInstanceContainer)context.ServiceContainer;

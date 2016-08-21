@@ -14,7 +14,7 @@ namespace RpcLite.Config
 		/// <summary>
 		/// Instance of RpcLiteConfigSection
 		/// </summary>
-		public static RpcLiteConfig Instance
+		private static RpcLiteConfig Instance
 		{
 			get
 			{
@@ -36,6 +36,8 @@ namespace RpcLite.Config
 		{
 			_instance = instance;
 		}
+
+		#region Properties
 
 		private readonly List<ServiceConfigItem> _services = new List<ServiceConfigItem>();
 		/// <summary>
@@ -87,6 +89,8 @@ namespace RpcLite.Config
 		/// <para>or else if request path is not in paths process will not execute</para>
 		/// </summary>
 		public string[] ServicePaths { get; set; }
+
+		#endregion
 
 	}
 }

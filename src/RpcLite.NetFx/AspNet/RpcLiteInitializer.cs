@@ -1,7 +1,6 @@
-﻿using System;
-using System.Configuration;
+﻿using System.Configuration;
 using RpcLite.Config;
-using RpcLite.Registry;
+using RpcLite.Service;
 
 namespace RpcLite.AspNet
 {
@@ -10,28 +9,13 @@ namespace RpcLite.AspNet
 	/// </summary>
 	public class RpcLiteInitializer
 	{
-		private static readonly Lazy<object> InitializeService = new Lazy<object>(() =>
-		{
-			var config = ConfigurationManager.GetSection("RpcLite");
-			//RpcLiteConfig.SetInstance()
-			if (RpcLiteConfig.Instance?.Services != null)
-			{
-				foreach (var service in RpcLiteConfig.Instance.Services)
-				{
-					RegistryManager.Register(service);
-				}
-			}
-
-			return null;
-		});
-
 		/// <summary>
 		/// 
 		/// </summary>
 		public static void Initialize()
 		{
-			// ReSharper disable once UnusedVariable
-			var value = InitializeService.Value;
+			var config = ConfigurationManager.GetSection("RpcLite") as RpcLiteConfig;
+			RpcProcessor.Initialize(config);
 		}
 
 	}

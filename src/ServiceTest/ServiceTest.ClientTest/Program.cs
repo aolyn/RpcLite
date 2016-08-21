@@ -1,7 +1,9 @@
 ﻿using System;
+using Microsoft.Extensions.Configuration;
 using RpcLite.Client;
 using RpcLite.Config;
 using RpcLite.Registry.Zookeeper;
+using RpcLite.Service;
 using RpcLiteClientTestNetCore;
 using ServiceTest.Contract;
 
@@ -11,11 +13,45 @@ namespace ServiceTest.ClientTest
 	{
 		public static void Main(string[] args)
 		{
+			//UnitTest();
+
+			//appHost.ProcessAsync()
+
+			//UnitTest.Test();
+			//RpcLite.AspNetCore.RpcLiteInitializer.Initialize();
+
+			//RegistryTest();
+			ClientTest1();
+			//PerformanceTest();
+			//Test2();
+		}
+
+		private static void UnitTest()
+		{
+			var config = new ConfigurationBuilder()
+				.AddJsonFile("rpclite.config.json")
+				.Build();
+
+			var appHost = new AppHost(RpcConfigHelper.GetConfig(new CoreConfiguration(config)));
+			appHost.Initialize();
+
+			IServerContext request = null;
+
+			var processed = appHost.ProcessAsync(request);
+		}
+
+		private static void RegistryTest()
+		{
 			//ZookeeperRegistryTest();
+			ClientTest.RegistryTest.Test();
+		}
 
-			RpcLite.AspNetCore.RpcLiteInitializer.Initialize();
+		private static void SerializationTest()
+		{
+			//PropertyReflectTest();
 
-			RegistryTest.Test();
+			//ReflectTest.Test();
+			//JsonSerializerTester.JsonSerializerTest();
 
 			//SerializeTest.PropertyReflectTest();
 			////SerializeTest.ExceptionSerializationMultiThreadTest();
@@ -28,14 +64,6 @@ namespace ServiceTest.ClientTest
 			//setter(exobj, 12);
 
 			//SerializeTest.Test3();
-
-			Test1();
-			PerformanceTest();
-			//PropertyReflectTest();
-
-			//ReflectTest.Test();
-			//JsonSerializerTester.JsonSerializerTest();
-			//Test2();
 		}
 
 		private static void ZookeeperRegistryTest()
@@ -102,7 +130,7 @@ namespace ServiceTest.ClientTest
 			try
 			{
 				var clientInfo = client as IRpcClient;
-				Console.WriteLine(clientInfo.BaseUrl);
+				Console.WriteLine(clientInfo.Address);
 				Console.WriteLine(clientInfo.Formatter.ToString());
 
 				Console.WriteLine("get 10 products");
@@ -141,16 +169,17 @@ namespace ServiceTest.ClientTest
 
 		private static string serviceBaseUrl = "http://localhost:17518";
 
-		private static void Test1()
+		private static void ClientTest1()
 		{
 			//var baseUrl = @"http://localhost:50001/api/service/";
 			//var baseUrl = @"https://www.baidu.com/test/api/service/";
 			//var baseUrl = @"http://localhost/config/asfsdfs";
 
+			RpcLite.AspNetCore.RpcLiteInitializer.Initialize();
+
 			var baseUrl = serviceBaseUrl + @"/api/service/";
 			//var client = ClientFactory.GetInstance<IProductService>(baseUrl);
 			var client = ClientFactory.GetInstance<IProductService>();
-
 
 			try
 			{

@@ -5,6 +5,9 @@ using Microsoft.AspNetCore.Http;
 
 namespace RpcLite.Service
 {
+	/// <summary>
+	/// 
+	/// </summary>
 	public class AspNetCoreServerContext : IServerContext
 	{
 		private readonly HttpContext _httpContext;
@@ -40,10 +43,10 @@ namespace RpcLite.Service
 			_httpContext.Response.ContentType = type;
 		}
 
-		public string GetResponseContentType(string type)
-		{
-			return _httpContext.Response.ContentType;
-		}
+		//public string GetResponseContentType(string type)
+		//{
+		//	return _httpContext.Response.ContentType;
+		//}
 
 		public string GetRequestContentType(string type)
 		{

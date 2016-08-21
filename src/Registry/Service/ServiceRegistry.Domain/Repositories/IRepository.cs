@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace ServiceRegistry.Domain.Repositories
 {
-	public interface IRepository<TAggregateRoot, TId>
+	public interface IRepository<TAggregateRoot, TId> : IDisposable
 		where TAggregateRoot : class, IAggregateRoot<TId>
 	{
 		Task AddAsync(TAggregateRoot aggregateRoot);

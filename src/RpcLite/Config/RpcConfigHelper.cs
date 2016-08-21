@@ -86,7 +86,7 @@ namespace RpcLite.Config
 				foreach (var item in clients)
 				{
 					var name = item["name"]; // GetAttribute("name", item);
-					var path = item["path"]; //GetAttribute("path", item);
+					var address = item["address"]; //GetAttribute("path", item);
 					var type = item["type"]; //GetAttribute("type", item);
 					var env = item["environment"]; //GetAttribute("type", item);
 					var nameSpace = item["namespace"]; // GetAttribute("namespace", item);
@@ -123,7 +123,7 @@ namespace RpcLite.Config
 						Type = type,
 						TypeName = typeName,
 						AssemblyName = assemblyName,
-						Path = path,
+						Address = address,
 						Namespace = nameSpace,
 						Environment = string.IsNullOrWhiteSpace(env) ? environment : env,
 					};
@@ -261,9 +261,9 @@ namespace RpcLite.Config
 				Environment = config["environment"],
 			};
 
-			//InitializeResolverConfig(config, instance);
 			InitializeServiceConfig(config, instance);
 			InitializeClientConfig(config, instance);
+			InitializeRegistryConfig(config, instance);
 
 			if (instance.Services != null)
 			{
@@ -279,9 +279,8 @@ namespace RpcLite.Config
 		private static void InitializeClientConfig(IConfiguration config, RpcLiteConfig instance)
 		{
 			var clientNode = config.GetSection("client");
-			if (clientNode == null) return;
 
-			var clientsNode = clientNode.GetSection("clients");
+			var clientsNode = clientNode?.GetSection("clients");
 			if (clientsNode != null)
 			{
 				var environment = clientsNode["environment"];
@@ -291,7 +290,7 @@ namespace RpcLite.Config
 				foreach (var item in clients)
 				{
 					var name = item["name"]; // GetAttribute("name", item);
-					var path = item["path"]; //GetAttribute("path", item);
+					var address = item["address"]; //GetAttribute("path", item);
 					var type = item["type"]; //GetAttribute("type", item);
 					var env = item["environment"]; //GetAttribute("type", item);
 					var nameSpace = item["namespace"]; // GetAttribute("namespace", item);
@@ -328,121 +327,55 @@ namespace RpcLite.Config
 						Type = type,
 						TypeName = typeName,
 						AssemblyName = assemblyName,
-						Path = path,
+						Address = address,
 						Namespace = nameSpace,
 						Environment = string.IsNullOrWhiteSpace(env) ? environment : env,
 					};
 					instance.Clients.Add(serviceConfigItem);
 				}
 			}
-
-			var resolverNode = clientNode.GetSection("resolver");
-			if (resolverNode != null)
-			{
-				InitializeResolverConfig(resolverNode, instance);
-			}
-
-			var registryrNode = config.GetSection("registry");
-			if (resolverNode != null)
-			{
-				InitializeRegistryConfig(registryrNode, instance);
-			}
 		}
 
-		private static void InitializeResolverConfig(IConfiguration resolverNode, RpcLiteConfig instance)
+		private static void InitializeRegistryConfig(IConfiguration config, RpcLiteConfig instance)
 		{
+			var registryNode = config.GetSection("registry");
+			if (registryNode == null || !registryNode.GetChildren().Any()) return;
+
 			try
 			{
-				//var resolverNode = config.GetSection("resolver");
-				if (resolverNode != null && resolverNode.GetChildren().Any())
+				var name = registryNode["name"]; //GetAttribute("name", registryNode);
+				var type = registryNode["type"]; //GetAttribute("type", registryNode);
+				var address = registryNode["address"]; //GetAttribute("type", registryNode);
+
+				//if (string.IsNullOrEmpty(name))
+				//	throw new RpcLiteConfigurationErrorException("name of RpcLite configuration addressRegistry node can't be null or empty");
+				if (string.IsNullOrEmpty(type))
+					throw new RpcLiteConfigurationErrorException("type of RpcLite configuration Registry node " + name + " can't be null or empty");
+
+				string typeName;
+				string assemblyName;
+
+				var splitorIndex = type.IndexOf(",", StringComparison.Ordinal);
+				if (splitorIndex > -1)
 				{
-					//foreach (XmlNode item in resolverNode.ChildNodes)
-					{
-						//if (resolverNode.Name != "add" || resolverNode.Attributes == null)
-						//	continue;
-
-						var name = resolverNode["name"]; //GetAttribute("name", resolverNode);
-						var type = resolverNode["type"]; //GetAttribute("type", resolverNode);
-						var address = resolverNode["address"]; //GetAttribute("type", resolverNode);
-
-						if (string.IsNullOrEmpty(name))
-							throw new RpcLiteConfigurationErrorException("name of RpcLite configuration addressResolver node can't be null or empty");
-						if (string.IsNullOrEmpty(type))
-							throw new RpcLiteConfigurationErrorException("type of RpcLite configuration addressResolver node " + name + " can't be null or empty");
-
-						string typeName;
-						string assemblyName;
-
-						var splitorIndex = type.IndexOf(",", StringComparison.Ordinal);
-						if (splitorIndex > -1)
-						{
-							typeName = type.Substring(0, splitorIndex);
-							assemblyName = type.Substring(splitorIndex + 1);
-						}
-						else
-						{
-							typeName = type;
-							assemblyName = null;
-						}
-
-						var resolver = new ResolverConfigItem
-						{
-							Name = name,
-							Type = type,
-							TypeName = typeName,
-							AssemblyName = assemblyName,
-							Address = address,
-						};
-						instance.Resover = resolver;
-					}
+					typeName = type.Substring(0, splitorIndex);
+					assemblyName = type.Substring(splitorIndex + 1);
 				}
-			}
-			catch (Exception ex)
-			{
-				throw new ConfigException("Client Configuration Error", ex);
-			}
-		}
-
-		private static void InitializeRegistryConfig(IConfiguration registryNode, RpcLiteConfig instance)
-		{
-			try
-			{
-				if (registryNode != null && registryNode.GetChildren().Any())
+				else
 				{
-					var name = registryNode["name"]; //GetAttribute("name", registryNode);
-					var type = registryNode["type"]; //GetAttribute("type", registryNode);
-					var address = registryNode["address"]; //GetAttribute("type", registryNode);
-
-					//if (string.IsNullOrEmpty(name))
-					//	throw new RpcLiteConfigurationErrorException("name of RpcLite configuration addressRegistry node can't be null or empty");
-					if (string.IsNullOrEmpty(type))
-						throw new RpcLiteConfigurationErrorException("type of RpcLite configuration Registry node " + name + " can't be null or empty");
-
-					string typeName;
-					string assemblyName;
-
-					var splitorIndex = type.IndexOf(",", StringComparison.Ordinal);
-					if (splitorIndex > -1)
-					{
-						typeName = type.Substring(0, splitorIndex);
-						assemblyName = type.Substring(splitorIndex + 1);
-					}
-					else
-					{
-						typeName = type;
-						assemblyName = null;
-					}
-
-					var registry = new RegistryConfigItem
-					{
-						Name = name,
-						Type = type,
-						TypeName = typeName,
-						AssemblyName = assemblyName,
-						Address = address,
-					};
-					instance.Registry = registry;
+					typeName = type;
+					assemblyName = null;
 				}
+
+				var registry = new RegistryConfigItem
+				{
+					Name = name,
+					Type = type,
+					TypeName = typeName,
+					AssemblyName = assemblyName,
+					Address = address,
+				};
+				instance.Registry = registry;
 			}
 			catch (Exception ex)
 			{

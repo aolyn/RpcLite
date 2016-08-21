@@ -12,20 +12,22 @@ namespace ServiceRegistry.Service.Services
 			if (request == null)
 				return new GetServiceAddressResponse();
 
-			var repository = new ServiceMappingRepository();
-			var serviceMapping = repository.GetAsync(it => it.Service.Name == request.ServiceName
-					&& it.Namespace == request.Namespace
-					&& it.Environment == request.Environment).Result;
-
-			var response = new GetServiceAddressResponse
+			using (var repository = new ServiceMappingRepository())
 			{
-				ServiceName = request.ServiceName,
-				Namespace = request.Namespace,
-				Environment = request.Environment,
-				Address = serviceMapping?.Address,
-			};
+				var serviceMapping = repository.GetAsync(it => it.Service.Name == request.ServiceName
+						&& it.Namespace == request.Namespace
+						&& it.Environment == request.Environment).Result;
 
-			return response;
+				var response = new GetServiceAddressResponse
+				{
+					ServiceName = request.ServiceName,
+					Namespace = request.Namespace,
+					Environment = request.Environment,
+					Address = serviceMapping?.Address,
+				};
+
+				return response;
+			}
 		}
 
 		public Task<GetServiceAddressResponse> GetServiceAddressAsync(GetServiceAddressRequest request)

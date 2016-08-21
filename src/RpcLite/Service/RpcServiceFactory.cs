@@ -11,23 +11,26 @@ namespace RpcLite.Service
 	public class RpcServiceFactory
 	{
 		private readonly List<RpcService> _services = new List<RpcService>();
+		private readonly AppHost _host;
+		private readonly RpcLiteConfig _config;
 
-		///// <summary>
-		///// Services
-		///// </summary>
-		//public static List<RpcService> Services
-		//{
-		//	get { return _services; }
-		//}
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="host"></param>
+		/// <param name="config"></param>
+		public RpcServiceFactory(AppHost host, RpcLiteConfig config)
+		{
+			_host = host;
+			_config = config;
+		}
 
-		//static RpcServiceFactory()
-		//{
-		//	Initialize();
-		//}
-
+		/// <summary>
+		/// 
+		/// </summary>
 		public void Initialize()
 		{
-			foreach (var item in RpcLiteConfig.Instance.Services)
+			foreach (var item in _config.Services)
 			{
 				var typeInfo = TypeCreator.GetTypeFromName(item.TypeName, item.AssemblyName);
 				if (typeInfo == null)
@@ -40,15 +43,10 @@ namespace RpcLite.Service
 					Name = item.Name,
 					Path = item.Path,
 					//Type = typeInfo,
-					Filters = RpcProcessor.Filters,
+					Filters = _host.Filters,
 				});
 			}
 		}
-
-		///// <summary>
-		///// 
-		///// </summary>
-		//public static List<RpcService> Services { get { return RpcLiteConfigSection.Instance.Services; } }
 
 		/// <summary>
 		/// 

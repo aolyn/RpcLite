@@ -12,13 +12,34 @@ namespace RpcLite.Registry.Http
 	{
 		private static readonly object InitializeLocker = new object();
 		private static QuickReadConcurrentDictionary<ClientConfigItem, string> _defaultBaseUrlDictionary = new QuickReadConcurrentDictionary<ClientConfigItem, string>();
+		private readonly RpcLiteConfig _config;
+		private readonly Lazy<IRegistryService> _registryClient;
 
-		static HttpRegistry()
+		public HttpRegistry(RpcLiteConfig config)
 		{
+			_config = config;
+
+			_registryClient = new Lazy<IRegistryService>(() =>
+			{
+				var address = _config?.Registry?.Address;
+
+				//var registryClientConfigItem = _config.Clients
+				//	.FirstOrDefault(it => it.TypeName == typeof(IRegistryService).FullName);
+
+				if (string.IsNullOrWhiteSpace(address))
+				{
+					LogHelper.Error("Registry Client Config Error: not exist or path is empty");
+					return null;
+				}
+
+				var client = ClientFactory.GetInstance<IRegistryService>(address);
+				return client;
+			});
+
 			InitilizeBaseUrlsSafe();
 		}
 
-		private static void InitilizeBaseUrlsSafe()
+		private void InitilizeBaseUrlsSafe()
 		{
 			lock (InitializeLocker)
 			{
@@ -26,37 +47,22 @@ namespace RpcLite.Registry.Http
 			}
 		}
 
-		private static void InitilizeBaseUrls()
+		private void InitilizeBaseUrls()
 		{
 			var tempDic = new QuickReadConcurrentDictionary<ClientConfigItem, string>();
-			foreach (var item in RpcLiteConfig.Instance.Clients)
+			foreach (var item in _config.Clients)
 			{
-				if (!string.IsNullOrWhiteSpace(item.Path))
-					tempDic.Add(item, item.Path);
+				if (!string.IsNullOrWhiteSpace(item.Address))
+					tempDic.Add(item, item.Address);
 			}
 
 			_defaultBaseUrlDictionary = tempDic;
 		}
 
-		private static readonly Lazy<IRegistryService> RegistryClient =
-			new Lazy<IRegistryService>(() =>
-			{
-				var registryClientConfigItem = RpcLiteConfig.Instance.Clients
-					.FirstOrDefault(it => it.TypeName == typeof(IRegistryService).FullName);
-
-				if (string.IsNullOrWhiteSpace(registryClientConfigItem?.Path))
-				{
-					LogHelper.Error("Registry Client Config Error: not exist or path is empty");
-					return null;
-				}
-
-				var client = ClientFactory.GetInstance<IRegistryService>(registryClientConfigItem.Path);
-				return client;
-			});
 
 		public bool CanRegister => false;
 
-		private static Uri[] GetAddressInternal(ClientConfigItem clientInfo)
+		private Uri[] GetAddressInternal(ClientConfigItem clientInfo)
 		{
 			// ReSharper disable once InconsistentlySynchronizedField
 			var url = _defaultBaseUrlDictionary.GetOrAdd(clientInfo, () =>
@@ -64,7 +70,7 @@ namespace RpcLite.Registry.Http
 				var clientConfigItem = clientInfo;
 
 				if (clientConfigItem == null) return null;
-				if (RegistryClient.Value == null) return null;
+				if (_registryClient.Value == null) return null;
 
 				var request = new GetServiceAddressRequest
 				{
@@ -72,7 +78,7 @@ namespace RpcLite.Registry.Http
 					Namespace = clientConfigItem.Namespace,
 					Environment = clientInfo.Environment,
 				};
-				var response = RegistryClient.Value.GetServiceAddress(request);
+				var response = _registryClient.Value.GetServiceAddress(request);
 				var uri = string.IsNullOrWhiteSpace(response?.Address)
 					? null
 					: response.Address;

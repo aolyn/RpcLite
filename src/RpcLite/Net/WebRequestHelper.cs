@@ -11,7 +11,6 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using RpcLite.Logging;
 
 namespace RpcLite.Net
 {
@@ -179,7 +178,7 @@ namespace RpcLite.Net
 		/// <param name="content"></param>
 		/// <param name="headDic"></param>
 		/// <returns></returns>
-		public static Task<ResponseMessage> PostAsync(string url, IContent content, Dictionary<string, string> headDic)
+		public static Task<ResponseMessage> PostAsync(string url, IContent content, IDictionary<string, string> headDic)
 		{
 			var tcs = new TaskCompletionSource<ResponseMessage>();
 
@@ -480,7 +479,7 @@ namespace RpcLite.Net
 		/// <param name="content"></param>
 		/// <param name="headDic"></param>
 		/// <returns></returns>
-		public static Task<ResponseMessage> PostAsync(string url, Stream content, Dictionary<string, string> headDic)
+		public static Task<ResponseMessage> PostAsync(string url, Stream content, IDictionary<string, string> headDic)
 		{
 			var requestMessage = new HttpRequestMessage(HttpMethod.Post, url)
 			{
@@ -612,44 +611,44 @@ namespace RpcLite.Net
 			public string Result { get; set; }
 		}
 
+	}
+
+	/// <summary>
+	/// 
+	/// </summary>
+	public class ResponseMessage : IDisposable
+	{
+		private IDisposable _obj;
+
 		/// <summary>
 		/// 
 		/// </summary>
-		public class ResponseMessage : IDisposable
+		/// <param name="obj"></param>
+		public ResponseMessage(IDisposable obj)
 		{
-			private IDisposable _obj;
+			_obj = obj;
+		}
 
-			/// <summary>
-			/// 
-			/// </summary>
-			/// <param name="obj"></param>
-			public ResponseMessage(IDisposable obj)
-			{
-				_obj = obj;
-			}
+		/// <summary>
+		/// 
+		/// </summary>
+		public bool IsSuccess { get; set; }
+		/// <summary>
+		/// 
+		/// </summary>
+		public Dictionary<string, string> Header { get; set; }
 
-			/// <summary>
-			/// 
-			/// </summary>
-			public bool IsSuccess { get; set; }
-			/// <summary>
-			/// 
-			/// </summary>
-			public Dictionary<string, string> Header { get; set; }
+		/// <summary>
+		/// 
+		/// </summary>
+		public Stream Result { get; set; }
 
-			/// <summary>
-			/// 
-			/// </summary>
-			public Stream Result { get; set; }
-
-			/// <summary>
-			/// 
-			/// </summary>
-			public void Dispose()
-			{
-				_obj?.Dispose();
-			}
-
+		/// <summary>
+		/// 
+		/// </summary>
+		public void Dispose()
+		{
+			_obj?.Dispose();
 		}
 
 	}

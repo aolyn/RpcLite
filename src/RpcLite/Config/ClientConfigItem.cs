@@ -23,7 +23,7 @@
 		/// <summary>
 		/// service url, eg: http://localhost/api/product
 		/// </summary>
-		public string Path { get; set; }
+		public string Address { get; set; }
 
 		/// <summary>
 		/// assembly of service implement class
@@ -51,7 +51,7 @@
 		/// <returns></returns>
 		public override string ToString()
 		{
-			return $"{Name}, { TypeName }, {Path}";
+			return $"{Name}, { TypeName }, {Address}";
 		}
 	}
 }

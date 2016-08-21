@@ -37,6 +37,8 @@ namespace ServiceRegistry.Dal
 			//		IndexAnnotation.AnnotationName,
 			//		new IndexAnnotation(new IndexAttribute("ServiceMapping_UK_ServiceId_Environment_Namespace", 2)));
 
+			//modelBuilder.HasDefaultSchema("public");
+
 			//TODO: add index ServiceMapping_UK_ServiceId_Environment_Namespace
 
 			//modelBuilder.Entity<Post>()
@@ -48,7 +50,7 @@ namespace ServiceRegistry.Dal
 		{
 			//optionsBuilder.Options.FindExtension<
 			//optionsBuilder.use
-			optionsBuilder.UseNpgsql("server=localhost;user id=chris;password=chris123;database=ShareVideo");
+			optionsBuilder.UseNpgsql("server=localhost;user id=chris;password=chris123;database=RpcLite");
 			//optionsBuilder.UseSqlite("Data Source=rpclite.db;Version=3;");
 			//optionsBuilder.UseSqlServer("server=localhost;user id=chris;password=chris123;database=RpcLite");
 			//optionsBuilder.UseSqlServer("Data Source=.;Initial Catalog=RpcLite;Integrated Security=True");

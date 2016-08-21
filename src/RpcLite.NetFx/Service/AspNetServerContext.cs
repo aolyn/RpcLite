@@ -56,10 +56,10 @@ namespace RpcLite.Service
 			return _httpContext.Response.ContentType;
 		}
 
-		public string GetRequestContentType(string type)
-		{
-			return _httpContext.Request.ContentType;
-		}
+		//public string GetRequestContentType(string type)
+		//{
+		//	return _httpContext.Request.ContentType;
+		//}
 
 		public Stream GetRequestStream()
 		{
