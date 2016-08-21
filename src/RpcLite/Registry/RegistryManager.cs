@@ -64,7 +64,8 @@ namespace RpcLite.Registry
 		/// <param name="serviceInfo"></param>
 		public void Register(ServiceConfigItem serviceInfo)
 		{
-			_registry?.RegisterAsync(serviceInfo).Wait();
+			if (_registry?.CanRegister ?? false)
+				_registry?.RegisterAsync(serviceInfo).Wait();
 		}
 
 	}

@@ -151,14 +151,14 @@ namespace RpcLite.Service
 			{
 				Request = new ServiceRequest
 				{
-					RequestStream = serverContext.GetRequestStream(),
+					RequestStream = serverContext.RequestStream,
 					Path = serverContext.RequestPath,
-					ContentType = serverContext.GetRequestContentType(),
+					ContentType = serverContext.RequestContentType,
 					ContentLength = serverContext.RequestContentLength,
 				},
 				Response = new ServiceResponse
 				{
-					ResponseStream = serverContext.GetResponseStream(),
+					ResponseStream = serverContext.ResponseStream,
 				},
 				ExecutingContext = serverContext,
 				//Formatter = formatter,
@@ -228,7 +228,7 @@ namespace RpcLite.Service
 
 			//var httpContext = (HttpContext)context.ExecutingContext;
 			//httpContext.Response.ContentType = context.Response.ContentType;
-			httpContext.SetResponseContentType(context.Response.ContentType);
+			httpContext.ResponseContentType = (context.Response.ContentType);
 
 #if DEBUG
 			var startTimeObj = context.GetExtensionData("StartTime");
@@ -276,7 +276,7 @@ namespace RpcLite.Service
 					{
 						if (string.IsNullOrWhiteSpace(context.Request.ContentType))
 						{
-							httpContext.SetResponseContentType("text/html");
+							httpContext.ResponseContentType = ("text/html");
 							using (var writer = new StreamWriter(context.Response.ResponseStream))
 							{
 								var value = context.Result.ToString();

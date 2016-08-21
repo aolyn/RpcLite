@@ -12,15 +12,33 @@ namespace RpcLite.Service
 	{
 		private readonly HttpContext _httpContext;
 
+		public AspNetCoreServerContext(HttpContext httpContext)
+		{
+			_httpContext = httpContext;
+		}
+
 		public string RequestPath => _httpContext.Request.QueryString.HasValue
 			? _httpContext.Request.Path + _httpContext.Request.QueryString.Value
 			: _httpContext.Request.Path.Value;
 
 		public int RequestContentLength => (int)(_httpContext.Request.ContentLength ?? 0);
 
-		public AspNetCoreServerContext(HttpContext httpContext)
+		public string ResponseContentType
 		{
-			_httpContext = httpContext;
+			get { return _httpContext.Response.ContentType; }
+			set { _httpContext.Response.ContentType = value; }
+		}
+
+		public string RequestContentType => _httpContext.Request.ContentType;
+
+		public Stream RequestStream => _httpContext.Request.Body;
+
+		public Stream ResponseStream => _httpContext.Response.Body;
+
+		public int ResponseStatusCode
+		{
+			get { return _httpContext.Response.StatusCode; }
+			set { _httpContext.Response.StatusCode = value; }
 		}
 
 		public string GetRequestHeader(string key)
@@ -38,45 +56,6 @@ namespace RpcLite.Service
 			return _httpContext.Response.Headers[key];
 		}
 
-		public void SetResponseContentType(string type)
-		{
-			_httpContext.Response.ContentType = type;
-		}
-
-		//public string GetResponseContentType(string type)
-		//{
-		//	return _httpContext.Response.ContentType;
-		//}
-
-		public string GetRequestContentType(string type)
-		{
-			return _httpContext.Request.ContentType;
-		}
-
-		public Stream GetRequestStream()
-		{
-			return _httpContext.Request.Body;
-		}
-
-		public Stream GetResponseStream()
-		{
-			return _httpContext.Response.Body;
-		}
-
-		public string GetResponseContentType()
-		{
-			return _httpContext.Response.ContentType;
-		}
-
-		public string GetRequestContentType()
-		{
-			return _httpContext.Request.ContentType;
-		}
-
-		public void SetResponseStatusCode(int statusCode)
-		{
-			_httpContext.Response.StatusCode = statusCode;
-		}
 	}
 }
 

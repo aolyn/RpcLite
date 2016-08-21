@@ -153,11 +153,11 @@ namespace RpcLite.Client
 					}
 				}
 
-				if (resultMessage.Header.Count == 0)
+				if (resultMessage.Headers.Count == 0)
 					throw new ServiceException("service url is not a service address");
 
-				var exceptionAssembly = resultMessage.Header["RpcLite-ExceptionAssembly"];
-				var exceptionTypeName = resultMessage.Header["RpcLite-ExceptionType"];
+				var exceptionAssembly = resultMessage.Headers["RpcLite-ExceptionAssembly"];
+				var exceptionTypeName = resultMessage.Headers["RpcLite-ExceptionType"];
 
 				if (string.IsNullOrWhiteSpace(exceptionAssembly) || string.IsNullOrWhiteSpace(exceptionTypeName))
 				{
@@ -295,47 +295,6 @@ namespace RpcLite.Client
 		{
 			get { return this as TContract; }
 		}
-
-
-		private static Lazy<Func<RpcClientBase<TContract>>> _func = new Lazy<Func<RpcClientBase<TContract>>>(() =>
-		{
-			var type = ClientWrapper.WrapInterface<TContract>();
-			var func = TypeCreator.GetCreateInstanceFunc(type) as Func<RpcClientBase<TContract>>;
-			return func;
-		}, true);
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <returns></returns>
-		public static RpcClientBase<TContract> GetInstance()
-		{
-			return GetInstance(GetDefaultBaseUrl());
-		}
-
-		private static string GetDefaultBaseUrl()
-		{
-			//var uri = ClientAddressResolver<TContract>.GetAddress();
-			var uri = RpcProcessor.ServiceHost.RegistryManager.GetAddress<TContract>();
-			return uri == null ? null : uri.ToString();
-		}
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="baseUrl"></param>
-		/// <returns></returns>
-		public static RpcClientBase<TContract> GetInstance(string baseUrl)
-		{
-			if (_func.Value == null)
-				throw new ClientException("GetCreateInstanceFunc Error.");
-
-			var client = _func.Value();
-			client.Address = baseUrl;
-			client.Channel = new HttpClientChannel(baseUrl);
-			return client;
-		}
-
 	}
 
 	internal static class StaticDataHolder

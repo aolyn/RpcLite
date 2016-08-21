@@ -17,6 +17,7 @@
     "RpcLite.Registry.Zookeeper": "1.0.0-*",
     "ServiceRegistry.Contract": "1.0.0-*",
     "ServiceTest.Contract": "1.0.0-*",
+    "ServiceTest.ServiceImpl": "1.0.0-*",
     "System.Runtime.Serialization.Json": "4.0.2",
     "System.Runtime.Serialization.Primitives": "4.1.1",
     "System.Runtime.Serialization.Xml": "4.1.1",

@@ -32,32 +32,25 @@ namespace RpcLite.Service
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="type"></param>
-		void SetResponseContentType(string type);
+		string ResponseContentType { get; set; }
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		string GetResponseContentType();
+		string RequestContentType { get; }
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		string GetRequestContentType();
+		Stream RequestStream { get; }
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		Stream GetRequestStream();
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <returns></returns>
-		Stream GetResponseStream();
+		Stream ResponseStream { get; }
 
 		/// <summary>
 		/// 
@@ -72,7 +65,6 @@ namespace RpcLite.Service
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="statusCode"></param>
-		void SetResponseStatusCode(int statusCode);
+		int ResponseStatusCode { get; set; }
 	}
 }

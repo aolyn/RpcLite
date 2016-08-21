@@ -9,6 +9,11 @@ namespace RpcLite.Service
 	{
 		private readonly HttpContext _httpContext;
 
+		public AspNetServerContext(HttpContext httpContext)
+		{
+			_httpContext = httpContext;
+		}
+
 		private string _requestPath;
 		public string RequestPath
 		{
@@ -26,11 +31,6 @@ namespace RpcLite.Service
 
 		public int RequestContentLength => _httpContext.Request.ContentLength;
 
-		public AspNetServerContext(HttpContext httpContext)
-		{
-			_httpContext = httpContext;
-		}
-
 		public string GetRequestHeader(string key)
 		{
 			return _httpContext.Request.Headers[key];
@@ -46,45 +46,24 @@ namespace RpcLite.Service
 			return _httpContext.Response.Headers[key];
 		}
 
-		public void SetResponseContentType(string type)
+		public string ResponseContentType
 		{
-			_httpContext.Response.ContentType = type;
+			get { return _httpContext.Response.ContentType; }
+			set { _httpContext.Response.ContentType = value; }
 		}
 
-		public string GetResponseContentType(string type)
+		public string RequestContentType => _httpContext.Request.ContentType;
+
+		public Stream RequestStream => _httpContext.Request.InputStream;
+
+		public Stream ResponseStream => _httpContext.Response.OutputStream;
+
+		public int ResponseStatusCode
 		{
-			return _httpContext.Response.ContentType;
+			get { return _httpContext.Response.StatusCode; }
+			set { _httpContext.Response.StatusCode = value; }
 		}
 
-		//public string GetRequestContentType(string type)
-		//{
-		//	return _httpContext.Request.ContentType;
-		//}
-
-		public Stream GetRequestStream()
-		{
-			return _httpContext.Request.InputStream;
-		}
-
-		public Stream GetResponseStream()
-		{
-			return _httpContext.Response.OutputStream;
-		}
-
-		public string GetResponseContentType()
-		{
-			return _httpContext.Response.ContentType;
-		}
-
-		public string GetRequestContentType()
-		{
-			return _httpContext.Request.ContentType;
-		}
-
-		public void SetResponseStatusCode(int statusCode)
-		{
-			_httpContext.Response.StatusCode = statusCode;
-		}
 	}
 }
 

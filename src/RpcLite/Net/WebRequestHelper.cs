@@ -11,6 +11,7 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using RpcLite.Client;
 
 namespace RpcLite.Net
 {
@@ -343,7 +344,7 @@ namespace RpcLite.Net
 			{
 				IsSuccess = isSuccess,
 				Result = response.GetResponseStream(),
-				Header = headers,
+				Headers = headers,
 			};
 			return responseMessage;
 		}
@@ -586,7 +587,7 @@ namespace RpcLite.Net
 			{
 				IsSuccess = isSuccess, // response.StatusCode == HttpStatusCode.OK,
 				Result = response.Content.ReadAsStreamAsync().Result,
-				Header = headers,
+				Headers = headers,
 			};
 			return responseMessage;
 		}
@@ -613,43 +614,4 @@ namespace RpcLite.Net
 
 	}
 
-	/// <summary>
-	/// 
-	/// </summary>
-	public class ResponseMessage : IDisposable
-	{
-		private IDisposable _obj;
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="obj"></param>
-		public ResponseMessage(IDisposable obj)
-		{
-			_obj = obj;
-		}
-
-		/// <summary>
-		/// 
-		/// </summary>
-		public bool IsSuccess { get; set; }
-		/// <summary>
-		/// 
-		/// </summary>
-		public Dictionary<string, string> Header { get; set; }
-
-		/// <summary>
-		/// 
-		/// </summary>
-		public Stream Result { get; set; }
-
-		/// <summary>
-		/// 
-		/// </summary>
-		public void Dispose()
-		{
-			_obj?.Dispose();
-		}
-
-	}
 }

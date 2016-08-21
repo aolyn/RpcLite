@@ -1,9 +1,7 @@
 ﻿using System;
-using Microsoft.Extensions.Configuration;
 using RpcLite.Client;
 using RpcLite.Config;
 using RpcLite.Registry.Zookeeper;
-using RpcLite.Service;
 using RpcLiteClientTestNetCore;
 using ServiceTest.Contract;
 
@@ -13,7 +11,7 @@ namespace ServiceTest.ClientTest
 	{
 		public static void Main(string[] args)
 		{
-			//UnitTest();
+			UnitTest.Test();
 
 			//appHost.ProcessAsync()
 
@@ -21,24 +19,16 @@ namespace ServiceTest.ClientTest
 			//RpcLite.AspNetCore.RpcLiteInitializer.Initialize();
 
 			//RegistryTest();
-			ClientTest1();
+			//ClientTest1();
 			//PerformanceTest();
 			//Test2();
 		}
 
-		private static void UnitTest()
-		{
-			var config = new ConfigurationBuilder()
-				.AddJsonFile("rpclite.config.json")
-				.Build();
-
-			var appHost = new AppHost(RpcConfigHelper.GetConfig(new CoreConfiguration(config)));
-			appHost.Initialize();
-
-			IServerContext request = null;
-
-			var processed = appHost.ProcessAsync(request);
-		}
+		//public static Task<ResponseMessage> SendAsync(string action, Stream content, IDictionary<string, string> headers)
+		//{
+		//	var response = new ResponseMessage(null);
+		//	return Task.FromResult(response);
+		//}
 
 		private static void RegistryTest()
 		{
