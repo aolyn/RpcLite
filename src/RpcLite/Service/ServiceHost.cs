@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using RpcLite.Config;
 using RpcLite.Formatters;
 using RpcLite.Logging;
-using RpcLite.Registry;
+
 #if OUTPUT_SERIALIZATION_TIME
 using System.Diagnostics;
 #endif
@@ -24,13 +24,12 @@ namespace RpcLite.Service
 	/// <summary>
 	/// 
 	/// </summary>
-	public class AppHost
+	public class ServiceHost
 	{
 		private readonly RpcServiceFactory _serviceFactory;
 		private readonly RpcLiteConfig _config;
 		private readonly Lazy<object> _initializeRegistry;
-
-		public RegistryManager RegistryManager { get; private set; }
+		private readonly AppHost _appHost;
 
 		/// <summary>
 		/// 
@@ -40,18 +39,12 @@ namespace RpcLite.Service
 		/// <summary>
 		/// 
 		/// </summary>
-		public string ApplicationId { get; private set; }
-
-		/// <summary>
-		/// 
-		/// </summary>
-		public AppHost(RpcLiteConfig config)
+		public ServiceHost(AppHost appHost, RpcLiteConfig config)
 		{
 			_config = config;
-			_serviceFactory = new RpcServiceFactory(this, config);
-			ApplicationId = config.AppId;
+			_appHost = appHost;
 
-			RegistryManager = new RegistryManager(config);
+			_serviceFactory = new RpcServiceFactory(_appHost, config);
 
 			_initializeRegistry = new Lazy<object>(() =>
 			{
@@ -59,7 +52,7 @@ namespace RpcLite.Service
 				{
 					foreach (var service in _config.Services)
 					{
-						RegistryManager.Register(service);
+						_appHost.RegistryManager.Register(service);
 					}
 				}
 

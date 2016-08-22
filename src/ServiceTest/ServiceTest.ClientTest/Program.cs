@@ -12,14 +12,14 @@ namespace ServiceTest.ClientTest
 		public static void Main(string[] args)
 		{
 			UnitTest.Test();
-
+			//ClientTest1();
 			//appHost.ProcessAsync()
 
 			//UnitTest.Test();
 			//RpcLite.AspNetCore.RpcLiteInitializer.Initialize();
 
 			//RegistryTest();
-			//ClientTest1();
+
 			//PerformanceTest();
 			//Test2();
 		}

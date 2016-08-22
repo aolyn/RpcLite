@@ -79,11 +79,22 @@ namespace RpcLite.Service
 			return tcs.Task;
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="context"></param>
+		/// <param name="cb"></param>
+		/// <param name="extraData"></param>
+		/// <returns></returns>
 		public IAsyncResult BeginProcessRequest(HttpContext context, AsyncCallback cb, object extraData)
 		{
 			return ProcessReqeustInternal(context, cb, extraData);
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="result"></param>
 		public void EndProcessRequest(IAsyncResult result)
 		{
 		}

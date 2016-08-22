@@ -7,7 +7,7 @@ namespace RpcLite.Client
 	/// </summary>
 	public static class ClientFactory
 	{
-		private static readonly RpcClientFactory Factory = new RpcClientFactory(RpcProcessor.ServiceHost.RegistryManager);
+		//private static readonly RpcClientFactory Factory = new RpcClientFactory(RpcProcessor.ServiceHost.RegistryManager);
 
 		/// <summary>
 		/// 
@@ -17,7 +17,7 @@ namespace RpcLite.Client
 		public static TContract GetInstance<TContract>()
 			where TContract : class
 		{
-			return Factory.GetInstance<TContract>();
+			return RpcProcessor.AppHost.ClientFactory.GetInstance<TContract>();
 		}
 
 		/// <summary>
@@ -28,7 +28,7 @@ namespace RpcLite.Client
 		public static TContract GetInstance<TContract>(string address)
 			where TContract : class
 		{
-			return Factory.GetInstance<TContract>(address);
+			return RpcProcessor.AppHost.ClientFactory.GetInstance<TContract>(address);
 		}
 	}
 }

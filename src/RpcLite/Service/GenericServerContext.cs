@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using RpcLite.Service;
 
-namespace ServiceTest.ClientTest
+namespace RpcLite.Service
 {
 	public class GenericServerContext : IServerContext
 	{

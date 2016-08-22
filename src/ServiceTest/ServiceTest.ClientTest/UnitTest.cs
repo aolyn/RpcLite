@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
-using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
+using RpcLite;
 using RpcLite.Client;
-using RpcLite.Config;
-using RpcLite.Service;
 using ServiceTest.Contract;
 
 namespace ServiceTest.ClientTest
@@ -20,59 +16,38 @@ namespace ServiceTest.ClientTest
 
 		public static void Test1()
 		{
+			Console.WriteLine("start test");
+			//Console.ReadLine();
+
 			var config = new ConfigurationBuilder()
 				.AddJsonFile("rpclite.config.json")
 				.Build();
 
-			var appHost = new AppHost(RpcConfigHelper.GetConfig(new CoreConfiguration(config)));
+			var appHost = new AppHost(config);
 			appHost.Initialize();
 
-			var clientBuilder = new RpcClientBuilder<IProductService>(appHost.RegistryManager);
+			var client = appHost.ClientFactory.GetInstance<IProductService>();
 
-			var client = clientBuilder.GetInstance();
-
-			var channel = new MemoryClientChannel() { Address = "/api/service/" };
-			channel.ExcuteFunc = (string action, Stream content, IDictionary<string, string> headers) =>
-			{
-				var outputStream = new MemoryStream();
-				var responseHeader = new Dictionary<string, string>();
-
-				IServerContext request = new GenericServerContext()
-				{
-					RequestContentLength = (int)content.Length,
-					RequestContentType = headers["Content-Type"],
-					RequestPath = channel.Address + action,
-					RequestStream = content,
-					RequestHeader = headers,
-
-					ResponseStream = outputStream,
-					ResponseHeader = responseHeader,
-				};
-
-				var processed = appHost.ProcessAsync(request).Result;
-				outputStream.Position = 0;
-				var response = new ResponseMessage(null)
-				{
-					Headers = responseHeader,
-					IsSuccess = true,
-					Result = outputStream,
-				};
-
-				return Task.FromResult(response);
-			};
+			var channel = new MemoryClientChannel(appHost) { Address = "/api/service/" };
 
 			((IRpcClient)client).Channel = channel;
 			var products = client.GetAll();
 
-			var stopwatch = Stopwatch.StartNew();
-			var times = 10000;
-			for (int i = 0; i < times; i++)
+			while (true)
 			{
-				var products2 = client.GetAll();
-			}
+				Console.WriteLine("press enter to start 10000 test");
+				Console.ReadLine();
 
-			stopwatch.Stop();
-			Console.WriteLine($"Elapsed: {stopwatch.Elapsed.TotalMilliseconds}, {times * 1000 / stopwatch.Elapsed.TotalMilliseconds} tps");
+				var stopwatch = Stopwatch.StartNew();
+				var times = 10000;
+				for (int i = 0; i < times; i++)
+				{
+					var products2 = client.GetAll();
+				}
+
+				stopwatch.Stop();
+				Console.WriteLine($"Elapsed: {stopwatch.Elapsed.TotalMilliseconds}, {times * 1000 / stopwatch.Elapsed.TotalMilliseconds} tps");
+			}
 
 			Console.ReadLine();
 		}

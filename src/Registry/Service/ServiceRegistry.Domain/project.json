@@ -2,18 +2,27 @@
   "version": "1.0.0-*",
 
   "dependencies": {
-    "NETStandard.Library": "1.6.0",
-    "System.Linq.Expressions": "4.1.0"
   },
 
   "frameworks": {
-    "netcoreapp1.0": {
-      "imports": [ "dnxcore50", "portable-net45+win8" ]
-    },
     "netstandard1.3": {
       "imports": "dnxcore50",
       "dependencies": {
+        "NETStandard.Library": "1.6.0",
+        "System.Linq.Expressions": "4.1.0"
+      }
+    },
+
+    "net45": {
+      "dependencies": {
+      },
+      "buildOptions": {
+        "define": [
+          "NETFX",
+          "NET40"
+        ]
       }
     }
+
   }
 }
