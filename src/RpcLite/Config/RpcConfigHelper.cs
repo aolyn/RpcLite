@@ -80,7 +80,7 @@ namespace RpcLite.Config
 			if (clientsNode != null)
 			{
 				var environment = clientsNode["environment"];
-				instance.ClientEnvironment = !string.IsNullOrWhiteSpace(environment) ? environment : instance.Environment;
+				//instance.ClientEnvironment = !string.IsNullOrWhiteSpace(environment) ? environment : instance.Environment;
 
 				var clients = clientsNode.GetChildren();
 				foreach (var item in clients)
@@ -121,8 +121,8 @@ namespace RpcLite.Config
 					{
 						Name = name,
 						Type = type,
-						TypeName = typeName,
-						AssemblyName = assemblyName,
+						//TypeName = typeName,
+						//AssemblyName = assemblyName,
 						Address = address,
 						Namespace = nameSpace,
 						Environment = string.IsNullOrWhiteSpace(env) ? environment : env,
@@ -229,8 +229,8 @@ namespace RpcLite.Config
 						{
 							Name = name,
 							Type = type,
-							TypeName = typeName,
-							AssemblyName = assemblyName,
+							//TypeName = typeName,
+							//AssemblyName = assemblyName,
 							Path = path,
 							Address = address,
 							Environment = env,
@@ -284,7 +284,7 @@ namespace RpcLite.Config
 			if (clientsNode != null)
 			{
 				var environment = clientsNode["environment"];
-				instance.ClientEnvironment = !string.IsNullOrWhiteSpace(environment) ? environment : instance.Environment;
+				//instance.ClientEnvironment = !string.IsNullOrWhiteSpace(environment) ? environment : instance.Environment;
 
 				var clients = clientsNode.GetChildren();
 				foreach (var item in clients)
@@ -325,8 +325,8 @@ namespace RpcLite.Config
 					{
 						Name = name,
 						Type = type,
-						TypeName = typeName,
-						AssemblyName = assemblyName,
+						//TypeName = typeName,
+						//AssemblyName = assemblyName,
 						Address = address,
 						Namespace = nameSpace,
 						Environment = string.IsNullOrWhiteSpace(env) ? environment : env,
@@ -439,8 +439,8 @@ namespace RpcLite.Config
 						{
 							Name = name,
 							Type = type,
-							TypeName = typeName,
-							AssemblyName = assemblyName,
+							//TypeName = typeName,
+							//AssemblyName = assemblyName,
 							Path = path,
 							Address = address,
 							Environment = env,

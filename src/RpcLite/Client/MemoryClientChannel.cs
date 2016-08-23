@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net;
 using System.Threading.Tasks;
 using RpcLite.Service;
 
@@ -65,11 +66,15 @@ namespace RpcLite.Client
 				if (!processed)
 					return null;
 
+				string statusCode;
+				var isSuccess = responseHeader.TryGetValue("RpcLite-StatusCode", out statusCode)
+					&& statusCode == ((int)HttpStatusCode.OK).ToString();
+
 				outputStream.Position = 0;
 				var response = new ResponseMessage(null)
 				{
 					Headers = responseHeader,
-					IsSuccess = true,
+					IsSuccess = isSuccess,
 					Result = outputStream,
 				};
 

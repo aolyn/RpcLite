@@ -26,9 +26,9 @@ namespace RpcLite.AspNetCore
 		public static void Initialize(CoreConfig.IConfiguration config)
 		{
 			var rpcConfig = RpcConfigHelper.GetConfig(new CoreConfigurationSection(config));
-			RpcLiteConfig.SetInstance(rpcConfig);
+			//RpcLiteConfig.SetInstance(rpcConfig);
 
-			RpcProcessor.Initialize(rpcConfig);
+			RpcManager.Initialize(rpcConfig);
 		}
 
 		/// <summary>

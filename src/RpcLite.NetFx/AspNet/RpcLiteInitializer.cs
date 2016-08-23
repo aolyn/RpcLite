@@ -15,7 +15,7 @@ namespace RpcLite.AspNet
 		public static void Initialize()
 		{
 			var config = ConfigurationManager.GetSection("RpcLite") as RpcLiteConfig;
-			RpcProcessor.Initialize(config);
+			RpcManager.Initialize(config);
 		}
 
 	}

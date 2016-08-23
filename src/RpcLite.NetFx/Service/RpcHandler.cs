@@ -15,7 +15,7 @@ namespace RpcLite.Service
 		/// <param name="context"></param>
 		public void ProcessRequest(HttpContext context)
 		{
-			RpcProcessor.ProcessAsync(new AspNetServerContext(context)).Wait();
+			RpcManager.ProcessAsync(new AspNetServerContext(context)).Wait();
 		}
 
 		/// <summary>

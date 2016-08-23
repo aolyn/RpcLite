@@ -48,9 +48,9 @@ namespace RpcLite.Registry.Zookeeper
 
 		public bool CanRegister => true;
 
-		public Task<Uri[]> LookupAsync(ClientConfigItem clientInfo)
+		public Task<string[]> LookupAsync(ClientConfigItem clientInfo)
 		{
-			if (clientInfo == null) return Task.FromResult((Uri[])null);
+			if (clientInfo == null) return Task.FromResult((string[])null);
 
 			EnsureStartComplete();
 
@@ -83,7 +83,7 @@ namespace RpcLite.Registry.Zookeeper
 			return Task.FromResult(url?.Addresses);
 		}
 
-		public async Task<Uri[]> LookupInternalAsync(ClientConfigItem clientInfo)
+		public async Task<string[]> LookupInternalAsync(ClientConfigItem clientInfo)
 		{
 			try
 			{
@@ -104,11 +104,11 @@ namespace RpcLite.Registry.Zookeeper
 					}
 					return addresses
 						.Distinct()
-						.Select(it => new Uri(it))
+						.Select(it => (it))
 						.ToArray();
 				}
 
-				return new Uri[0];
+				return new string[0];
 			}
 			catch (KeeperException)
 			{
@@ -298,7 +298,7 @@ namespace RpcLite.Registry.Zookeeper
 
 		internal class ClientLookupItem
 		{
-			public Uri[] Addresses { get; internal set; }
+			public string[] Addresses { get; internal set; }
 			public ClientConfigItem ClientInfo { get; internal set; }
 		}
 	}

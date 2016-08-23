@@ -102,5 +102,10 @@ namespace ServiceTest.ServiceImpl
 			return Task.FromResult(Products.ToArray());
 		}
 
+		public void ThrowException(Exception ex)
+		{
+			throw ex;
+		}
 	}
+
 }

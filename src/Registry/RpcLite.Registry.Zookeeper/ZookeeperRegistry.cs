@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using org.apache.zookeeper;
 using RpcLite.Config;
 
@@ -55,7 +54,7 @@ namespace RpcLite.Registry.Zookeeper
 			_zookeeper.Dispose();
 		}
 
-		public async Task<Uri[]> LookupAsync(ClientConfigItem clientInfo)
+		public async Task<string[]> LookupAsync(ClientConfigItem clientInfo)
 		{
 			try
 			{

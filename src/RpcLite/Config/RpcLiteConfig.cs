@@ -10,59 +10,54 @@ namespace RpcLite.Config
 	{
 		//private string _clientEnvironmentAttributeValue;
 
-		private static RpcLiteConfig _instance;
-		/// <summary>
-		/// Instance of RpcLiteConfigSection
-		/// </summary>
-		private static RpcLiteConfig Instance
-		{
-			get
-			{
-				if (_instance != null)
-					return _instance;
+		//private static RpcLiteConfig _instance;
+		///// <summary>
+		///// Instance of RpcLiteConfigSection
+		///// </summary>
+		//private static RpcLiteConfig Instance
+		//{
+		//	get
+		//	{
+		//		if (_instance != null)
+		//			return _instance;
 
-				_instance = new RpcLiteConfig();
+		//		_instance = new RpcLiteConfig();
 
-				return _instance;
-			}
-		}
+		//		return _instance;
+		//	}
+		//}
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="instance"></param>
-		/// <returns></returns>
-		public static void SetInstance(RpcLiteConfig instance)
-		{
-			_instance = instance;
-		}
+		///// <summary>
+		///// 
+		///// </summary>
+		///// <param name="instance"></param>
+		///// <returns></returns>
+		//public static void SetInstance(RpcLiteConfig instance)
+		//{
+		//	_instance = instance;
+		//}
 
 		#region Properties
 
-		private readonly List<ServiceConfigItem> _services = new List<ServiceConfigItem>();
 		/// <summary>
 		/// Service config items
 		/// </summary>
-		public List<ServiceConfigItem> Services { get { return _services; } }
+		public List<ServiceConfigItem> Services { get; set; } = new List<ServiceConfigItem>();
 
 		/// <summary>
 		/// Current app environment
 		/// </summary>
 		public string Environment { get; set; }
 
-		/// <summary>
-		/// Default environment of ServiceClient used to get ServiceClientAddress
-		/// </summary>
-		public string ClientEnvironment { get; set; }
+		///// <summary>
+		///// Default environment of ServiceClient used to get ServiceClientAddress
+		///// </summary>
+		//public string ClientEnvironment { get; set; }
 
-		private readonly List<ClientConfigItem> _clients = new List<ClientConfigItem>();
 		/// <summary>
 		/// Client config items
 		/// </summary>
-		public List<ClientConfigItem> Clients
-		{
-			get { return _clients; }
-		}
+		public List<ClientConfigItem> Clients { get; set; } = new List<ClientConfigItem>();
 
 		/// <summary>
 		/// Client Address Resover

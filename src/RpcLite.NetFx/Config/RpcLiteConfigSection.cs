@@ -6,6 +6,9 @@ using System.Xml;
 
 namespace RpcLite.Config
 {
+	/// <summary>
+	/// 
+	/// </summary>
 	public class RpcLiteConfigSection : IConfigurationSectionHandler
 	{
 		/// <summary>
@@ -13,9 +16,9 @@ namespace RpcLite.Config
 		/// </summary>
 		public static RpcLiteConfig Instance { get; private set; }
 
-		public static void Initialize()
-		{
-		}
+		//public static void Initialize()
+		//{
+		//}
 
 		static RpcLiteConfigSection()
 		{
@@ -23,7 +26,7 @@ namespace RpcLite.Config
 			{
 				var sec = ConfigurationManager.GetSection("RpcLite");
 				Instance = sec as RpcLiteConfig;
-				RpcLiteConfig.SetInstance(Instance);
+				//RpcLiteConfig.SetInstance(Instance);
 			}
 			catch (RpcLiteConfigurationErrorException)
 			{

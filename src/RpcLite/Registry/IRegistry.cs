@@ -21,7 +21,7 @@ namespace RpcLite.Registry
 		/// </summary>
 		/// <param name="clientInfo"></param>
 		/// <returns></returns>
-		Task<Uri[]> LookupAsync(ClientConfigItem clientInfo);
+		Task<string[]> LookupAsync(ClientConfigItem clientInfo);
 
 		/// <summary>
 		/// if or not support registry current service to registry server

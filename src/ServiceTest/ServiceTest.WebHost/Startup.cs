@@ -22,8 +22,8 @@ namespace ServiceTest.WebHost
 			loggerFactory.AddConsole(LogLevel.Error);
 
 			RpcLiteInitializer.Initialize(app);
-			RpcProcessor.AddFilter(new LogTimeFilter());
-			RpcProcessor.AddFilter(new LogRequestTimeFilter());
+			RpcManager.AddFilter(new LogTimeFilter());
+			RpcManager.AddFilter(new LogRequestTimeFilter());
 
 			if (env.IsDevelopment())
 			{

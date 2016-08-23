@@ -30,7 +30,7 @@ namespace RpcLite.Service
 		/// <returns></returns>
 		public async Task Invoke(HttpContext httpContext)
 		{
-			if (await RpcProcessor.ProcessAsync(new AspNetCoreServerContext(httpContext))) return;
+			if (await RpcManager.ProcessAsync(new AspNetCoreServerContext(httpContext))) return;
 
 			await _next(httpContext);
 		}

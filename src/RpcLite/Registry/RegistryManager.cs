@@ -14,6 +14,10 @@ namespace RpcLite.Registry
 		private static IRegistry _registry;
 		private readonly RpcLiteConfig _config;
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="config"></param>
 		public RegistryManager(RpcLiteConfig config)
 		{
 			_config = config;
@@ -27,7 +31,7 @@ namespace RpcLite.Registry
 
 			try
 			{
-				var type = TypeCreator.GetTypeFromName(registryItem.TypeName, registryItem.AssemblyName);
+				var type = TypeCreator.GetTypeFromFullName(registryItem.Type);
 				if (type != null)
 				{
 					_registry = Activator.CreateInstance(type, _config) as IRegistry;
@@ -45,7 +49,7 @@ namespace RpcLite.Registry
 		/// </summary>
 		/// <typeparam name="TContract"></typeparam>
 		/// <returns></returns>
-		public Uri GetAddress<TContract>()
+		public string GetAddress<TContract>()
 		{
 			if (_registry == null)
 				//InitializeResolver();

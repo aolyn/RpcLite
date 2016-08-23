@@ -32,7 +32,7 @@ namespace RpcLite.Service
 		{
 			foreach (var item in _config.Services)
 			{
-				var typeInfo = TypeCreator.GetTypeFromName(item.TypeName, item.AssemblyName);
+				var typeInfo = TypeCreator.GetTypeFromFullName(item.Type);
 				if (typeInfo == null)
 				{
 					throw new ServiceException("can't load service type: " + item.Type);

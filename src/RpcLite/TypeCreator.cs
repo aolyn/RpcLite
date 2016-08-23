@@ -473,10 +473,24 @@ namespace RpcLite
 		/// <summary>
 		/// Get type from assembly
 		/// </summary>
+		/// <param name="name">Namespace.TypeName, AssemblyName</param>
+		/// <returns></returns>
+		public static Type GetTypeFromFullName(string name)
+		{
+			var segs = name.Split(',');
+
+			var typeName = segs[0];
+			var assemblyName = segs[1];
+			return GetTypeFromName(typeName, assemblyName);
+		}
+
+		/// <summary>
+		/// Get type from assembly
+		/// </summary>
 		/// <param name="typeName"></param>
 		/// <param name="assemblyName"></param>
 		/// <returns></returns>
-		public static Type GetTypeFromName(string typeName, string assemblyName)
+		private static Type GetTypeFromName(string typeName, string assemblyName)
 		{
 			Assembly assembly;
 

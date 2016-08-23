@@ -62,7 +62,7 @@ namespace RpcLite.Registry.Http
 
 		public bool CanRegister => false;
 
-		private Uri[] GetAddressInternal(ClientConfigItem clientInfo)
+		private string[] GetAddressInternal(ClientConfigItem clientInfo)
 		{
 			// ReSharper disable once InconsistentlySynchronizedField
 			var url = _defaultBaseUrlDictionary.GetOrAdd(clientInfo, () =>
@@ -88,7 +88,7 @@ namespace RpcLite.Registry.Http
 
 			return string.IsNullOrEmpty(url)
 				? null
-				: new[] { new Uri(url) };
+				: new[] { (url) };
 		}
 
 		public void OnConfigChanged()
@@ -101,7 +101,7 @@ namespace RpcLite.Registry.Http
 			throw new NotImplementedException();
 		}
 
-		public Task<Uri[]> LookupAsync(ClientConfigItem clientInfo)
+		public Task<string[]> LookupAsync(ClientConfigItem clientInfo)
 		{
 #if NETCORE
 			return Task.FromResult(GetAddressInternal(clientInfo));

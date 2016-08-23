@@ -26,7 +26,7 @@ namespace RpcLite.Service
 		/// <param name="context"></param>
 		public void ProcessRequest(HttpContext context)
 		{
-			RpcProcessor.ProcessAsync(new AspNetServerContext(context)).Wait();
+			RpcManager.ProcessAsync(new AspNetServerContext(context)).Wait();
 		}
 
 		/// <summary>
@@ -38,7 +38,7 @@ namespace RpcLite.Service
 
 		private static IAsyncResult ProcessReqeustInternal(HttpContext context, AsyncCallback cb, object extraData)
 		{
-			var task = RpcProcessor.ProcessAsync(new AspNetServerContext(context));
+			var task = RpcManager.ProcessAsync(new AspNetServerContext(context));
 			var waitTask = ToBegin(task, cb, extraData);
 			return waitTask;
 		}

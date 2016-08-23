@@ -6,15 +6,14 @@ namespace RpcLite.Service
 	/// <summary>
 	/// 
 	/// </summary>
-	public static class RpcProcessor
+	public static class RpcManager
 	{
-		private static AppHost _appHost;
 		private static readonly object InitilizeLock = new object();
 
 		/// <summary>
 		/// default AppHost
 		/// </summary>
-		public static AppHost AppHost => _appHost;
+		public static AppHost AppHost { get; private set; }
 
 		/// <summary>
 		/// 
@@ -22,7 +21,7 @@ namespace RpcLite.Service
 		/// <param name="config"></param>
 		public static void Initialize(RpcLiteConfig config)
 		{
-			if (_appHost != null)
+			if (AppHost != null)
 			{
 				return;
 				//throw new InvalidOperationException("default service host already initialized");
@@ -30,10 +29,10 @@ namespace RpcLite.Service
 
 			lock (InitilizeLock)
 			{
-				if (_appHost == null)
+				if (AppHost == null)
 				{
-					_appHost = new AppHost(config);
-					_appHost.Initialize();
+					AppHost = new AppHost(config);
+					AppHost.Initialize();
 				}
 			}
 		}
@@ -45,7 +44,7 @@ namespace RpcLite.Service
 		/// <returns>if true process processed or else the path not a service path</returns>
 		public static Task<bool> ProcessAsync(IServerContext httpContext)
 		{
-			return _appHost.ProcessAsync(httpContext);
+			return AppHost.ProcessAsync(httpContext);
 		}
 
 		/// <summary>
@@ -54,7 +53,7 @@ namespace RpcLite.Service
 		/// <param name="filter"></param>
 		public static void AddFilter(IServiceFilter filter)
 		{
-			_appHost.AddFilter(filter);
+			AppHost.AddFilter(filter);
 		}
 
 	}

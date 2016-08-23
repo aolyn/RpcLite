@@ -17,7 +17,7 @@ namespace RpcLite.Client
 		public static TContract GetInstance<TContract>()
 			where TContract : class
 		{
-			return RpcProcessor.AppHost.ClientFactory.GetInstance<TContract>();
+			return RpcManager.AppHost.ClientFactory.GetInstance<TContract>();
 		}
 
 		/// <summary>
@@ -28,7 +28,7 @@ namespace RpcLite.Client
 		public static TContract GetInstance<TContract>(string address)
 			where TContract : class
 		{
-			return RpcProcessor.AppHost.ClientFactory.GetInstance<TContract>(address);
+			return RpcManager.AppHost.ClientFactory.GetInstance<TContract>(address);
 		}
 	}
 }

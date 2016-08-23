@@ -17,9 +17,7 @@ namespace ServiceTest.ClientTest
 
 			//UnitTest.Test();
 			//RpcLite.AspNetCore.RpcLiteInitializer.Initialize();
-
 			//RegistryTest();
-
 			//PerformanceTest();
 			//Test2();
 		}

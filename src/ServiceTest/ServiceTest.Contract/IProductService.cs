@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 
 namespace ServiceTest.Contract
 {
@@ -27,6 +28,8 @@ namespace ServiceTest.Contract
 		Task<Product> GetByIdAsync(int id);
 
 		void ExceptionTest();
+
+		void ThrowException(Exception ex);
 
 		Task ExceptionTestAsync();
 	}
