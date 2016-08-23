@@ -31,7 +31,7 @@ namespace RpcLite.Registry
 
 			try
 			{
-				var type = TypeCreator.GetTypeFromFullName(registryItem.Type);
+				var type = TypeCreator.GetTypeByIdentifier(registryItem.Type);
 				if (type != null)
 				{
 					_registry = Activator.CreateInstance(type, _config) as IRegistry;

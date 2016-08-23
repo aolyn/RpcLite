@@ -32,18 +32,18 @@ namespace RpcLite.Service
 		{
 			foreach (var item in _config.Services)
 			{
-				var typeInfo = TypeCreator.GetTypeFromFullName(item.Type);
+				var typeInfo = TypeCreator.GetTypeByIdentifier(item.Type);
 				if (typeInfo == null)
 				{
 					throw new ServiceException("can't load service type: " + item.Type);
 				}
 
-				_services.Add(new RpcService(typeInfo)
+				_services.Add(new RpcService(typeInfo,_host)
 				{
 					Name = item.Name,
 					Path = item.Path,
 					//Type = typeInfo,
-					Filters = _host.Filters,
+					//Filters = _host.Filters,
 				});
 			}
 		}

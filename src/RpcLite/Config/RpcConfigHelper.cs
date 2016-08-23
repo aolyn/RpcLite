@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Reflection;
 
 namespace RpcLite.Config
 {
@@ -42,6 +43,20 @@ namespace RpcLite.Config
 			if (versionText == null || !Version.TryParse(versionText, out version))
 				version = new Version("1.0");
 			return version;
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="type"></param>
+		/// <returns></returns>
+		public static string GetTypeIdentifier(Type type)
+		{
+			return type.FullName + ", " + type
+#if NETCORE
+				.GetTypeInfo()
+#endif
+				.Assembly.GetName().Name;
 		}
 	}
 
@@ -371,8 +386,8 @@ namespace RpcLite.Config
 				{
 					Name = name,
 					Type = type,
-					TypeName = typeName,
-					AssemblyName = assemblyName,
+					//TypeName = typeName,
+					//AssemblyName = assemblyName,
 					Address = address,
 				};
 				instance.Registry = registry;

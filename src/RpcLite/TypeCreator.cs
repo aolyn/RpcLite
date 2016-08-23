@@ -475,7 +475,7 @@ namespace RpcLite
 		/// </summary>
 		/// <param name="name">Namespace.TypeName, AssemblyName</param>
 		/// <returns></returns>
-		public static Type GetTypeFromFullName(string name)
+		public static Type GetTypeByIdentifier(string name)
 		{
 			var segs = name.Split(',');
 

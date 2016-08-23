@@ -6,7 +6,9 @@ using NUnit.Framework;
 using RpcLite;
 using RpcLite.Client;
 using RpcLite.Config;
+using RpcLite.Registry.Http;
 using ServiceTest.Contract;
+using ServiceTest.ServiceImpl;
 
 namespace ServiceTest.ClientTest
 {
@@ -21,36 +23,22 @@ namespace ServiceTest.ClientTest
 		{
 			#region prepare config
 
-			var config1 = new ConfigurationBuilder()
-				.AddJsonFile("rpclite.config.json")
-				.Build();
-			var config2 = RpcConfigHelper.GetConfig(new CoreConfiguration(config1));
+			//var config1 = new ConfigurationBuilder()
+			//	.AddJsonFile("rpclite.config.json")
+			//	.Build();
+			//var config2 = RpcConfigHelper.GetConfig(new CoreConfiguration(config1));
 
 			var config = new RpcLiteConfig
 			{
 				AppId = "10000",
-				Registry = new RegistryConfigItem
-				{
-					Address = "http://localhost:12974/api/service/",
-					Type = "RpcLite.Registry.Http.HttpRegistry, RpcLite.Registry.Http",
-				},
+				Registry = new RegistryConfigItem("HttpRegistry", typeof(HttpRegistry), "http://localhost:12974/api/service/"),
 				Services = new List<ServiceConfigItem>
 				{
-					new ServiceConfigItem
-					{
-						Name = "ProductService",
-						Path = "/service/",
-						Type = "ServiceTest.ServiceImpl.ProductService, ServiceTest.ServiceImpl",
-					}
+					new ServiceConfigItem("ProductService", typeof(ProductService), "/service/"),
 				},
 				Clients = new List<ClientConfigItem>
 				{
-					new ClientConfigItem
-					{
-						Name = "ProductService",
-						Address = "/service/",
-						Type = "ServiceTest.Contract.IProductService, ServiceTest.Contract",
-					}
+					new ClientConfigItem("ProductService", typeof(IProductService), "/service/"),
 				}
 			};
 
@@ -58,6 +46,13 @@ namespace ServiceTest.ClientTest
 
 			var appHost = new AppHost(config);
 			appHost.Initialize();
+
+			//appHost.AddFilter(new LogTimeFilter());
+			//appHost.AddFilter(new LogRequestTimeFilter());
+
+			appHost.AddFilter(new EmptyFilter());
+			appHost.AddFilter(new EmptyFilter());
+
 
 			var client = appHost.ClientFactory.GetInstance<IProductService>();
 			((IRpcClient)client).Channel = new MemoryClientChannel(appHost)
@@ -145,7 +140,5 @@ namespace ServiceTest.ClientTest
 
 			Console.ReadLine();
 		}
-
 	}
-
 }

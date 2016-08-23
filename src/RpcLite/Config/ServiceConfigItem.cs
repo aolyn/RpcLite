@@ -1,12 +1,12 @@
-﻿namespace RpcLite.Config
+﻿using System;
+
+namespace RpcLite.Config
 {
 	/// <summary>
 	/// ServiceConfigItem
 	/// </summary>
 	public class ServiceConfigItem
 	{
-		private string _type;
-
 		/// <summary>
 		/// name of service
 		/// </summary>
@@ -27,34 +27,37 @@
 		/// </summary>
 		public string Environment { get; set; }
 
-		/// <summary>
-		/// assembly of service implement class
-		/// </summary>
-		public string AssemblyName { get; private set; }
+		///// <summary>
+		///// assembly of service implement class
+		///// </summary>
+		//public string AssemblyName { get; private set; }
 
-		/// <summary>
-		/// full service type name, eg: ServiceImpl.ProductAsyncService
-		/// </summary>
-		public string TypeName { get; private set; }
+		///// <summary>
+		///// full service type name, eg: ServiceImpl.ProductAsyncService
+		///// </summary>
+		//public string TypeName { get; private set; }
 
 		/// <summary>
 		/// original configured type name, eg: ServiceImpl.ProductAsyncService,ServiceImpl
 		/// </summary>
-		public string Type
+		public string Type { get; set; }
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public ServiceConfigItem() { }
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="name"></param>
+		/// <param name="type"></param>
+		/// <param name="path"></param>
+		public ServiceConfigItem(string name, Type type, string path)
 		{
-			get { return _type; }
-			set
-			{
-				TypeName = null;
-				AssemblyName = null;
-				_type = value;
-				var segs = _type?.Split(',');
-				if (segs?.Length == 2)
-				{
-					TypeName = segs[0].Trim();
-					AssemblyName = segs[1].Trim();
-				}
-			}
+			Name = name;
+			Type = RpcConfigHelper.GetTypeIdentifier(type);
+			Path = path;
 		}
 
 		/// <summary>

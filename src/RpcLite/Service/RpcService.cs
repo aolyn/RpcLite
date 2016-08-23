@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using RpcLite.Logging;
 
@@ -13,15 +13,20 @@ namespace RpcLite.Service
 	public class RpcService
 	{
 		private readonly ActionManager _actionManager;
-
+		private VersionedList<IServiceFilter> Filters => _host?.Filters;
+		private readonly AppHost _host;
+		private long _oldVersion;
+		Func<ServiceContext, Task> _filterFunc;
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="serviceType"></param>
-		public RpcService(Type serviceType)
+		/// <param name="host"></param>
+		public RpcService(Type serviceType, AppHost host)
 		{
 			Type = serviceType;
 			_actionManager = new ActionManager(serviceType);
+			_host = host;
 		}
 
 		#region properties
@@ -41,20 +46,16 @@ namespace RpcLite.Service
 		/// </summary>
 		public string Name { get; set; }
 
-		/// <summary>
-		/// 
-		/// </summary>
-		public List<IServiceFilter> Filters;
 
-		/// <summary>
-		/// 
-		/// </summary>
-		public event Action<ServiceContext> BeforeInvoke;
+		///// <summary>
+		///// 
+		///// </summary>
+		//public event Action<ServiceContext> BeforeInvoke;
 
-		/// <summary>
-		/// 
-		/// </summary>
-		public event Action<ServiceContext> AfterInvoke;
+		///// <summary>
+		///// 
+		///// </summary>
+		//public event Action<ServiceContext> AfterInvoke;
 
 		/// <summary>
 		/// Convert to string
@@ -107,49 +108,63 @@ namespace RpcLite.Service
 
 			context.Action = action;
 
-			Func<ServiceContext, Task> filterFunc = ProcessRequest;
-			if (Filters != null && Filters.Count > 0)
-			{
-				var preFilterFunc = filterFunc;
-				for (var idxFilter = 0; idxFilter < Filters.Count; idxFilter++)
-				{
-					var thisFilter = Filters[idxFilter];
-					if (!thisFilter.FilterInvoke) continue;
-
-					var nextFilterFunc = preFilterFunc;
-					//all currentFilterFunc.GetHashCode is the same
-					Func<ServiceContext, Task> currentFilterFunc = sc => thisFilter.Invoke(sc, nextFilterFunc);
-
-					preFilterFunc = currentFilterFunc;
-				}
-				filterFunc = preFilterFunc;
-			}
+			var filterFunc = GetFilterFunc();
 
 			return filterFunc(context);
 		}
 
+		private Func<ServiceContext, Task> GetFilterFunc()
+		{
+			if (Filters == null || Filters.Count == 0)
+				return ProcessRequest;
+
+			var version = Filters.Version;
+			if (_oldVersion == version)
+				return _filterFunc;
+
+			Func<ServiceContext, Task> filterFunc = ProcessRequest;
+
+			var preFilterFunc = filterFunc;
+			for (var idxFilter = Filters.Count - 1; idxFilter > -1; idxFilter--)
+			{
+				var thisFilter = Filters[idxFilter];
+				if (!thisFilter.FilterInvoke) continue;
+
+				var nextFilterFunc = preFilterFunc;
+				//all currentFilterFunc.GetHashCode is the same
+				Func<ServiceContext, Task> currentFilterFunc = sc => thisFilter.Invoke(sc, nextFilterFunc);
+
+				preFilterFunc = currentFilterFunc;
+			}
+			filterFunc = preFilterFunc;
+
+			_filterFunc = filterFunc;
+			_oldVersion = version;
+			return filterFunc;
+		}
+
 		private Task ProcessRequest(ServiceContext context)
 		{
-			try
-			{
-				BeforeInvoke?.Invoke(context);
-			}
-			catch (Exception ex)
-			{
-				LogHelper.Error(ex);
-			}
+			//try
+			//{
+			//	BeforeInvoke?.Invoke(context);
+			//}
+			//catch (Exception ex)
+			//{
+			//	LogHelper.Error(ex);
+			//}
 
 			var task = context.Action.ExecuteAsync(context);
 			var waitTask = task.ContinueWith(tsk =>
 			{
-				try
-				{
-					AfterInvoke?.Invoke(context);
-				}
-				catch (Exception ex)
-				{
-					LogHelper.Error(ex);
-				}
+				//try
+				//{
+				//	AfterInvoke?.Invoke(context);
+				//}
+				//catch (Exception ex)
+				//{
+				//	LogHelper.Error(ex);
+				//}
 			});
 
 			return waitTask;

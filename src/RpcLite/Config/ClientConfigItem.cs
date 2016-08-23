@@ -1,4 +1,6 @@
-﻿namespace RpcLite.Config
+﻿using System;
+
+namespace RpcLite.Config
 {
 	/// <summary>
 	/// client configuration item
@@ -56,6 +58,26 @@
 				}
 			}
 		}
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public ClientConfigItem() { }
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="name"></param>
+		/// <param name="type"></param>
+		/// <param name="address"></param>
+		public ClientConfigItem(string name, Type type, string address)
+		{
+			Name = name;
+			Type = RpcConfigHelper.GetTypeIdentifier(type);
+			Address = address;
+		}
+
 
 		/// <summary>
 		/// extra attribute of service

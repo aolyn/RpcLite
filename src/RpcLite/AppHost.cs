@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using RpcLite.Client;
 using RpcLite.Config;
@@ -38,7 +37,7 @@ namespace RpcLite
 		/// <summary>
 		/// 
 		/// </summary>
-		public List<IServiceFilter> Filters { get; internal set; } = new List<IServiceFilter>();
+		public VersionedList<IServiceFilter> Filters { get; internal set; } = new VersionedList<IServiceFilter>();
 
 		/// <summary>
 		/// 
