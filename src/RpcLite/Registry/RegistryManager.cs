@@ -21,10 +21,10 @@ namespace RpcLite.Registry
 		public RegistryManager(RpcLiteConfig config)
 		{
 			_config = config;
-			InitializeResolver();
+			InitializeRegistry();
 		}
 
-		private void InitializeResolver()
+		private void InitializeRegistry()
 		{
 			var registryItem = _config.Registry;
 			if (registryItem == null) return;

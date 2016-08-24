@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using RpcLite.Client;
 using RpcLite.Config;
+using RpcLite.Monitor;
 using RpcLite.Registry;
 using RpcLite.Service;
 
@@ -28,6 +29,11 @@ namespace RpcLite
 		/// ClientFactory
 		/// </summary>
 		public RpcClientFactory ClientFactory { get; }
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public IMonitor Monitor { get; }
 
 		/// <summary>
 		/// 
@@ -73,6 +79,7 @@ namespace RpcLite
 			RegistryManager = new RegistryManager(config);
 			ServiceHost = new ServiceHost(this, config);
 			ClientFactory = new RpcClientFactory(RegistryManager);
+			Monitor = MonitorManager.GetMonitor(config);
 
 			_initializeRegistry = new Lazy<object>(() =>
 			{

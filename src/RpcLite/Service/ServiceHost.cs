@@ -132,7 +132,6 @@ namespace RpcLite.Service
 			catch (Exception ex)
 			{
 				LogHelper.Error(ex.ToString());
-				//throw;
 				tcs.SetResult(false);
 			}
 			return tcs.Task;
@@ -159,6 +158,7 @@ namespace RpcLite.Service
 
 			try
 			{
+				serviceContext.Monitor = _appHost.Monitor?.GetSession(serviceContext);
 				serviceContext.Formatter = GetFormatter(serviceContext.Request.ContentType);
 
 				var requestPath = serverContext.RequestPath;
@@ -179,6 +179,15 @@ namespace RpcLite.Service
 #if DEBUG
 				serviceContext.SetExtensionData("StartTime", DateTime.Now);
 #endif
+				try
+				{
+					serviceContext.Monitor?.BeginRequest(serviceContext);
+				}
+				catch (Exception ex2)
+				{
+					LogHelper.Error(ex2);
+				}
+
 				var result = service.ProcessAsync(serviceContext);
 
 				return result.ContinueWith(tsk =>
@@ -194,12 +203,24 @@ namespace RpcLite.Service
 					{
 						LogHelper.Error(ex);
 					}
+					finally
+					{
+						try
+						{
+							serviceContext.Monitor?.EndRequest(serviceContext);
+						}
+						catch (Exception ex2)
+						{
+							LogHelper.Error(ex2);
+						}
+					}
 				});
 			}
 			catch (Exception ex)
 			{
 				serviceContext.Exception = ex;
 				EndProcessRequest(serviceContext);
+
 
 				LogHelper.Error("process request error in RpcProcessor", ex);
 				return TaskHelper.FromResult<object>(null);
@@ -212,16 +233,13 @@ namespace RpcLite.Service
 
 			var httpContext = context.ExecutingContext as IServerContext;
 
-			//var context = result.AsyncState as ServiceContext;
 			if (httpContext == null)
 			{
 				//LogHelper.Error("ServiceContext is null", null);
 				return;
 			}
 
-			//var httpContext = (HttpContext)context.ExecutingContext;
-			//httpContext.Response.ContentType = context.Response.ContentType;
-			httpContext.ResponseContentType = (context.Response.ContentType);
+			httpContext.ResponseContentType = context.Response.ContentType;
 
 #if DEBUG
 			var startTimeObj = context.GetExtensionData("StartTime");
@@ -269,7 +287,7 @@ namespace RpcLite.Service
 					{
 						if (string.IsNullOrWhiteSpace(context.Request.ContentType))
 						{
-							httpContext.ResponseContentType = ("text/html");
+							httpContext.ResponseContentType = "text/html";
 							using (var writer = new StreamWriter(context.Response.ResponseStream))
 							{
 								var value = context.Result.ToString();

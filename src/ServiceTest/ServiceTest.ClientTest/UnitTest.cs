@@ -6,6 +6,7 @@ using NUnit.Framework;
 using RpcLite;
 using RpcLite.Client;
 using RpcLite.Config;
+using RpcLite.Monitor.Http;
 using RpcLite.Registry.Http;
 using ServiceTest.Contract;
 using ServiceTest.ServiceImpl;
@@ -32,6 +33,7 @@ namespace ServiceTest.ClientTest
 			{
 				AppId = "10000",
 				Registry = new RegistryConfigItem("HttpRegistry", typeof(HttpRegistry), "http://localhost:12974/api/service/"),
+				Monitor = new MonitorConfigItem("ConsoleMonitor", typeof(HttpMonitor), "http://localhost:6201/api/service/"),
 				Services = new List<ServiceConfigItem>
 				{
 					new ServiceConfigItem("ProductService", typeof(ProductService), "/service/"),
@@ -86,8 +88,10 @@ namespace ServiceTest.ClientTest
 			var products = client.GetAll();
 			while (true)
 			{
-				Console.WriteLine("press enter to start 10000 test");
+				Console.WriteLine();
+				Console.Write("press enter to start 10000 test");
 				Console.ReadLine();
+				Console.WriteLine("testing...");
 
 				var stopwatch = Stopwatch.StartNew();
 				var times = 10000;

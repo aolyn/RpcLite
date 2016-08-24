@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using RpcLite.Monitor;
 
 namespace RpcLite.Service
 {
@@ -74,6 +75,7 @@ namespace RpcLite.Service
 		/// 
 		/// </summary>
 		public Exception Exception { get; set; }
+		public IMonitorSession Monitor { get; internal set; }
 
 		/// <summary>
 		/// store some use data

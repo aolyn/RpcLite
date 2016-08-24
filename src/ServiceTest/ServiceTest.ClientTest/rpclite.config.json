@@ -13,6 +13,11 @@
     "type": "RpcLite.Registry.Http.HttpRegistry, RpcLite.Registry.Http"
   },
 
+  "monitor": {
+    "address": "http://localhost:12974/api/service/",
+    "type": "RpcLite.Registry.Http.HttpRegistry, RpcLite.Registry.Http"
+  },
+
   "service": {
     "services": [
       {

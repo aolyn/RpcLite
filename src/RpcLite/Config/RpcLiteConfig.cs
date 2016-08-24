@@ -85,6 +85,11 @@ namespace RpcLite.Config
 		/// </summary>
 		public string[] ServicePaths { get; set; }
 
+		/// <summary>
+		/// 
+		/// </summary>
+		public MonitorConfigItem Monitor { get; set; }
+
 		#endregion
 
 	}
