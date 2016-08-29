@@ -112,33 +112,6 @@ namespace RpcLite.Service
 			if (serverContext == null)
 				throw new ArgumentNullException(nameof(serverContext));
 
-			var tcs = new TaskCompletionSource<bool>();
-
-			try
-			{
-				var isServicePath = _config.ServicePaths == null
-					|| (_config.ServicePaths != null && _config.ServicePaths
-						.Any(it => serverContext.RequestPath.StartsWith(it, StringComparison.OrdinalIgnoreCase)));
-
-				if (!isServicePath)
-				{
-					tcs.SetResult(false);
-				}
-				else
-				{
-					ProcessInternalAsync(serverContext).ContinueWith(tsk => tcs.SetResult(true));
-				}
-			}
-			catch (Exception ex)
-			{
-				LogHelper.Error(ex.ToString());
-				tcs.SetResult(false);
-			}
-			return tcs.Task;
-		}
-
-		private Task ProcessInternalAsync(IServerContext serverContext)
-		{
 			var serviceContext = new ServiceContext
 			{
 				Request = new ServiceRequest
@@ -153,28 +126,68 @@ namespace RpcLite.Service
 					ResponseStream = serverContext.ResponseStream,
 				},
 				ExecutingContext = serverContext,
-				//Formatter = formatter,
 			};
 
+			return ProcessInternalAsync(serviceContext)
+				.ContinueWith(tsk =>
+				{
+					if (tsk.Exception == null)
+						return tsk.Result;
+
+					LogHelper.Error(tsk.Exception.InnerException);
+					return true;
+				});
+		}
+
+		internal struct ServiceContextParseResult
+		{
+			public static ServiceContextParseResult Empty;
+
+			public bool IsServiceRequest;
+			public ServiceContext ServiceContext;
+		}
+
+		private ServiceContextParseResult ParseServiceContext(ServiceContext serviceContext)
+		{
+			var isServicePath = _config.ServicePaths == null
+				|| _config.ServicePaths
+					.Any(it => serviceContext.Request.Path.StartsWith(it, StringComparison.OrdinalIgnoreCase));
+
+			if (!isServicePath)
+				return ServiceContextParseResult.Empty;
+
+			serviceContext.Formatter = GetFormatter(serviceContext.Request.ContentType);
+
+			var requestPath = serviceContext.Request.Path;
+			if (string.IsNullOrWhiteSpace(requestPath))
+				throw new ArgumentException("request.AppRelativeCurrentExecutionFilePath is null or white space");
+
+			var service = _serviceFactory.GetService(requestPath);
+			if (service == null)
+			{
+				LogHelper.Debug("BeginProcessReques Can't find service " + requestPath);
+				throw new ServiceNotFoundException(requestPath);
+			}
+			var actionName = requestPath.Substring(service.Path.Length);
+
+			serviceContext.Request.ActionName = actionName;
+			serviceContext.Service = service;
+
+			serviceContext.Monitor = _appHost.Monitor?.GetSession(serviceContext);
+			return new ServiceContextParseResult
+			{
+				IsServiceRequest = true,
+				ServiceContext = serviceContext,
+			};
+		}
+
+		private Task<bool> ProcessInternalAsync(ServiceContext serviceContext)
+		{
 			try
 			{
-				serviceContext.Monitor = _appHost.Monitor?.GetSession(serviceContext);
-				serviceContext.Formatter = GetFormatter(serviceContext.Request.ContentType);
-
-				var requestPath = serverContext.RequestPath;
-				if (string.IsNullOrWhiteSpace(requestPath))
-					throw new ArgumentException("request.AppRelativeCurrentExecutionFilePath is null or white space");
-
-				var service = _serviceFactory.GetService(requestPath);
-				if (service == null)
-				{
-					LogHelper.Debug("BeginProcessReques Can't find service " + requestPath);
-					throw new ServiceNotFoundException(requestPath);
-				}
-
-				var actionName = requestPath.Substring(service.Path.Length);
-				serviceContext.Request.ActionName = actionName;
-				serviceContext.Service = service;
+				var parseResult = ParseServiceContext(serviceContext);
+				if (!parseResult.IsServiceRequest)
+					return TaskHelper.FromResult(false);
 
 #if DEBUG
 				serviceContext.SetExtensionData("StartTime", DateTime.Now);
@@ -188,7 +201,7 @@ namespace RpcLite.Service
 					LogHelper.Error(ex2);
 				}
 
-				var result = service.ProcessAsync(serviceContext);
+				var result = serviceContext.Service.ProcessAsync(serviceContext);
 
 				return result.ContinueWith(tsk =>
 				{
@@ -203,17 +216,16 @@ namespace RpcLite.Service
 					{
 						LogHelper.Error(ex);
 					}
-					finally
+
+					try
 					{
-						try
-						{
-							serviceContext.Monitor?.EndRequest(serviceContext);
-						}
-						catch (Exception ex2)
-						{
-							LogHelper.Error(ex2);
-						}
+						serviceContext.Monitor?.EndRequest(serviceContext);
 					}
+					catch (Exception ex2)
+					{
+						LogHelper.Error(ex2);
+					}
+					return true;
 				});
 			}
 			catch (Exception ex)
@@ -221,9 +233,8 @@ namespace RpcLite.Service
 				serviceContext.Exception = ex;
 				EndProcessRequest(serviceContext);
 
-
 				LogHelper.Error("process request error in RpcProcessor", ex);
-				return TaskHelper.FromResult<object>(null);
+				return TaskHelper.FromResult(true);
 			}
 		}
 
