@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using RpcLite.Config;
+using RpcLite.Logging;
 
 namespace RpcLite.Service
 {
@@ -11,7 +12,7 @@ namespace RpcLite.Service
 	public class RpcServiceFactory
 	{
 		private readonly List<RpcService> _services = new List<RpcService>();
-		private readonly AppHost _host;
+		private readonly AppHost _appHost;
 		private readonly RpcLiteConfig _config;
 
 		/// <summary>
@@ -21,7 +22,7 @@ namespace RpcLite.Service
 		/// <param name="config"></param>
 		public RpcServiceFactory(AppHost host, RpcLiteConfig config)
 		{
-			_host = host;
+			_appHost = host;
 			_config = config;
 		}
 
@@ -38,7 +39,7 @@ namespace RpcLite.Service
 					throw new ServiceException("can't load service type: " + item.Type);
 				}
 
-				_services.Add(new RpcService(typeInfo,_host)
+				_services.Add(new RpcService(typeInfo, _appHost)
 				{
 					Name = item.Name,
 					Path = item.Path,
@@ -53,11 +54,47 @@ namespace RpcLite.Service
 		/// </summary>
 		/// <param name="requestPath"></param>
 		/// <returns></returns>
-		public RpcService GetService(string requestPath)
+		private RpcService GetService(string requestPath)
 		{
 			var service = _services.FirstOrDefault(it =>
 				requestPath.StartsWith(it.Path, StringComparison.OrdinalIgnoreCase));
 			return service;
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="serviceContext"></param>
+		/// <returns></returns>
+		public MapServiceResult MapService(ServiceContext serviceContext)
+		{
+			var isServicePath = _config.ServicePaths == null
+				|| _config.ServicePaths
+					.Any(it => serviceContext.Request.Path.StartsWith(it, StringComparison.OrdinalIgnoreCase));
+
+			if (!isServicePath)
+				return MapServiceResult.Empty;
+
+			var requestPath = serviceContext.Request.Path;
+			if (string.IsNullOrWhiteSpace(requestPath))
+				throw new ArgumentException("request.AppRelativeCurrentExecutionFilePath is null or white space");
+
+			var service = GetService(requestPath);
+			if (service == null)
+			{
+				LogHelper.Debug("BeginProcessReques Can't find service " + requestPath);
+				throw new ServiceNotFoundException(requestPath);
+			}
+			var actionName = requestPath.Substring(service.Path.Length);
+
+			serviceContext.Request.ActionName = actionName;
+			serviceContext.Service = service;
+
+			return new MapServiceResult
+			{
+				IsServiceRequest = true,
+				//ServiceContext = serviceContext,
+			};
 		}
 
 		///// <summary>
@@ -73,4 +110,26 @@ namespace RpcLite.Service
 		//}
 
 	}
+
+	/// <summary>
+	/// 
+	/// </summary>
+	public struct MapServiceResult
+	{
+		/// <summary>
+		/// 
+		/// </summary>
+		public static MapServiceResult Empty;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public bool IsServiceRequest;
+
+		///// <summary>
+		///// 
+		///// </summary>
+		//public ServiceContext ServiceContext;
+	}
+
 }

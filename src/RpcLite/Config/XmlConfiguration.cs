@@ -5,15 +5,27 @@ using System.Xml;
 
 namespace RpcLite.Config
 {
+	/// <summary>
+	/// 
+	/// </summary>
 	public class XmlConfiguration : IConfiguration
 	{
 		private readonly XmlNode _node;
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="node"></param>
 		public XmlConfiguration(XmlNode node)
 		{
 			_node = node;
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="key"></param>
+		/// <returns></returns>
 		public string this[string key]
 		{
 			get
@@ -32,6 +44,10 @@ namespace RpcLite.Config
 			}
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
 		public IEnumerable<IConfigurationSection> GetChildren()
 		{
 			return _node.ChildNodes
@@ -40,8 +56,16 @@ namespace RpcLite.Config
 				.Select(it => new XmlConfigurationSection(it));
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
 		public IEnumerable<IConfigurationSection> Children => GetChildren();
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="key"></param>
+		/// <returns></returns>
 		public IConfigurationSection GetSection(string key)
 		{
 			var node = _node[key];

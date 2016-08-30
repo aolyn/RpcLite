@@ -8,8 +8,7 @@ namespace RpcLite.Registry.Zookeeper
 	{
 		private ZookeeperRegistryInternal _zookeeper;
 		private string _registryAddress;
-		private readonly RpcLiteConfig _config;
-		private int _sessionExpire;
+		//private readonly RpcLiteConfig _config;
 
 		public bool CanRegister => true;
 
@@ -17,15 +16,15 @@ namespace RpcLite.Registry.Zookeeper
 		{
 			//_config = _config;
 			_registryAddress = config.Registry.Address;
-			_sessionExpire = 30 * 1000;
-			Initialize(_registryAddress, _sessionExpire);
+			var sessionExpire = 30 * 1000;
+			Initialize(_registryAddress, sessionExpire);
 		}
 
 		public ZookeeperRegistry(string address)
 		{
 			_registryAddress = address;
-			_sessionExpire = 30 * 1000;
-			Initialize(_registryAddress, _sessionExpire);
+			var sessionExpire = 30 * 1000;
+			Initialize(_registryAddress, sessionExpire);
 		}
 
 		//public ZookeeperRegistry()

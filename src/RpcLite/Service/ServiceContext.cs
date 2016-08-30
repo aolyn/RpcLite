@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using RpcLite.Formatters;
 using RpcLite.Monitor;
 
 namespace RpcLite.Service
@@ -59,7 +60,7 @@ namespace RpcLite.Service
 		/// <summary>
 		/// 
 		/// </summary>
-		public Formatters.IFormatter Formatter { get; set; }
+		public IFormatter Formatter { get; set; }
 
 		/// <summary>
 		/// 
@@ -69,12 +70,16 @@ namespace RpcLite.Service
 		/// <summary>
 		/// 
 		/// </summary>
-		public object ExecutingContext { get; set; }
+		public IServerContext ExecutingContext { get; set; }
 
 		/// <summary>
 		/// 
 		/// </summary>
 		public Exception Exception { get; set; }
+
+		/// <summary>
+		/// 
+		/// </summary>
 		public IMonitorSession Monitor { get; internal set; }
 
 		/// <summary>

@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using RpcLite.Config;
@@ -90,19 +89,6 @@ namespace RpcLite.Service
 		}
 
 		/// <summary>
-		/// get formatter by content type
-		/// </summary>
-		/// <param name="contentType"></param>
-		/// <returns></returns>
-		private IFormatter GetFormatter(string contentType)
-		{
-			var formatter = FormatterManager.GetFormatter(contentType);
-			if (formatter == null)
-				throw new ConfigException("Not Supported MIME: " + contentType);
-			return formatter;
-		}
-
-		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="serverContext"></param>
@@ -139,53 +125,27 @@ namespace RpcLite.Service
 				});
 		}
 
-		internal struct ServiceContextParseResult
+		/// <summary>
+		/// get formatter by content type
+		/// </summary>
+		/// <param name="contentType"></param>
+		/// <returns></returns>
+		private IFormatter GetFormatter(string contentType)
 		{
-			public static ServiceContextParseResult Empty;
-
-			public bool IsServiceRequest;
-			public ServiceContext ServiceContext;
-		}
-
-		private ServiceContextParseResult ParseServiceContext(ServiceContext serviceContext)
-		{
-			var isServicePath = _config.ServicePaths == null
-				|| _config.ServicePaths
-					.Any(it => serviceContext.Request.Path.StartsWith(it, StringComparison.OrdinalIgnoreCase));
-
-			if (!isServicePath)
-				return ServiceContextParseResult.Empty;
-
-			serviceContext.Formatter = GetFormatter(serviceContext.Request.ContentType);
-
-			var requestPath = serviceContext.Request.Path;
-			if (string.IsNullOrWhiteSpace(requestPath))
-				throw new ArgumentException("request.AppRelativeCurrentExecutionFilePath is null or white space");
-
-			var service = _serviceFactory.GetService(requestPath);
-			if (service == null)
-			{
-				LogHelper.Debug("BeginProcessReques Can't find service " + requestPath);
-				throw new ServiceNotFoundException(requestPath);
-			}
-			var actionName = requestPath.Substring(service.Path.Length);
-
-			serviceContext.Request.ActionName = actionName;
-			serviceContext.Service = service;
-
-			serviceContext.Monitor = _appHost.Monitor?.GetSession(serviceContext);
-			return new ServiceContextParseResult
-			{
-				IsServiceRequest = true,
-				ServiceContext = serviceContext,
-			};
+			var formatter = FormatterManager.GetFormatter(contentType);
+			if (formatter == null)
+				throw new ConfigException("Not Supported MIME: " + contentType);
+			return formatter;
 		}
 
 		private Task<bool> ProcessInternalAsync(ServiceContext serviceContext)
 		{
 			try
 			{
-				var parseResult = ParseServiceContext(serviceContext);
+				serviceContext.Formatter = GetFormatter(serviceContext.Request.ContentType);
+				serviceContext.Monitor = _appHost.Monitor?.GetSession(serviceContext);
+
+				var parseResult = _serviceFactory.MapService(serviceContext);
 				if (!parseResult.IsServiceRequest)
 					return TaskHelper.FromResult(false);
 
@@ -338,4 +298,5 @@ namespace RpcLite.Service
 			//LogHelper.Debug("RpcAsyncHandler.EndProcessRequest end RpcService.EndProcessRequest(result);");
 		}
 	}
+
 }

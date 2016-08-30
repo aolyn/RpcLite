@@ -5,6 +5,9 @@ using System.Threading.Tasks;
 
 namespace RpcLite.Service
 {
+	/// <summary>
+	/// 
+	/// </summary>
     public class ServiceContextParser
     {
     }
