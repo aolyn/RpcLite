@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using NUnit.Framework;
 using RpcLite;
 using RpcLite.Client;
 using RpcLite.Config;
-using RpcLite.Monitor.Http;
+using RpcLite.Monitor;
 using RpcLite.Registry.Http;
 using ServiceTest.Contract;
 using ServiceTest.ServiceImpl;
@@ -24,29 +23,38 @@ namespace ServiceTest.ClientTest
 		{
 			#region prepare config
 
-			//var config1 = new ConfigurationBuilder()
-			//	.AddJsonFile("rpclite.config.json")
-			//	.Build();
-			//var config2 = RpcConfigHelper.GetConfig(new CoreConfiguration(config1));
+			////var config1 = new ConfigurationBuilder()
+			////	.AddJsonFile("rpclite.config.json")
+			////	.Build();
+			////var config2 = RpcConfigHelper.GetConfig(new CoreConfiguration(config1));
 
-			var config = new RpcLiteConfig
-			{
-				AppId = "10000",
-				Registry = new RegistryConfigItem("HttpRegistry", typeof(HttpRegistry), "http://localhost:12974/api/service/"),
-				Monitor = new MonitorConfigItem("ConsoleMonitor", typeof(HttpMonitor), "http://localhost:6201/api/service/"),
-				Services = new List<ServiceConfigItem>
-				{
-					new ServiceConfigItem("ProductService", typeof(ProductService), "/service/"),
-				},
-				Clients = new List<ClientConfigItem>
-				{
-					new ClientConfigItem("ProductService", typeof(IProductService), "/service/"),
-				}
-			};
+			//var config = new RpcLiteConfig
+			//{
+			//	AppId = "10000",
+			//	Registry = new RegistryConfigItem("HttpRegistry", typeof(HttpRegistryFactory), "http://localhost:12974/api/service/"),
+			//	//Monitor = new MonitorConfigItem("ConsoleMonitor", typeof(HttpMonitorFactory), "http://localhost:6201/api/service/"),
+			//	Monitor = new MonitorConfigItem("ConsoleMonitor", typeof(ConsoleMonitorFactory), "http://localhost:6201/api/service/"),
+			//	Services = new List<ServiceConfigItem>
+			//	{
+			//		new ServiceConfigItem("ProductService", typeof(ProductService), "/service/"),
+			//	},
+			//	Clients = new List<ClientConfigItem>
+			//	{
+			//		new ClientConfigItem("ProductService", typeof(IProductService), "/service/"),
+			//	}
+			//};
 
+			//var appHost = new AppHost(config);
 			#endregion
 
-			var appHost = new AppHost(config);
+			var appHost = new AppHostBuilder()
+				.UseAppId("10000")
+				.UseRegistry("HttpRegistry", typeof(HttpRegistryFactory), "http://localhost:12974/api/service/")
+				.UseMonitor("ConsoleMonitor", typeof(ConsoleMonitorFactory), "http://localhost:6201/api/service/")
+				.UseServices(new ServiceConfigItem("ProductService", typeof(ProductService), "/service/"))
+				.UseClients(new ClientConfigItem("ProductService", typeof(IProductService), "/service/"))
+				.Build();
+
 			appHost.Initialize();
 
 			//appHost.AddFilter(new LogTimeFilter());

@@ -1,4 +1,5 @@
 ﻿using System;
+using RpcLite.Config;
 
 namespace RpcLite.Registry
 {
@@ -11,9 +12,9 @@ namespace RpcLite.Registry
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="address"></param>
+		/// <param name="config"></param>
 		/// <returns></returns>
-		IRegistry CreateRegistry(string address);
+		IRegistry CreateRegistry(RpcLiteConfig config);
 	}
 
 }

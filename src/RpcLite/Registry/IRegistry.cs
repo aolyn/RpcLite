@@ -28,5 +28,5 @@ namespace RpcLite.Registry
 		/// </summary>
 		bool CanRegister { get; }
 	}
-
+	
 }

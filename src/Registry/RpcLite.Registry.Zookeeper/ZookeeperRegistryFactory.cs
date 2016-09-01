@@ -1,10 +1,12 @@
-﻿namespace RpcLite.Registry.Zookeeper
+﻿using RpcLite.Config;
+
+namespace RpcLite.Registry.Zookeeper
 {
 	public class ZookeeperRegistryFactory : IRegistryFactory
 	{
-		public IRegistry CreateRegistry(string address)
+		public IRegistry CreateRegistry(RpcLiteConfig config)
 		{
-			return new ZookeeperRegistry(address);
+			return new ZookeeperRegistry(config);
 		}
 
 		public void Dispose()

@@ -73,13 +73,21 @@ namespace RpcLite
 		/// </summary>
 		public AppHost(RpcLiteConfig config)
 		{
+			if (config == null)
+				throw new ArgumentNullException(nameof(config));
+
 			_config = config;
 
 			AppId = config.AppId;
 			RegistryManager = new RegistryManager(config);
 			ServiceHost = new ServiceHost(this, config);
 			ClientFactory = new RpcClientFactory(RegistryManager);
-			Monitor = MonitorManager.GetMonitor(config);
+
+			if (!string.IsNullOrWhiteSpace(config.Monitor?.Type))
+			{
+				var monitorFactory = TypeCreator.CreateInstanceByIdentifier<IMonitorFactory>(config.Monitor.Type);
+				Monitor = monitorFactory.CreateMonitor(config);
+			}
 
 			_initializeRegistry = new Lazy<object>(() =>
 			{

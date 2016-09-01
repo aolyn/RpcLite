@@ -34,7 +34,12 @@ namespace RpcLite.Registry
 				var type = TypeCreator.GetTypeByIdentifier(registryItem.Type);
 				if (type != null)
 				{
-					_registry = Activator.CreateInstance(type, _config) as IRegistry;
+					var factory = Activator.CreateInstance(type) as IRegistryFactory;
+					if (factory == null)
+					{
+						throw new ConfigException(@"registry type not implements IRegistryFactory");
+					}
+					_registry = factory.CreateRegistry(_config);
 				}
 			}
 			catch (Exception ex)

@@ -485,6 +485,21 @@ namespace RpcLite
 		}
 
 		/// <summary>
+		/// 
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="identifier"></param>
+		/// <returns></returns>
+		public static T CreateInstanceByIdentifier<T>(string identifier)
+		{
+			if (string.IsNullOrWhiteSpace(identifier))
+				throw new ArgumentNullException(nameof(identifier));
+
+			var type = GetTypeByIdentifier(identifier);
+			return (T)Activator.CreateInstance(type);
+		}
+
+		/// <summary>
 		/// Get type from assembly
 		/// </summary>
 		/// <param name="typeName"></param>

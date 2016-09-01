@@ -26,7 +26,11 @@
         "type": "ServiceTest.ServiceImpl.ProductService, ServiceTest.ServiceImpl"
         //"address": "http://192.168.9.1:5000/api/service/"
       }
-    ]
+    ],
+    "ServiceMapper": {
+      "name": "ServiceMapper",
+      "type": "ServiceTest.ServiceImpl.ProductService, ServiceTest.ServiceImpl"
+    }
   },
 
 
@@ -47,4 +51,5 @@
       }
     ]
   }
+
 }
