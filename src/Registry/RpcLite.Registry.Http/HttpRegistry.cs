@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using RpcLite.Client;
 using RpcLite.Config;
@@ -63,7 +64,6 @@ namespace RpcLite.Registry.Http
 			_defaultBaseUrlDictionary = tempDic;
 		}
 
-
 		public bool CanRegister => false;
 
 		private string[] GetAddressInternal(ClientConfigItem clientInfo)
@@ -114,9 +114,21 @@ namespace RpcLite.Registry.Http
 #endif
 		}
 
+		public Task<string[]> LookupAsync<TContract>()
+		{
+			var type = typeof(TContract);
+			var clientConfigItem = _config.Client.Clients
+				.FirstOrDefault(it => it.TypeName == type.FullName);
+
+			return clientConfigItem == null
+				? TaskHelper.FromResult<string[]>(null)
+				: LookupAsync(clientConfigItem);
+		}
+
 		public void Dispose()
 		{
 
 		}
+
 	}
 }

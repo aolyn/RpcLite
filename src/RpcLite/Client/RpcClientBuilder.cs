@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using RpcLite.Registry;
 
 namespace RpcLite.Client
@@ -10,13 +11,13 @@ namespace RpcLite.Client
 	public class RpcClientBuilder<TContract>
 		where TContract : class
 	{
-		private readonly RegistryManager _registry;
+		private readonly IRegistry _registry;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="registry"></param>
-		public RpcClientBuilder(RegistryManager registry)
+		public RpcClientBuilder(IRegistry registry)
 		{
 			_registry = registry;
 		}
@@ -39,9 +40,8 @@ namespace RpcLite.Client
 
 		private string GetDefaultBaseUrl()
 		{
-			//var uri = ClientAddressResolver<TContract>.GetAddress();
-			var uri = _registry.GetAddress<TContract>();
-			return uri == null ? null : uri.ToString();
+			var uri = _registry.LookupAsync<TContract>().Result?.FirstOrDefault();
+			return uri;
 		}
 
 		/// <summary>

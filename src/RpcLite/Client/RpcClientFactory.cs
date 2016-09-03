@@ -11,13 +11,13 @@ namespace RpcLite.Client
 	public class RpcClientFactory
 	{
 		private readonly ConcurrentDictionary<Type, object> _clienBuilders = new ConcurrentDictionary<Type, object>();
-		private readonly RegistryManager _registry;
+		private readonly IRegistry _registry;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="registry"></param>
-		public RpcClientFactory(RegistryManager registry)
+		public RpcClientFactory(IRegistry registry)
 		{
 			_registry = registry;
 		}

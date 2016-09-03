@@ -48,11 +48,12 @@ namespace RpcLite.Service
 			_initializeRegistry = new Lazy<object>(() =>
 			{
 				var services = _config?.Service?.Services;
-				if (services == null) return null;
+				if (services == null || _appHost.Registry?.CanRegister != true)
+					return null;
 
 				foreach (var service in services)
 				{
-					_appHost.RegistryManager.Register(service);
+					_appHost.Registry.RegisterAsync(service);
 				}
 
 				return null;

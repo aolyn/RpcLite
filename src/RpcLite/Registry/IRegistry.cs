@@ -24,9 +24,15 @@ namespace RpcLite.Registry
 		Task<string[]> LookupAsync(ClientConfigItem clientInfo);
 
 		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		Task<string[]> LookupAsync<TContract>();
+
+		/// <summary>
 		/// if or not support registry current service to registry server
 		/// </summary>
 		bool CanRegister { get; }
 	}
-	
+
 }

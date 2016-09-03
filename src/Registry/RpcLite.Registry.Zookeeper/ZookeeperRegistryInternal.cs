@@ -10,7 +10,7 @@ using RpcLite.Logging;
 
 namespace RpcLite.Registry.Zookeeper
 {
-	internal class ZookeeperRegistryInternal : Watcher, IRegistry
+	internal class ZookeeperRegistryInternal : Watcher
 	{
 		private readonly ConcurrentDictionary<string, ClientLookupItem> _serviceAddressDictionary = new ConcurrentDictionary<string, ClientLookupItem>();
 		private readonly ConcurrentDictionary<ServiceConfigItem, DateTime> _registerServiceDictionary = new ConcurrentDictionary<ServiceConfigItem, DateTime>();

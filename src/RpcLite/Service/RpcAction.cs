@@ -210,7 +210,7 @@ namespace RpcLite.Service
 			try
 			{
 				var type = task.GetType();
-				var func = GetTaskResultFuncs.GetOrAdd(type, (key) =>
+				var func = GetTaskResultFuncs.GetOrAdd(type, (Type key) =>
 				{
 					var arg = Expression.Parameter(typeof(object), "task");
 					var argConvert = Expression.Convert(arg, type);

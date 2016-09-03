@@ -18,7 +18,7 @@ namespace RpcLite
 	public class AppHost
 	{
 		private readonly RpcConfig _config;
-		private readonly Lazy<object> _initializeRegistry;
+		//private readonly Lazy<object> _initializeRegistry;
 
 		/// <summary>
 		/// ServiceHost
@@ -38,7 +38,7 @@ namespace RpcLite
 		/// <summary>
 		/// 
 		/// </summary>
-		public RegistryManager RegistryManager { get; }
+		public IRegistry Registry { get; }
 
 		/// <summary>
 		/// 
@@ -79,9 +79,9 @@ namespace RpcLite
 			_config = config;
 
 			AppId = config.AppId;
-			RegistryManager = new RegistryManager(config);
+			Registry = RegistryHelper.GetRegistry(config);
 			ServiceHost = new ServiceHost(this, config);
-			ClientFactory = new RpcClientFactory(RegistryManager);
+			ClientFactory = new RpcClientFactory(Registry);
 
 			if (!string.IsNullOrWhiteSpace(config.Monitor?.Type))
 			{
@@ -89,18 +89,22 @@ namespace RpcLite
 				Monitor = monitorFactory.CreateMonitor(config);
 			}
 
-			_initializeRegistry = new Lazy<object>(() =>
-			{
-				if (_config?.Service.Services != null)
-				{
-					foreach (var service in _config.Service.Services)
-					{
-						RegistryManager.Register(service);
-					}
-				}
+			//_initializeRegistry = new Lazy<object>(() =>
+			//{
+			//	RegistryServices();
 
-				return null;
-			});
+			//	return null;
+			//});
+		}
+
+		private void RegisterServices()
+		{
+			if (Registry?.CanRegister != true || _config?.Service.Services == null) return;
+
+			foreach (var service in _config.Service.Services)
+			{
+				Registry.RegisterAsync(service);
+			}
 		}
 
 		/// <summary>
@@ -111,7 +115,8 @@ namespace RpcLite
 			ServiceHost.Initialize();
 
 			// ReSharper disable once UnusedVariable
-			var initilizeResult = _initializeRegistry.Value;
+			//var initilizeResult = _initializeRegistry.Value;
+			RegisterServices();
 		}
 
 		/// <summary>

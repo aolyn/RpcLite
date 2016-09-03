@@ -1,0 +1,63 @@
+﻿using System;
+using System.Collections.Generic;
+using RpcLite.Config;
+using RpcLite.Logging;
+
+namespace RpcLite.Registry
+{
+	/// <summary>
+	/// 
+	/// </summary>
+	public static class RegistryHelper
+	{
+		internal static IRegistry GetRegistry(RpcConfig config)
+		{
+			var registryItem = config.Registry;
+			if (registryItem == null)
+				return new DefaultRegistry(config);
+
+			try
+			{
+				var type = TypeCreator.GetTypeByIdentifier(registryItem.Type);
+				if (type == null)
+					throw new ConfigException($"can't get type '{registryItem.Type}' from registry config");
+
+				var factory = Activator.CreateInstance(type) as IRegistryFactory;
+				if (factory == null)
+				{
+					throw new ConfigException(@"registry type not implements IRegistryFactory");
+				}
+				var registry = factory.CreateRegistry(config);
+				return registry;
+			}
+			catch (Exception ex)
+			{
+				LogHelper.Error("InitializeResolver error", ex);
+				throw;
+			}
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <typeparam name="TDictionary"></typeparam>
+		/// <param name="config"></param>
+		/// <returns></returns>
+		public static IDictionary<ClientConfigItem, string> GetAddresses<TDictionary>(RpcConfig config)
+			where TDictionary : IDictionary<ClientConfigItem, string>, new()
+		{
+			if (config.Client?.Clients == null)
+				return new TDictionary();
+
+			var tempDic = new TDictionary();
+			foreach (var item in config.Client?.Clients)
+			{
+				if (!string.IsNullOrWhiteSpace(item.Address))
+					tempDic.Add(item, item.Address);
+			}
+
+			return tempDic;
+		}
+
+	}
+}

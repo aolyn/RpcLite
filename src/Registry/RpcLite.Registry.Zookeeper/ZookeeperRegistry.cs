@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using org.apache.zookeeper;
 using RpcLite.Config;
 
@@ -8,24 +9,24 @@ namespace RpcLite.Registry.Zookeeper
 	{
 		private ZookeeperRegistryInternal _zookeeper;
 		private string _registryAddress;
-		//private readonly RpcLiteConfig _config;
+		private readonly RpcConfig _config;
 
 		public bool CanRegister => true;
 
 		public ZookeeperRegistry(RpcConfig config)
 		{
-			//_config = _config;
+			_config = config;
 			_registryAddress = config.Registry.Address;
 			var sessionExpire = 30 * 1000;
 			Initialize(_registryAddress, sessionExpire);
 		}
 
-		public ZookeeperRegistry(string address)
-		{
-			_registryAddress = address;
-			var sessionExpire = 30 * 1000;
-			Initialize(_registryAddress, sessionExpire);
-		}
+		//public ZookeeperRegistry(string address)
+		//{
+		//	_registryAddress = address;
+		//	var sessionExpire = 30 * 1000;
+		//	Initialize(_registryAddress, sessionExpire);
+		//}
 
 		//public ZookeeperRegistry()
 		//{
@@ -87,14 +88,25 @@ namespace RpcLite.Registry.Zookeeper
 				{
 					throw new SessionExpireException(ex.Message, ex);
 				}
-				else if (ex.getCode() == KeeperException.Code.CONNECTIONLOSS)
+				if (ex.getCode() == KeeperException.Code.CONNECTIONLOSS)
 				{
 					throw new ConnectionLossException(ex.Message, ex);
 				}
 
 				throw new ZookeeperException(ex.Message, ex);
 			}
-
 		}
+
+		public Task<string[]> LookupAsync<TContract>()
+		{
+			var type = typeof(TContract);
+			var clientConfigItem = _config.Client.Clients
+				.FirstOrDefault(it => it.TypeName == type.FullName);
+
+			return clientConfigItem == null
+				? Task.FromResult<string[]>(null)
+				: LookupAsync(clientConfigItem);
+		}
+
 	}
 }
