@@ -12,7 +12,7 @@ namespace RpcLite.Registry.Zookeeper
 
 		public bool CanRegister => true;
 
-		public ZookeeperRegistry(RpcLiteConfig config)
+		public ZookeeperRegistry(RpcConfig config)
 		{
 			//_config = _config;
 			_registryAddress = config.Registry.Address;

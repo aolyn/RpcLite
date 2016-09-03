@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Threading.Tasks;
 using RpcLite.Client;
 using RpcLite.Config;
@@ -12,10 +11,10 @@ namespace RpcLite.Registry.Http
 	{
 		private static readonly object InitializeLocker = new object();
 		private static QuickReadConcurrentDictionary<ClientConfigItem, string> _defaultBaseUrlDictionary = new QuickReadConcurrentDictionary<ClientConfigItem, string>();
-		private readonly RpcLiteConfig _config;
+		private readonly RpcConfig _config;
 		private readonly Lazy<IRegistryService> _registryClient;
 
-		public HttpRegistry(RpcLiteConfig config)
+		public HttpRegistry(RpcConfig config)
 		{
 			_config = config;
 
@@ -50,10 +49,15 @@ namespace RpcLite.Registry.Http
 		private void InitilizeBaseUrls()
 		{
 			var tempDic = new QuickReadConcurrentDictionary<ClientConfigItem, string>();
-			foreach (var item in _config.Clients)
+
+			var clients = _config.Client?.Clients;
+			if (clients != null)
 			{
-				if (!string.IsNullOrWhiteSpace(item.Address))
-					tempDic.Add(item, item.Address);
+				foreach (var item in clients)
+				{
+					if (!string.IsNullOrWhiteSpace(item.Address))
+						tempDic.Add(item, item.Address);
+				}
 			}
 
 			_defaultBaseUrlDictionary = tempDic;
@@ -65,7 +69,7 @@ namespace RpcLite.Registry.Http
 		private string[] GetAddressInternal(ClientConfigItem clientInfo)
 		{
 			// ReSharper disable once InconsistentlySynchronizedField
-			var url = _defaultBaseUrlDictionary.GetOrAdd(clientInfo, () =>
+			var url = _defaultBaseUrlDictionary.GetOrAdd(clientInfo, key =>
 			{
 				var clientConfigItem = clientInfo;
 

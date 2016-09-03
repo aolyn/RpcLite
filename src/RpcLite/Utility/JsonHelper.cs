@@ -2,6 +2,7 @@
 
 using System;
 using System.IO;
+using System.Text;
 using Newtonsoft.Json;
 #if USE_CUSTOMIZE_JSON_DESERIALIZE
 using RpcLite.Formatters.Json;
@@ -17,12 +18,17 @@ namespace RpcLite.Utility
 		/// </summary>
 		/// <param name="stream"></param>
 		/// <param name="targetType"></param>
+		/// <param name="leaveOpen"></param>
 		/// <returns></returns>
-		public static object Deserialize(Stream stream, Type targetType)
+		public static object Deserialize(Stream stream, Type targetType, bool leaveOpen = false)
 		{
+#if NETCORE
+			using (var reader = new StreamReader(stream, Encoding.UTF8, true, 0x400, leaveOpen))
+#else
 			using (var reader = new StreamReader(stream))
+#endif
 			{
-				return Deserialize(targetType, reader);
+				return Deserialize(targetType, reader, leaveOpen);
 			}
 		}
 
@@ -41,27 +47,29 @@ namespace RpcLite.Utility
 		};
 #endif
 
-		private static object Deserialize(Type targetType, TextReader reader)
+		private static object Deserialize(Type targetType, TextReader reader, bool leaveOpen = false)
 		{
 			using (var jsonReader = new JsonTextReader(reader))
 			{
-				var jsonSerializer = GetSerializer();
+				jsonReader.CloseInput = !leaveOpen;
 
+				var jsonSerializer = GetSerializer();
+				//var jsonSerializer = JsonSerializer.Create();
 				var obj = jsonSerializer.Deserialize(jsonReader, targetType);
 				return obj;
 			}
 		}
 
 #if USE_CUSTOMIZE_JSON_DESERIALIZE
-		private static readonly Lazy<JsonSerializer> DefaultJsonSerializer = new Lazy<JsonSerializer>(() =>
-		{
-			var jsonSerializer = new JsonSerializer
-			{
-				ContractResolver = Settings.ContractResolver,
-			};
-			jsonSerializer.Converters.Add(new ExceptionConverter());
-			return jsonSerializer;
-		});
+		//private static readonly Lazy<JsonSerializer> DefaultJsonSerializer = new Lazy<JsonSerializer>(() =>
+		//{
+		//	var jsonSerializer = new JsonSerializer
+		//	{
+		//		ContractResolver = Settings.ContractResolver,
+		//	};
+		//	jsonSerializer.Converters.Add(new ExceptionConverter());
+		//	return jsonSerializer;
+		//});
 #else
 		private static readonly JsonSerializer DefaultJsonSerializer = new JsonSerializer();
 #endif
@@ -74,13 +82,16 @@ namespace RpcLite.Utility
 			//{
 			//	ContractResolver = Settings.ContractResolver,
 			//};
-			//jsonSerializer.Converters.Add(new ExceptionConverter());
-			//return jsonSerializer;
+			var jsonSerializer = JsonSerializer.Create();
+			jsonSerializer.ContractResolver = Settings.ContractResolver;
+			jsonSerializer.Converters.Add(new ExceptionConverter());
 
-			return DefaultJsonSerializer.Value;
+			return jsonSerializer;
+
+			//return DefaultJsonSerializer.Value;
 #else
-			//return new JsonSerializer();
-			return DefaultJsonSerializer;
+			return new JsonSerializer();
+			//return DefaultJsonSerializer;
 #endif
 
 		}

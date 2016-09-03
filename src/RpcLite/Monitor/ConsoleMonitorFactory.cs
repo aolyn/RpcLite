@@ -12,7 +12,7 @@ namespace RpcLite.Monitor
 		/// </summary>
 		/// <param name="config"></param>
 		/// <returns></returns>
-		public IMonitor CreateMonitor(RpcLiteConfig config)
+		public IMonitor CreateMonitor(RpcConfig config)
 		{
 			return new ConsoleMonitor();
 		}

@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using RpcLite.Utility;
+using RpcLiteClientTestNetCore;
+using RpcLiteServiceTest;
 
 namespace ServiceTest.ClientTest.Test
 {
@@ -261,6 +263,94 @@ namespace ServiceTest.ClientTest.Test
 			((MyClass)obj).Age = (int)age;
 		}
 
+		public static void JsonTest()
+		{
+			var rnd = new Random();
+			var products = Enumerable.Range(0, 1000)
+				.Select(it => new Product
+				{
+					Id = it,
+					Name = "Test Product Name " + it,
+					Price = rnd.Next() * 100,
+				})
+				.ToArray();
+
+			var str3 = ServiceStack.Text.JsonSerializer.SerializeToString(products);
+
+			var literalTime = 3;
+			goto de_JsonHelper;
+
+			Console.WriteLine("Serialize ServiceStack");
+			for (int idxTime = 0; idxTime < literalTime; idxTime++)
+			{
+				using (new TimeRecorder())
+				{
+					for (int i = 0; i < 1000; i++)
+					{
+						//var str = Newtonsoft.Json.JsonConvert.SerializeObject(products);
+						var str2 = ServiceStack.Text.JsonSerializer.SerializeToString(products);
+					}
+				}
+			}
+
+			Console.WriteLine("Serialize Newtonsoft");
+			for (int idxTime = 0; idxTime < literalTime; idxTime++)
+			{
+				using (new TimeRecorder())
+				{
+					for (int i = 0; i < 1000; i++)
+					{
+						var str = Newtonsoft.Json.JsonConvert.SerializeObject(products);
+						//var str2 = ServiceStack.Text.JsonSerializer.SerializeToString(products);
+					}
+				}
+			}
+
+			Console.WriteLine("DeSerialize ServiceStack");
+			for (int idxTime = 0; idxTime < literalTime; idxTime++)
+			{
+				using (new TimeRecorder())
+				{
+					for (int i = 0; i < 1000; i++)
+					{
+						//var str = Newtonsoft.Json.JsonConvert.SerializeObject(products);
+						var str2 = ServiceStack.Text.JsonSerializer.DeserializeFromString<Product[]>(str3);
+					}
+				}
+			}
+
+			de_JsonHelper:
+			Console.WriteLine("DeSerialize Newtonsoft");
+			for (int idxTime = 0; idxTime < literalTime; idxTime++)
+			{
+				using (new TimeRecorder())
+				{
+					for (int i = 0; i < 1000; i++)
+					{
+						var str = Newtonsoft.Json.JsonConvert.DeserializeObject<Product[]>(str3);
+						//var str2 = ServiceStack.Text.JsonSerializer.SerializeToString(products);
+					}
+				}
+			}
+
+			var ms = new MemoryStream(Encoding.UTF8.GetBytes(str3));
+			Console.WriteLine("DeSerialize JsonHelper");
+			for (int idxTime = 0; idxTime < literalTime; idxTime++)
+			{
+				using (new TimeRecorder())
+				{
+					for (int i = 0; i < 1000; i++)
+					{
+						//var str = Newtonsoft.Json.JsonConvert.DeserializeObject<Product[]>(str3);
+						ms.Position = 0;
+						var strObj1 = JsonHelper.Deserialize(ms, typeof(Product[]), true);
+						//var str2 = ServiceStack.Text.JsonSerializer.SerializeToString(products);
+					}
+				}
+			}
+
+			Console.ReadLine();
+		}
 	}
 
 	public class MyClass

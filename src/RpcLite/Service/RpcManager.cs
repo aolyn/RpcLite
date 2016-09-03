@@ -19,7 +19,7 @@ namespace RpcLite.Service
 		/// 
 		/// </summary>
 		/// <param name="config"></param>
-		public static void Initialize(RpcLiteConfig config)
+		public static void Initialize(RpcConfig config)
 		{
 			if (AppHost != null)
 			{

@@ -128,4 +128,44 @@ namespace RpcLite
 
 	}
 
+	/// <summary>
+	/// Represents errors that occor during application execution in RpcLite server
+	/// </summary>
+	public class NotInitializedException : RpcLiteException
+	{
+		/// <summary>
+		/// Initializes a new instance of RpcLite.RpcNotInitializedException class
+		/// </summary>
+		public NotInitializedException() { }
+
+#if NETCORE
+#else
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="info"></param>
+		/// <param name="context"></param>
+		protected NotInitializedException(SerializationInfo info, StreamingContext context) : base(info, context)
+		{
+		}
+#endif
+
+		/// <summary>
+		/// Initializes a new instance of RpcLite.RpcNotInitializedException with specifid message and inner exception
+		/// </summary>
+		/// <param name="message">message</param>
+		/// <param name="innerException">inner exception</param>
+		public NotInitializedException(string message, Exception innerException)
+			: base(message, innerException)
+		{ }
+
+		/// <summary>
+		/// Initializes a new instance of RpcLite.RpcNotInitializedException with specifid message
+		/// </summary>
+		/// <param name="message"></param>
+		public NotInitializedException(string message)
+			: base(message)
+		{ }
+	}
+
 }

@@ -14,7 +14,7 @@ namespace RpcLite.Config
 		/// <summary>
 		/// Instance of RpcLiteConfigSection
 		/// </summary>
-		public static RpcLiteConfig Instance { get; private set; }
+		public static RpcConfig Instance { get; private set; }
 
 		//public static void Initialize()
 		//{
@@ -25,10 +25,10 @@ namespace RpcLite.Config
 			try
 			{
 				var sec = ConfigurationManager.GetSection("RpcLite");
-				Instance = sec as RpcLiteConfig;
+				Instance = sec as RpcConfig;
 				//RpcLiteConfig.SetInstance(Instance);
 			}
-			catch (RpcLiteConfigurationErrorException)
+			catch (RpcConfigException)
 			{
 				throw;
 			}

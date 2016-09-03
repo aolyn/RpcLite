@@ -10,8 +10,8 @@ namespace RpcLite.Service
 	{
 		private readonly List<RpcService> _services = new List<RpcService>();
 		private readonly AppHost _appHost;
-		private readonly RpcLiteConfig _config;
-		private readonly ServiceMapper _serviceMapper;
+		private readonly RpcConfig _config;
+		private readonly IServiceMapper _serviceMapper;
 
 		/// <summary>
 		/// 
@@ -23,12 +23,21 @@ namespace RpcLite.Service
 		/// </summary>
 		/// <param name="host"></param>
 		/// <param name="config"></param>
-		public RpcServiceFactory(AppHost host, RpcLiteConfig config)
+		public RpcServiceFactory(AppHost host, RpcConfig config)
 		{
 			_appHost = host;
 			_config = config;
 			Services = new ReadOnlyListWraper<RpcService>(_services);
-			_serviceMapper = new ServiceMapper(this, config);
+
+			if (config?.Service?.Mapper != null)
+			{
+				var factory = TypeCreator.CreateInstanceByIdentifier<IServiceMapperFactory>(config.Service.Mapper.Type);
+				_serviceMapper = factory.CreateServiceMapper(this, config);
+			}
+			else
+			{
+				_serviceMapper = new DefaultServiceMapper(this, config);
+			}
 		}
 
 		/// <summary>
@@ -36,7 +45,10 @@ namespace RpcLite.Service
 		/// </summary>
 		public void Initialize()
 		{
-			foreach (var item in _config.Services)
+			if (_config.Service?.Services == null)
+				return;
+
+			foreach (var item in _config.Service.Services)
 			{
 				var typeInfo = TypeCreator.GetTypeByIdentifier(item.Type);
 				if (typeInfo == null)
@@ -77,27 +89,6 @@ namespace RpcLite.Service
 		//		.FirstOrDefault(it => string.Compare(it.Name, name, StringComparison.OrdinalIgnoreCase) == 0);
 		//	return service;
 		//}
-	}
-
-	/// <summary>
-	/// 
-	/// </summary>
-	public struct MapServiceResult
-	{
-		/// <summary>
-		/// 
-		/// </summary>
-		public static MapServiceResult Empty;
-
-		/// <summary>
-		/// 
-		/// </summary>
-		public bool IsServiceRequest;
-
-		///// <summary>
-		///// 
-		///// </summary>
-		//public ServiceContext ServiceContext;
 	}
 
 }

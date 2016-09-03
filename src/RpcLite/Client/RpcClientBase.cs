@@ -128,79 +128,84 @@ namespace RpcLite.Client
 				if (resultMessage == null)
 					throw new ClientException("get service data error");
 
-				if (resultMessage.IsSuccess)
-				{
-					if (resultMessage.Result == null || returnType == null)
-						return default(TResult);
-
-					var objType = typeof(TResult);
-
-					try
-					{
-						var resultObj = Formatter.Deserialize(resultMessage.Result, objType);
-						return (TResult)resultObj;
-					}
-					catch (Exception ex)
-					{
-						//return default(TResult);
-						//throw;
-						throw new ServiceException("parse data received error", ex);
-					}
-					finally
-					{
-						resultMessage.Dispose();
-					}
-				}
-
-				if (resultMessage.Headers.Count == 0)
-					throw new ServiceException("service url is not a service address");
-
-				var exceptionAssembly = resultMessage.Headers["RpcLite-ExceptionAssembly"];
-				var exceptionTypeName = resultMessage.Headers["RpcLite-ExceptionType"];
-
-				if (string.IsNullOrWhiteSpace(exceptionAssembly) || string.IsNullOrWhiteSpace(exceptionTypeName))
-				{
-					throw new ClientException("exception occored, but no ExceptionAssembly and ExceptionType returned");
-				}
-
-				Type exceptionType;
-				try
-				{
-#if NETCORE
-					var asm = Assembly.Load(new AssemblyName(exceptionAssembly));
-#else
-					var asm = Assembly.Load(exceptionAssembly);
-#endif
-					exceptionType = asm.GetType(exceptionTypeName);
-				}
-				catch (Exception ex)
-				{
-					LogHelper.Error("can't find exception type " + exceptionTypeName, ex);
-					exceptionType = typeof(Exception);
-				}
-
-				object exObj;
-				try
-				{
-					//var buf = new byte[8192];
-					//var readLength = resultMessage.Result.Read(buf, 0, buf.Length);
-					//var json = Encoding.UTF8.GetString(buf);
-
-					exObj = Formatter.Deserialize(resultMessage.Result, exceptionType);
-				}
-				catch (Exception ex)
-				{
-					throw new ClientException("Deserialize Response failed", ex);
-				}
-
-				if (exObj != null)
-					throw (Exception)exObj;
-
-				//return default(TResult);
-				throw new ServiceException("exception occored but no exception data transported");
+				return GetResult<TResult>(tsk.Result, returnType);
 			});
 
 			return task;
+		}
+
+		private TResult GetResult<TResult>(ResponseMessage resultMessage, Type returnType)
+		{
+			if (resultMessage.IsSuccess)
+			{
+				if (resultMessage.Result == null || returnType == null)
+					return default(TResult);
+
+				var objType = typeof(TResult);
+
+				try
+				{
+					var resultObj = Formatter.Deserialize(resultMessage.Result, objType);
+					return (TResult)resultObj;
+				}
+				catch (Exception ex)
+				{
+					//return default(TResult);
+					//throw;
+					throw new ServiceException("parse data received error", ex);
+				}
+				finally
+				{
+					resultMessage.Dispose();
+				}
+			}
+
+			if (resultMessage.Headers.Count == 0)
+				throw new ServiceException("service url is not a service address");
+
+			var exceptionAssembly = resultMessage.Headers["RpcLite-ExceptionAssembly"];
+			var exceptionTypeName = resultMessage.Headers["RpcLite-ExceptionType"];
+
+			if (string.IsNullOrWhiteSpace(exceptionAssembly) || string.IsNullOrWhiteSpace(exceptionTypeName))
+			{
+				throw new ClientException("exception occored, but no ExceptionAssembly and ExceptionType returned");
+			}
+
+			Type exceptionType;
+			try
+			{
+#if NETCORE
+				var asm = Assembly.Load(new AssemblyName(exceptionAssembly));
+#else
+					var asm = Assembly.Load(exceptionAssembly);
+#endif
+				exceptionType = asm.GetType(exceptionTypeName);
+			}
+			catch (Exception ex)
+			{
+				LogHelper.Error("can't find exception type " + exceptionTypeName, ex);
+				exceptionType = typeof(Exception);
+			}
+
+			object exObj;
+			try
+			{
+				//var buf = new byte[8192];
+				//var readLength = resultMessage.Result.Read(buf, 0, buf.Length);
+				//var json = Encoding.UTF8.GetString(buf);
+
+				exObj = Formatter.Deserialize(resultMessage.Result, exceptionType);
+			}
+			catch (Exception ex)
+			{
+				throw new ClientException("Deserialize Response failed", ex);
+			}
+
+			if (exObj != null)
+				throw (Exception)exObj;
+
+			//return default(TResult);
+			throw new ServiceException("exception occored but no exception data transported");
 		}
 
 		// ReSharper disable once UnusedMember.Local

@@ -12,6 +12,6 @@ namespace RpcLite.Monitor
 		/// </summary>
 		/// <param name="config"></param>
 		/// <returns></returns>
-		IMonitor CreateMonitor(RpcLiteConfig config);
+		IMonitor CreateMonitor(RpcConfig config);
 	}
 }

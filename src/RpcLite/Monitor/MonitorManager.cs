@@ -11,7 +11,7 @@ namespace RpcLite.Monitor
 {
 	internal class MonitorManager
 	{
-		public static IMonitor GetMonitor(RpcLiteConfig config)
+		public static IMonitor GetMonitor(RpcConfig config)
 		{
 			var registryItem = config.Monitor;
 			if (registryItem == null) return null;
@@ -36,7 +36,7 @@ namespace RpcLite.Monitor
 								return false;
 
 							var paras = it.GetParameters();
-							return paras.Length == 1 && paras[0].ParameterType == typeof(RpcLiteConfig);
+							return paras.Length == 1 && paras[0].ParameterType == typeof(RpcConfig);
 						})
 						.FirstOrDefault();
 

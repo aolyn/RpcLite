@@ -5,7 +5,7 @@ namespace RpcLite.Config
 	/// <summary>
 	/// RegistryConfigItem
 	/// </summary>
-	public class RegistryConfigItem
+	public class RegistryConfig
 	{
 		/// <summary>
 		/// name of Registry
@@ -26,7 +26,7 @@ namespace RpcLite.Config
 		/// <summary>
 		/// 
 		/// </summary>
-		public RegistryConfigItem() { }
+		public RegistryConfig() { }
 
 		/// <summary>
 		/// 
@@ -34,7 +34,7 @@ namespace RpcLite.Config
 		/// <param name="name"></param>
 		/// <param name="type"></param>
 		/// <param name="address"></param>
-		public RegistryConfigItem(string name, Type type, string address)
+		public RegistryConfig(string name, Type type, string address)
 		{
 			Name = name;
 			Type = RpcConfigHelper.GetTypeIdentifier(type);

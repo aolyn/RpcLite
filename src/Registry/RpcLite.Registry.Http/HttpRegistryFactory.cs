@@ -8,7 +8,7 @@ namespace RpcLite.Registry.Http
 		{
 		}
 
-		public IRegistry CreateRegistry(RpcLiteConfig config)
+		public IRegistry CreateRegistry(RpcConfig config)
 		{
 			return new HttpRegistry(config);
 		}

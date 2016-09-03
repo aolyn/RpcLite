@@ -11,14 +11,17 @@ namespace ServiceTest.ClientTest
 	{
 		public static void Main(string[] args)
 		{
-			UnitTest.Test();
+			//Test.SerializeTest.JsonTest();
+			//return;
+
+			//UnitTest.Test();
 			//ClientTest1();
+			PerformanceTest();
 			//appHost.ProcessAsync()
 
 			//UnitTest.Test();
 			//RpcLite.AspNetCore.RpcLiteInitializer.Initialize();
 			//RegistryTest();
-			//PerformanceTest();
 			//Test2();
 		}
 
@@ -114,6 +117,8 @@ namespace ServiceTest.ClientTest
 
 		private static void PerformanceTest()
 		{
+			RpcLite.AspNetCore.RpcLiteInitializer.Initialize();
+
 			var client = ClientFactory.GetInstance<IProductService>(serviceBaseUrl + "/api/service/");
 			try
 			{
@@ -121,8 +126,21 @@ namespace ServiceTest.ClientTest
 				Console.WriteLine(clientInfo.Address);
 				Console.WriteLine(clientInfo.Formatter.ToString());
 
+				var v01 = client.GetAll();
+
+				var times = 5;
+
+				Console.WriteLine("get 1 products");
+				for (int idxTime = 0; idxTime < times; idxTime++)
+				{
+					using (new TimeRecorder())
+					{
+						var v1 = client.GetPage(1, 1);
+					}
+				}
+
 				Console.WriteLine("get 10 products");
-				for (int idxTime = 0; idxTime < 19; idxTime++)
+				for (int idxTime = 0; idxTime < times; idxTime++)
 				{
 					using (new TimeRecorder())
 					{
@@ -131,7 +149,7 @@ namespace ServiceTest.ClientTest
 				}
 
 				Console.WriteLine("get 100 products");
-				for (int idxTime = 0; idxTime < 19; idxTime++)
+				for (int idxTime = 0; idxTime < times; idxTime++)
 				{
 					using (new TimeRecorder())
 					{
@@ -140,7 +158,7 @@ namespace ServiceTest.ClientTest
 				}
 
 				Console.WriteLine("get 1000 products");
-				for (int idxTime = 0; idxTime < 19; idxTime++)
+				for (int idxTime = 0; idxTime < times; idxTime++)
 				{
 					using (new TimeRecorder())
 					{
@@ -153,9 +171,12 @@ namespace ServiceTest.ClientTest
 			{
 				Console.WriteLine(ex);
 			}
+
+			//Console.Write(nameof(PerformanceTest) + "finish, press enter to exit");
+			//Console.ReadLine();
 		}
 
-		private static string serviceBaseUrl = "http://localhost:17518";
+		private static string serviceBaseUrl = "http://localhost:5000";
 
 		private static void ClientTest1()
 		{
@@ -197,6 +218,8 @@ namespace ServiceTest.ClientTest
 			{
 				Console.WriteLine(ex);
 			}
+
+			Console.WriteLine("Client Test Finish");
 
 		}
 	}

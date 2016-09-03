@@ -26,7 +26,7 @@ namespace RpcLite.Service
 	public class ServiceHost
 	{
 		private readonly RpcServiceFactory _serviceFactory;
-		private readonly RpcLiteConfig _config;
+		private readonly RpcConfig _config;
 		private readonly Lazy<object> _initializeRegistry;
 		private readonly AppHost _appHost;
 
@@ -38,7 +38,7 @@ namespace RpcLite.Service
 		/// <summary>
 		/// 
 		/// </summary>
-		public ServiceHost(AppHost appHost, RpcLiteConfig config)
+		public ServiceHost(AppHost appHost, RpcConfig config)
 		{
 			_config = config;
 			_appHost = appHost;
@@ -47,12 +47,12 @@ namespace RpcLite.Service
 
 			_initializeRegistry = new Lazy<object>(() =>
 			{
-				if (_config?.Services != null)
+				var services = _config?.Service?.Services;
+				if (services == null) return null;
+
+				foreach (var service in services)
 				{
-					foreach (var service in _config.Services)
-					{
-						_appHost.RegistryManager.Register(service);
-					}
+					_appHost.RegistryManager.Register(service);
 				}
 
 				return null;

@@ -12,7 +12,7 @@ namespace RpcLite.Service
 			if (action == null) throw new ArgumentNullException(nameof(action));
 			if (action.ServiceCreator == null) throw new ArgumentException("action.ServiceCreator can't be null");
 
-			var container = Pool.GetOrAdd(action, () =>
+			var container = Pool.GetOrAdd(action, (k) =>
 				new ServiceInstanceContainerPool(action.ServiceCreator) { Size = 1000 });
 			return container.GetInstanceContainer();
 		}

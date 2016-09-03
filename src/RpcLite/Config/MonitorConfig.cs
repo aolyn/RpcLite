@@ -5,7 +5,7 @@ namespace RpcLite.Config
 	/// <summary>
 	/// MonitorConfigItem
 	/// </summary>
-	public class MonitorConfigItem
+	public class MonitorConfig
 	{
 		/// <summary>
 		/// name of Registry
@@ -25,14 +25,14 @@ namespace RpcLite.Config
 		/// <summary>
 		/// 
 		/// </summary>
-		public MonitorConfigItem() { }
+		public MonitorConfig() { }
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="name"></param>
 		/// <param name="type"></param>
-		public MonitorConfigItem(string name, Type type)
+		public MonitorConfig(string name, Type type)
 			: this(name, type, null)
 		{
 		}
@@ -43,7 +43,7 @@ namespace RpcLite.Config
 		/// <param name="name"></param>
 		/// <param name="type"></param>
 		/// <param name="address"></param>
-		public MonitorConfigItem(string name, Type type, string address)
+		public MonitorConfig(string name, Type type, string address)
 		{
 			Name = name;
 			Type = RpcConfigHelper.GetTypeIdentifier(type);

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -16,6 +17,26 @@ namespace RpcLite.Formatters.Json
 	public class ExceptionConverter : CustomCreationConverter<Exception>
 	{
 		private string _className;
+		private static readonly Type ExceptionType = typeof(Exception);
+
+		//private static readonly QuickReadConcurrentDictionary<Type, bool> IsExceptionTypeDictionary = new QuickReadConcurrentDictionary<Type, bool>();
+		//private static readonly AddOnlyConcurrentDictionary<Type, bool> IsExceptionTypeDictionary = new AddOnlyConcurrentDictionary<Type, bool>();
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="objectType"></param>
+		/// <returns></returns>
+		public override bool CanConvert(Type objectType)
+		{
+			//return IsExceptionTypeDictionary.GetOrAdd(objectType, tp =>
+			//{
+			//	return ExceptionType.IsAssignableFrom(objectType);
+			//});
+
+			//return false;
+			return ExceptionType.IsAssignableFrom(objectType);
+		}
 
 		/// <summary>
 		/// 
@@ -254,6 +275,10 @@ namespace RpcLite.Formatters.Json
 	/// </summary>
 	public class SerializeContractResolver : DefaultContractResolver
 	{
+		private static readonly ConcurrentDictionary<Type, IList<JsonProperty>> ExceptionProperties = new ConcurrentDictionary<Type, IList<JsonProperty>>();
+		private static readonly ConcurrentDictionary<Type, IList<JsonProperty>> PropertyDictionary = new ConcurrentDictionary<Type, IList<JsonProperty>>();
+		//private static readonly ConcurrentDictionary<Type, bool> IsExceptionTypeDictionary = new ConcurrentDictionary<Type, bool>();
+
 		/// <summary>
 		/// 
 		/// </summary>
@@ -267,7 +292,31 @@ namespace RpcLite.Formatters.Json
 		/// <returns></returns>
 		protected override IList<JsonProperty> CreateProperties(Type type, MemberSerialization memberSerialization)
 		{
-			if (typeof(Exception).IsAssignableFrom(type) && type != typeof(object))
+			//if (type != typeof(object))
+			//{
+			//	//var isExceptionType = IsExceptionTypeDictionary.GetOrAdd(type, tp => typeof(Exception).IsAssignableFrom(tp));
+			//	var isExceptionType = typeof(Exception).IsAssignableFrom(type);
+			//	if (isExceptionType)
+			//	{
+			//		return GetExceptionProperties(type, memberSerialization);
+			//	}
+			//}
+
+			return PropertyDictionary.GetOrAdd(type, tp =>
+			{
+				if (typeof(Exception).IsAssignableFrom(type) && type != typeof(object))
+				{
+					return GetExceptionProperties(type, memberSerialization);
+				}
+
+				var properties = base.CreateProperties(type, memberSerialization);
+				return properties;
+			});
+		}
+
+		private IList<JsonProperty> GetExceptionProperties(Type type, MemberSerialization memberSerialization)
+		{
+			return ExceptionProperties.GetOrAdd(type, t =>
 			{
 				var propertyInfos = type.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
 
@@ -290,10 +339,7 @@ namespace RpcLite.Formatters.Json
 					ps.Insert(0, p);
 				}
 				return ps;
-			}
-
-			var properties = base.CreateProperties(type, memberSerialization);
-			return properties;
+			});
 		}
 
 		//protected override string ResolvePropertyName(string propertyName)

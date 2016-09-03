@@ -14,7 +14,7 @@ namespace RpcLite.Registry
 		/// </summary>
 		/// <param name="config"></param>
 		/// <returns></returns>
-		IRegistry CreateRegistry(RpcLiteConfig config);
+		IRegistry CreateRegistry(RpcConfig config);
 	}
 
 }

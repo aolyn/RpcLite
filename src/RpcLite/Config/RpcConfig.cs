@@ -6,43 +6,16 @@ namespace RpcLite.Config
 	/// <summary>
 	/// RpcLite Config Section
 	/// </summary>
-	public class RpcLiteConfig
+	public class RpcConfig
 	{
-		//private string _clientEnvironmentAttributeValue;
-
-		//private static RpcLiteConfig _instance;
-		///// <summary>
-		///// Instance of RpcLiteConfigSection
-		///// </summary>
-		//private static RpcLiteConfig Instance
-		//{
-		//	get
-		//	{
-		//		if (_instance != null)
-		//			return _instance;
-
-		//		_instance = new RpcLiteConfig();
-
-		//		return _instance;
-		//	}
-		//}
-
-		///// <summary>
-		///// 
-		///// </summary>
-		///// <param name="instance"></param>
-		///// <returns></returns>
-		//public static void SetInstance(RpcLiteConfig instance)
-		//{
-		//	_instance = instance;
-		//}
 
 		#region Properties
 
-		/// <summary>
-		/// Service config items
-		/// </summary>
-		public List<ServiceConfigItem> Services { get; set; } = new List<ServiceConfigItem>();
+		///// <summary>
+		///// Service config items
+		///// </summary>
+		//[Obsolete("use Service.Services instead")]
+		//public List<ServiceConfigItem> Services { get; set; } = new List<ServiceConfigItem>();
 
 		/// <summary>
 		/// Current app environment
@@ -54,20 +27,22 @@ namespace RpcLite.Config
 		///// </summary>
 		//public string ClientEnvironment { get; set; }
 
-		/// <summary>
-		/// Client config items
-		/// </summary>
-		public List<ClientConfigItem> Clients { get; set; } = new List<ClientConfigItem>();
+		///// <summary>
+		///// Client config items
+		///// </summary>
+		//[Obsolete("use Client.Clients instead")]
+		//public List<ClientConfigItem> Clients { get; set; } = new List<ClientConfigItem>();
 
 		/// <summary>
 		/// Client Address Resover
 		/// </summary>
+		[Obsolete]
 		public ResolverConfigItem Resover { get; set; }
 
 		/// <summary>
 		/// Registry Configuration
 		/// </summary>
-		public RegistryConfigItem Registry { get; set; }
+		public RegistryConfig Registry { get; set; }
 
 		/// <summary>
 		/// App Id of current app
@@ -88,7 +63,17 @@ namespace RpcLite.Config
 		/// <summary>
 		/// 
 		/// </summary>
-		public MonitorConfigItem Monitor { get; set; }
+		public MonitorConfig Monitor { get; set; }
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public ServiceConfig Service { get; set; }
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public ClientConfig Client { get; set; }
 
 		#endregion
 

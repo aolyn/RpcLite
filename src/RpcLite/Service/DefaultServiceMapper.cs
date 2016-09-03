@@ -8,9 +8,9 @@ namespace RpcLite.Service
 	/// <summary>
 	/// 
 	/// </summary>
-	public class ServiceMapper
+	public class DefaultServiceMapper:IServiceMapper
 	{
-		private readonly RpcLiteConfig _config;
+		private readonly RpcConfig _config;
 		private readonly RpcServiceFactory _factory;
 
 		/// <summary>
@@ -18,7 +18,7 @@ namespace RpcLite.Service
 		/// </summary>
 		/// <param name="factory"></param>
 		/// <param name="config"></param>
-		public ServiceMapper(RpcServiceFactory factory, RpcLiteConfig config)
+		public DefaultServiceMapper(RpcServiceFactory factory, RpcConfig config)
 		{
 			if (factory == null)
 				throw new ArgumentNullException(nameof(factory));
@@ -68,6 +68,6 @@ namespace RpcLite.Service
 				//ServiceContext = serviceContext,
 			};
 		}
-
 	}
+
 }

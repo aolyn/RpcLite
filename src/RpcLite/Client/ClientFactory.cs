@@ -17,7 +17,7 @@ namespace RpcLite.Client
 		public static TContract GetInstance<TContract>()
 			where TContract : class
 		{
-			return RpcManager.AppHost.ClientFactory.GetInstance<TContract>();
+			return AppHost.ClientFactory.GetInstance<TContract>();
 		}
 
 		/// <summary>
@@ -28,7 +28,19 @@ namespace RpcLite.Client
 		public static TContract GetInstance<TContract>(string address)
 			where TContract : class
 		{
-			return RpcManager.AppHost.ClientFactory.GetInstance<TContract>(address);
+			return AppHost.ClientFactory.GetInstance<TContract>(address);
 		}
+
+		private static AppHost AppHost
+		{
+			get
+			{
+				if (RpcManager.AppHost == null)
+					throw new NotInitializedException("RpcLite not initialized");
+
+				return RpcManager.AppHost;
+			}
+		}
+
 	}
 }

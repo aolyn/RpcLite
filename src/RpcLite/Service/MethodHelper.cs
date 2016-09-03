@@ -14,7 +14,7 @@ namespace RpcLite.Service
 
 		public static Delegate GetCallMethodFunc(Type serviceType, Type argumentType, ParameterInfo[] arguments, MethodInfo method, bool hasReturn)
 		{
-			return CallMethods.GetOrAdd(method, () => GetCallMethodFuncInternal(serviceType, argumentType, arguments, method, hasReturn));
+			return CallMethods.GetOrAdd(method, (k) => GetCallMethodFuncInternal(serviceType, argumentType, arguments, method, hasReturn));
 		}
 
 		private static Delegate GetCallMethodFuncInternal(Type serviceType, Type argumentType, ParameterInfo[] arguments, MethodInfo method, bool hasReturn)
@@ -136,7 +136,7 @@ namespace RpcLite.Service
 
 		public static Delegate GetCallMethodAsyncFunc(Type serviceType, Type argumentType, ParameterInfo[] arguments, MethodInfo method, bool hasReturn)
 		{
-			return AsyncCallMethods.GetOrAdd(method, () => GetCallMethodAsyncFuncInternal(serviceType, argumentType, arguments, method, hasReturn));
+			return AsyncCallMethods.GetOrAdd(method, (k) => GetCallMethodAsyncFuncInternal(serviceType, argumentType, arguments, method, hasReturn));
 		}
 
 		private static Delegate GetCallMethodAsyncFuncInternal(Type serviceType, Type argumentType, ParameterInfo[] arguments, MethodInfo method, bool hasReturn)
@@ -196,7 +196,7 @@ namespace RpcLite.Service
 		public static MethodInfo GetActionMethod(Type serviceType, string action)
 		{
 			var methodKey = serviceType.Name + "." + action;
-			return ActionMethods.GetOrAdd(methodKey, () =>
+			return ActionMethods.GetOrAdd(methodKey, (k) =>
 			{
 				var methods = serviceType.GetMethods();
 				var method = methods

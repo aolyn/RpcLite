@@ -4,9 +4,9 @@ using Microsoft.Extensions.Configuration;
 using NUnit.Framework;
 using RpcLite;
 using RpcLite.Client;
-using RpcLite.Config;
 using RpcLite.Monitor;
 using RpcLite.Registry.Http;
+using RpcLite.Service;
 using ServiceTest.Contract;
 using ServiceTest.ServiceImpl;
 
@@ -47,12 +47,21 @@ namespace ServiceTest.ClientTest
 			//var appHost = new AppHost(config);
 			#endregion
 
+			//var appHost = new AppHostBuilder()
+			//	.UseAppId("10000")
+			//	.UseRegistry("HttpRegistry", typeof(HttpRegistryFactory), "http://localhost:12974/api/service/")
+			//	.UseMonitor("ConsoleMonitor", typeof(ConsoleMonitorFactory), "http://localhost:6201/api/service/")
+			//	.UseServices(new ServiceConfigItem("ProductService", typeof(ProductService), "/service/"))
+			//	.UseClients(new ClientConfigItem("ProductService", typeof(IProductService), "/service/"))
+			//	.Build();
+
 			var appHost = new AppHostBuilder()
 				.UseAppId("10000")
-				.UseRegistry("HttpRegistry", typeof(HttpRegistryFactory), "http://localhost:12974/api/service/")
-				.UseMonitor("ConsoleMonitor", typeof(ConsoleMonitorFactory), "http://localhost:6201/api/service/")
-				.UseServices(new ServiceConfigItem("ProductService", typeof(ProductService), "/service/"))
-				.UseClients(new ClientConfigItem("ProductService", typeof(IProductService), "/service/"))
+				.UseRegistry<HttpRegistryFactory>("HttpRegistry", "http://localhost:12974/api/service/")
+				.UseMonitor<ConsoleMonitorFactory>("ConsoleMonitor", "http://localhost:6201/api/service/")
+				//.UseServiceMapper<DefaultServiceMapperFactory>("DefaultServiceMapper")
+				.UseService<ProductService>("ProductService", "/service/", null)
+				.UseClient<IProductService>("ProductService", "/service/")
 				.Build();
 
 			appHost.Initialize();
@@ -96,20 +105,22 @@ namespace ServiceTest.ClientTest
 			var products = client.GetAll();
 			while (true)
 			{
+				var times = 1000;
 				Console.WriteLine();
-				Console.Write("press enter to start 10000 test");
+				Console.Write($"press enter to start {times} test");
 				Console.ReadLine();
 				Console.WriteLine("testing...");
 
 				var stopwatch = Stopwatch.StartNew();
-				var times = 10000;
 				for (int i = 0; i < times; i++)
 				{
-					var products2 = client.GetAll();
+					//var products2 = client.GetPage(1, 1000);
+					var products22 = client.GetPage(1, 1);
+					//var products3 = client.GetCount();
 				}
 
 				stopwatch.Stop();
-				Console.WriteLine($"Elapsed: {stopwatch.Elapsed.TotalMilliseconds}, {times * 1000 / stopwatch.Elapsed.TotalMilliseconds} tps");
+				Console.WriteLine($"Elapsed: {stopwatch.Elapsed.TotalMilliseconds}, {times * 1000 / stopwatch.Elapsed.TotalMilliseconds} tps, {stopwatch.Elapsed.TotalMilliseconds / times}ms/t");
 			}
 
 			Console.ReadLine();

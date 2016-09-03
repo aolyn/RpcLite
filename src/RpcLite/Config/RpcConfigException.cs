@@ -5,13 +5,13 @@ namespace RpcLite.Config
 	/// <summary>
 	/// 
 	/// </summary>
-	public class RpcLiteConfigurationErrorException : Exception
+	public class RpcConfigException : Exception
 	{
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="message"></param>
-		public RpcLiteConfigurationErrorException(string message) :
+		public RpcConfigException(string message) :
 			base(message)
 		{
 

@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using RpcLite.Config;
 
 namespace RpcLite
@@ -10,7 +8,7 @@ namespace RpcLite
 	/// </summary>
 	public class AppHostBuilder
 	{
-		private readonly RpcLiteConfig _config = new RpcLiteConfig();
+		private readonly RpcConfigBuilder _config = new RpcConfigBuilder();
 
 		/// <summary>
 		/// 
@@ -19,7 +17,7 @@ namespace RpcLite
 		/// <returns></returns>
 		public AppHostBuilder UseAppId(string appId)
 		{
-			_config.AppId = appId;
+			_config.UseAppId(appId);
 			return this;
 		}
 
@@ -32,8 +30,19 @@ namespace RpcLite
 		/// <returns></returns>
 		public AppHostBuilder UseRegistry(string name, Type factoryType, string address)
 		{
-			_config.Registry = new RegistryConfigItem(name, factoryType, address);
+			_config.UseRegistry(name, factoryType, address);
 			return this;
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="name"></param>
+		/// <param name="address"></param>
+		/// <returns></returns>
+		public AppHostBuilder UseRegistry<TFactory>(string name, string address)
+		{
+			return UseRegistry(name, typeof(TFactory), address);
 		}
 
 		/// <summary>
@@ -45,7 +54,29 @@ namespace RpcLite
 		/// <returns></returns>
 		public AppHostBuilder UseMonitor(string name, Type factoryType, string address)
 		{
-			_config.Monitor = new MonitorConfigItem(name, factoryType, address);
+			_config.UseMonitor(name, factoryType, address);
+			return this;
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="name"></param>
+		/// <param name="address"></param>
+		/// <returns></returns>
+		public AppHostBuilder UseMonitor<TFactory>(string name, string address)
+		{
+			return UseMonitor(name, typeof(TFactory), address);
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="name"></param>
+		/// <returns></returns>
+		public AppHostBuilder UseServiceMapper<TFactory>(string name)
+		{
+			_config.UseServiceMapper<TFactory>(name);
 			return this;
 		}
 
@@ -56,13 +87,20 @@ namespace RpcLite
 		/// <returns></returns>
 		public AppHostBuilder UseServices(params ServiceConfigItem[] services)
 		{
-			if (services == null) return this;
+			_config.UseServices(services);
+			return this;
+		}
 
-			_config.Services = _config.Services ?? new List<ServiceConfigItem>();
-			var newItems = services
-				.Where(it => !_config.Services.Contains(it));
-			_config.Services.AddRange(newItems);
-
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="name"></param>
+		/// <param name="path"></param>
+		/// <param name="address"></param>
+		/// <returns></returns>
+		public AppHostBuilder UseService<TService>(string name, string path, string address)
+		{
+			_config.UseService<TService>(name, path, address);
 			return this;
 		}
 
@@ -74,12 +112,19 @@ namespace RpcLite
 		public AppHostBuilder UseClients(params ClientConfigItem[] clients)
 		{
 			if (clients == null) return this;
+			_config.UseClients(clients);
+			return this;
+		}
 
-			_config.Clients = _config.Clients ?? new List<Config.ClientConfigItem>();
-			var newItems = clients
-				.Where(it => !_config.Clients.Contains(it));
-			_config.Clients.AddRange(newItems);
-
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="name"></param>
+		/// <param name="address"></param>
+		/// <returns></returns>
+		public AppHostBuilder UseClient<TClient>(string name, string address)
+		{
+			_config.UseClient<TClient>(name, address);
 			return this;
 		}
 
@@ -89,7 +134,7 @@ namespace RpcLite
 		/// <returns></returns>
 		public AppHost Build()
 		{
-			return new RpcLite.AppHost(_config);
+			return new AppHost(_config.Build());
 		}
 
 	}

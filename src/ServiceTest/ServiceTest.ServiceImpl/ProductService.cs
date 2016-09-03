@@ -90,7 +90,7 @@ namespace ServiceTest.ServiceImpl
 				.Select(it => new Product
 				{
 					Id = it,
-					Name = "Test Product Name " + it,
+					Name = "Test Product Name ",// + it,
 					Price = Rnd.Next() * 100,
 				})
 				.ToArray();

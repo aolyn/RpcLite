@@ -46,7 +46,7 @@ namespace RpcLite.Service
 
 			serviceType = serviceType ?? _defaultServiceType;
 			var actionKey = /*serviceType.FullName + "." + */actionName;
-			return _actions.GetOrAdd(actionKey, () => GetActionInternal(serviceType, actionName));
+			return _actions.GetOrAdd(actionKey, (k) => GetActionInternal(serviceType, actionName));
 		}
 
 		/// <summary>

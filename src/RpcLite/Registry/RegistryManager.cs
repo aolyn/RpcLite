@@ -12,13 +12,13 @@ namespace RpcLite.Registry
 	{
 		// ReSharper disable once StaticMemberInGenericType
 		private static IRegistry _registry;
-		private readonly RpcLiteConfig _config;
+		private readonly RpcConfig _config;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="config"></param>
-		public RegistryManager(RpcLiteConfig config)
+		public RegistryManager(RpcConfig config)
 		{
 			_config = config;
 			InitializeRegistry();
@@ -61,10 +61,12 @@ namespace RpcLite.Registry
 				return null;
 
 			var type = typeof(TContract);
-			var clientConfigItem = _config.Clients
+			var clientConfigItem = _config.Client.Clients
 				.FirstOrDefault(it => it.TypeName == type.FullName);
 
-			return _registry?.LookupAsync(clientConfigItem).Result?.FirstOrDefault();
+			return clientConfigItem == null
+				? null
+				: _registry?.LookupAsync(clientConfigItem).Result?.FirstOrDefault();
 		}
 
 		/// <summary>

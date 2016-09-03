@@ -4,7 +4,7 @@ namespace RpcLite.Monitor.Http
 {
 	public class HttpMonitorFactory : IMonitorFactory
 	{
-		public IMonitor CreateMonitor(RpcLiteConfig config)
+		public IMonitor CreateMonitor(RpcConfig config)
 		{
 			return new HttpMonitor(config);
 		}

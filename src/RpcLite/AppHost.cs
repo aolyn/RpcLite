@@ -17,7 +17,7 @@ namespace RpcLite
 	/// </summary>
 	public class AppHost
 	{
-		private readonly RpcLiteConfig _config;
+		private readonly RpcConfig _config;
 		private readonly Lazy<object> _initializeRegistry;
 
 		/// <summary>
@@ -71,7 +71,7 @@ namespace RpcLite
 		/// <summary>
 		/// 
 		/// </summary>
-		public AppHost(RpcLiteConfig config)
+		public AppHost(RpcConfig config)
 		{
 			if (config == null)
 				throw new ArgumentNullException(nameof(config));
@@ -91,9 +91,9 @@ namespace RpcLite
 
 			_initializeRegistry = new Lazy<object>(() =>
 			{
-				if (_config?.Services != null)
+				if (_config?.Service.Services != null)
 				{
-					foreach (var service in _config.Services)
+					foreach (var service in _config.Service.Services)
 					{
 						RegistryManager.Register(service);
 					}

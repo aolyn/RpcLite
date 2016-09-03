@@ -16,7 +16,7 @@ namespace RpcLite.Monitor.Http
 		//private readonly ReaderWriterLockSlim _logLock = new ReaderWriterLockSlim();
 		private readonly object _logLock = new object();
 
-		public HttpMonitor(RpcLiteConfig config)
+		public HttpMonitor(RpcConfig config)
 		{
 			var factory = new RpcClientFactory(null);
 			_client = factory.GetInstance<IMonitorService>(config?.Monitor.Address);
