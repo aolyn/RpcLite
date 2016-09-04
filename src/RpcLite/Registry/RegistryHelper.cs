@@ -8,7 +8,7 @@ namespace RpcLite.Registry
 	/// <summary>
 	/// 
 	/// </summary>
-	public static class RegistryHelper
+	internal static class RegistryHelper
 	{
 		internal static IRegistry GetRegistry(RpcConfig config)
 		{
@@ -43,7 +43,7 @@ namespace RpcLite.Registry
 		/// <typeparam name="TDictionary"></typeparam>
 		/// <param name="config"></param>
 		/// <returns></returns>
-		public static IDictionary<ClientConfigItem, string> GetAddresses<TDictionary>(RpcConfig config)
+		public static TDictionary GetAddresses<TDictionary>(RpcConfig config)
 			where TDictionary : IDictionary<ClientConfigItem, string>, new()
 		{
 			if (config.Client?.Clients == null)

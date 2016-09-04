@@ -33,8 +33,12 @@ namespace RpcLite.Client
 		/// <returns></returns>
 		public Task<ResponseMessage> SendAsync(string action, Stream content, IDictionary<string, string> headers)
 		{
+			if (string.IsNullOrWhiteSpace(Address))
+				throw new ServiceException("service address not provided");
+
 			var url = Address + action;
 			return WebRequestHelper.PostAsync(url, content, headers);
 		}
+
 	}
 }

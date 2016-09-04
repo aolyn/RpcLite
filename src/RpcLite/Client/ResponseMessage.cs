@@ -10,7 +10,7 @@ namespace RpcLite.Client
 	/// </summary>
 	public class ResponseMessage : IDisposable
 	{
-		private IDisposable _obj;
+		private readonly IDisposable _obj;
 
 		/// <summary>
 		/// 

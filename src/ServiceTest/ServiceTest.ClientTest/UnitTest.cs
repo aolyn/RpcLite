@@ -45,7 +45,6 @@ namespace ServiceTest.ClientTest
 			//};
 
 			//var appHost = new AppHost(config);
-			#endregion
 
 			//var appHost = new AppHostBuilder()
 			//	.UseAppId("10000")
@@ -54,6 +53,7 @@ namespace ServiceTest.ClientTest
 			//	.UseServices(new ServiceConfigItem("ProductService", typeof(ProductService), "/service/"))
 			//	.UseClients(new ClientConfigItem("ProductService", typeof(IProductService), "/service/"))
 			//	.Build();
+			#endregion
 
 			var appHost = new AppHostBuilder()
 				.UseAppId("10000")
@@ -61,7 +61,7 @@ namespace ServiceTest.ClientTest
 				.UseMonitor<ConsoleMonitorFactory>("ConsoleMonitor", "http://localhost:6201/api/service/")
 				//.UseServiceMapper<DefaultServiceMapperFactory>("DefaultServiceMapper")
 				.UseService<ProductService>("ProductService", "/service/", null)
-				.UseClient<IProductService>("ProductService", "/service/")
+				//.UseClient<IProductService>("ProductService", "/service/")
 				.Build();
 
 			appHost.Initialize();

@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using RpcLite.Config;
 
@@ -8,32 +7,30 @@ namespace RpcLite.Registry
 	/// <summary>
 	/// only get address from config
 	/// </summary>
-	public class DefaultRegistry : IRegistry
+	public class DefaultRegistry : RegistryBase
 	{
 		private IDictionary<ClientConfigItem, string> _defaultBaseUrlDictionary;
-		private readonly RpcConfig _config;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="config"></param>
 		public DefaultRegistry(RpcConfig config)
+			: base(config)
 		{
-			_config = config;
-
 			InitilizeAddresses();
 		}
 
 		private void InitilizeAddresses()
 		{
-			var tempDic = RegistryHelper.GetAddresses<Dictionary<ClientConfigItem, string>>(_config);
+			var tempDic = GetAddresses<Dictionary<ClientConfigItem, string>>(Config);
 			_defaultBaseUrlDictionary = tempDic;
 		}
 
 		/// <summary>
 		/// 
 		/// </summary>
-		public bool CanRegister => false;
+		public override bool CanRegister => false;
 
 		private string[] GetAddressInternal(ClientConfigItem clientInfo)
 		{
@@ -48,7 +45,7 @@ namespace RpcLite.Registry
 		/// </summary>
 		/// <param name="serviceInfo"></param>
 		/// <returns></returns>
-		public Task RegisterAsync(ServiceConfigItem serviceInfo)
+		public override Task RegisterAsync(ServiceConfigItem serviceInfo)
 		{
 			return TaskHelper.FromResult<object>(null);
 		}
@@ -58,33 +55,11 @@ namespace RpcLite.Registry
 		/// </summary>
 		/// <param name="clientInfo"></param>
 		/// <returns></returns>
-		public Task<string[]> LookupAsync(ClientConfigItem clientInfo)
+		public override Task<string[]> LookupAsync(ClientConfigItem clientInfo)
 		{
 			return TaskHelper.FromResult(GetAddressInternal(clientInfo));
 		}
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <typeparam name="TContract"></typeparam>
-		/// <returns></returns>
-		public Task<string[]> LookupAsync<TContract>()
-		{
-			var type = typeof(TContract);
-			var clientConfigItem = _config.Client.Clients
-				.FirstOrDefault(it => it.TypeName == type.FullName);
-
-			return clientConfigItem == null
-				? TaskHelper.FromResult<string[]>(null)
-				: LookupAsync(clientConfigItem);
-		}
-
-		/// <summary>
-		/// 
-		/// </summary>
-		public void Dispose()
-		{
-		}
-
 	}
+
 }

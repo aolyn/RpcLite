@@ -55,7 +55,7 @@ namespace RpcLite.Client
 				throw new ClientException("GetCreateInstanceFunc Error.");
 
 			var client = ClientCreateFunc.Value();
-			client.Address = baseUrl;
+			//client.Address = baseUrl;
 			client.Channel = new HttpClientChannel(baseUrl);
 			return client as TContract;
 		}

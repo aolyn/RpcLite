@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Threading.Tasks;
 using RpcLite.Client;
 using RpcLite.Config;
@@ -8,20 +7,20 @@ using ServiceRegistry.Contract;
 
 namespace RpcLite.Registry.Http
 {
-	public class HttpRegistry : IRegistry
+	public class HttpRegistry : RegistryBase
 	{
 		private static readonly object InitializeLocker = new object();
 		private static QuickReadConcurrentDictionary<ClientConfigItem, string> _defaultBaseUrlDictionary = new QuickReadConcurrentDictionary<ClientConfigItem, string>();
-		private readonly RpcConfig _config;
 		private readonly Lazy<IRegistryService> _registryClient;
 
 		public HttpRegistry(RpcConfig config)
+			: base(config)
 		{
-			_config = config;
+			Config = config;
 
 			_registryClient = new Lazy<IRegistryService>(() =>
 			{
-				var address = _config?.Registry?.Address;
+				var address = Config?.Registry?.Address;
 
 				//var registryClientConfigItem = _config.Clients
 				//	.FirstOrDefault(it => it.TypeName == typeof(IRegistryService).FullName);
@@ -49,22 +48,12 @@ namespace RpcLite.Registry.Http
 
 		private void InitilizeBaseUrls()
 		{
-			var tempDic = new QuickReadConcurrentDictionary<ClientConfigItem, string>();
-
-			var clients = _config.Client?.Clients;
-			if (clients != null)
-			{
-				foreach (var item in clients)
-				{
-					if (!string.IsNullOrWhiteSpace(item.Address))
-						tempDic.Add(item, item.Address);
-				}
-			}
+			var tempDic = GetAddresses<QuickReadConcurrentDictionary<ClientConfigItem, string>>(Config);
 
 			_defaultBaseUrlDictionary = tempDic;
 		}
 
-		public bool CanRegister => false;
+		public override bool CanRegister => false;
 
 		private string[] GetAddressInternal(ClientConfigItem clientInfo)
 		{
@@ -95,17 +84,12 @@ namespace RpcLite.Registry.Http
 				: new[] { (url) };
 		}
 
-		public void OnConfigChanged()
-		{
-			InitilizeBaseUrlsSafe();
-		}
-
-		public Task RegisterAsync(ServiceConfigItem serviceInfo)
+		public override Task RegisterAsync(ServiceConfigItem serviceInfo)
 		{
 			throw new NotImplementedException();
 		}
 
-		public Task<string[]> LookupAsync(ClientConfigItem clientInfo)
+		public override Task<string[]> LookupAsync(ClientConfigItem clientInfo)
 		{
 #if NETCORE
 			return Task.FromResult(GetAddressInternal(clientInfo));
@@ -113,22 +97,6 @@ namespace RpcLite.Registry.Http
 			return TaskHelper.FromResult(GetAddressInternal(clientInfo));
 #endif
 		}
-
-		public Task<string[]> LookupAsync<TContract>()
-		{
-			var type = typeof(TContract);
-			var clientConfigItem = _config.Client.Clients
-				.FirstOrDefault(it => it.TypeName == type.FullName);
-
-			return clientConfigItem == null
-				? TaskHelper.FromResult<string[]>(null)
-				: LookupAsync(clientConfigItem);
-		}
-
-		public void Dispose()
-		{
-
-		}
-
 	}
+
 }
