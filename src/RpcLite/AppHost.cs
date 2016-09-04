@@ -43,6 +43,11 @@ namespace RpcLite
 		/// <summary>
 		/// 
 		/// </summary>
+		//public IClusterFactory ClusterFactory { get; }
+
+		/// <summary>
+		/// 
+		/// </summary>
 		public VersionedList<IServiceFilter> Filters { get; internal set; } = new VersionedList<IServiceFilter>();
 
 		/// <summary>
@@ -81,7 +86,8 @@ namespace RpcLite
 			AppId = config.AppId;
 			Registry = RegistryHelper.GetRegistry(config);
 			ServiceHost = new ServiceHost(this, config);
-			ClientFactory = new RpcClientFactory(Registry);
+			//ClusterFactory = new SimpleClusterFactory();
+			ClientFactory = new RpcClientFactory(this, config);
 
 			if (!string.IsNullOrWhiteSpace(config.Monitor?.Type))
 			{

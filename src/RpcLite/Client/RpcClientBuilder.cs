@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Linq;
-using RpcLite.Registry;
 
 namespace RpcLite.Client
 {
@@ -11,17 +9,6 @@ namespace RpcLite.Client
 	public class RpcClientBuilder<TContract>
 		where TContract : class
 	{
-		private readonly IRegistry _registry;
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="registry"></param>
-		public RpcClientBuilder(IRegistry registry)
-		{
-			_registry = registry;
-		}
-
 		private static readonly Lazy<Func<RpcClientBase<TContract>>> ClientCreateFunc = new Lazy<Func<RpcClientBase<TContract>>>(() =>
 		{
 			var type = ClientWrapper.WrapInterface<TContract>();
@@ -29,35 +16,27 @@ namespace RpcLite.Client
 			return func;
 		}, true);
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <returns></returns>
-		public TContract GetInstance()
-		{
-			return GetInstance(GetDefaultBaseUrl());
-		}
-
-		private string GetDefaultBaseUrl()
-		{
-			var uri = _registry.LookupAsync<TContract>().Result?.FirstOrDefault();
-			return uri;
-		}
+		///// <summary>
+		///// 
+		///// </summary>
+		///// <returns></returns>
+		//public RpcClientBase<TContract> GetInstance()
+		//{
+		//	return GetInstance(null);
+		//}
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="baseUrl"></param>
 		/// <returns></returns>
-		public TContract GetInstance(string baseUrl)
+		public RpcClientBase<TContract> GetInstance(string baseUrl)
 		{
 			if (ClientCreateFunc.Value == null)
 				throw new ClientException("GetCreateInstanceFunc Error.");
 
 			var client = ClientCreateFunc.Value();
-			//client.Address = baseUrl;
-			client.Channel = new HttpClientChannel(baseUrl);
-			return client as TContract;
+			return client;
 		}
 
 	}

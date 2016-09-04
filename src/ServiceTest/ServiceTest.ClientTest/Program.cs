@@ -14,8 +14,8 @@ namespace ServiceTest.ClientTest
 			//Test.SerializeTest.JsonTest();
 			//return;
 
-			UnitTest.Test();
-			//ClientTest1();
+			//UnitTest.Test();
+			ClientTest1();
 			//PerformanceTest();
 			//appHost.ProcessAsync()
 

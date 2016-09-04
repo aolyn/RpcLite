@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using RpcLite.Registry;
+using RpcLite.Config;
 
 namespace RpcLite.Client
 {
@@ -11,15 +11,28 @@ namespace RpcLite.Client
 	public class RpcClientFactory
 	{
 		private readonly ConcurrentDictionary<Type, object> _clienBuilders = new ConcurrentDictionary<Type, object>();
-		private readonly IRegistry _registry;
+		private readonly IClusterFactory _clusterFactory;
+		private readonly AppHost _appHost;
+		//private readonly IClientChannelFactory _channelFactory;
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="registry"></param>
-		public RpcClientFactory(IRegistry registry)
+		/// <param name="appHost"></param>
+		/// <param name="config"></param>
+		public RpcClientFactory(AppHost appHost, RpcConfig config)
 		{
-			_registry = registry;
+			_appHost = appHost;
+			if (config?.Client != null)
+			{
+				//get ClusterFactory from config
+			}
+			_clusterFactory = new SimpleClusterFactory
+			{
+				ChannelFactory = new DefaultClientChannelFactory(),
+				Registry = appHost?.Registry,
+			};
+			//_channelFactory = new DefaultClientChannelFactory();
 		}
 
 		/// <summary>
@@ -30,8 +43,7 @@ namespace RpcLite.Client
 		public TContract GetInstance<TContract>()
 			where TContract : class
 		{
-			var builder = GetBuilder<TContract>();
-			return builder.GetInstance();
+			return GetInstance<TContract>(null);
 		}
 
 		private RpcClientBuilder<TContract> GetBuilder<TContract>() where TContract : class
@@ -39,7 +51,7 @@ namespace RpcLite.Client
 			var type = typeof(TContract);
 			var builder = (RpcClientBuilder<TContract>)_clienBuilders.GetOrAdd(type, tp =>
 			{
-				var b = new RpcClientBuilder<TContract>(_registry);
+				var b = new RpcClientBuilder<TContract>();
 				return b;
 			});
 			return builder;
@@ -54,7 +66,12 @@ namespace RpcLite.Client
 			where TContract : class
 		{
 			var builder = GetBuilder<TContract>();
-			return builder.GetInstance(url);
+			var client = builder.GetInstance(url);
+			client.Cluster = string.IsNullOrWhiteSpace(url)
+				? _clusterFactory.GetCluster<TContract>()
+				: _clusterFactory.GetCluster<TContract>(url);
+			return client as TContract;
 		}
+
 	}
 }

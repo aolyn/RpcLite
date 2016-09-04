@@ -19,7 +19,7 @@ namespace RpcLite.Client
 	/// 
 	/// </summary>
 	/// <typeparam name="TContract">contract interface</typeparam>
-	public class RpcClientBase<TContract> : IRpcClient
+	public class RpcClientBase<TContract> : IRpcClient<TContract>
 		where TContract : class
 	{
 		/// <summary>
@@ -27,11 +27,11 @@ namespace RpcLite.Client
 		/// </summary>
 		public string Address
 		{
-			get { return Channel?.Address; }
+			get { return Cluster?.Address; }
 			set
 			{
-				if (Channel != null)
-					Channel.Address = value;
+				if (Cluster != null)
+					Cluster.Address = value;
 			}
 		}
 
@@ -41,10 +41,15 @@ namespace RpcLite.Client
 		/// </summary>
 		public IFormatter Formatter { get { return _formatter; } set { _formatter = value; } }
 
+		///// <summary>
+		///// Channel to transport data with service
+		///// </summary>
+		//public IClientChannel Channel { get; set; }
+
 		/// <summary>
 		/// Channel to transport data with service
 		/// </summary>
-		public IClientChannel Channel { get; set; }
+		public ICluster<TContract> Cluster { get; set; }
 
 		/// <summary>
 		/// 
@@ -86,37 +91,19 @@ namespace RpcLite.Client
 			if (_formatter == null)
 				throw new ServiceException("Formatter can't be null");
 
-			var mime = _formatter.SupportMimes.First();
-
-			var resultObj = DoRequestAsync<TResult>(action, request, returnType, mime);
+			var resultObj = DoRequestAsync<TResult>(action, request, returnType);
 			return resultObj;
 		}
 
-		private Task<TResult> DoRequestAsync<TResult>(string action, object param, Type returnType, string mime)
+		private Task<TResult> DoRequestAsync<TResult>(string action, object param, Type returnType)
 		{
-			var headDic = new Dictionary<string, string>
-			{
-				{"Content-Type",mime},
-				{"Accept",mime},
-			};
-
-			//var content = new FormaterContent(Formatter, param);
-
-			var content = new MemoryStream();
-			Formatter.Serialize(content, param);
-			content.Position = 0;
-
-#if DEBUG && LogDuration
-			var stopwatch1 = Stopwatch.StartNew();
-#endif
-
-			var resultMessageTask = Channel.SendAsync(action, content, headDic);
+			var sendTask = SendAsync(action, param);
 
 #if DEBUG && LogDuration
 			var duration0 = stopwatch1.GetAndRest();
 #endif
 
-			var task = resultMessageTask.ContinueWith(tsk =>
+			var task = sendTask.ContinueWith(tsk =>
 			{
 #if DEBUG && LogDuration
 				var duration1 = stopwatch1.GetAndRest();
@@ -132,6 +119,27 @@ namespace RpcLite.Client
 			});
 
 			return task;
+		}
+
+		private Task<ResponseMessage> SendAsync(string action, object param)
+		{
+			var mime = _formatter.SupportMimes.First();
+			var headDic = new Dictionary<string, string>
+			{
+				{"Content-Type",mime},
+				{"Accept",mime},
+			};
+
+			var content = new MemoryStream();
+			Formatter.Serialize(content, param);
+			content.Position = 0;
+
+#if DEBUG && LogDuration
+			var stopwatch1 = Stopwatch.StartNew();
+#endif
+
+			var sendTask = Cluster.SendAsync(action, content, headDic);
+			return sendTask;
 		}
 
 		private TResult GetResult<TResult>(ResponseMessage resultMessage, Type returnType)

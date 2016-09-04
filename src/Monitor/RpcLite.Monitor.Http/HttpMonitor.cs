@@ -11,14 +11,14 @@ namespace RpcLite.Monitor.Http
 {
 	public class HttpMonitor : IMonitor
 	{
-		private IMonitorService _client;
+		private readonly IMonitorService _client;
 		private List<InvokeInfo> _invokes = new List<InvokeInfo>();
 		//private readonly ReaderWriterLockSlim _logLock = new ReaderWriterLockSlim();
 		private readonly object _logLock = new object();
 
 		public HttpMonitor(RpcConfig config)
 		{
-			var factory = new RpcClientFactory(null);
+			var factory = new RpcClientFactory(null, null);
 			_client = factory.GetInstance<IMonitorService>(config?.Monitor.Address);
 			var writeTask = WriteLogsAsync();
 		}

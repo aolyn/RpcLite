@@ -6,7 +6,6 @@ using RpcLite;
 using RpcLite.Client;
 using RpcLite.Monitor;
 using RpcLite.Registry.Http;
-using RpcLite.Service;
 using ServiceTest.Contract;
 using ServiceTest.ServiceImpl;
 
@@ -55,12 +54,13 @@ namespace ServiceTest.ClientTest
 			//	.Build();
 			#endregion
 
+			var path = "/service/";
 			var appHost = new AppHostBuilder()
 				.UseAppId("10000")
 				.UseRegistry<HttpRegistryFactory>("HttpRegistry", "http://localhost:12974/api/service/")
 				.UseMonitor<ConsoleMonitorFactory>("ConsoleMonitor", "http://localhost:6201/api/service/")
 				//.UseServiceMapper<DefaultServiceMapperFactory>("DefaultServiceMapper")
-				.UseService<ProductService>("ProductService", "/service/", null)
+				.UseService<ProductService>("ProductService", path, null)
 				//.UseClient<IProductService>("ProductService", "/service/")
 				.Build();
 
@@ -74,10 +74,7 @@ namespace ServiceTest.ClientTest
 
 
 			var client = appHost.ClientFactory.GetInstance<IProductService>();
-			((IRpcClient)client).Channel = new MemoryClientChannel(appHost)
-			{
-				Address = ((IRpcClient)client).Channel.Address,
-			};
+			((IRpcClient<IProductService>)client).Cluster = new MemoryCluster<IProductService>(appHost, path);
 
 			Console.WriteLine("start test");
 
@@ -142,7 +139,9 @@ namespace ServiceTest.ClientTest
 
 			var channel = new MemoryClientChannel(appHost) { Address = "/api/service/" };
 
-			((IRpcClient)client).Channel = channel;
+			((IRpcClient<IProductService>)client).Cluster = new MemoryCluster<IProductService>(appHost, "/api/service/");
+
+			//((IRpcClient)client).Channel = channel;
 			var products = client.GetAll();
 
 			while (true)
