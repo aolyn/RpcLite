@@ -126,9 +126,17 @@ namespace RpcLite.Service
 		{
 			if (ArgumentCount > 0)
 			{
-				context.Argument = context.Request.ContentLength > 0
-					? GetRequestObject(context.Request.RequestStream, context.Formatter, ArgumentType)
-					: DefaultArgument;
+				try
+				{
+					context.Argument = context.Request.ContentLength > 0
+						? GetRequestObject(context.Request.RequestStream, context.Formatter, ArgumentType)
+						: DefaultArgument;
+				}
+				catch (Exception ex)
+				{
+					context.Exception = new DeserializeRequestException("deserialize request error", ex);
+					return TaskHelper.FromResult<object>(null);
+				}
 			}
 
 			if (IsTask)
@@ -156,9 +164,7 @@ namespace RpcLite.Service
 				{
 					context.Exception = ex;
 
-					var tcs = new TaskCompletionSource<object>();
-					tcs.SetResult(null);
-					return tcs.Task;
+					return TaskHelper.FromResult<object>(null);
 				}
 			}
 			else
@@ -177,10 +183,6 @@ namespace RpcLite.Service
 					return tcs.Task;
 				}
 				LogHelper.Debug("RpcService.BeginProcessRequest: end ActionHelper.InvokeAction");
-
-				//var task = new Task<object>(() => context.Result);
-				//task.RunSynchronously();
-				//return task;
 
 				return TaskHelper.FromResult(context.Result);
 			}
@@ -205,7 +207,7 @@ namespace RpcLite.Service
 		/// </summary>
 		/// <param name="task"></param>
 		/// <returns></returns>
-		internal static object GetTaskResult(Task task)
+		private static object GetTaskResult(Task task)
 		{
 			try
 			{

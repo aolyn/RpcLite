@@ -11,11 +11,11 @@ namespace ServiceTest.ClientTest
 	{
 		public static void Main(string[] args)
 		{
-			//Test.SerializeTest.JsonTest();
+			Test.SerializeTest.InnerExceptionTest();
 			//return;
 
-			//UnitTest.Test();
-			ClientTest1();
+			UnitTest.Test();
+			//ClientTest1();
 			//PerformanceTest();
 			//appHost.ProcessAsync()
 
@@ -213,6 +213,10 @@ namespace ServiceTest.ClientTest
 			try
 			{
 				client.ExceptionTestAsync().Wait();
+			}
+			catch (AggregateException ex)
+			{
+				Console.WriteLine(ex.InnerException);
 			}
 			catch (Exception ex)
 			{

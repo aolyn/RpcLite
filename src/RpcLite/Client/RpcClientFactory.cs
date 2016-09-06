@@ -12,7 +12,7 @@ namespace RpcLite.Client
 	{
 		private readonly ConcurrentDictionary<Type, object> _clienBuilders = new ConcurrentDictionary<Type, object>();
 		private readonly IClusterFactory _clusterFactory;
-		private readonly AppHost _appHost;
+		//private readonly AppHost _appHost;
 		//private readonly IClientChannelFactory _channelFactory;
 
 		/// <summary>
@@ -22,17 +22,17 @@ namespace RpcLite.Client
 		/// <param name="config"></param>
 		public RpcClientFactory(AppHost appHost, RpcConfig config)
 		{
-			_appHost = appHost;
+			//_appHost = appHost;
 			if (config?.Client != null)
 			{
 				//get ClusterFactory from config
 			}
-			_clusterFactory = new SimpleClusterFactory
-			{
-				ChannelFactory = new DefaultClientChannelFactory(),
-				Registry = appHost?.Registry,
-			};
-			//_channelFactory = new DefaultClientChannelFactory();
+
+			_clusterFactory = config?.Client?.Cluster?.Type != null
+				? TypeCreator.CreateInstanceByIdentifier<IClusterFactory>(config.Client?.Cluster?.Type)
+				: new SimpleClusterFactory();
+			//todo: create DefaultClientChannelFactory from config
+			_clusterFactory.Initilize(appHost?.Registry, new DefaultClientChannelFactory());
 		}
 
 		/// <summary>

@@ -61,6 +61,7 @@ namespace ServiceTest.ClientTest
 				.UseMonitor<ConsoleMonitorFactory>("ConsoleMonitor", "http://localhost:6201/api/service/")
 				//.UseServiceMapper<DefaultServiceMapperFactory>("DefaultServiceMapper")
 				.UseService<ProductService>("ProductService", path, null)
+				.UseCluster<SimpleClusterFactory>(null)
 				//.UseClient<IProductService>("ProductService", "/service/")
 				.Build();
 

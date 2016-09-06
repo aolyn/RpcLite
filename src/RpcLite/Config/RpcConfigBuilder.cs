@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using RpcLite.Client;
 using RpcLite.Monitor;
 using RpcLite.Registry;
 
@@ -93,6 +95,24 @@ namespace RpcLite.Config
 				_config.Service = new ServiceConfig();
 
 			_config.Service.Mapper = new ServiceMapperConfig(name, typeof(TFactory));
+
+			return this;
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="name"></param>
+		/// <returns></returns>
+		public RpcConfigBuilder UseCluster<TFactory>(string name)
+		{
+			if (!typeof(IClusterFactory).IsAssignableFrom(typeof(TFactory)))
+				throw new ArgumentOutOfRangeException(nameof(TFactory), $"typeof {nameof(TFactory)} must implements { nameof(IClusterFactory)}");
+
+			if (_config.Client == null)
+				_config.Client = new ClientConfig();
+
+			_config.Client.Cluster = new ClusterConfig(name, typeof(TFactory));
 
 			return this;
 		}

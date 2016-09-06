@@ -11,5 +11,10 @@ namespace RpcLite.Config
 		/// 
 		/// </summary>
 		public List<ClientConfigItem> Clients { get; set; } = new List<ClientConfigItem>();
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public ClusterConfig Cluster { get; set; }
 	}
 }

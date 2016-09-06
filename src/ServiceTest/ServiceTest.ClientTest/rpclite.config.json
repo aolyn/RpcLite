@@ -21,18 +21,21 @@
     "mapper": {
       "name": "ServiceMapper",
       "type": "RpcLite.Service.DefaultServiceMapperFactory, RpcLite"
-    }
+    },
+    "services": [
+      {
+        "name": "ProductService",
+        "path": "/api/service/",
+        "type": "ServiceTest.ServiceImpl.ProductService, ServiceTest.ServiceImpl"
+        //"address": "http://192.168.9.1:5000/api/service/"
+      }
+    ]
   },
-  "services": [
-    {
-      "name": "ProductService",
-      "path": "/api/service/",
-      "type": "ServiceTest.ServiceImpl.ProductService, ServiceTest.ServiceImpl"
-      //"address": "http://192.168.9.1:5000/api/service/"
-    }
-  ],
 
   "client": {
+    "cluster": {
+      "type": "RpcLite.Client.SimpleClusterFactory, RpcLite"
+    },
     "clients": [
       //{
       //  "name": "RegistryService",

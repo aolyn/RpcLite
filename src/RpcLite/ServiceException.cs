@@ -168,4 +168,46 @@ namespace RpcLite
 		{ }
 	}
 
+
+	/// <summary>
+	/// Represents errors that occor during application execution in RpcLite server
+	/// </summary>
+	public class DeserializeRequestException : ServiceException
+	{
+		/// <summary>
+		/// Initializes a new instance of RpcLite.ServiceException with specifid message and inner exception
+		/// </summary>
+		/// <param name="message">message</param>
+		/// <param name="innerException">inner exception</param>
+		public DeserializeRequestException(string message, Exception innerException)
+			: base(message, innerException)
+		{ }
+
+#if !NETCORE
+	///// <summary>
+		///// 
+		///// </summary>
+		///// <param name="info"></param>
+		///// <param name="context"></param>
+		//protected DeserializeRequestException(SerializationInfo info, StreamingContext context) : base(info, context)
+		//{
+		//}
+#endif
+
+		/// <summary>
+		/// Initializes a new instance of RpcLite.ServiceException with specifid message and inner exception
+		/// </summary>
+		public DeserializeRequestException()
+		{ }
+
+		/// <summary>
+		/// Initializes a new instance of RpcLite.ServiceException with specifid message and inner exception
+		/// </summary>
+		/// <param name="actionName">message</param>
+		public DeserializeRequestException(string actionName)
+			: base($"Action {actionName} Not Found")
+		{ }
+
+	}
+
 }

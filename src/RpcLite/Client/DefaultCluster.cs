@@ -17,11 +17,6 @@ namespace RpcLite.Client
 		private IClientChannel _channel;
 		private readonly IClientChannelFactory _channelFactory;
 
-		///// <summary>
-		///// 
-		///// </summary>
-		//IClientChannelFactory ChannelFactory { get; set; }
-
 		/// <summary>
 		/// address or registry must provider one
 		/// </summary>

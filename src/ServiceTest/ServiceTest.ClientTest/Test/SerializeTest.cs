@@ -148,6 +148,31 @@ namespace ServiceTest.ClientTest.Test
 			var dexobj2 = JsonHelper.Deserialize(dms, exobj.GetType());
 		}
 
+		public static void InnerExceptionTest()
+		{
+			Exception exObj = null;
+			try
+			{
+				//System.Runtime.Serialization.ISerializationSurrogateProvider 
+				//SerializationInfo
+				try
+				{
+					throw new DivideByZeroException("dbze test");
+				}
+				catch (Exception ex)
+				{
+					throw new InvalidOperationException("test ops", ex);
+				}
+			}
+			catch (Exception ex)
+			{
+				exObj = ex;
+			}
+
+			var json = Newtonsoft.Json.JsonConvert.SerializeObject(exObj);
+			var dexObj = Newtonsoft.Json.JsonConvert.DeserializeObject<InvalidOperationException>(json);
+		}
+
 		private static void Test2()
 		{
 #if NETCORE

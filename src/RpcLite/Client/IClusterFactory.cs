@@ -8,15 +8,22 @@ namespace RpcLite.Client
 	public interface IClusterFactory
 	{
 
-		/// <summary>
-		/// 
-		/// </summary>
-		IClientChannelFactory ChannelFactory { get; set; }
+		///// <summary>
+		///// 
+		///// </summary>
+		//IClientChannelFactory ChannelFactory { get; set; }
+
+		///// <summary>
+		///// 
+		///// </summary>
+		//IRegistry Registry { get; set; }
 
 		/// <summary>
 		/// 
 		/// </summary>
-		IRegistry Registry { get; set; }
+		/// <param name="registry"></param>
+		/// <param name="channelFactory"></param>
+		void Initilize(IRegistry registry, IClientChannelFactory channelFactory);
 
 		/// <summary>
 		/// 

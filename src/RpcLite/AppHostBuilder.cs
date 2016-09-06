@@ -131,6 +131,18 @@ namespace RpcLite
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <param name="name"></param>
+		/// <returns></returns>
+		public AppHostBuilder UseCluster<TFactory>(string name)
+		{
+			_config.UseCluster<TFactory>(name);
+
+			return this;
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
 		/// <returns></returns>
 		public AppHost Build()
 		{

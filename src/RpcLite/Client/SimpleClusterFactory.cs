@@ -10,12 +10,12 @@ namespace RpcLite.Client
 		/// <summary>
 		/// 
 		/// </summary>
-		public IClientChannelFactory ChannelFactory { get; set; }
+		public IClientChannelFactory ChannelFactory { get; private set; }
 
 		/// <summary>
 		/// 
 		/// </summary>
-		public IRegistry Registry { get; set; }
+		public IRegistry Registry { get; private set; }
 
 		/// <summary>
 		/// 
@@ -34,6 +34,17 @@ namespace RpcLite.Client
 		public ICluster<TContract> GetCluster<TContract>()
 		{
 			return GetCluster<TContract>(null);
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="registry"></param>
+		/// <param name="channelFactory"></param>
+		public void Initilize(IRegistry registry, IClientChannelFactory channelFactory)
+		{
+			Registry = registry;
+			ChannelFactory = channelFactory;
 		}
 
 	}
