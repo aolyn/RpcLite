@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using RpcLite.Config;
 
 namespace RpcLite.Service
@@ -10,50 +8,74 @@ namespace RpcLite.Service
 	/// </summary>
 	public class RpcServiceFactory
 	{
-		private static readonly List<RpcService> Services = new List<RpcService>();
+		private readonly List<RpcService> _services = new List<RpcService>();
+		private readonly AppHost _appHost;
+		private readonly RpcConfig _config;
+		private readonly IServiceMapper _serviceMapper;
 
-		///// <summary>
-		///// Services
-		///// </summary>
-		//public static List<RpcService> Services
-		//{
-		//	get { return _services; }
-		//}
+		/// <summary>
+		/// 
+		/// </summary>
+		public IReadOnlyCollection<RpcService> Services { get; }
 
-		static RpcServiceFactory()
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="host"></param>
+		/// <param name="config"></param>
+		public RpcServiceFactory(AppHost host, RpcConfig config)
 		{
-			foreach (var item in RpcLiteConfig.Instance.Services)
+			_appHost = host;
+			_config = config;
+			Services = new ReadOnlyListWraper<RpcService>(_services);
+
+			if (config?.Service?.Mapper != null)
 			{
-				var typeInfo = TypeCreator.GetTypeFromName(item.TypeName, item.AssemblyName);
+				var factory = TypeCreator.CreateInstanceByIdentifier<IServiceMapperFactory>(config.Service.Mapper.Type);
+				_serviceMapper = factory.CreateServiceMapper(this, config);
+			}
+			else
+			{
+				_serviceMapper = new DefaultServiceMapper(this, config);
+			}
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public void Initialize()
+		{
+			if (_config.Service?.Services == null)
+				return;
+
+			foreach (var item in _config.Service.Services)
+			{
+				var typeInfo = TypeCreator.GetTypeByIdentifier(item.Type);
 				if (typeInfo == null)
 				{
 					throw new ServiceException("can't load service type: " + item.Type);
 				}
 
-				Services.Add(new RpcService
+				_services.Add(new RpcService(typeInfo, _appHost)
 				{
 					Name = item.Name,
 					Path = item.Path,
-					Type = typeInfo,
+					//Type = typeInfo,
+					//Filters = _host.Filters,
 				});
 			}
 		}
 
-		///// <summary>
-		///// 
-		///// </summary>
-		//public static List<RpcService> Services { get { return RpcLiteConfigSection.Instance.Services; } }
-
 		/// <summary>
-		/// 
+		/// <para>determinate if the request path is Service path</para>
+		/// <para>get and set Service to serviceContext</para>
+		/// <para>compute and set ActionName to serviceContext.Request</para>
 		/// </summary>
-		/// <param name="requestPath"></param>
+		/// <param name="serviceContext"></param>
 		/// <returns></returns>
-		public static RpcService GetService(string requestPath)
+		public MapServiceResult MapService(ServiceContext serviceContext)
 		{
-			var service = Services.FirstOrDefault(it =>
-				requestPath.StartsWith(it.Path, StringComparison.OrdinalIgnoreCase));
-			return service;
+			return _serviceMapper.MapService(serviceContext);
 		}
 
 		///// <summary>
@@ -67,6 +89,6 @@ namespace RpcLite.Service
 		//		.FirstOrDefault(it => string.Compare(it.Name, name, StringComparison.OrdinalIgnoreCase) == 0);
 		//	return service;
 		//}
-
 	}
+
 }

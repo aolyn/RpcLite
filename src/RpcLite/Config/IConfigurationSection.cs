@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace RpcLite.Config
+﻿namespace RpcLite.Config
 {
 	/// <summary>
 	/// Represents a section of application configuration values.
@@ -11,12 +6,12 @@ namespace RpcLite.Config
 	public interface IConfigurationSection : IConfiguration
 	{
 		/// <summary>
-		///  Gets the key this section occupies in its parent.
+		/// Gets the key this section occupies in its parent.
 		/// </summary>
 		string Key { get; }
 
 		/// <summary>
-		///  Gets the full path to this section within the Microsoft.Extensions.Configuration.IConfiguration.
+		/// Gets the full path to this section within the Microsoft.Extensions.Configuration.IConfiguration.
 		/// </summary>
 		string Path { get; }
 

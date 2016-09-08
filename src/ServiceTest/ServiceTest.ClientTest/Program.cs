@@ -1,8 +1,8 @@
 ﻿using System;
 using RpcLite.Client;
-using RpcLite.Utility;
+using RpcLite.Config;
+using RpcLite.Registry.Zookeeper;
 using RpcLiteClientTestNetCore;
-using ServiceTest.ClientTest.Test;
 using ServiceTest.Contract;
 
 namespace ServiceTest.ClientTest
@@ -11,11 +11,43 @@ namespace ServiceTest.ClientTest
 	{
 		public static void Main(string[] args)
 		{
-			SerializeTest.PropertyReflectTest();
-			SerializeTest.ExceptionSerializationTest();
+			Test.SerializeTest.InnerExceptionTest();
+			//return;
 
-			PerformanceTest();
+			UnitTest.Test();
+			//ClientTest1();
+			//PerformanceTest();
+			//appHost.ProcessAsync()
 
+			//UnitTest.Test();
+			//RpcLite.AspNetCore.RpcLiteInitializer.Initialize();
+			//RegistryTest();
+			//Test2();
+		}
+
+		//public static Task<ResponseMessage> SendAsync(string action, Stream content, IDictionary<string, string> headers)
+		//{
+		//	var response = new ResponseMessage(null);
+		//	return Task.FromResult(response);
+		//}
+
+		private static void RegistryTest()
+		{
+			//ZookeeperRegistryTest();
+			ClientTest.RegistryTest.Test();
+		}
+
+		private static void SerializationTest()
+		{
+			//PropertyReflectTest();
+
+			//ReflectTest.Test();
+			//JsonSerializerTester.JsonSerializerTest();
+
+			//SerializeTest.PropertyReflectTest();
+			////SerializeTest.ExceptionSerializationMultiThreadTest();
+			//SerializeTest.ExceptionSerializationTest();
+			//PerformanceTest();
 
 			//SerializeTest.Test3();
 			//var exobj = new Exception();
@@ -23,27 +55,92 @@ namespace ServiceTest.ClientTest
 			//setter(exobj, 12);
 
 			//SerializeTest.Test3();
+		}
 
-			Test1();
-			PerformanceTest();
-			//PropertyReflectTest();
+		private static void ZookeeperRegistryTest()
+		{
+			var registry = new ZookeeperRegistry("192.168.9.1:2181", 10 * 1000);
+			if (registry.CanRegister)
+			{
+				registry.RegisterAsync(new ServiceConfigItem
+				{
+					Name = "ProductService",
+					Environment = "UAT",
+					Address = "http://localhost:5000/api/product/",
+				}).Wait();
+			}
 
-			//ReflectTest.Test();
-			//JsonSerializerTester.JsonSerializerTest();
-			//Test2();
+			Console.WriteLine("register finished");
+			Console.ReadLine();
+
+			try
+			{
+				var lookupTask = registry.LookupAsync(new ClientConfigItem
+				{
+					Name = "ProductService",
+					Environment = "UAT",
+				});
+
+				Console.WriteLine("started lookup");
+				Console.ReadLine();
+
+				lookupTask.Wait();
+				Console.WriteLine("lookupTask.Wait() " + lookupTask.Result);
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine(ex);
+			}
+
+			try
+			{
+				var lookupTask = registry.LookupAsync(new ClientConfigItem
+				{
+					Name = "ProductService",
+					Environment = "UAT",
+				});
+
+				Console.WriteLine("started lookup");
+				Console.ReadLine();
+
+				lookupTask.Wait();
+				Console.WriteLine("lookupTask.Wait() " + lookupTask.Result);
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine(ex);
+			}
+
+			Console.ReadLine();
+			registry.Dispose();
 		}
 
 		private static void PerformanceTest()
 		{
-			var client = ClientFactory.GetInstance<IProductService>("http://localhost:5000/api/service/");
+			RpcLite.AspNetCore.RpcLiteInitializer.Initialize();
+
+			var client = ClientFactory.GetInstance<IProductService>(serviceBaseUrl + "/api/service/");
 			try
 			{
 				var clientInfo = client as IRpcClient;
-				Console.WriteLine(clientInfo.BaseUrl);
+				Console.WriteLine(clientInfo.Address);
 				Console.WriteLine(clientInfo.Formatter.ToString());
 
+				var v01 = client.GetAll();
+
+				var times = 5;
+
+				Console.WriteLine("get 1 products");
+				for (int idxTime = 0; idxTime < times; idxTime++)
+				{
+					using (new TimeRecorder())
+					{
+						var v1 = client.GetPage(1, 1);
+					}
+				}
+
 				Console.WriteLine("get 10 products");
-				for (int idxTime = 0; idxTime < 19; idxTime++)
+				for (int idxTime = 0; idxTime < times; idxTime++)
 				{
 					using (new TimeRecorder())
 					{
@@ -52,7 +149,7 @@ namespace ServiceTest.ClientTest
 				}
 
 				Console.WriteLine("get 100 products");
-				for (int idxTime = 0; idxTime < 19; idxTime++)
+				for (int idxTime = 0; idxTime < times; idxTime++)
 				{
 					using (new TimeRecorder())
 					{
@@ -61,7 +158,7 @@ namespace ServiceTest.ClientTest
 				}
 
 				Console.WriteLine("get 1000 products");
-				for (int idxTime = 0; idxTime < 19; idxTime++)
+				for (int idxTime = 0; idxTime < times; idxTime++)
 				{
 					using (new TimeRecorder())
 					{
@@ -74,15 +171,24 @@ namespace ServiceTest.ClientTest
 			{
 				Console.WriteLine(ex);
 			}
+
+			//Console.Write(nameof(PerformanceTest) + "finish, press enter to exit");
+			//Console.ReadLine();
 		}
 
-		private static void Test1()
+		private static string serviceBaseUrl = "http://localhost:5000";
+
+		private static void ClientTest1()
 		{
 			//var baseUrl = @"http://localhost:50001/api/service/";
 			//var baseUrl = @"https://www.baidu.com/test/api/service/";
 			//var baseUrl = @"http://localhost/config/asfsdfs";
-			var baseUrl = @"http://localhost:5000/api/service/";
-			var client = ClientFactory.GetInstance<IProductService>(baseUrl);
+
+			RpcLite.AspNetCore.RpcLiteInitializer.Initialize();
+
+			var baseUrl = serviceBaseUrl + @"/api/service/";
+			//var client = ClientFactory.GetInstance<IProductService>(baseUrl);
+			var client = ClientFactory.GetInstance<IProductService>();
 
 			try
 			{
@@ -108,10 +214,16 @@ namespace ServiceTest.ClientTest
 			{
 				client.ExceptionTestAsync().Wait();
 			}
+			catch (AggregateException ex)
+			{
+				Console.WriteLine(ex.InnerException);
+			}
 			catch (Exception ex)
 			{
 				Console.WriteLine(ex);
 			}
+
+			Console.WriteLine("Client Test Finish");
 
 		}
 	}

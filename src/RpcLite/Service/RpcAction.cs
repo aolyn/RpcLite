@@ -1,7 +1,9 @@
 ﻿using System;
+using System.IO;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Threading.Tasks;
+using RpcLite.Formatters;
 using RpcLite.Logging;
 
 namespace RpcLite.Service
@@ -103,38 +105,98 @@ namespace RpcLite.Service
 		/// </summary>
 		public Type TaskResultType { get; set; }
 
+		///// <summary>
+		///// 
+		///// </summary>
+		//public Type ServiceType { get; set; }
+
 		/// <summary>
-		/// 
+		/// default value or argument type
 		/// </summary>
-		public Type ServiceType { get; set; }
+		public object DefaultArgument { get; set; }
 
 		#endregion
 
-		internal Task ExecuteAsync(ServiceContext context)
+		/// <summary>
+		/// invoke methods
+		/// </summary>
+		/// <param name="context"></param>
+		/// <returns></returns>
+		public Task ExecuteAsync(ServiceContext context)
 		{
+			if (ArgumentCount > 0)
+			{
+				try
+				{
+					context.Argument = context.Request.ContentLength > 0
+						? GetRequestObject(context.Request.RequestStream, context.Formatter, ArgumentType)
+						: DefaultArgument;
+				}
+				catch (Exception ex)
+				{
+					context.Exception = new DeserializeRequestException("deserialize request error", ex);
+					return TaskHelper.FromResult<object>(null);
+				}
+			}
+
 			if (IsTask)
 			{
-				var task = ActionHelper.InvokeTask(context);
-				return task;
+				try
+				{
+					var task = InvokeTaskInternal(context);
+
+					var waitTask = task.ContinueWith(tsk =>
+					{
+						if (tsk.IsFaulted)
+						{
+							context.Exception = tsk.Exception.InnerException;
+						}
+						else
+						{
+							var result = GetResultObject(tsk, context);
+							context.Result = result;
+						}
+					});
+
+					return waitTask;
+				}
+				catch (Exception ex)
+				{
+					context.Exception = ex;
+
+					return TaskHelper.FromResult<object>(null);
+				}
 			}
 			else
 			{
 				LogHelper.Debug("RpcService.BeginProcessRequest: start ActionHelper.InvokeAction");
 				try
 				{
-					context.Result = ActionHelper.InvokeAction(context.Action, context.Argument);
+					context.Result = InvokeAction(context.Argument);
 				}
 				catch (Exception ex)
 				{
+					context.Exception = ex;
+
 					var tcs = new TaskCompletionSource<object>();
-					tcs.SetException(ex);
+					tcs.SetResult(null);
 					return tcs.Task;
 				}
 				LogHelper.Debug("RpcService.BeginProcessRequest: end ActionHelper.InvokeAction");
 
-				var task = new Task<object>(() => context.Result);
-				task.RunSynchronously();
-				return task;
+				return TaskHelper.FromResult(context.Result);
+			}
+		}
+
+		private static object GetRequestObject(Stream stream, IFormatter formatter, Type type)
+		{
+			try
+			{
+				return formatter.Deserialize(stream, type);
+			}
+			catch (Exception)
+			{
+				throw new RequestException("Parse request content to object error.");
 			}
 		}
 
@@ -145,18 +207,13 @@ namespace RpcLite.Service
 		/// </summary>
 		/// <param name="task"></param>
 		/// <returns></returns>
-		internal static object GetTaskResult(Task task)
+		private static object GetTaskResult(Task task)
 		{
-			//return task.GetType() == typeof(Task)
-			//	? null
-			//	: ((dynamic)task).Result;
-
 			try
 			{
 				var type = task.GetType();
-				var func = GetTaskResultFuncs.GetOrAdd(type, () =>
+				var func = GetTaskResultFuncs.GetOrAdd(type, (Type key) =>
 				{
-					//var taskType = typeof(Task<>).MakeGenericType(type);
 					var arg = Expression.Parameter(typeof(object), "task");
 					var argConvert = Expression.Convert(arg, type);
 					var expProp = Expression.Property(argConvert, "Result");
@@ -177,10 +234,9 @@ namespace RpcLite.Service
 					throw ex.InnerException;
 				throw;
 			}
-			//return null;
 		}
 
-		internal static object GetResultObject(IAsyncResult ar, ServiceContext context)
+		private static object GetResultObject(IAsyncResult ar, ServiceContext context)
 		{
 			object resultObject = null;
 			var serviceContainer = (ServiceInstanceContainer)context.ServiceContainer;
@@ -195,45 +251,65 @@ namespace RpcLite.Service
 
 					resultObject = GetTaskResult(task);
 				}
-				else // if (!context.Action.IsAsync)
+				else
 				{
 					if (context.Action.HasReturnValue)
 					{
 						resultObject = context.Result;
 					}
 				}
-				//else
-				//{
-				//	if (context.Action.HasReturnValue)
-				//	{
-				//		try
-				//		{
-				//			resultObject = context.Action.EndFunc(serviceContainer.ServiceObject, ar);
-				//		}
-				//		catch (Exception ex)
-				//		{
-				//			resultObject = ex;
-				//		}
-				//	}
-				//	else
-				//	{
-				//		context.Action.EndAction(serviceContainer.ServiceObject, ar);
-				//	}
-				//}
 			}
-			//catch (Exception ex)
-			//{
-			//	resultObject = ex;
-			//}
 			finally
 			{
-				if (/*context.Action.IsAsync &&*/ serviceContainer != null && !context.Action.IsStatic)
+				if (serviceContainer != null && !context.Action.IsStatic)
 				{
 					serviceContainer.Dispose();
 				}
 			}
 
 			return resultObject;
+		}
+
+		private object InvokeAction(object reqArg)
+		{
+			if (IsStatic)
+			{
+				return InvokeAcion(reqArg, null);
+			}
+
+			using (var serviceInstance = ServiceFactory.GetService(this))
+			{
+				return InvokeAcion(reqArg, serviceInstance.ServiceObject);
+			}
+		}
+
+		private object InvokeAcion(object requestObject, object serviceObject)
+		{
+			object resultObj;
+			if (HasReturnValue)
+			{
+				resultObj = Func(serviceObject, requestObject);
+			}
+			else
+			{
+				Action(serviceObject, requestObject);
+				resultObj = null;
+			}
+			return resultObj;
+		}
+
+		private static Task InvokeTaskInternal(ServiceContext context)
+		{
+			object serviceObject = null;
+			if (!context.Action.IsStatic)
+			{
+				var serviceContainer = ServiceFactory.GetService(context.Action);
+				context.ServiceContainer = serviceContainer;
+				serviceObject = serviceContainer.ServiceObject;
+			}
+
+			var ar = (Task)context.Action.InvokeTask(serviceObject, context.Argument);
+			return ar;
 		}
 
 		/// <summary>
@@ -244,5 +320,6 @@ namespace RpcLite.Service
 		{
 			return Name;
 		}
+
 	}
 }

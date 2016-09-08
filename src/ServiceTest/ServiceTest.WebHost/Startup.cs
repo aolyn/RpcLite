@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using RpcLite.AspNetCore;
+using RpcLite.Service;
 
 namespace ServiceTest.WebHost
 {
@@ -23,7 +21,9 @@ namespace ServiceTest.WebHost
 		{
 			loggerFactory.AddConsole(LogLevel.Error);
 
-			RpcLite.Config.RpcLiteInitializer.Initialize(app);
+			RpcLiteInitializer.Initialize(app);
+			RpcManager.AddFilter(new LogTimeFilter());
+			RpcManager.AddFilter(new LogRequestTimeFilter());
 
 			if (env.IsDevelopment())
 			{
@@ -36,4 +36,5 @@ namespace ServiceTest.WebHost
 			});
 		}
 	}
+
 }

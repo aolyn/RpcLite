@@ -1,0 +1,8 @@
+{
+  "buildOptions": {
+    "copyToOutput": [ "rpclite.config.json" ]
+  },
+  "publishOptions": {
+    "include": [ "rpclite.config.json" ]
+  }
+}

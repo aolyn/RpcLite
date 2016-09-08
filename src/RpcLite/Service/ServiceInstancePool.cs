@@ -6,31 +6,15 @@ namespace RpcLite.Service
 	internal class ServiceFactory
 	{
 		private static readonly QuickReadConcurrentDictionary<RpcAction, ServiceInstanceContainerPool> Pool = new QuickReadConcurrentDictionary<RpcAction, ServiceInstanceContainerPool>();
-		//private static readonly object ContainerLock = new object();
 
 		public static ServiceInstanceContainer GetService(RpcAction action)
 		{
 			if (action == null) throw new ArgumentNullException(nameof(action));
 			if (action.ServiceCreator == null) throw new ArgumentException("action.ServiceCreator can't be null");
 
-			//var serviceCreator = action.ServiceCreator;
-			//ServiceInstanceContainerPool container;
-			var container = Pool.GetOrAdd(action, () =>
+			var container = Pool.GetOrAdd(action, (k) =>
 				new ServiceInstanceContainerPool(action.ServiceCreator) { Size = 1000 });
 			return container.GetInstanceContainer();
-
-			//if (Pool.TryGetValue(action, out container))
-			//	return container.GetInstanceContainer();
-
-			//lock (ContainerLock)
-			//{
-			//	if (Pool.TryGetValue(action, out container))
-			//		return container.GetInstanceContainer();
-
-			//	container = new ServiceInstanceContainerPool(action.ServiceCreator) { Size = 1000 };
-			//	Pool.Add(action, container);
-			//	return container.GetInstanceContainer();
-			//}
 		}
 	}
 

@@ -1,4 +1,4 @@
-﻿{
+{
   "dependencies": {
     "Microsoft.NETCore.App": {
       "version": "1.0.0",
@@ -8,8 +8,11 @@
     "Microsoft.AspNetCore.Server.IISIntegration": "1.0.0",
     "Microsoft.AspNetCore.Server.Kestrel": "1.0.0",
     "Microsoft.Extensions.Logging.Console": "1.0.0",
+    "RpcLite": "1.0.1-*",
     "RpcLite.AspNetCore": "1.0.1-*",
-    "ServiceTest.ServiceImpl": "1.0.0-*"
+    "ServiceTest.ServiceImpl": "1.0.0-*",
+    "Microsoft.AspNetCore.Server.Kestrel.Https": "1.0.0",
+    "RpcLite.Registry.Zookeeper": "1.0.0-*"
   },
 
   "tools": {
@@ -19,8 +22,7 @@
   "frameworks": {
     "netcoreapp1.0": {
       "imports": [
-        "dotnet5.6",
-        "portable-net45+win8"
+        "dnxcore50"
       ]
     }
   },
@@ -28,7 +30,7 @@
   "buildOptions": {
     "emitEntryPoint": true,
     "preserveCompilationContext": true,
-    "copyToOutput": [ "rpclite.config.json" ]
+    "copyToOutput": [ "rpclite.config.json", "ssl.pfx" ]
   },
 
   "runtimeOptions": {
@@ -40,7 +42,9 @@
   "publishOptions": {
     "include": [
       "wwwroot",
-      "web.config"
+      "web.config",
+      "rpclite.config.json",
+      "ssl.pfx"
     ]
   },
 

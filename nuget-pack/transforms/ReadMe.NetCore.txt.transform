@@ -1,0 +1,5 @@
+public void Configure(IApplicationBuilder app)
+{
+	//initialize use this statement
+	RpcLiteInitializer.Initialize(app, Directory.GetCurrentDirectory());
+}

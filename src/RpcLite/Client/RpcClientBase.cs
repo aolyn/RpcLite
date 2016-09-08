@@ -1,12 +1,17 @@
-﻿using System;
+﻿//#define LogDuration
+#if DEBUG && LogDuration
+using System.Diagnostics;
+#endif
+
+using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 using RpcLite.Formatters;
-using RpcLite.Net;
+using RpcLite.Logging;
 
 namespace RpcLite.Client
 {
@@ -14,18 +19,37 @@ namespace RpcLite.Client
 	/// 
 	/// </summary>
 	/// <typeparam name="TContract">contract interface</typeparam>
-	public class RpcClientBase<TContract> where TContract : class
+	public class RpcClientBase<TContract> : IRpcClient<TContract>
+		where TContract : class
 	{
 		/// <summary>
-		/// 
+		/// base url of service
 		/// </summary>
-		public string BaseUrl { get; set; }
+		public string Address
+		{
+			get { return Cluster?.Address; }
+			set
+			{
+				if (Cluster != null)
+					Cluster.Address = value;
+			}
+		}
 
-		private IFormatter _formatter = new JsonFormatter();
+		//private IFormatter _formatter = new JsonFormatter();
 		/// <summary>
-		/// 
+		/// Formatter
 		/// </summary>
-		public IFormatter Formatter { get { return _formatter; } set { _formatter = value; } }
+		public IFormatter Formatter { get; set; }
+
+		///// <summary>
+		///// Channel to transport data with service
+		///// </summary>
+		//public IClientChannel Channel { get; set; }
+
+		/// <summary>
+		/// Channel to transport data with service
+		/// </summary>
+		public ICluster<TContract> Cluster { get; set; }
 
 		/// <summary>
 		/// 
@@ -34,11 +58,25 @@ namespace RpcLite.Client
 		/// <param name="request"></param>
 		/// <param name="returnType"></param>
 		/// <returns></returns>
-		protected object GetResponse(string action, object request, Type returnType)
+		protected object GetResponse<TResult>(string action, object request, Type returnType)
 		{
-			var response = DoRequest(action, request, returnType);
-
-			return response;
+#if DEBUG && LogDuration
+			var stopwatch = Stopwatch.StartNew();
+#endif
+			var response = GetResponseAsync<TResult>(action, request, returnType);
+			try
+			{
+#if DEBUG && LogDuration
+				stopwatch.Stop();
+				var duration = stopwatch.ElapsedMilliseconds;
+#endif
+				var result = response.Result;
+				return result;
+			}
+			catch (AggregateException ex)
+			{
+				throw ex.InnerException;
+			}
 		}
 
 		/// <summary>
@@ -50,167 +88,142 @@ namespace RpcLite.Client
 		/// <returns></returns>
 		protected Task<TResult> GetResponseAsync<TResult>(string action, object request, Type returnType)
 		{
-			if (_formatter == null)
+			if (Formatter == null)
 				throw new ServiceException("Formatter can't be null");
 
-			var mime = _formatter.SupportMimes.First();
-
-			var resultObj = DoRequestAsync<TResult>(action, request, returnType, mime);
+			var resultObj = DoRequestAsync<TResult>(action, request, returnType);
 			return resultObj;
 		}
 
-		private Task<TResult> DoRequestAsync<TResult>(string action, object param, Type returnType, string mime)
+		private Task<TResult> DoRequestAsync<TResult>(string action, object param, Type returnType)
 		{
-			var headDic = new Dictionary<string, string>
+			var sendTask = SendAsync(action, param);
+
+#if DEBUG && LogDuration
+			var duration0 = stopwatch1.GetAndRest();
+#endif
+
+			var task = sendTask.ContinueWith(tsk =>
 			{
-				{"Content-Type",mime},
-				{"Accept",mime},
-			};
-
-			var json = JsonConvert.SerializeObject(param);
-
-			var url = BaseUrl + action;
-			var resultMessageTask = WebRequestHelper.PostAsync(url, json, Encoding.UTF8, headDic);
-
-			var task = resultMessageTask.ContinueWith(tsk =>
-			{
+#if DEBUG && LogDuration
+				var duration1 = stopwatch1.GetAndRest();
+#endif
 				if (tsk.Exception != null)
-					throw tsk.Exception;
+					throw tsk.Exception.InnerException;
 
 				var resultMessage = tsk.Result;
 				if (resultMessage == null)
 					throw new ClientException("get service data error");
 
-				if (resultMessage.IsSuccess)
-				{
-					if (string.IsNullOrEmpty(resultMessage.Result) || returnType == null)
-						return default(TResult);
-
-					var objType = typeof(TResult);
-
-					var resultObj = JsonConvert.DeserializeObject(resultMessage.Result, objType);
-					return (TResult)resultObj;
-				}
-
-#if NETCORE
-				var asm = Assembly.Load(new AssemblyName(resultMessage.Header["RpcLite-ExceptionAssembly"]));
-#else
-				var asm = Assembly.Load(resultMessage.Header["RpcLite-ExceptionAssembly"]);
-#endif
-				var exType = asm.GetType(resultMessage.Header["RpcLite-ExceptionType"]);
-
-				var exObj = JsonConvert.DeserializeObject(resultMessage.Result, exType);
-				if (exObj != null)
-					throw (Exception)exObj;
-
-				return default(TResult);
+				return GetResult<TResult>(tsk.Result, returnType);
 			});
 
 			return task;
 		}
 
-		/// <summary>
-		/// 
-		/// </summary>
-		public TContract Client
+		private Task<ResponseMessage> SendAsync(string action, object param)
 		{
-			get { return this as TContract; }
-		}
-
-		private object DoRequest(string action, object param, Type returnType)
-		{
-			if (_formatter == null)
-				throw new ServiceException("Formatter can't be null");
-
-			var mime = _formatter.SupportMimes.First();
-
-			var resultObj = DoRequest(action, param, returnType, mime);
-			return resultObj;
-		}
-
-		private object DoRequest(string action, object param, Type returnType, string mime)
-		{
+			var mime = Formatter.SupportMimes.First();
 			var headDic = new Dictionary<string, string>
 			{
 				{"Content-Type",mime},
 				{"Accept",mime},
 			};
 
-			var json = JsonConvert.SerializeObject(param);
+			var content = new MemoryStream();
+			Formatter.Serialize(content, param);
+			content.Position = 0;
 
-			var url = BaseUrl + action;
-			var resultMessage = WebRequestHelper.Post(url, json, Encoding.UTF8, headDic);
-			if (resultMessage == null)
-				throw new ClientException("get service data error");
+#if DEBUG && LogDuration
+			var stopwatch1 = Stopwatch.StartNew();
+#endif
 
+			var sendTask = Cluster.SendAsync(action, content, headDic);
+			return sendTask;
+		}
+
+		private TResult GetResult<TResult>(ResponseMessage resultMessage, Type returnType)
+		{
 			if (resultMessage.IsSuccess)
 			{
-				if (string.IsNullOrEmpty(resultMessage.Result) || returnType == null)
-					return null;
+				if (resultMessage.Result == null || returnType == null)
+					return default(TResult);
 
-#if NETCORE
-				var objType = returnType.GetTypeInfo().BaseType == typeof(Task)
-					? returnType.GetGenericArguments()[0]
-					: returnType;
-#else
-				var objType = returnType.BaseType == typeof(Task)
-					? returnType.GetGenericArguments()[0]
-					: returnType;
-#endif
+				var objType = typeof(TResult);
 
-				var resultObj = JsonConvert.DeserializeObject(resultMessage.Result, objType);
-				return resultObj;
+				try
+				{
+					var resultObj = Formatter.Deserialize(resultMessage.Result, objType);
+					return (TResult)resultObj;
+				}
+				catch (Exception ex)
+				{
+					//return default(TResult);
+					//throw;
+					throw new ServiceException("parse data received error", ex);
+				}
+				finally
+				{
+					resultMessage.Dispose();
+				}
 			}
 
-#if NETCORE
-			var asm = Assembly.Load(new AssemblyName(resultMessage.Header["RpcLite-ExceptionAssembly"]));
-#else
-			var asm = Assembly.Load(resultMessage.Header["RpcLite-ExceptionAssembly"]);
-#endif
-			var exType = asm.GetType(resultMessage.Header["RpcLite-ExceptionType"]);
+			if (resultMessage.Headers.Count == 0)
+				throw new ServiceException("service url is not a service address");
 
-			var exObj = JsonConvert.DeserializeObject(resultMessage.Result, exType);
+			var exceptionAssembly = resultMessage.Headers["RpcLite-ExceptionAssembly"];
+			var exceptionTypeName = resultMessage.Headers["RpcLite-ExceptionType"];
+
+			if (string.IsNullOrWhiteSpace(exceptionAssembly) || string.IsNullOrWhiteSpace(exceptionTypeName))
+			{
+				throw new ClientException("exception occored, but no ExceptionAssembly and ExceptionType returned");
+			}
+
+			Type exceptionType;
+			try
+			{
+#if NETCORE
+				var asm = Assembly.Load(new AssemblyName(exceptionAssembly));
+#else
+					var asm = Assembly.Load(exceptionAssembly);
+#endif
+				exceptionType = asm.GetType(exceptionTypeName);
+			}
+			catch (Exception ex)
+			{
+				LogHelper.Error("can't find exception type " + exceptionTypeName, ex);
+				exceptionType = typeof(Exception);
+			}
+
+			object exObj;
+			try
+			{
+				//var buf = new byte[8192];
+				//var readLength = resultMessage.Result.Read(buf, 0, buf.Length);
+				//var json = Encoding.UTF8.GetString(buf);
+
+				exObj = Formatter.Deserialize(resultMessage.Result, exceptionType);
+			}
+			catch (Exception ex)
+			{
+				throw new ClientException("Deserialize Response failed", ex);
+			}
+
 			if (exObj != null)
 				throw (Exception)exObj;
 
-			return null;
-		}
-
-		private static Lazy<Func<RpcClientBase<TContract>>> _func = new Lazy<Func<RpcClientBase<TContract>>>(() =>
-		{
-			var type = ClientWrapper.WrapInterface<TContract>();
-			var func = TypeCreator.GetCreateInstanceFunc(type) as Func<RpcClientBase<TContract>>;
-			return func;
-		}, true);
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <returns></returns>
-		public static RpcClientBase<TContract> GetInstance()
-		{
-			return GetInstance(GetDefaultBaseUrl());
-		}
-
-		private static string GetDefaultBaseUrl()
-		{
-			var uri = ClientAddressResolver<TContract>.GetAddress();
-			return uri == null ? null : uri.ToString();
+			//return default(TResult);
+			throw new ServiceException("exception occored but no exception data transported");
 		}
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="baseUrl"></param>
-		/// <returns></returns>
-		public static RpcClientBase<TContract> GetInstance(string baseUrl)
-		{
-			if (_func.Value == null)
-				throw new ClientException("GetCreateInstanceFunc Error.");
+		public TContract Client => this as TContract;
+	}
 
-			var client = _func.Value();
-			client.BaseUrl = baseUrl;
-			return client;
-		}
+	internal static class StaticDataHolder
+	{
+		internal static readonly ConcurrentDictionary<string, DateTime> DotFoundAssemblyDictionary = new ConcurrentDictionary<string, DateTime>();
 	}
 }
