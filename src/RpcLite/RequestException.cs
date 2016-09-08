@@ -1,10 +1,12 @@
 ﻿using System;
+#if !NETCORE
 using System.Runtime.Serialization;
+#endif
 
 namespace RpcLite
 {
 	/// <summary>
-	/// Respresnts request error that occor during application in server side
+	/// Respresents request error that occored during application in server side
 	/// </summary>
 	public class RequestException : ServiceException
 	{
@@ -13,6 +15,8 @@ namespace RpcLite
 		/// </summary>
 		public RequestException() { }
 
+#if NETCORE
+#else
 		/// <summary>
 		/// 
 		/// </summary>
@@ -21,6 +25,7 @@ namespace RpcLite
 		protected RequestException(SerializationInfo info, StreamingContext context) : base(info, context)
 		{
 		}
+#endif
 
 		/// <summary>
 		/// Initializes a new instance of RpcLite.RequestException class with specifid message and inner exception

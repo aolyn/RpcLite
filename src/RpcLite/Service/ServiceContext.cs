@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using RpcLite.Formatters;
+using RpcLite.Monitor;
 
 namespace RpcLite.Service
 {
@@ -57,7 +60,7 @@ namespace RpcLite.Service
 		/// <summary>
 		/// 
 		/// </summary>
-		public Formatters.IFormatter Formatter { get; set; }
+		public IFormatter Formatter { get; set; }
 
 		/// <summary>
 		/// 
@@ -67,11 +70,50 @@ namespace RpcLite.Service
 		/// <summary>
 		/// 
 		/// </summary>
-		public object ExecutingContext { get; set; }
+		public IServerContext ExecutingContext { get; set; }
 
 		/// <summary>
 		/// 
 		/// </summary>
 		public Exception Exception { get; set; }
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public IMonitorSession Monitor { get; internal set; }
+
+		/// <summary>
+		/// store some use data
+		/// </summary>
+		private Dictionary<string, object> _extensionData;
+
+		/// <summary>
+		/// set extension data by key
+		/// </summary>
+		/// <param name="key"></param>
+		/// <param name="data"></param>
+		public void SetExtensionData(string key, object data)
+		{
+			if (_extensionData == null)
+				_extensionData = new Dictionary<string, object>();
+
+			_extensionData[key] = data;
+		}
+
+		/// <summary>
+		/// get extension data by key
+		/// </summary>
+		/// <param name="key"></param>
+		/// <returns></returns>
+		public object GetExtensionData(string key)
+		{
+			if (_extensionData == null)
+				return null;
+
+			object data;
+			_extensionData.TryGetValue(key, out data);
+			return data;
+		}
+
 	}
 }

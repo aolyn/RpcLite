@@ -15,7 +15,15 @@ namespace RpcLite.Formatters
 		/// <param name="inputStream"></param>
 		/// <param name="targetType"></param>
 		/// <returns></returns>
-		object Deserilize(Stream inputStream,Type targetType);
+		object Deserialize(Stream inputStream, Type targetType);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="reader"></param>
+		/// <param name="targetType"></param>
+		/// <returns></returns>
+		object Deserialize(TextReader reader, Type targetType);
 
 		/// <summary>
 		/// 
@@ -23,6 +31,13 @@ namespace RpcLite.Formatters
 		/// <param name="outputStream"></param>
 		/// <param name="source"></param>
 		void Serialize(Stream outputStream, object source);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="writer"></param>
+		/// <param name="source"></param>
+		void Serialize(TextWriter writer, object source);
 
 		/// <summary>
 		/// 

@@ -1,4 +1,6 @@
-﻿namespace RpcLite.Config
+﻿using System;
+
+namespace RpcLite.Config
 {
 	/// <summary>
 	/// ServiceConfigItem
@@ -6,19 +8,34 @@
 	public class ServiceConfigItem
 	{
 		/// <summary>
+		/// name of service
+		/// </summary>
+		public string Name { get; set; }
+
+		/// <summary>
 		/// relative path of service url, eg: ~/api/product
 		/// </summary>
 		public string Path { get; set; }
 
 		/// <summary>
-		/// assembly of service implement class
+		/// relative path of service url, eg: ~/api/product
 		/// </summary>
-		public string AssemblyName { get; set; }
+		public string Address { get; set; }
 
 		/// <summary>
-		/// full service type name, eg: ServiceImpl.ProductAsyncService
+		/// Environment
 		/// </summary>
-		public string TypeName { get; set; }
+		public string Environment { get; set; }
+
+		///// <summary>
+		///// assembly of service implement class
+		///// </summary>
+		//public string AssemblyName { get; private set; }
+
+		///// <summary>
+		///// full service type name, eg: ServiceImpl.ProductAsyncService
+		///// </summary>
+		//public string TypeName { get; private set; }
 
 		/// <summary>
 		/// original configured type name, eg: ServiceImpl.ProductAsyncService,ServiceImpl
@@ -26,9 +43,22 @@
 		public string Type { get; set; }
 
 		/// <summary>
-		/// name of service
+		/// 
 		/// </summary>
-		public string Name { get; set; }
+		public ServiceConfigItem() { }
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="name"></param>
+		/// <param name="type"></param>
+		/// <param name="path"></param>
+		public ServiceConfigItem(string name, Type type, string path)
+		{
+			Name = name;
+			Type = RpcConfigHelper.GetTypeIdentifier(type);
+			Path = path;
+		}
 
 		/// <summary>
 		/// get description string
@@ -36,7 +66,7 @@
 		/// <returns></returns>
 		public override string ToString()
 		{
-			return $"{Name}, { TypeName }, {Path}";
+			return $"{Name}, { Type }, {Path}";
 		}
 	}
 }

@@ -29,7 +29,7 @@ namespace RpcLite
 				throw new ArgumentNullException(nameof(key));
 			}
 
-			return GetOrAdd(key, () => value);
+			return GetOrAdd(key, k => value);
 		}
 
 		/// <summary>
@@ -38,7 +38,19 @@ namespace RpcLite
 		/// <param name="key"></param>
 		/// <param name="valueFactory"></param>
 		/// <returns></returns>
+		[Obsolete("use GetOrAdd(TKey key, Func<TKey, TValue> valueFactory) instead")]
 		public TValue GetOrAdd(TKey key, Func<TValue> valueFactory)
+		{
+			return GetOrAdd(key, k => valueFactory());
+		}
+
+		/// <summary>
+		/// [thread safe] Adds a key/value pair if the key does not already exist.
+		/// </summary>
+		/// <param name="key"></param>
+		/// <param name="valueFactory"></param>
+		/// <returns></returns>
+		public TValue GetOrAdd(TKey key, Func<TKey, TValue> valueFactory)
 		{
 			if (key == null)
 			{
@@ -84,7 +96,7 @@ namespace RpcLite
 					_readWriteLock.ExitReadLock();
 				}
 
-				value = valueFactory();
+				value = valueFactory(key);
 				try
 				{
 					_readWriteLock.EnterWriteLock();

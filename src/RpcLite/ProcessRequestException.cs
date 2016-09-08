@@ -13,6 +13,8 @@ namespace RpcLite
 		/// </summary>
 		public ProcessRequestException() { }
 
+#if NETCORE
+#else
 		/// <summary>
 		/// 
 		/// </summary>
@@ -21,6 +23,7 @@ namespace RpcLite
 		protected ProcessRequestException(SerializationInfo info, StreamingContext context) : base(info, context)
 		{
 		}
+#endif
 
 		/// <summary>
 		/// Initializes a new instance of RpcLite.ProcessRequestException class with specifid message and inner exception

@@ -27,7 +27,7 @@ namespace RpcLiteClientTestNetCore
 		public void Dispose()
 		{
 			_stopwatch.Stop();
-			Console.WriteLine("Time escaped in ms " + _stopwatch.ElapsedMilliseconds);
+			Console.WriteLine("Time escaped in ms " + _stopwatch.Elapsed.TotalMilliseconds);
 		}
 	}
 }

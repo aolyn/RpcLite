@@ -1,4 +1,8 @@
-﻿using System;
+﻿#if NETCORE
+
+#else
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;
@@ -25,7 +29,7 @@ namespace RpcLite.Formatters
 		/// <param name="inputStream"></param>
 		/// <param name="targetType"></param>
 		/// <returns></returns>
-		public object Deserilize(Stream inputStream, Type targetType)
+		public object Deserialize(Stream inputStream, Type targetType)
 		{
 			var serializer = new XmlSerializer(targetType);
 			return serializer.Deserialize(inputStream);
@@ -49,3 +53,5 @@ namespace RpcLite.Formatters
 		public List<string> SupportMimes { get { return _supportMimes; } }
 	}
 }
+
+#endif
