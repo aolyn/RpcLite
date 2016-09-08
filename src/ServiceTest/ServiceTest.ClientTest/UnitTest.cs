@@ -22,10 +22,6 @@ namespace ServiceTest.ClientTest
 		{
 			#region prepare config
 
-			////var config1 = new ConfigurationBuilder()
-			////	.AddJsonFile("rpclite.config.json")
-			////	.Build();
-			////var config2 = RpcConfigHelper.GetConfig(new CoreConfiguration(config1));
 
 			//var config = new RpcLiteConfig
 			//{
@@ -53,6 +49,11 @@ namespace ServiceTest.ClientTest
 			//	.UseClients(new ClientConfigItem("ProductService", typeof(IProductService), "/service/"))
 			//	.Build();
 			#endregion
+
+			////var config1 = new ConfigurationBuilder()
+			////	.AddJsonFile("rpclite.config.json")
+			////	.Build();
+			////var config2 = RpcConfigHelper.GetConfig(new CoreConfiguration(config1));
 
 			var path = "/service/";
 			var appHost = new AppHostBuilder()

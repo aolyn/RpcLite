@@ -17,6 +17,13 @@
     "type": "RpcLite.Monitor.Http.HttpMonitorFactory, RpcLite.Monitor.Http"
   },
 
+  "formatter": {
+    "removeDefault": false,
+    "formatters": [
+      { "type": "RpcLite.Formatters.JsonFormatter, RpcLite" }
+    ]
+  },
+
   "service": {
     "mapper": {
       "name": "ServiceMapper",

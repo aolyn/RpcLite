@@ -2,8 +2,8 @@
 
 using System;
 using System.IO;
-using System.Text;
 using Newtonsoft.Json;
+
 #if USE_CUSTOMIZE_JSON_DESERIALIZE
 using RpcLite.Formatters.Json;
 #endif
@@ -22,32 +22,19 @@ namespace RpcLite.Utility
 		/// <returns></returns>
 		public static object Deserialize(Stream stream, Type targetType, bool leaveOpen = false)
 		{
-#if NETCORE
-			using (var reader = new StreamReader(stream, Encoding.UTF8, true, 0x400, leaveOpen))
-#else
-			using (var reader = new StreamReader(stream))
-#endif
-			{
-				return Deserialize(targetType, reader, leaveOpen);
-			}
+			//using (var reader = new StreamReader(stream, Encoding.UTF8, true, 1024, leaveOpen))
+			var reader = new StreamReader(stream);
+			return Deserialize(reader, targetType, leaveOpen);
 		}
 
-#if USE_CUSTOMIZE_JSON_DESERIALIZE
-		private static readonly JsonSerializerSettings Settings = new JsonSerializerSettings
-		{
-			Formatting = Formatting.Indented,
-			ContractResolver = new SerializeContractResolver(),
-			//Converters = new List<JsonConverter>
-			//{
-			//	new ExceptionConverter(),
-			//	//new EmptyConverter(),
-			//	new KeyValuePairConverter(),
-			//	new ExpandoObjectConverter()
-			//}
-		};
-#endif
-
-		private static object Deserialize(Type targetType, TextReader reader, bool leaveOpen = false)
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="reader"></param>
+		/// <param name="targetType"></param>
+		/// <param name="leaveOpen"></param>
+		/// <returns></returns>
+		public static object Deserialize(TextReader reader, Type targetType, bool leaveOpen = false)
 		{
 			using (var jsonReader = new JsonTextReader(reader))
 			{
@@ -74,6 +61,21 @@ namespace RpcLite.Utility
 		private static readonly JsonSerializer DefaultJsonSerializer = new JsonSerializer();
 #endif
 
+
+#if USE_CUSTOMIZE_JSON_DESERIALIZE
+		private static readonly JsonSerializerSettings Settings = new JsonSerializerSettings
+		{
+			Formatting = Formatting.Indented,
+			ContractResolver = new SerializeContractResolver(),
+			//Converters = new List<JsonConverter>
+			//{
+			//	new ExceptionConverter(),
+			//	//new EmptyConverter(),
+			//	new KeyValuePairConverter(),
+			//	new ExpandoObjectConverter()
+			//}
+		};
+#endif
 
 		private static JsonSerializer GetSerializer()
 		{
@@ -102,7 +104,7 @@ namespace RpcLite.Utility
 		{
 			using (var writer = new StringWriter())
 			{
-				Serialize(source, writer);
+				Serialize(writer, source);
 				writer.Flush();
 				return writer.ToString();
 			}
@@ -112,29 +114,25 @@ namespace RpcLite.Utility
 		/// </summary>
 		public static void Serialize(Stream stream, object source)
 		{
-			//using (var writer = new StreamWriter(stream))
-			//{
 			var writer = new StreamWriter(stream);
-			Serialize(source, writer);
-			//writer.Flush();
-			//}
-		}
-
-		private static void Serialize(object source, TextWriter writer)
-		{
-			//using (var jsonWriter = new JsonTextWriter(writer))
-			//{
-			var jsonWriter = new JsonTextWriter(writer);
-			//var jsonSerializer = new JsonSerializer
-			//{
-			//	NullValueHandling = NullValueHandling.Ignore
-			//};
-
-			var jsonSerializer = GetSerializer();
-
-			jsonSerializer.Serialize(jsonWriter, source);
+			Serialize(writer, source);
 			writer.Flush();
-			//}
 		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="writer"></param>
+		/// <param name="source"></param>
+		public static void Serialize(TextWriter writer, object source)
+		{
+			using (var jsonWriter = new JsonTextWriter(writer))
+			{
+				jsonWriter.CloseOutput = false;
+				var jsonSerializer = GetSerializer();
+				jsonSerializer.Serialize(jsonWriter, source);
+			}
+		}
+
 	}
 }

@@ -43,7 +43,7 @@ namespace RpcLite
 		/// <summary>
 		/// 
 		/// </summary>
-		//public IClusterFactory ClusterFactory { get; }
+		public FormatterManager FormatterManager { get; set; }
 
 		/// <summary>
 		/// 
@@ -86,6 +86,7 @@ namespace RpcLite
 			AppId = config.AppId;
 			Registry = RegistryHelper.GetRegistry(config);
 			ServiceHost = new ServiceHost(this, config);
+			FormatterManager = new FormatterManager(config);
 			//ClusterFactory = new SimpleClusterFactory();
 			ClientFactory = new RpcClientFactory(this, config);
 

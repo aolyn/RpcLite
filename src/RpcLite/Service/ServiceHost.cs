@@ -133,7 +133,7 @@ namespace RpcLite.Service
 		/// <returns></returns>
 		private IFormatter GetFormatter(string contentType)
 		{
-			var formatter = FormatterManager.GetFormatter(contentType);
+			var formatter = _appHost.FormatterManager.GetFormatter(contentType);
 			if (formatter == null)
 				throw new ConfigException("Not Supported MIME: " + contentType);
 			return formatter;

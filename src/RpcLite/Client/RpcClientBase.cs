@@ -35,11 +35,11 @@ namespace RpcLite.Client
 			}
 		}
 
-		private IFormatter _formatter = new JsonFormatter();
+		//private IFormatter _formatter = new JsonFormatter();
 		/// <summary>
 		/// Formatter
 		/// </summary>
-		public IFormatter Formatter { get { return _formatter; } set { _formatter = value; } }
+		public IFormatter Formatter { get; set; }
 
 		///// <summary>
 		///// Channel to transport data with service
@@ -88,7 +88,7 @@ namespace RpcLite.Client
 		/// <returns></returns>
 		protected Task<TResult> GetResponseAsync<TResult>(string action, object request, Type returnType)
 		{
-			if (_formatter == null)
+			if (Formatter == null)
 				throw new ServiceException("Formatter can't be null");
 
 			var resultObj = DoRequestAsync<TResult>(action, request, returnType);
@@ -123,7 +123,7 @@ namespace RpcLite.Client
 
 		private Task<ResponseMessage> SendAsync(string action, object param)
 		{
-			var mime = _formatter.SupportMimes.First();
+			var mime = Formatter.SupportMimes.First();
 			var headDic = new Dictionary<string, string>
 			{
 				{"Content-Type",mime},
@@ -216,97 +216,10 @@ namespace RpcLite.Client
 			throw new ServiceException("exception occored but no exception data transported");
 		}
 
-		// ReSharper disable once UnusedMember.Local
-		//		private Task<TResult> DoRequestAsync2<TResult>(string action, object param, Type returnType, string mime)
-		//		{
-		//			var headDic = new Dictionary<string, string>
-		//			{
-		//				{"Content-Type",mime},
-		//				{"Accept",mime},
-		//			};
-
-		//			//var json = JsonConvert.SerializeObject(param);
-
-		//			var content = new FormaterContent(Formatter, param);
-
-		//#if DEBUG && LogDuration
-		//			var stopwatch1 = Stopwatch.StartNew();
-		//#endif
-
-		//			var url = BaseUrl + action;
-		//			var resultMessageTask = WebRequestHelper.PostAsync(url, content, headDic);
-
-		//#if DEBUG && LogDuration
-		//			var duration0 = stopwatch1.GetAndRest();
-		//#endif
-
-		//			var task = resultMessageTask.ContinueWith(tsk =>
-		//			{
-		//#if DEBUG && LogDuration
-		//				var duration1 = stopwatch1.GetAndRest();
-		//#endif
-		//				if (tsk.Exception != null)
-		//					throw tsk.Exception.InnerException;
-
-		//				var resultMessage = tsk.Result;
-		//				if (resultMessage == null)
-		//					throw new ClientException("get service data error");
-
-		//				if (resultMessage.IsSuccess)
-		//				{
-		//					if (resultMessage.Result == null || returnType == null)
-		//						return default(TResult);
-
-		//					var objType = typeof(TResult);
-
-		//					try
-		//					{
-		//						var resultObj = Formatter.Deserialize(resultMessage.Result, objType);
-		//						return (TResult)resultObj;
-		//					}
-		//					//catch (Exception ex)
-		//					//{
-		//					//	return default(TResult);
-		//					//	//throw;
-		//					//}
-		//					finally
-		//					{
-		//						resultMessage.Dispose();
-		//					}
-		//				}
-
-		//				var exceptionAssembly = resultMessage.Header["RpcLite-ExceptionAssembly"];
-		//				var exceptionType = resultMessage.Header["RpcLite-ExceptionType"];
-
-		//				if (string.IsNullOrWhiteSpace(exceptionAssembly) || string.IsNullOrWhiteSpace(exceptionType))
-		//				{
-		//					throw new ClientException("exception occored, but no ExceptionAssembly and ExceptionType returned");
-		//				}
-
-		//#if NETCORE
-		//				var asm = Assembly.Load(new AssemblyName(exceptionAssembly));
-		//#else
-		//				var asm = Assembly.Load(exceptionAssembly);
-		//#endif
-		//				var exType = asm.GetType(exceptionType);
-
-		//				var exObj = Formatter.Deserialize(resultMessage.Result, exType);
-		//				if (exObj != null)
-		//					throw (Exception)exObj;
-
-		//				return default(TResult);
-		//			});
-
-		//			return task;
-		//		}
-
 		/// <summary>
 		/// 
 		/// </summary>
-		public TContract Client
-		{
-			get { return this as TContract; }
-		}
+		public TContract Client => this as TContract;
 	}
 
 	internal static class StaticDataHolder

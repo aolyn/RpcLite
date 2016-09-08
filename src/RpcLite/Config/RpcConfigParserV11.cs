@@ -23,6 +23,7 @@ namespace RpcLite.Config
 			InitializeClientConfig(config, instance);
 			InitializeRegistryConfig(config, instance);
 			InitializeMonitorConfig(config, instance);
+			InitializeFormatterConfig(config, instance);
 
 			if (instance.Service.Services != null)
 			{
@@ -34,26 +35,77 @@ namespace RpcLite.Config
 			return instance;
 		}
 
+		private static void InitializeFormatterConfig(IConfiguration config, RpcConfig instance)
+		{
+			var formatterNode = config.GetSection("formatter");
+
+			if (formatterNode?.GetChildren()?.Any() == true)
+			{
+				var removeDefaultNode = formatterNode["removeDefault"];
+				instance.Formatter = new FormatterConfig
+				{
+					RemoveDefault = removeDefaultNode?.ToLower() == "true",
+					Formatters = new List<FormatterItemConfig>(),
+				};
+
+				var formattersNode = formatterNode.GetSection("formatters");
+				var clients = formattersNode.GetChildren();
+				foreach (var item in clients)
+				{
+					var name = item["name"];
+					var type = item["type"];
+
+					//if (string.IsNullOrEmpty(name))
+					//	throw new RpcConfigException("name of RpcLite configuration client node can't be null or empty");
+					if (string.IsNullOrEmpty(type))
+						throw new RpcConfigException(string.Format("type of RpcLite configuration client node '{0}' can't be null or empty", name));
+
+					var serviceConfigItem = new FormatterItemConfig
+					{
+						Name = name,
+						Type = type,
+					};
+					instance.Formatter.Formatters.Add(serviceConfigItem);
+				}
+			}
+		}
+
 		// ReSharper disable once FunctionComplexityOverflow
 		private static void InitializeClientConfig(IConfiguration config, RpcConfig instance)
 		{
 			var clientNode = config.GetSection("client");
+			if (clientNode?.GetChildren()?.Any() != true)
+				return;
 
-			var clientsNode = clientNode?.GetSection("clients");
-			if (clientsNode != null)
+			instance.Client = new ClientConfig();
+
+			var clusterNode = clientNode.GetSection("cluster");
+			if (clusterNode?.GetChildren()?.Any() == true)
+			{
+				var name = clusterNode["name"];
+				var type = clusterNode["type"];
+
+				instance.Client.Cluster = new ClusterConfig
+				{
+					Name = name,
+					Type = type,
+				};
+			}
+
+			var clientsNode = clientNode.GetSection("clients");
+			if (clientsNode?.GetChildren()?.Any() == true)
 			{
 				var environment = clientsNode["environment"];
 				//instance.ClientEnvironment = !string.IsNullOrWhiteSpace(environment) ? environment : instance.Environment;
 
-				instance.Client = new ClientConfig();
 				var clients = clientsNode.GetChildren();
 				foreach (var item in clients)
 				{
-					var name = item["name"]; // GetAttribute("name", item);
-					var address = item["address"]; //GetAttribute("path", item);
-					var type = item["type"]; //GetAttribute("type", item);
-					var env = item["environment"]; //GetAttribute("type", item);
-					var nameSpace = item["namespace"]; // GetAttribute("namespace", item);
+					var name = item["name"];
+					var address = item["address"];
+					var type = item["type"];
+					var env = item["environment"];
+					var nameSpace = item["namespace"];
 
 					if (string.IsNullOrEmpty(name))
 						throw new RpcConfigException("name of RpcLite configuration client node can't be null or empty");
@@ -63,7 +115,6 @@ namespace RpcLite.Config
 						throw new RpcConfigException(string.Format("type of RpcLite configuration client node '{0}' can't be null or empty", name));
 					if (string.IsNullOrEmpty(nameSpace))
 						throw new RpcConfigException(string.Format("namespace of RpcLite configuration client node '{0}' can't be null or empty", name));
-
 
 					var serviceConfigItem = new ClientConfigItem
 					{
