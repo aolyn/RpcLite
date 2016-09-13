@@ -41,6 +41,11 @@ namespace RpcLite
 		public IRegistry Registry { get; }
 
 		/// <summary>
+		/// get config, modification to config will not effect except service.paths, so just don't modify it
+		/// </summary>
+		public RpcConfig Config => _config;
+
+		/// <summary>
 		/// 
 		/// </summary>
 		public FormatterManager FormatterManager { get; set; }

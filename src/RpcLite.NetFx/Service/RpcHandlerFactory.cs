@@ -1,12 +1,11 @@
-﻿using System;
-using System.Web;
+﻿using System.Web;
 
 namespace RpcLite.Service
 {
 	/// <summary>
 	/// 
 	/// </summary>
-	public class RpcHandlerFactory: IHttpHandlerFactory
+	public class RpcHandlerFactory : IHttpHandlerFactory
 	{
 		/// <summary>
 		/// 
@@ -18,7 +17,7 @@ namespace RpcLite.Service
 		/// <returns></returns>
 		public IHttpHandler GetHandler(HttpContext context, string requestType, string url, string pathTranslated)
 		{
-			throw new NotImplementedException();
+			return new RpcAsyncHandler();
 		}
 
 		/// <summary>
@@ -27,7 +26,6 @@ namespace RpcLite.Service
 		/// <param name="handler"></param>
 		public void ReleaseHandler(IHttpHandler handler)
 		{
-			throw new NotImplementedException();
 		}
 	}
 }

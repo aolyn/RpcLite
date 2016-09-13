@@ -10,7 +10,7 @@ namespace RpcLite.Config
 		/// <summary>
 		/// 
 		/// </summary>
-		private XmlNode _node;
+		private readonly XmlNode _node;
 
 		/// <summary>
 		/// 
@@ -25,16 +25,28 @@ namespace RpcLite.Config
 		/// <summary>
 		/// 
 		/// </summary>
-		public string Key { get { return _node.Name; } }
-
-		/// <summary>
-		/// 
-		/// </summary>
 		public string Path { get; }
 
 		/// <summary>
 		/// 
 		/// </summary>
-		public string Value { get; set; }
+		public string Key => _node.Name;
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public string Value
+		{
+			get
+			{
+				return _node.Value;
+			}
+			set
+			{
+				_node.Value = value;
+			}
+		}
+
 	}
 }

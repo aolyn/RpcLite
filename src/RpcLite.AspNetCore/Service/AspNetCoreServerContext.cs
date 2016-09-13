@@ -11,6 +11,7 @@ namespace RpcLite.Service
 	public class AspNetCoreServerContext : IServerContext
 	{
 		private readonly HttpContext _httpContext;
+		private string _requestPath;
 
 		/// <summary>
 		/// 
@@ -24,9 +25,24 @@ namespace RpcLite.Service
 		/// <summary>
 		/// 
 		/// </summary>
-		public string RequestPath => _httpContext.Request.QueryString.HasValue
-			? _httpContext.Request.Path + _httpContext.Request.QueryString.Value
-			: _httpContext.Request.Path.Value;
+		public string RequestPath
+		{
+			get
+			{
+				if (_requestPath != null) return _requestPath;
+
+				var path = _httpContext.Request.Path.Value.StartsWith("/")
+					? _httpContext.Request.Path.Value.Substring(1)
+					: _httpContext.Request.Path.Value;
+
+				_requestPath = _httpContext.Request.QueryString.HasValue
+					? path + _httpContext.Request.QueryString.Value
+					: path;
+
+				return _requestPath;
+
+			}
+		}
 
 		/// <summary>
 		/// 

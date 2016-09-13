@@ -268,6 +268,8 @@ namespace RpcLite.Config
 					{
 						if (!string.IsNullOrWhiteSpace(path.Value))
 							paths.Add(path.Value);
+						else if (!string.IsNullOrWhiteSpace(path["value"]))
+							paths.Add(path["value"]);
 					}
 					instance.Service.Paths = paths.ToArray();
 				}

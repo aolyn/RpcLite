@@ -30,15 +30,19 @@ namespace RpcLite.Service
 		{
 			get
 			{
-				if (_requestPath == null)
-				{
-					_requestPath = _httpContext.Request.QueryString.Count == 0
-						? _httpContext.Request.Path
-						: _httpContext.Request.Path + "?" + _httpContext.Request.QueryString;
+				if (_requestPath != null) return _requestPath;
 
-					if (_httpContext.Request.ApplicationPath?.Length > 1)
-						_requestPath = _requestPath.Substring(_httpContext.Request.ApplicationPath.Length);
-				}
+				var path = _httpContext.Request.Path.StartsWith("/")
+					? _httpContext.Request.Path.Substring(1)
+					: _httpContext.Request.Path;
+
+				_requestPath = _httpContext.Request.QueryString.Count == 0
+					? path
+					: path + "?" + _httpContext.Request.QueryString;
+
+				if (_httpContext.Request.ApplicationPath?.Length > 1)
+					_requestPath = _requestPath.Substring(_httpContext.Request.ApplicationPath.Length);
+
 				return _requestPath;
 			}
 		}
