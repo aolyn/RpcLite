@@ -12,7 +12,10 @@
     "RpcLite.AspNetCore": "1.0.1-*",
     "ServiceTest.ServiceImpl": "1.0.0-*",
     "Microsoft.AspNetCore.Server.Kestrel.Https": "1.0.0",
-    "RpcLite.Registry.Zookeeper": "1.0.0-*"
+    "RpcLite.Registry.Zookeeper": "1.0.0-*",
+    "Microsoft.AspNetCore.Mvc.Core": "1.0.0",
+    "Microsoft.AspNetCore.Mvc.ViewFeatures": "1.0.0",
+    "Microsoft.AspNetCore.Mvc": "1.0.0"
   },
 
   "tools": {

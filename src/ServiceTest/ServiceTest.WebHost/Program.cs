@@ -46,7 +46,7 @@ namespace ServiceTest.WebHost
 					.UseKestrel()
 					.UseContentRoot(Directory.GetCurrentDirectory())
 					.UseIISIntegration()
-					.UseUrls("http://*:5000")
+					.UseUrls("http://*:5000/rpc/")
 					.UseKestrel((options) =>
 					{
 						options.ThreadCount = 32;

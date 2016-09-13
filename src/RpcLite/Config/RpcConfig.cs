@@ -53,11 +53,11 @@ namespace RpcLite.Config
 		/// </summary>
 		public Version Version { get; internal set; }
 
-		/// <summary>
-		/// <para>service paths, used in module, if not null request path will be check</para>
-		/// <para>or else if request path is not in paths process will not execute</para>
-		/// </summary>
-		public string[] ServicePaths { get; set; }
+		///// <summary>
+		///// <para>service paths, used in module, if not null request path will be check</para>
+		///// <para>or else if request path is not in paths process will not execute</para>
+		///// </summary>
+		//public string[] ServicePaths { get; set; }
 
 		/// <summary>
 		/// 

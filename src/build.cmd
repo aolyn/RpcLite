@@ -1,1 +1,3 @@
-"C:\Program Files (x86)\MSBuild\14.0\Bin\MSBuild.exe" RpcLite.sln /property:Configuration="Release"
+call build-env-set.cmd
+
+MSBuild RpcLite.sln /property:Configuration="Release"

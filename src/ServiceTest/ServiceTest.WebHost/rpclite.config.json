@@ -16,7 +16,8 @@
         "type": "ServiceTest.WebHost.TestService, ServiceTest.WebHost"
         //"address": "http://192.168.9.1:5000/api/test/"
       }
-    ]
+    ],
+    "paths": [ "api/service/{*path}" ]
   },
 
   //"registry": {

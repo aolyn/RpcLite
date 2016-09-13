@@ -25,12 +25,13 @@ namespace RpcLite.Config
 			InitializeMonitorConfig(config, instance);
 			InitializeFormatterConfig(config, instance);
 
-			if (instance.Service.Services != null)
-			{
-				instance.ServicePaths = instance.Service.Services
-					.Select(it => it.Path)
-					.ToArray();
-			}
+			//TODO
+			////if (instance.Service?.Paths == null && instance.Service?.Services != null)
+			////{
+			////	instance.Service.Paths = instance.Service.Services
+			////		.Select(it => it.Path)
+			////		.ToArray();
+			////}
 
 			return instance;
 		}
@@ -253,10 +254,24 @@ namespace RpcLite.Config
 				}
 
 				var mapperNode = serviceNode.GetSection("mapper");
-				if (servicesNode != null)
+				if (mapperNode != null)
 				{
 					instance.Service.Mapper = InitializeServiceMapperConfig(mapperNode);
 				}
+
+				var pathsNode = serviceNode.GetSection("paths");
+				if (pathsNode != null)
+				{
+					var paths = new List<string>();
+					var pathNodes = pathsNode.GetChildren();
+					foreach (var path in pathNodes)
+					{
+						if (!string.IsNullOrWhiteSpace(path.Value))
+							paths.Add(path.Value);
+					}
+					instance.Service.Paths = paths.ToArray();
+				}
+
 			}
 			catch (Exception ex)
 			{

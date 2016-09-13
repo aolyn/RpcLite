@@ -8,6 +8,7 @@
   },
 
   "dependencies": {
+    "Microsoft.AspNetCore.Routing": "1.0.0",
     "RpcLite": "1.0.1-*"
   },
 

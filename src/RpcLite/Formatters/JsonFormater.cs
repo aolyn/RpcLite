@@ -27,7 +27,8 @@ namespace RpcLite.Formatters
 		/// <returns></returns>
 		public object Deserialize(Stream inputStream, Type targetType)
 		{
-			return JsonHelper.Deserialize(inputStream, targetType);
+			var reader = new StreamReader(inputStream);
+			return Deserialize(reader, targetType);
 		}
 
 		/// <summary>
@@ -38,7 +39,7 @@ namespace RpcLite.Formatters
 		/// <returns></returns>
 		public object Deserialize(TextReader reader, Type targetType)
 		{
-			throw new NotImplementedException();
+			return JsonHelper.Deserialize(reader, targetType);
 		}
 
 		/// <summary>
@@ -50,6 +51,7 @@ namespace RpcLite.Formatters
 		{
 			var writer = new StreamWriter(outputStream);
 			Serialize(writer, source);
+			writer.Flush();
 		}
 
 		/// <summary>
@@ -62,11 +64,10 @@ namespace RpcLite.Formatters
 			JsonHelper.Serialize(writer, source);
 		}
 
-		private readonly List<string> _supportMimes = new List<string>();
 		/// <summary>
 		/// 
 		/// </summary>
-		public List<string> SupportMimes { get { return _supportMimes; } }
+		public List<string> SupportMimes { get; } = new List<string>();
 	}
 
 }

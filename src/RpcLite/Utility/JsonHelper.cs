@@ -20,7 +20,7 @@ namespace RpcLite.Utility
 		/// <param name="targetType"></param>
 		/// <param name="leaveOpen"></param>
 		/// <returns></returns>
-		public static object Deserialize(Stream stream, Type targetType, bool leaveOpen = false)
+		public static object Deserialize(Stream stream, Type targetType, bool leaveOpen = true)
 		{
 			//using (var reader = new StreamReader(stream, Encoding.UTF8, true, 1024, leaveOpen))
 			var reader = new StreamReader(stream);
@@ -34,7 +34,7 @@ namespace RpcLite.Utility
 		/// <param name="targetType"></param>
 		/// <param name="leaveOpen"></param>
 		/// <returns></returns>
-		public static object Deserialize(TextReader reader, Type targetType, bool leaveOpen = false)
+		public static object Deserialize(TextReader reader, Type targetType, bool leaveOpen = true)
 		{
 			using (var jsonReader = new JsonTextReader(reader))
 			{

@@ -35,6 +35,9 @@ namespace RpcLite.Service
 					_requestPath = _httpContext.Request.QueryString.Count == 0
 						? _httpContext.Request.Path
 						: _httpContext.Request.Path + "?" + _httpContext.Request.QueryString;
+
+					if (_httpContext.Request.ApplicationPath?.Length > 1)
+						_requestPath = _requestPath.Substring(_httpContext.Request.ApplicationPath.Length);
 				}
 				return _requestPath;
 			}

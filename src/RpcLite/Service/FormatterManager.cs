@@ -93,13 +93,13 @@ namespace RpcLite.Service
 		{
 			if (config?.Formatter?.RemoveDefault != true)
 			{
-#if NETCORE
+				//#if NETCORE
+				//				AddFormatter(new JsonFormatter());
+				//#else
+				//AddFormatter(new NetJsonFormater());
 				AddFormatter(new JsonFormatter());
-#else
-			//AddFormatter(new NetJsonFormater());
-			AddFormatter(new JsonFormatter());
-			AddFormatter(new XmlFormatter());
-#endif
+				AddFormatter(new XmlFormatter());
+				//#endif
 			}
 
 			if (config?.Formatter?.Formatters != null)

@@ -17,6 +17,7 @@
     },
     "ServiceTest.WebHost": {
       "commandName": "Project",
+      "commandLineArgs": "--ssl222",
       "launchBrowser": true,
       "launchUrl": "http://localhost:5000",
       "environmentVariables": {

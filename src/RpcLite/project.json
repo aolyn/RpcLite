@@ -21,7 +21,8 @@
         "System.Reflection.Emit.Lightweight": "4.0.1",
         "System.Reflection.TypeExtensions": "4.1.0",
         "System.Runtime.Serialization.Xml": "4.1.1",
-        "System.Xml.XmlDocument": "4.0.1"
+        "System.Xml.XmlDocument": "4.0.1",
+        "System.Xml.XmlSerializer": "4.0.11"
       },
       "buildOptions": {
         "define": [
@@ -30,7 +31,8 @@
         "outputName": "RpcLite"
       }
     },
-    "net40": {
+   
+     "net40": {
       "frameworkAssemblies": {
         "System.Xml": "4.0.0"
       },

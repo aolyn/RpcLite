@@ -8,7 +8,7 @@ namespace RpcLite.Service
 	/// <summary>
 	/// 
 	/// </summary>
-	public class DefaultServiceMapper:IServiceMapper
+	public class DefaultServiceMapper : IServiceMapper
 	{
 		private readonly RpcConfig _config;
 		private readonly RpcServiceFactory _factory;
@@ -39,12 +39,12 @@ namespace RpcLite.Service
 		/// <returns></returns>
 		public MapServiceResult MapService(ServiceContext serviceContext)
 		{
-			var isServicePath = _config.ServicePaths == null
-				|| _config.ServicePaths
-					.Any(it => serviceContext.Request.Path.StartsWith(it, StringComparison.OrdinalIgnoreCase));
+			//var isServicePath = _config.Service?.Paths == null
+			//	|| _config.Service.Paths
+			//		.Any(it => serviceContext.Request.Path.StartsWith(it, StringComparison.OrdinalIgnoreCase));
 
-			if (!isServicePath)
-				return MapServiceResult.Empty;
+			//if (!isServicePath)
+			//	return MapServiceResult.Empty;
 
 			var requestPath = serviceContext.Request.Path;
 			if (string.IsNullOrWhiteSpace(requestPath))

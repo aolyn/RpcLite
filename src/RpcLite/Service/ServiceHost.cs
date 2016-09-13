@@ -203,7 +203,7 @@ namespace RpcLite.Service
 		{
 			//LogHelper.Debug("RpcAsyncHandler.EndProcessRequest start RpcService.EndProcessRequest(result);");
 
-			var httpContext = context.ExecutingContext as IServerContext;
+			var httpContext = context.ExecutingContext;
 
 			if (httpContext == null)
 			{
