@@ -1,0 +1,1 @@
+start "" ..\src\Tools\NuGetPackTool\bin\Debug\NuGetPackTool.exe

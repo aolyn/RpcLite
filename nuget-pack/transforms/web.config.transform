@@ -1,37 +1,27 @@
 ﻿<configuration>
 	<configSections>
-		<section name="RpcLite" type="RpcLite.Config.RpcLiteConfigSection, RpcLite.AspNet"/>
+		<section name="RpcLite" type="RpcLite.Config.RpcLiteConfigSection, RpcLite.NetFx"/>
 	</configSections>
 	<RpcLite>
+		<version>1.1</version>
 		<appId>10000</appId>
-		<services>
-			<add name="TestService" path="/api/test/" type="RpcLiteServiceTest.TestService1,WebHostAssembly"/>
-		</services>
-		<clients>
-			<add name="ProductService" path="http://localhost/api/test/" type="ServiceImpl.ProductAsyncService,ServiceImpl" namespace="v1"/>
-		</clients>
-	</RpcLite>
-	
-	<system.web>
-		<httpHandlers>
-			<!-- for all RpcLite service path -->
-			<!--
-			<add path="api/*" verb="*" type ="RpcLite.Service.RpcHandler, RpcLite.AspNet"/>
-			<add path="api/*/*" verb="*" type ="RpcLite.Service.RpcHandler, RpcLite.AspNet"/>
-			<add path="api/*/*/*" verb="*" type ="RpcLite.Service.RpcHandler, RpcLite.AspNet"/>
-			<add path="api/*/*/*/*" verb="*" type ="RpcLite.Service.RpcHandler, RpcLite.AspNet"/>
-			-->
-		</httpHandlers>
-		<pages controlRenderingCompatibilityVersion="4.0"/>
-	</system.web>
-	
+		<service>
+			<services>
+				<add name="TestService" path="api/test/" type="RpcLiteServiceTest.TestService1,WebHostAssembly"/>
+			</services>
+			<paths>
+				<add value="api/"/>
+			</paths>
+		</service>
+		<client>
+			<clients>
+				<add name="ProductService" address="http://localhost/api/test/" type="ServiceImpl.ProductAsyncService,ServiceImpl" />
+			</clients>
+		</client>
+	</RpcLite>	
 	<system.webServer>
-		<handlers>
-			<!-- for all RpcLite service path -->
-			<add name="RpcLite1" path="api/*" verb="*" type="RpcLite.Service.RpcAsyncHandler, RpcLite.AspNet"/>
-			<add name="RpcLite2" path="api/*/*" verb="*" type="RpcLite.Service.RpcAsyncHandler, RpcLite.AspNet"/>
-			<add name="RpcLite3" path="api/*/*/*" verb="*" type="RpcLite.Service.RpcAsyncHandler, RpcLite.AspNet"/>
-			<add name="RpcLite4" path="api/*/*/*/*" verb="*" type="RpcLite.Service.RpcAsyncHandler, RpcLite.AspNet"/>
-		</handlers>
+		<modules>
+			<add name="RpcLite" type="RpcLite.Service.RpcHttpModule, RpcLite.NetFx"/>
+		</modules>
 	</system.webServer>
 </configuration>
