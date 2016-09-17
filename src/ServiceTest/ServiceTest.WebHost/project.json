@@ -1,21 +1,21 @@
 {
   "dependencies": {
     "Microsoft.NETCore.App": {
-      "version": "1.0.0",
+      "version": "1.0.1",
       "type": "platform"
     },
     "Microsoft.AspNetCore.Diagnostics": "1.0.0",
     "Microsoft.AspNetCore.Server.IISIntegration": "1.0.0",
-    "Microsoft.AspNetCore.Server.Kestrel": "1.0.0",
     "Microsoft.Extensions.Logging.Console": "1.0.0",
     "RpcLite": "1.0.1-*",
     "RpcLite.AspNetCore": "1.0.1-*",
     "ServiceTest.ServiceImpl": "1.0.0-*",
-    "Microsoft.AspNetCore.Server.Kestrel.Https": "1.0.0",
     "RpcLite.Registry.Zookeeper": "1.0.0-*",
-    "Microsoft.AspNetCore.Mvc.Core": "1.0.0",
-    "Microsoft.AspNetCore.Mvc.ViewFeatures": "1.0.0",
-    "Microsoft.AspNetCore.Mvc": "1.0.0"
+    "Microsoft.AspNetCore.Mvc": "1.0.1",
+    "Microsoft.AspNetCore.Mvc.Core": "1.0.1",
+    "Microsoft.AspNetCore.Mvc.ViewFeatures": "1.0.1",
+    "Microsoft.AspNetCore.Server.Kestrel.Https": "1.0.1",
+    "Microsoft.AspNetCore.Server.Kestrel": "1.0.1"
   },
 
   "tools": {

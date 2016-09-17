@@ -11,11 +11,12 @@
         <TextBox x:Name="txtNuspec" AllowDrop="True" Height="23" Margin="80,14,10,0" TextWrapping="Wrap" Text="D:\git-repo\git-hub\RpcLite-chrishaly\nuget-pack\RpcLite.nuspec" VerticalAlignment="Top"/>
         <Label x:Name="label1" Content="Version" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,51,0,0"/>
         <TextBox x:Name="txtVersion" HorizontalAlignment="Left" Height="23" Margin="80,54,0,0" TextWrapping="Wrap" Text="1.0.1.21" VerticalAlignment="Top" Width="204"/>
-        <Button x:Name="btnPack" Content="Pack" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Margin="256,103,0,0" Click="btnPack_Click"/>
+        <Button x:Name="btnPack" Content="Pack" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Margin="354,103,0,0" Click="btnPack_Click"/>
         <Button x:Name="btnSetVersion" Content="Set Version" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Margin="153,103,0,0" Click="btnSetVersion_Click"/>
-        <Button x:Name="btnPublish" Content="Publish" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Margin="353,103,0,0" Click="btnPublish_Click"/>
+        <Button x:Name="btnPublish" Content="Publish" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Margin="177,147,0,0" Click="btnPublish_Click"/>
         <Button x:Name="btnRead" Content="Read" HorizontalAlignment="Left" Margin="56,103,0,0" VerticalAlignment="Top" Width="75" Click="btnRead_Click"/>
-        <Button x:Name="btnCopyToLocalIIS" Content="Copy To Local IIS" HorizontalAlignment="Left" VerticalAlignment="Top" Width="107" Margin="56,149,0,0" Click="btnCopyToLocalIIS_Click"/>
+        <Button x:Name="btnCopyToLocalIIS" Content="Copy To Local IIS" HorizontalAlignment="Left" VerticalAlignment="Top" Width="107" Margin="56,147,0,0" Click="btnCopyToLocalIIS_Click"/>
+        <Button x:Name="btnBuild" Content="Build" HorizontalAlignment="Left" Margin="254,103,0,0" VerticalAlignment="Top" Width="75" Click="btnBuild_Click"/>
 
     </Grid>
 </Window>

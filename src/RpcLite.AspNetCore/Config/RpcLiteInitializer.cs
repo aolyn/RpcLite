@@ -6,7 +6,7 @@ namespace RpcLite.Config
 	/// 
 	/// </summary>
 	[Obsolete("if host in AspNetCore use RpcLite.AspNetCore.RpcLiteInitializer instead")]
-	public class RpcLiteInitializer : AspNetCore.RpcLiteInitializer
+	public class RpcLiteInitializer : AspNetCore.RpcInitializer
 	{
 	}
 }

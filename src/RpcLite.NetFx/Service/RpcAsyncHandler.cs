@@ -15,7 +15,7 @@ namespace RpcLite.Service
 	{
 		static RpcAsyncHandler()
 		{
-			RpcLiteInitializer.Initialize();
+			RpcInitializer.Initialize();
 		}
 
 		#region Sync

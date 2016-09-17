@@ -20,7 +20,7 @@ namespace RpcLite.Monitor.Service
 		{
 			loggerFactory.AddConsole(LogLevel.Error);
 
-			RpcLiteInitializer.Initialize(app);
+			RpcInitializer.Initialize(app);
 
 			if (env.IsDevelopment())
 			{

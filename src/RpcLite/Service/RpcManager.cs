@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using RpcLite.Config;
 
 namespace RpcLite.Service
@@ -35,6 +36,20 @@ namespace RpcLite.Service
 					AppHost.Initialize();
 				}
 			}
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="builder"></param>
+		/// <returns></returns>
+		public static void Initialize(Action<RpcConfigBuilder> builder)
+		{
+			var builderObj = new RpcConfigBuilder();
+			builder(builderObj);
+			var config = builderObj.Build();
+
+			Initialize(config);
 		}
 
 		/// <summary>

@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
   <metadata>
     <id>RpcLite</id>
-    <version>1.0.1.21</version>
+    <version>1.0.1.30</version>
     <title>RpcLite</title>
     <authors>Chris Huang</authors>
     <owners>Aolyn Inc</owners>
@@ -19,16 +19,19 @@
         <dependency id="Microsoft.Extensions.Configuration.Json" version="1.0.0" />
         <dependency id="System.Net.Http" version="4.1.0" />
         <dependency id="Newtonsoft.Json" version="9.0.1" />
+        <dependency id="Microsoft.AspNetCore.Routing" version="1.0.0" />
       </group>
       <group targetFramework=".NETStandard1.3">
         <dependency id="Microsoft.Extensions.Configuration.Json" version="1.0.0" />
         <dependency id="System.Net.Http" version="4.1.0" />
         <dependency id="Newtonsoft.Json" version="9.0.1" />
+        <dependency id="Microsoft.AspNetCore.Routing" version="1.0.0" />
       </group>
       <group targetFramework=".NETStandard1.5">
         <dependency id="Microsoft.Extensions.Configuration.Json" version="1.0.0" />
         <dependency id="System.Net.Http" version="4.1.0" />
         <dependency id="Newtonsoft.Json" version="9.0.1" />
+        <dependency id="Microsoft.AspNetCore.Routing" version="1.0.0" />
       </group>
       <group targetFramework=".NETFramework4.0">
         <dependency id="Microsoft.Net.Http" version="2.2.29" />
@@ -40,6 +43,9 @@
     <file src="transforms\project.json.transform" target="content\dnxcore50\project.json.transform" />
     <file src="transforms\ReadMe.NetCore.txt.transform" target="content\dnxcore50\ReadMe.NetCore.txt.transform" />
     <file src="transforms\rpclite.config.json.transform" target="content\dnxcore50\rpclite.config.json.transform" />
+    <file src="transforms\project.json.transform" target="content\dotnet\project.json.transform" />
+    <file src="transforms\ReadMe.NetCore.txt.transform" target="content\dotnet\ReadMe.NetCore.txt.transform" />
+    <file src="transforms\rpclite.config.json.transform" target="content\dotnet\rpclite.config.json.transform" />
     <file src="transforms\web.config.transform" target="content\net40\web.config.transform" />
     <file src="transforms\web.config.transform" target="content\net45\web.config.transform" />
     <file src="transforms\web.config.transform" target="content\net451\web.config.transform" />
@@ -47,16 +53,16 @@
     <file src="transforms\ReadMe.NetCore.txt.transform" target="content\netstandard1.3\ReadMe.NetCore.txt.transform" />
     <file src="transforms\rpclite.config.json.transform" target="content\netstandard1.3\rpclite.config.json.transform" />
     <file src="..\src\RpcLite.AspNetCore\bin\Release\netstandard1.3\RpcLite.dll" target="lib\dnxcore50\RpcLite.dll" />
-    <file src="..\src\RpcLite.AspNetCore\bin\Release\netstandard1.3\RpcLite.xml" target="lib\dnxcore50\RpcLite.xml" />
     <file src="..\src\RpcLite.AspNetCore\bin\Release\netstandard1.3\RpcLite.NetCore.dll" target="lib\dnxcore50\RpcLite.NetCore.dll" />
     <file src="..\src\RpcLite.AspNetCore\bin\Release\netstandard1.3\RpcLite.NetCore.xml" target="lib\dnxcore50\RpcLite.NetCore.xml" />
+    <file src="..\src\RpcLite.AspNetCore\bin\Release\netstandard1.3\RpcLite.xml" target="lib\dnxcore50\RpcLite.xml" />
     <file src="..\src\RpcLite.NetFx\bin\Release\net40\RpcLite.dll" target="lib\net40\RpcLite.dll" />
-    <file src="..\src\RpcLite.NetFx\bin\Release\net40\RpcLite.xml" target="lib\net40\RpcLite.xml" />
     <file src="..\src\RpcLite.NetFx\bin\Release\net40\RpcLite.NetFx.dll" target="lib\net40\RpcLite.NetFx.dll" />
     <file src="..\src\RpcLite.NetFx\bin\Release\net40\RpcLite.NetFx.xml" target="lib\net40\RpcLite.NetFx.xml" />
+    <file src="..\src\RpcLite.NetFx\bin\Release\net40\RpcLite.xml" target="lib\net40\RpcLite.xml" />
     <file src="..\src\RpcLite.AspNetCore\bin\Release\netstandard1.3\RpcLite.dll" target="lib\netstandard1.3\RpcLite.dll" />
-    <file src="..\src\RpcLite.AspNetCore\bin\Release\netstandard1.3\RpcLite.xml" target="lib\netstandard1.3\RpcLite.xml" />
     <file src="..\src\RpcLite.AspNetCore\bin\Release\netstandard1.3\RpcLite.NetCore.dll" target="lib\netstandard1.3\RpcLite.NetCore.dll" />
     <file src="..\src\RpcLite.AspNetCore\bin\Release\netstandard1.3\RpcLite.NetCore.xml" target="lib\netstandard1.3\RpcLite.NetCore.xml" />
+    <file src="..\src\RpcLite.AspNetCore\bin\Release\netstandard1.3\RpcLite.xml" target="lib\netstandard1.3\RpcLite.xml" />
   </files>
 </package>

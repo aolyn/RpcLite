@@ -12,7 +12,7 @@ namespace ServiceTest.ClientTest
 		{
 			try
 			{
-				RpcLiteInitializer.Initialize();
+				RpcInitializer.Initialize();
 
 				var client = ClientFactory.GetInstance<IRegistryService>();
 

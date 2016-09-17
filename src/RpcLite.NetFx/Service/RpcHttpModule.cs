@@ -26,7 +26,7 @@ namespace RpcLite.Service
 		/// <param name="context"></param>
 		public void Init(HttpApplication context)
 		{
-			RpcLiteInitializer.Initialize();
+			RpcInitializer.Initialize();
 			context.PostResolveRequestCache += Context_PostResolveRequestCache;
 		}
 

@@ -117,7 +117,7 @@ namespace ServiceTest.ClientTest
 
 		private static void PerformanceTest()
 		{
-			RpcLite.AspNetCore.RpcLiteInitializer.Initialize();
+			RpcLite.AspNetCore.RpcInitializer.Initialize();
 
 			var client = ClientFactory.GetInstance<IProductService>(serviceBaseUrl + "/api/service/");
 			try
@@ -184,7 +184,7 @@ namespace ServiceTest.ClientTest
 			//var baseUrl = @"https://www.baidu.com/test/api/service/";
 			//var baseUrl = @"http://localhost/config/asfsdfs";
 
-			RpcLite.AspNetCore.RpcLiteInitializer.Initialize();
+			RpcLite.AspNetCore.RpcInitializer.Initialize();
 
 			var baseUrl = serviceBaseUrl + @"/api/service/";
 			//var client = ClientFactory.GetInstance<IProductService>(baseUrl);

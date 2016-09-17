@@ -24,7 +24,7 @@ namespace ServiceRegistry.Service
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
 		public void Configure(IApplicationBuilder app)
 		{
-			RpcLiteInitializer.Initialize(app, _env.ContentRootPath);
+			RpcInitializer.Initialize(app, _env.ContentRootPath);
 
 			var configBuilder = new ConfigurationBuilder();
 			configBuilder.AddJsonFile("appsettings.json", true);

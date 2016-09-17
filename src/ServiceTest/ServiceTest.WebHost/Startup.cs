@@ -8,11 +8,10 @@ namespace ServiceTest.WebHost
 {
 	public class Startup
 	{
-		// This method gets called by the runtime. Use this method to add services to the container.
-		// For more information on how to configure your application, visit http://go.microsoft.com/fwlink/?LinkID=398940
 		public void ConfigureServices(IServiceCollection services)
 		{
 			services.AddMvc();
+			//services.AddRouting();
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -25,7 +24,15 @@ namespace ServiceTest.WebHost
 			//RpcManager.AddFilter(new LogTimeFilter());
 			//RpcManager.AddFilter(new LogRequestTimeFilter());
 
-			RpcLite.AspNetCore.RpcLiteInitializer.Initialize(app);
+			//RpcLite.AspNetCore.RpcLiteInitializer.Initialize(app);
+
+			//Method 3: use builder
+			app.UseRpcLite(builder =>
+			{
+				builder
+				.UseService<TestService>("TestService", "api/test/")
+				.UseServicePaths("api/test/");
+			});
 
 			if (env.IsDevelopment())
 			{

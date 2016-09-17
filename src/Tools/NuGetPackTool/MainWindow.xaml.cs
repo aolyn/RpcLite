@@ -207,5 +207,10 @@ namespace NuGetPackTool
 			args += Environment.NewLine + "pause";
 			RunCommand(args);
 		}
+
+		private void btnBuild_Click(object sender, RoutedEventArgs e)
+		{
+			RunCommand("build.cmd");
+		}
 	}
 }

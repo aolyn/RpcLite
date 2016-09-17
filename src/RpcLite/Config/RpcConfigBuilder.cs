@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using RpcLite.Client;
 using RpcLite.Monitor;
 using RpcLite.Registry;
+#if NETCORE
+using System.Reflection;
+#endif
 
 namespace RpcLite.Config
 {
@@ -145,6 +147,17 @@ namespace RpcLite.Config
 		/// </summary>
 		/// <param name="name"></param>
 		/// <param name="path"></param>
+		/// <returns></returns>
+		public RpcConfigBuilder UseService<TService>(string name, string path)
+		{
+			return UseService<TService>(name, path, null);
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="name"></param>
+		/// <param name="path"></param>
 		/// <param name="address"></param>
 		/// <returns></returns>
 		public RpcConfigBuilder UseService<TService>(string name, string path, string address)
@@ -155,6 +168,35 @@ namespace RpcLite.Config
 			};
 
 			return UseServices(item);
+		}
+
+		/// <summary>
+		/// <para>set service path prefix, eg: api/service/</para>
+		/// <para> all match paths will be processed as service request</para>
+		/// </summary>
+		/// <param name="paths">must ends with "/", eg: api/service/</param>
+		/// <returns></returns>
+		public RpcConfigBuilder UseServicePaths(params string[] paths)
+		{
+			if (_config.Service == null)
+				_config.Service = new ServiceConfig();
+
+			if (paths != null)
+			{
+#if NETCORE
+				if (!paths.All(it => it.EndsWith("/")))
+					throw new ArgumentOutOfRangeException(nameof(paths), "all path must ends with /");
+
+				paths = paths
+					.Select(it => it + "{*RpcLiteServicePath}")
+					//.Select(it => it + "{*path}")
+					.ToArray();
+#endif
+			}
+
+			_config.Service.Paths = paths;
+
+			return this;
 		}
 
 		/// <summary>

@@ -107,6 +107,28 @@ namespace RpcLite
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <param name="name"></param>
+		/// <param name="path"></param>
+		/// <returns></returns>
+		public AppHostBuilder UseService<TService>(string name, string path)
+		{
+			return UseService<TService>(name, path, null);
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="paths"></param>
+		/// <returns></returns>
+		public AppHostBuilder UseServicePaths(params string[] paths)
+		{
+			_config.UseServicePaths(paths);
+			return this;
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
 		/// <param name="clients"></param>
 		/// <returns></returns>
 		public AppHostBuilder UseClients(params ClientConfigItem[] clients)
