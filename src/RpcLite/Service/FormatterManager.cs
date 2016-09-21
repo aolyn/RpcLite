@@ -16,6 +16,11 @@ namespace RpcLite.Service
 		private Dictionary<string, IFormatter> _typeToFormatterDictionary = new Dictionary<string, IFormatter>();
 
 		/// <summary>
+		/// 
+		/// </summary>
+		public static FormatterManager Default = new FormatterManager(null);
+
+		/// <summary>
 		/// get formatter by content type
 		/// </summary>
 		/// <param name="contentType"></param>
@@ -36,6 +41,11 @@ namespace RpcLite.Service
 			//var formatter = _formaters.FirstOrDefault(it => it.SupportMimes.Contains(contentType));
 			return formatter;
 		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public IFormatter DefaultFormatter { get; private set; }
 
 		private void AddFormatter(IFormatter formatter)
 		{
@@ -82,6 +92,7 @@ namespace RpcLite.Service
 			}
 
 			_typeToFormatterDictionary = dic;
+			DefaultFormatter = formatters.FirstOrDefault();
 			_formaters = formatters;
 		}
 

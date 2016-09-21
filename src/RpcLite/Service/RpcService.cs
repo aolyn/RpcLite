@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Reflection;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using RpcLite.Logging;
 
@@ -13,9 +12,14 @@ namespace RpcLite.Service
 	public class RpcService
 	{
 		private readonly ActionManager _actionManager;
-		private VersionedList<IServiceFilter> Filters => _host?.Filters;
+		private VersionedList<IServiceFilter> Filters => _host?.ServiceFilters;
+		private VersionedList<IServiceInvokeFilter> _invokeFilters;
+		private VersionedList<IProcessFilter> _processFilters;
+		internal VersionedList<IActionExecteFilter> ActionExecteFilter;
 		private readonly AppHost _host;
 		private long _oldVersion;
+		private long _processFilterOldVersion;
+
 		Func<ServiceContext, Task> _filterFunc;
 		/// <summary>
 		/// 
@@ -25,7 +29,7 @@ namespace RpcLite.Service
 		public RpcService(Type serviceType, AppHost host)
 		{
 			Type = serviceType;
-			_actionManager = new ActionManager(serviceType);
+			_actionManager = new ActionManager(this);
 			_host = host;
 		}
 
@@ -108,66 +112,128 @@ namespace RpcLite.Service
 
 			context.Action = action;
 
-			var filterFunc = GetFilterFunc();
+			GroupFilters();
+			var filterFunc = GetProcessFilterFunc();
 
 			return filterFunc(context);
 		}
 
-		private Func<ServiceContext, Task> GetFilterFunc()
+		private void GroupFilters()
 		{
-			if (Filters == null || Filters.Count == 0)
+			if (Filters == null)
+			{
+				if (_oldVersion == 0)
+					return;
+
+				_invokeFilters = null;
+				_processFilters = null;
+				ActionExecteFilter = null;
+				_oldVersion = 0;
+				return;
+			}
+
+			if (Filters.Version == _oldVersion)
+				return;
+
+			//todo: add lock
+			_processFilters = new VersionedList<IProcessFilter>();
+			_invokeFilters = new VersionedList<IServiceInvokeFilter>();
+			ActionExecteFilter = new VersionedList<IActionExecteFilter>();
+
+			foreach (var item in Filters)
+			{
+				if (item is IProcessFilter)
+				{
+					_processFilters.Add(item as IProcessFilter);
+				}
+				else if (item is IServiceInvokeFilter)
+				{
+					_invokeFilters.Add(item as IServiceInvokeFilter);
+				}
+				else if (item is IActionExecteFilter)
+				{
+					ActionExecteFilter.Add(item as IActionExecteFilter);
+				}
+			}
+
+			_oldVersion = Filters.Version;
+		}
+
+		private Func<ServiceContext, Task> GetProcessFilterFunc()
+		{
+			if (_processFilters == null || _processFilters.Count == 0)
 				return ProcessRequest;
 
-			var version = Filters.Version;
-			if (_oldVersion == version)
+			var version = _processFilters.Version;
+			if (_processFilterOldVersion == version)
 				return _filterFunc;
 
+			//todo: add lock
 			Func<ServiceContext, Task> filterFunc = ProcessRequest;
 
 			var preFilterFunc = filterFunc;
-			for (var idxFilter = Filters.Count - 1; idxFilter > -1; idxFilter--)
+			for (var idxFilter = _processFilters.Count - 1; idxFilter > -1; idxFilter--)
 			{
-				var thisFilter = Filters[idxFilter];
-				if (!thisFilter.FilterInvoke) continue;
+				var thisFilter = _processFilters[idxFilter];
 
 				var nextFilterFunc = preFilterFunc;
 				//all currentFilterFunc.GetHashCode is the same
-				Func<ServiceContext, Task> currentFilterFunc = sc => thisFilter.Invoke(sc, nextFilterFunc);
+				Func<ServiceContext, Task> currentFilterFunc = sc => thisFilter.ProcessAsync(sc, nextFilterFunc);
 
 				preFilterFunc = currentFilterFunc;
 			}
 			filterFunc = preFilterFunc;
 
 			_filterFunc = filterFunc;
-			_oldVersion = version;
+			_processFilterOldVersion = version;
 			return filterFunc;
 		}
 
 		private Task ProcessRequest(ServiceContext context)
 		{
-			//try
-			//{
-			//	BeforeInvoke?.Invoke(context);
-			//}
-			//catch (Exception ex)
-			//{
-			//	LogHelper.Error(ex);
-			//}
+			ApplyBeforeInvokeFilters(context);
 
 			var task = context.Action.ExecuteAsync(context);
 			var waitTask = task.ContinueWith(tsk =>
 			{
-				//try
-				//{
-				//	AfterInvoke?.Invoke(context);
-				//}
-				//catch (Exception ex)
-				//{
-				//	LogHelper.Error(ex);
-				//}
+				ApplyAfterInvokeFilters(context);
 			});
 
 			return waitTask;
+		}
+
+		private void ApplyAfterInvokeFilters(ServiceContext context)
+		{
+			if (_invokeFilters == null) return;
+
+			foreach (var item in _invokeFilters)
+			{
+				try
+				{
+					item.OnInvoked(context);
+				}
+				catch (Exception ex)
+				{
+					LogHelper.Error(ex);
+				}
+			}
+		}
+
+		private void ApplyBeforeInvokeFilters(ServiceContext context)
+		{
+			if (_invokeFilters == null) return;
+
+			foreach (var item in _invokeFilters)
+			{
+				try
+				{
+					item.OnInvoking(context);
+				}
+				catch (Exception ex)
+				{
+					LogHelper.Error(ex);
+				}
+			}
 		}
 
 		private object GetMetaInfo(RpcService service)
@@ -210,7 +276,7 @@ namespace RpcLite.Service
 					sb.Append(arg.Name);
 				}
 
-				sb.AppendFormat(");", method.Name);
+				sb.AppendFormat(");");
 			}
 
 			return sb.ToString();

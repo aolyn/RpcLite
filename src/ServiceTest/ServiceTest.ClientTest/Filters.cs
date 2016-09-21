@@ -6,21 +6,11 @@ using RpcLite.Service;
 namespace ServiceTest.ClientTest
 {
 
-	class LogTimeFilter : IServiceFilter
+	class LogTimeFilter : IProcessFilter
 	{
-		public bool FilterInvoke { get; } = true;
+		public string Name { get; set; } = nameof(LogTimeFilter);
 
-		public string Name { get; set; }
-
-		public void AfterInvoke(ServiceContext context)
-		{
-		}
-
-		public void BeforeInvoke(ServiceContext context)
-		{
-		}
-
-		public async Task Invoke(ServiceContext context, Func<ServiceContext, Task> next)
+		public async Task ProcessAsync(ServiceContext context, Func<ServiceContext, Task> next)
 		{
 			var stopwatch = Stopwatch.StartNew();
 			await next(context);
@@ -29,45 +19,24 @@ namespace ServiceTest.ClientTest
 		}
 	}
 
-	class LogRequestTimeFilter : IServiceFilter
+	class LogRequestTimeFilter : IProcessFilter
 	{
-		public string Name { get; set; }
+		public string Name { get; set; } = nameof(LogRequestTimeFilter);
 
-		public bool FilterInvoke { get; } = true;
-
-		public void AfterInvoke(ServiceContext context)
-		{
-		}
-
-		public void BeforeInvoke(ServiceContext context)
-		{
-		}
-
-		public async Task Invoke(ServiceContext context, Func<ServiceContext, Task> next)
+		public async Task ProcessAsync(ServiceContext context, Func<ServiceContext, Task> next)
 		{
 			var stopwatch = Stopwatch.StartNew();
 			await next(context);
 			stopwatch.Stop();
 			//Console.WriteLine($"Service: {context.Service.Name}, Action: {context.Action.Name}, Request Length: {context.Request.ContentLength}bytes");
 		}
-
 	}
 
-	class EmptyFilter : IServiceFilter
+	class EmptyFilter : IProcessFilter
 	{
-		public bool FilterInvoke => true;
-
 		public string Name { get; set; } = nameof(EmptyFilter);
 
-		public void AfterInvoke(ServiceContext context)
-		{
-		}
-
-		public void BeforeInvoke(ServiceContext context)
-		{
-		}
-
-		public async Task Invoke(ServiceContext context, Func<ServiceContext, Task> next)
+		public async Task ProcessAsync(ServiceContext context, Func<ServiceContext, Task> next)
 		{
 			await next(context);
 		}

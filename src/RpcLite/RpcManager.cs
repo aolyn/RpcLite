@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
 using RpcLite.Config;
+using RpcLite.Service;
 
-namespace RpcLite.Service
+namespace RpcLite
 {
 	/// <summary>
 	/// 
@@ -62,14 +63,14 @@ namespace RpcLite.Service
 			return AppHost.ProcessAsync(httpContext);
 		}
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="filter"></param>
-		public static void AddFilter(IServiceFilter filter)
-		{
-			AppHost.AddFilter(filter);
-		}
+		///// <summary>
+		///// 
+		///// </summary>
+		///// <param name="filter"></param>
+		//public static void AddFilter(IServiceFilter filter)
+		//{
+		//	AppHost.AddFilter(filter);
+		//}
 
 	}
 }

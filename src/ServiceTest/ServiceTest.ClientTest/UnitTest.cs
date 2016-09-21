@@ -71,8 +71,8 @@ namespace ServiceTest.ClientTest
 			//appHost.AddFilter(new LogTimeFilter());
 			//appHost.AddFilter(new LogRequestTimeFilter());
 
-			appHost.AddFilter(new EmptyFilter());
-			appHost.AddFilter(new EmptyFilter());
+			//appHost.AddFilter(new EmptyFilter());
+			//appHost.AddFilter(new EmptyFilter());
 
 
 			var client = appHost.ClientFactory.GetInstance<IProductService>();

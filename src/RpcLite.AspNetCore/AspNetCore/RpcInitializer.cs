@@ -52,6 +52,7 @@ namespace RpcLite.AspNetCore
 			RpcManager.Initialize(rpcConfig);
 
 			if (rpcConfig?.Service?.Paths == null) return;
+			if (app == null) return;
 
 			var routers = new RouteBuilder(app);
 

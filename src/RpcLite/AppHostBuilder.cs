@@ -162,6 +162,27 @@ namespace RpcLite
 			return this;
 		}
 
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		public AppHostBuilder UseFilter<TFactory>()
+		{
+			UseFilter<TFactory>(null);
+			return this;
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		public AppHostBuilder UseFilter<TFactory>(string name)
+		{
+			_config.UseFilter<TFactory>(name);
+			return this;
+		}
+
 		/// <summary>
 		/// 
 		/// </summary>

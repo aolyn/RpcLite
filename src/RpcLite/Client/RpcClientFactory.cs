@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using RpcLite.Config;
+using RpcLite.Service;
 
 namespace RpcLite.Client
 {
@@ -12,7 +13,7 @@ namespace RpcLite.Client
 	{
 		private readonly ConcurrentDictionary<Type, object> _clienBuilders = new ConcurrentDictionary<Type, object>();
 		private readonly IClusterFactory _clusterFactory;
-		//private readonly AppHost _appHost;
+		private readonly AppHost _appHost;
 		//private readonly IClientChannelFactory _channelFactory;
 
 		/// <summary>
@@ -22,7 +23,7 @@ namespace RpcLite.Client
 		/// <param name="config"></param>
 		public RpcClientFactory(AppHost appHost, RpcConfig config)
 		{
-			//_appHost = appHost;
+			_appHost = appHost;
 			if (config?.Client != null)
 			{
 				//get ClusterFactory from config
@@ -70,6 +71,9 @@ namespace RpcLite.Client
 			client.Cluster = string.IsNullOrWhiteSpace(url)
 				? _clusterFactory.GetCluster<TContract>()
 				: _clusterFactory.GetCluster<TContract>(url);
+			client.Formatter = _appHost?.FormatterManager != null
+				? _appHost.FormatterManager.DefaultFormatter
+				: FormatterManager.Default.DefaultFormatter;
 			return client as TContract;
 		}
 

@@ -71,23 +71,23 @@ namespace RpcLite.Service
 			var initilizeResult = _initializeRegistry.Value;
 		}
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="filter"></param>
-		public void AddFilter(IServiceFilter filter)
-		{
-			Filters.Add(filter);
-		}
+		///// <summary>
+		///// 
+		///// </summary>
+		///// <param name="filter"></param>
+		//public void AddFilter(IRpcServiceFilter filter)
+		//{
+		//	Filters.Add(filter);
+		//}
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="filter"></param>
-		public void RemoveFilter(IServiceFilter filter)
-		{
-			Filters.Remove(filter);
-		}
+		///// <summary>
+		///// 
+		///// </summary>
+		///// <param name="filter"></param>
+		//public void RemoveFilter(IRpcServiceFilter filter)
+		//{
+		//	Filters.Remove(filter);
+		//}
 
 		/// <summary>
 		/// 

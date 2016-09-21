@@ -53,7 +53,12 @@ namespace RpcLite
 		/// <summary>
 		/// 
 		/// </summary>
-		public VersionedList<IServiceFilter> Filters { get; internal set; } = new VersionedList<IServiceFilter>();
+		public VersionedList<IServiceFilter> ServiceFilters { get; internal set; } = new VersionedList<IServiceFilter>();
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public VersionedList<IRpcClientFilter> ClientFilters { get; internal set; } = new VersionedList<IRpcClientFilter>();
 
 		/// <summary>
 		/// 
@@ -101,6 +106,20 @@ namespace RpcLite
 				Monitor = monitorFactory.CreateMonitor(config);
 			}
 
+			if (config.Filter?.Filters.Count > 0)
+			{
+				foreach (var item in config.Filter.Filters)
+				{
+					var factory = TypeCreator.CreateInstanceByIdentifier<IFilterFactory>(item.Type);
+					var filters = factory.CreateFilters();
+					if (filters == null) continue;
+					foreach (var filter in filters)
+					{
+						AddFilter(filter);
+					}
+				}
+			}
+
 			//_initializeRegistry = new Lazy<object>(() =>
 			//{
 			//	RegistryServices();
@@ -135,18 +154,27 @@ namespace RpcLite
 		/// 
 		/// </summary>
 		/// <param name="filter"></param>
-		public void AddFilter(IServiceFilter filter)
+		private void AddFilter(IRpcFilter filter)
 		{
-			Filters.Add(filter);
+			if (filter == null)
+				throw new ArgumentNullException(nameof(filter));
+
+			if (filter is IServiceFilter)
+				ServiceFilters.Add((IServiceFilter)filter);
+			else if (filter is IRpcClientFilter)
+				ClientFilters.Add((IRpcClientFilter)filter);
 		}
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="filter"></param>
-		public void RemoveFilter(IServiceFilter filter)
+		private void RemoveFilter(IServiceFilter filter)
 		{
-			Filters.Remove(filter);
+			if (filter == null)
+				throw new ArgumentNullException(nameof(filter));
+
+			ServiceFilters.Remove(filter);
 		}
 
 		/// <summary>

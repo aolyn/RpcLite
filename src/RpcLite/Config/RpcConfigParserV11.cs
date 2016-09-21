@@ -24,6 +24,7 @@ namespace RpcLite.Config
 			InitializeRegistryConfig(config, instance);
 			InitializeMonitorConfig(config, instance);
 			InitializeFormatterConfig(config, instance);
+			InitializeFilterConfig(config, instance);
 
 			//TODO
 			////if (instance.Service?.Paths == null && instance.Service?.Services != null)
@@ -34,6 +35,36 @@ namespace RpcLite.Config
 			////}
 
 			return instance;
+		}
+
+		private void InitializeFilterConfig(IConfiguration config, RpcConfig instance)
+		{
+			var filterNode = config.GetSection("filter");
+
+			if (filterNode?.GetChildren()?.Any() != true) return;
+
+			instance.Filter = new FilterConfig
+			{
+				Filters = new List<FilterItemConfig>(),
+			};
+
+			var filtersNode = filterNode.GetSection("filters");
+			var clients = filtersNode.GetChildren();
+			foreach (var item in clients)
+			{
+				var name = item["name"];
+				var type = item["type"];
+
+				if (string.IsNullOrEmpty(type))
+					throw new RpcConfigException($"type of RpcLite configuration client node '{name}' can't be null or empty");
+
+				var serviceConfigItem = new FilterItemConfig
+				{
+					Name = name,
+					Type = type,
+				};
+				instance.Filter.Filters.Add(serviceConfigItem);
+			}
 		}
 
 		private static void InitializeFormatterConfig(IConfiguration config, RpcConfig instance)

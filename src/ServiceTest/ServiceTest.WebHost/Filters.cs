@@ -6,44 +6,24 @@ using RpcLite.Service;
 namespace ServiceTest.WebHost
 {
 
-	class LogTimeFilter : IServiceFilter
+	class LogTimeFilter : IProcessFilter
 	{
-		public bool FilterInvoke { get; } = true;
+		public string Name { get; set; } = nameof(LogTimeFilter);
 
-		public string Name { get; set; }
-
-		public void AfterInvoke(ServiceContext context)
-		{
-		}
-
-		public void BeforeInvoke(ServiceContext context)
-		{
-		}
-
-		public async Task Invoke(ServiceContext context, Func<ServiceContext, Task> next)
+		public async Task ProcessAsync(ServiceContext context, Func<ServiceContext, Task> next)
 		{
 			var stopwatch = Stopwatch.StartNew();
 			await next(context);
 			stopwatch.Stop();
-			//Console.WriteLine($"Service: {context.Service.Name}, Action: {context.Action.Name}, Execute Duration: {stopwatch.ElapsedMilliseconds}ms");
+			Console.WriteLine($"Service: {context.Service.Name}, Action: {context.Action.Name}, Execute Duration: {stopwatch.ElapsedMilliseconds}ms");
 		}
 	}
 
-	class LogRequestTimeFilter : IServiceFilter
+	class LogRequestTimeFilter : IProcessFilter
 	{
-		public string Name { get; set; }
+		public string Name { get; set; } = nameof(LogRequestTimeFilter);
 
-		public bool FilterInvoke { get; } = true;
-
-		public void AfterInvoke(ServiceContext context)
-		{
-		}
-
-		public void BeforeInvoke(ServiceContext context)
-		{
-		}
-
-		public async Task Invoke(ServiceContext context, Func<ServiceContext, Task> next)
+		public async Task ProcessAsync(ServiceContext context, Func<ServiceContext, Task> next)
 		{
 			var stopwatch = Stopwatch.StartNew();
 			await next(context);
@@ -52,4 +32,28 @@ namespace ServiceTest.WebHost
 		}
 
 	}
+
+	class ResultFilter : IActionExecteFilter
+	{
+		public string Name { get; set; } = nameof(LogRequestTimeFilter);
+
+		public void OnExecuted(ServiceContext context)
+		{
+			if (context.Exception != null)
+			{
+				Console.WriteLine(context.Action.Name + " exception occored: " + context.Exception);
+			}
+			else
+			{
+				Console.WriteLine(context.Action.Name + " execute result: " + Newtonsoft.Json.JsonConvert.SerializeObject(context.Result).Substring(0, 100));
+			}
+		}
+
+		public void OnExecuting(ServiceContext context)
+		{
+			Console.WriteLine(context.Action.Name + " before execute action");
+		}
+	}
+
+
 }

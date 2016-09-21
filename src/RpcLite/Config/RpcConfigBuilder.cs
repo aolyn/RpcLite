@@ -208,11 +208,6 @@ namespace RpcLite.Config
 		{
 			if (clients == null) return this;
 
-			//_config.Clients = _config.Clients ?? new List<ClientConfigItem>();
-			//var newItems = clients
-			//	.Where(it => !_config.Clients.Contains(it));
-			//_config.Clients.AddRange(newItems);
-
 			_config.Client = _config.Client ?? new ClientConfig();
 			_config.Client.Clients = _config.Client.Clients ?? new List<ClientConfigItem>();
 			var newItems2 = clients
@@ -237,6 +232,41 @@ namespace RpcLite.Config
 
 			return UseClients(item);
 		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		public RpcConfigBuilder UseFilter<TFactory>()
+		{
+			UseFilter<TFactory>(null);
+			return this;
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		public RpcConfigBuilder UseFilter<TFactory>(string name)
+		{
+			if (_config.Filter == null)
+			{
+				_config.Filter = new FilterConfig
+				{
+					Filters = new List<FilterItemConfig>()
+				};
+			}
+
+			if (!typeof(IFilterFactory).IsAssignableFromEx(typeof(TFactory)))
+			{
+				throw new ArgumentOutOfRangeException(nameof(TFactory), "factoryType must implement " + nameof(IFilterFactory));
+			}
+
+			_config.Filter.Filters.Add(new FilterItemConfig(name, typeof(TFactory)));
+
+			return this;
+		}
+
 
 		/// <summary>
 		/// 

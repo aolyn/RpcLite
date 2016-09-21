@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using ServiceTest.ServiceImpl;
 
 namespace ServiceTest.WebHost
 {
@@ -20,7 +20,8 @@ namespace ServiceTest.WebHost
 			loggerFactory.AddConsole(LogLevel.Error);
 
 			////Method1: use Middleware
-			//RpcLiteInitializer.Initialize(app);
+			//RpcLite.AspNetCore.RpcInitializer.Initialize(app);
+
 			//RpcManager.AddFilter(new LogTimeFilter());
 			//RpcManager.AddFilter(new LogRequestTimeFilter());
 
@@ -30,8 +31,10 @@ namespace ServiceTest.WebHost
 			app.UseRpcLite(builder =>
 			{
 				builder
-				.UseService<TestService>("TestService", "api/test/")
-				.UseServicePaths("api/test/");
+					.UseService<TestService>("TestService", "api/test/")
+					.UseService<ProductService>("TestService", "api/service/")
+					.UseServicePaths("api/")
+					.UseFilter<TestFilterFactory>();
 			});
 
 			if (env.IsDevelopment())
@@ -54,7 +57,5 @@ namespace ServiceTest.WebHost
 				//routes.UseRpcLite();
 			});
 		}
-
 	}
-
 }

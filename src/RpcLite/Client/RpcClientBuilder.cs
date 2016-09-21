@@ -28,14 +28,15 @@ namespace RpcLite.Client
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="baseUrl"></param>
+		/// <param name="address"></param>
 		/// <returns></returns>
-		public RpcClientBase<TContract> GetInstance(string baseUrl)
+		public RpcClientBase<TContract> GetInstance(string address)
 		{
 			if (ClientCreateFunc.Value == null)
 				throw new ClientException("GetCreateInstanceFunc Error.");
 
 			var client = ClientCreateFunc.Value();
+			client.Address = address;
 			return client;
 		}
 

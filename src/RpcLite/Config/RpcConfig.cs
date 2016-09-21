@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace RpcLite.Config
 {
@@ -73,6 +74,11 @@ namespace RpcLite.Config
 		/// 
 		/// </summary>
 		public ClientConfig Client { get; set; }
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public FilterConfig Filter { get; set; }
 
 		/// <summary>
 		/// 

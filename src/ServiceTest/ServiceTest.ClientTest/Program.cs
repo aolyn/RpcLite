@@ -11,11 +11,11 @@ namespace ServiceTest.ClientTest
 	{
 		public static void Main(string[] args)
 		{
-			Test.SerializeTest.InnerExceptionTest();
+			//Test.SerializeTest.InnerExceptionTest();
 			//return;
 
-			UnitTest.Test();
-			//ClientTest1();
+			//UnitTest.Test();
+			ClientTest1();
 			//PerformanceTest();
 			//appHost.ProcessAsync()
 
@@ -186,9 +186,9 @@ namespace ServiceTest.ClientTest
 
 			RpcLite.AspNetCore.RpcInitializer.Initialize();
 
-			var baseUrl = serviceBaseUrl + @"/api/service/";
-			//var client = ClientFactory.GetInstance<IProductService>(baseUrl);
-			var client = ClientFactory.GetInstance<IProductService>();
+			var address = serviceBaseUrl + @"/api/service/";
+			var client = ClientFactory.GetInstance<IProductService>(address);
+			//var client = ClientFactory.GetInstance<IProductService>();
 
 			try
 			{

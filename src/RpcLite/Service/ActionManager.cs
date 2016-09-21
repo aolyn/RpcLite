@@ -10,12 +10,13 @@ namespace RpcLite.Service
 	/// <summary>
 	/// create actions
 	/// </summary>
-	public class ActionManager
+	internal class ActionManager
 	{
 		//public static ActionManager Instance = new ActionManager();
 
 		private readonly QuickReadConcurrentDictionary<string, RpcAction> _actions = new QuickReadConcurrentDictionary<string, RpcAction>();
 		private readonly Type _defaultServiceType;
+		private RpcService _service;
 
 		/// <summary>
 		/// 
@@ -25,11 +26,21 @@ namespace RpcLite.Service
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="serviceType"></param>
-		public ActionManager(Type serviceType)
+		/// <param name="service"></param>
+		public ActionManager(RpcService service)
 		{
-			_defaultServiceType = serviceType;
+			_service = service;
+			_defaultServiceType = service.Type;
 		}
+
+		///// <summary>
+		///// 
+		///// </summary>
+		///// <param name="serviceType"></param>
+		//public ActionManager(Type serviceType)
+		//{
+		//	_defaultServiceType = serviceType;
+		//}
 
 		/// <summary>
 		/// 
@@ -46,7 +57,7 @@ namespace RpcLite.Service
 
 			serviceType = serviceType ?? _defaultServiceType;
 			var actionKey = /*serviceType.FullName + "." + */actionName;
-			return _actions.GetOrAdd(actionKey, (k) => GetActionInternal(serviceType, actionName));
+			return _actions.GetOrAdd(actionKey, k => GetActionInternal(serviceType, actionName));
 		}
 
 		/// <summary>
@@ -102,7 +113,7 @@ namespace RpcLite.Service
 				methodFunc = MethodHelper.GetCallMethodFunc(serviceType, argumentType, arguments, method, hasReturn);
 			}
 
-			var actionInfo = new RpcAction
+			var action = new RpcAction
 			{
 				Name = actionName,
 				ArgumentCount = arguments.Length,
@@ -111,26 +122,26 @@ namespace RpcLite.Service
 				MethodInfo = method,
 				HasReturnValue = hasReturn,
 				ServiceCreator = TypeCreator.GetCreateInstanceFunc(serviceType),
-				//ServiceType = serviceType,
 				IsStatic = method.IsStatic,
 				IsTask = isTask,
+				Service = _service,
 			};
 
 			if (isTask)
 			{
-				actionInfo.InvokeTask = methodFunc as Func<object, object, object>;
-				actionInfo.TaskResultType = method.ReturnType.GetGenericArguments().FirstOrDefault();
+				action.InvokeTask = methodFunc as Func<object, object, object>;
+				action.TaskResultType = method.ReturnType.GetGenericArguments().FirstOrDefault();
 			}
 			else if (hasReturn)
 			{
-				actionInfo.Func = methodFunc as Func<object, object, object>;
+				action.Func = methodFunc as Func<object, object, object>;
 			}
 			else
 			{
-				actionInfo.Action = methodFunc as Action<object, object>;
+				action.Action = methodFunc as Action<object, object>;
 			}
 
-			return actionInfo;
+			return action;
 		}
 
 		private static object GetDefaultValue(Type type)

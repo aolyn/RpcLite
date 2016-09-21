@@ -115,6 +115,11 @@ namespace RpcLite.Service
 		/// </summary>
 		public object DefaultArgument { get; set; }
 
+		/// <summary>
+		/// 
+		/// </summary>
+		public RpcService Service { get; internal set; }
+
 		#endregion
 
 		/// <summary>
@@ -139,6 +144,8 @@ namespace RpcLite.Service
 				}
 			}
 
+			ApplyExecutingFilters(context);
+
 			if (IsTask)
 			{
 				try
@@ -147,7 +154,7 @@ namespace RpcLite.Service
 
 					var waitTask = task.ContinueWith(tsk =>
 					{
-						if (tsk.IsFaulted)
+						if (tsk.Exception != null)
 						{
 							context.Exception = tsk.Exception.InnerException;
 						}
@@ -156,6 +163,8 @@ namespace RpcLite.Service
 							var result = GetResultObject(tsk, context);
 							context.Result = result;
 						}
+
+						ApplyExecutedFilters(context);
 					});
 
 					return waitTask;
@@ -163,6 +172,7 @@ namespace RpcLite.Service
 				catch (Exception ex)
 				{
 					context.Exception = ex;
+					ApplyExecutedFilters(context);
 
 					return TaskHelper.FromResult<object>(null);
 				}
@@ -182,9 +192,46 @@ namespace RpcLite.Service
 					tcs.SetResult(null);
 					return tcs.Task;
 				}
+				ApplyExecutedFilters(context);
 				LogHelper.Debug("RpcService.BeginProcessRequest: end ActionHelper.InvokeAction");
 
 				return TaskHelper.FromResult(context.Result);
+			}
+		}
+
+		private void ApplyExecutingFilters(ServiceContext context)
+		{
+			if (!(Service?.ActionExecteFilter?.Count > 0))
+				return;
+
+			foreach (var item in Service.ActionExecteFilter)
+			{
+				try
+				{
+					item.OnExecuting(context);
+				}
+				catch (Exception ex)
+				{
+					LogHelper.Error(ex);
+				}
+			}
+		}
+
+		private void ApplyExecutedFilters(ServiceContext context)
+		{
+			if (!(Service?.ActionExecteFilter?.Count > 0))
+				return;
+
+			foreach (var item in Service.ActionExecteFilter)
+			{
+				try
+				{
+					item.OnExecuted(context);
+				}
+				catch (Exception ex)
+				{
+					LogHelper.Error(ex);
+				}
 			}
 		}
 
@@ -230,8 +277,8 @@ namespace RpcLite.Service
 			{
 				LogHelper.Error("GetTaskResult error", ex);
 				var aex = ex as AggregateException;
-				if (aex != null)
-					throw ex.InnerException;
+				if (aex?.InnerException != null)
+					throw aex.InnerException;
 				throw;
 			}
 		}
