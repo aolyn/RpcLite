@@ -10,8 +10,9 @@ namespace RpcLite.Monitor
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <param name="appHost"></param>
 		/// <param name="config"></param>
 		/// <returns></returns>
-		IMonitor CreateMonitor(RpcConfig config);
+		IMonitor CreateMonitor(AppHost appHost, RpcConfig config);
 	}
 }

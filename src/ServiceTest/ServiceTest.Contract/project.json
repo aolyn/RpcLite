@@ -8,8 +8,7 @@
     "netstandard1.3": {
       "imports": "dnxcore50"
     },
-    "netcoreapp1.0": {
-      "imports": "dnxcore50"
+    "net45": {
     }
   }
 }

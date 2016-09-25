@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
-using Microsoft.Extensions.Configuration;
+using System.Threading.Tasks;
 using NUnit.Framework;
 using RpcLite;
 using RpcLite.Client;
@@ -10,7 +10,11 @@ using RpcLite.Registry.Http;
 using ServiceTest.Contract;
 using ServiceTest.ServiceImpl;
 
-namespace ServiceTest.ClientTest
+#if NETCORE
+using Microsoft.Extensions.Configuration;
+#endif
+
+namespace ServiceTest.ClientTest_NetFx
 {
 	public class UnitTest
 	{
@@ -140,6 +144,7 @@ namespace ServiceTest.ClientTest
 			Console.ReadLine();
 		}
 
+#if NETCORE
 		public static void Test1()
 		{
 			Console.WriteLine("start test");
@@ -178,6 +183,81 @@ namespace ServiceTest.ClientTest
 			}
 
 			Console.ReadLine();
+		}
+#endif
+
+	}
+
+	class ProductServiceImp22 : RpcClientBase<IProductService>
+	{
+		public int GetCount()
+		{
+			throw new NotImplementedException();
+		}
+
+		public Task<int> GetCountAsync()
+		{
+			throw new NotImplementedException();
+		}
+
+		public void SetCount(int age)
+		{
+			throw new NotImplementedException();
+		}
+
+		public Task SetCountAsync(int age)
+		{
+			throw new NotImplementedException();
+		}
+
+		public Product[] GetAll()
+		{
+			throw new NotImplementedException();
+		}
+
+		public Product[] GetPage(int pageIndex, int pageSize)
+		{
+			throw new NotImplementedException();
+		}
+
+		public Task<Product[]> GetAllAsync()
+		{
+			throw new NotImplementedException();
+		}
+
+		public int Add(Product product)
+		{
+			return (int)GetResponse<int>("Add", product, typeof(int));
+		}
+
+		public Task<int> AddAsync(Product product)
+		{
+			throw new NotImplementedException();
+		}
+
+		public Product GetById(int id)
+		{
+			throw new NotImplementedException();
+		}
+
+		public Task<Product> GetByIdAsync(int id)
+		{
+			throw new NotImplementedException();
+		}
+
+		public void ExceptionTest()
+		{
+			throw new NotImplementedException();
+		}
+
+		public void ThrowException(Exception ex)
+		{
+			throw new NotImplementedException();
+		}
+
+		public Task ExceptionTestAsync()
+		{
+			throw new NotImplementedException();
 		}
 	}
 }

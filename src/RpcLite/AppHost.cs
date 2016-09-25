@@ -17,9 +17,6 @@ namespace RpcLite
 	/// </summary>
 	public class AppHost
 	{
-		private readonly RpcConfig _config;
-		//private readonly Lazy<object> _initializeRegistry;
-
 		/// <summary>
 		/// ServiceHost
 		/// </summary>
@@ -43,7 +40,7 @@ namespace RpcLite
 		/// <summary>
 		/// get config, modification to config will not effect except service.paths, so just don't modify it
 		/// </summary>
-		public RpcConfig Config => _config;
+		public RpcConfig Config { get; }
 
 		/// <summary>
 		/// 
@@ -91,19 +88,18 @@ namespace RpcLite
 			if (config == null)
 				throw new ArgumentNullException(nameof(config));
 
-			_config = config;
+			Config = config;
 
 			AppId = config.AppId;
 			Registry = RegistryHelper.GetRegistry(config);
 			ServiceHost = new ServiceHost(this, config);
 			FormatterManager = new FormatterManager(config);
-			//ClusterFactory = new SimpleClusterFactory();
 			ClientFactory = new RpcClientFactory(this, config);
 
 			if (!string.IsNullOrWhiteSpace(config.Monitor?.Type))
 			{
 				var monitorFactory = TypeCreator.CreateInstanceByIdentifier<IMonitorFactory>(config.Monitor.Type);
-				Monitor = monitorFactory.CreateMonitor(config);
+				Monitor = monitorFactory.CreateMonitor(this, config);
 			}
 
 			if (config.Filter?.Filters.Count > 0)
@@ -119,20 +115,13 @@ namespace RpcLite
 					}
 				}
 			}
-
-			//_initializeRegistry = new Lazy<object>(() =>
-			//{
-			//	RegistryServices();
-
-			//	return null;
-			//});
 		}
 
 		private void RegisterServices()
 		{
-			if (Registry?.CanRegister != true || _config?.Service.Services == null) return;
+			if (Registry?.CanRegister != true || Config?.Service.Services == null) return;
 
-			foreach (var service in _config.Service.Services)
+			foreach (var service in Config.Service.Services)
 			{
 				Registry.RegisterAsync(service);
 			}
@@ -165,17 +154,17 @@ namespace RpcLite
 				ClientFilters.Add((IRpcClientFilter)filter);
 		}
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="filter"></param>
-		private void RemoveFilter(IServiceFilter filter)
-		{
-			if (filter == null)
-				throw new ArgumentNullException(nameof(filter));
+		///// <summary>
+		///// 
+		///// </summary>
+		///// <param name="filter"></param>
+		//private void RemoveFilter(IServiceFilter filter)
+		//{
+		//	if (filter == null)
+		//		throw new ArgumentNullException(nameof(filter));
 
-			ServiceFilters.Remove(filter);
-		}
+		//	ServiceFilters.Remove(filter);
+		//}
 
 		/// <summary>
 		/// 

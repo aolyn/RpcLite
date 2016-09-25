@@ -1,0 +1,31 @@
+﻿{
+  "version": "1.0.0-*",
+  "buildOptions": {
+    "emitEntryPoint": true
+  },
+  "frameworks": {
+    "netcoreapp1.0": {
+      "imports": "dnxcore50",
+      "dependencies": {
+        "Microsoft.NETCore.App": {
+          "type": "platform",
+          "version": "1.0.1"
+        },
+        "RpcLite.AspNetCore": "1.0.1-*"
+      },
+      "buildOptions": { "define": [ "NETCORE" ] }
+    },
+    "net45": {
+      "dependencies": {
+        "RpcLite.NetFx": "1.0.0-*"
+      }
+    }
+  },
+  "dependencies": {
+    "RpcLite": "1.0.1-*",
+    "RpcLite.Registry.Http": "1.0.0-*",
+    "NUnit": "3.4.1",
+    "ServiceTest.Contract": "1.0.0-*",
+    "ServiceTest.ServiceImpl": "1.0.0-*"
+  }
+}

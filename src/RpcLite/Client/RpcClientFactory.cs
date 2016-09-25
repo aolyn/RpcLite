@@ -71,9 +71,8 @@ namespace RpcLite.Client
 			client.Cluster = string.IsNullOrWhiteSpace(url)
 				? _clusterFactory.GetCluster<TContract>()
 				: _clusterFactory.GetCluster<TContract>(url);
-			client.Formatter = _appHost?.FormatterManager != null
-				? _appHost.FormatterManager.DefaultFormatter
-				: FormatterManager.Default.DefaultFormatter;
+			client.Formatter = _appHost?.FormatterManager?.DefaultFormatter
+				?? FormatterManager.Default.DefaultFormatter;
 			return client as TContract;
 		}
 

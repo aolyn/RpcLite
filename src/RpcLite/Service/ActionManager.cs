@@ -131,10 +131,12 @@ namespace RpcLite.Service
 			{
 				action.InvokeTask = methodFunc as Func<object, object, object>;
 				action.TaskResultType = method.ReturnType.GetGenericArguments().FirstOrDefault();
+				action.ResultType = action.TaskResultType;
 			}
 			else if (hasReturn)
 			{
 				action.Func = methodFunc as Func<object, object, object>;
+				action.ResultType = method.ReturnType;
 			}
 			else
 			{

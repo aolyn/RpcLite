@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using RpcLite.Formatters;
 
 namespace RpcLite
@@ -10,16 +11,19 @@ namespace RpcLite
 	{
 		private readonly IFormatter _formatter;
 		private readonly object _content;
+		private Type _type;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="formatter"></param>
 		/// <param name="content"></param>
-		public FormaterContent(IFormatter formatter, object content)
+		/// <param name="type"></param>
+		public FormaterContent(IFormatter formatter, object content, Type type)
 		{
 			_formatter = formatter;
 			_content = content;
+			_type = type;
 		}
 
 		/// <summary>
@@ -28,7 +32,7 @@ namespace RpcLite
 		/// <param name="stream"></param>
 		public void Write(Stream stream)
 		{
-			_formatter.Serialize(stream, _content);
+			_formatter.Serialize(stream, _content, _type);
 		}
 	}
 

@@ -91,13 +91,13 @@ namespace RpcLite.Client
 			if (Formatter == null)
 				throw new ServiceException("Formatter can't be null");
 
-			var resultObj = DoRequestAsync<TResult>(action, request, returnType);
+			var resultObj = DoRequestAsync<TResult>(action, request, request?.GetType(), returnType);
 			return resultObj;
 		}
 
-		private Task<TResult> DoRequestAsync<TResult>(string action, object param, Type returnType)
+		private Task<TResult> DoRequestAsync<TResult>(string action, object param, Type argumentType, Type returnType)
 		{
-			var sendTask = SendAsync(action, param);
+			var sendTask = SendAsync(action, param, argumentType);
 
 #if DEBUG && LogDuration
 			var duration0 = stopwatch1.GetAndRest();
@@ -121,7 +121,7 @@ namespace RpcLite.Client
 			return task;
 		}
 
-		private Task<ResponseMessage> SendAsync(string action, object param)
+		private Task<ResponseMessage> SendAsync(string action, object param, Type argumentType)
 		{
 			var mime = Formatter.SupportMimes.First();
 			var headDic = new Dictionary<string, string>
@@ -131,7 +131,7 @@ namespace RpcLite.Client
 			};
 
 			var content = new MemoryStream();
-			Formatter.Serialize(content, param);
+			Formatter.Serialize(content, param, argumentType);
 			content.Position = 0;
 
 #if DEBUG && LogDuration

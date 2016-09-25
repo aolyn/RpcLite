@@ -30,14 +30,14 @@ namespace RpcLite.Formatters
 		/// </summary>
 		/// <param name="outputStream"></param>
 		/// <param name="source"></param>
-		void Serialize(Stream outputStream, object source);
+		void Serialize(Stream outputStream, object source, Type type);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="writer"></param>
 		/// <param name="source"></param>
-		void Serialize(TextWriter writer, object source);
+		void Serialize(TextWriter writer, object source, Type type);
 
 		/// <summary>
 		/// 

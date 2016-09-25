@@ -70,6 +70,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{9E3F3BDA
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NuGetPackTool", "Tools\NuGetPackTool\NuGetPackTool.csproj", "{9BC55290-0933-4049-BD13-49FF7C388778}"
 EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "ServiceTest.ClientTest_NetFx", "ServiceTest\ServiceTest.ClientTest_NetFx\ServiceTest.ClientTest_NetFx.xproj", "{D1902FF4-20E0-45D2-8F5B-DB2949EAD724}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -342,6 +344,18 @@ Global
 		{9BC55290-0933-4049-BD13-49FF7C388778}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{9BC55290-0933-4049-BD13-49FF7C388778}.Release|x86.ActiveCfg = Release|Any CPU
 		{9BC55290-0933-4049-BD13-49FF7C388778}.Release|x86.Build.0 = Release|Any CPU
+		{D1902FF4-20E0-45D2-8F5B-DB2949EAD724}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D1902FF4-20E0-45D2-8F5B-DB2949EAD724}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D1902FF4-20E0-45D2-8F5B-DB2949EAD724}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{D1902FF4-20E0-45D2-8F5B-DB2949EAD724}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{D1902FF4-20E0-45D2-8F5B-DB2949EAD724}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{D1902FF4-20E0-45D2-8F5B-DB2949EAD724}.Debug|x86.Build.0 = Debug|Any CPU
+		{D1902FF4-20E0-45D2-8F5B-DB2949EAD724}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D1902FF4-20E0-45D2-8F5B-DB2949EAD724}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D1902FF4-20E0-45D2-8F5B-DB2949EAD724}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{D1902FF4-20E0-45D2-8F5B-DB2949EAD724}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{D1902FF4-20E0-45D2-8F5B-DB2949EAD724}.Release|x86.ActiveCfg = Release|Any CPU
+		{D1902FF4-20E0-45D2-8F5B-DB2949EAD724}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -373,5 +387,6 @@ Global
 		{5D2CC80C-942A-4B5A-810D-B8594EFF2937} = {6FA37F36-5906-46AE-A108-033EE86E55B1}
 		{02119D4A-06E8-4DEA-BC06-4F0022C89157} = {6FA37F36-5906-46AE-A108-033EE86E55B1}
 		{9BC55290-0933-4049-BD13-49FF7C388778} = {9E3F3BDA-8776-4264-91C1-1BC7284CA890}
+		{D1902FF4-20E0-45D2-8F5B-DB2949EAD724} = {067E5EED-B95F-49F7-B9D7-C5CCDB4F34A6}
 	EndGlobalSection
 EndGlobal

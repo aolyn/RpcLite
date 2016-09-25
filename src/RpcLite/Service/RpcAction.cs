@@ -120,6 +120,11 @@ namespace RpcLite.Service
 		/// </summary>
 		public RpcService Service { get; internal set; }
 
+		/// <summary>
+		/// result type of action, if return type of action is Task of T, it's T
+		/// </summary>
+		public Type ResultType { get; internal set; }
+
 		#endregion
 
 		/// <summary>

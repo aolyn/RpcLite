@@ -1,6 +1,7 @@
 ﻿using System;
 using RpcLite.Client;
 using RpcLite.Config;
+using RpcLite.Formatters;
 using RpcLite.Registry.Zookeeper;
 using RpcLiteClientTestNetCore;
 using ServiceTest.Contract;
@@ -13,9 +14,10 @@ namespace ServiceTest.ClientTest
 		{
 			//Test.SerializeTest.InnerExceptionTest();
 			//return;
+			//Test222(null);
 
-			//UnitTest.Test();
-			ClientTest1();
+			UnitTest.Test();
+			//ClientTest1();
 			//PerformanceTest();
 			//appHost.ProcessAsync()
 
@@ -23,6 +25,11 @@ namespace ServiceTest.ClientTest
 			//RpcLite.AspNetCore.RpcLiteInitializer.Initialize();
 			//RegistryTest();
 			//Test2();
+		}
+
+		private static void Test222(Type type)
+		{
+			
 		}
 
 		//public static Task<ResponseMessage> SendAsync(string action, Stream content, IDictionary<string, string> headers)
@@ -188,6 +195,9 @@ namespace ServiceTest.ClientTest
 
 			var address = serviceBaseUrl + @"/api/service/";
 			var client = ClientFactory.GetInstance<IProductService>(address);
+			var clientInfo = (IRpcClient)client;
+			clientInfo.Formatter = new XmlFormatter();
+
 			//var client = ClientFactory.GetInstance<IProductService>();
 
 			try

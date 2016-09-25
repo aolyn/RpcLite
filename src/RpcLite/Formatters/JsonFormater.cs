@@ -47,10 +47,11 @@ namespace RpcLite.Formatters
 		/// </summary>
 		/// <param name="outputStream"></param>
 		/// <param name="source"></param>
-		public void Serialize(Stream outputStream, object source)
+		/// <param name="type"></param>
+		public void Serialize(Stream outputStream, object source, Type type)
 		{
 			var writer = new StreamWriter(outputStream);
-			Serialize(writer, source);
+			Serialize(writer, source, type);
 			writer.Flush();
 		}
 
@@ -59,7 +60,8 @@ namespace RpcLite.Formatters
 		/// </summary>
 		/// <param name="writer"></param>
 		/// <param name="source"></param>
-		public void Serialize(TextWriter writer, object source)
+		/// <param name="type"></param>
+		public void Serialize(TextWriter writer, object source, Type type)
 		{
 			JsonHelper.Serialize(writer, source);
 		}
