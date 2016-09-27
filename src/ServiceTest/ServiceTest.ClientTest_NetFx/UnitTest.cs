@@ -37,7 +37,7 @@ namespace ServiceTest.ClientTest_NetFx
 				var address = serviceBaseUrl + @"/api/service/";
 #if NETCORE
 				var config = new RpcConfigBuilder()
-					.UseClient<IProductService>(null, address)
+					.UseClient<IProductService>()
 					.Build();
 
 				RpcLite.AspNetCore.RpcInitializer.Initialize(config);
@@ -46,7 +46,8 @@ namespace ServiceTest.ClientTest_NetFx
 #endif
 				var client = ClientFactory.GetInstance<IProductService>(address);
 				var clientInfo = (IRpcClient)client;
-				clientInfo.Formatter = new XmlFormatter();
+				//clientInfo.Formatter = new XmlFormatter();
+				clientInfo.Format = "xml";
 
 				TestService(client).Wait();
 			}

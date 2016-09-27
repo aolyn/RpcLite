@@ -27,6 +27,13 @@ namespace RpcLite.Client
 		/// Formatter
 		/// </summary>
 		IFormatter Formatter { get; set; }
+
+		/// <summary>
+		/// name for Formatter,
+		/// <para>get: return Formatter.Name</para>
+		/// <para>set: find property Formatter set to Formatter field</para>
+		/// </summary>
+		string Format { get; set; }
 	}
 
 }

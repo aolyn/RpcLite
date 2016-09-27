@@ -45,7 +45,7 @@ namespace RpcLite
 		/// <summary>
 		/// 
 		/// </summary>
-		public FormatterManager FormatterManager { get; set; }
+		internal FormatterManager FormatterManager { get; set; }
 
 		/// <summary>
 		/// 

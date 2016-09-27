@@ -43,6 +43,26 @@ namespace RpcLite.Service
 		}
 
 		/// <summary>
+		/// get formatter by name
+		/// </summary>
+		/// <param name="name"></param>
+		/// <returns></returns>
+		public IFormatter GetFormatterByName(string name)
+		{
+			if (_formaters == null || _formaters.Count == 0)
+			{
+				throw new ConfigException("Configuration error: no formatters.");
+			}
+
+			if (string.IsNullOrWhiteSpace(name))
+				return _formaters.First();
+
+			var formatter = _formaters
+				.FirstOrDefault(it => it.Name == name);
+			return formatter;
+		}
+
+		/// <summary>
 		/// 
 		/// </summary>
 		public IFormatter DefaultFormatter { get; private set; }
@@ -86,7 +106,6 @@ namespace RpcLite.Service
 			{
 				foreach (var mime in item.SupportMimes)
 				{
-					//dic.Add(mime, item);
 					dic[mime] = item;
 				}
 			}

@@ -10,6 +10,21 @@ namespace RpcLite.Formatters
 	public interface IFormatter
 	{
 		/// <summary>
+		/// format name, case sensitive, suggest use lower case, eg: xml, json
+		/// </summary>
+		string Name { get; }
+
+		/// <summary>
+		/// 
+		/// </summary>
+		List<string> SupportMimes { get; }
+
+		/// <summary>
+		/// get if the Formatter can serialize Type of Exception
+		/// </summary>
+		bool SupportException { get; }
+
+		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="inputStream"></param>
@@ -41,14 +56,5 @@ namespace RpcLite.Formatters
 		/// <param name="type"></param>
 		void Serialize(TextWriter writer, object source, Type type);
 
-		/// <summary>
-		/// 
-		/// </summary>
-		List<string> SupportMimes { get; }
-
-		/// <summary>
-		/// get if the Formatter can serialize Type of Exception
-		/// </summary>
-		bool SupportException { get; }
 	}
 }

@@ -144,6 +144,7 @@ namespace RpcLite.Service
 			try
 			{
 				serviceContext.Formatter = GetFormatter(serviceContext.Request.ContentType);
+				serviceContext.Response.ContentType = serviceContext.Request.ContentType;
 				serviceContext.Monitor = _appHost.Monitor?.GetSession(serviceContext);
 
 				var parseResult = _serviceFactory.MapService(serviceContext);

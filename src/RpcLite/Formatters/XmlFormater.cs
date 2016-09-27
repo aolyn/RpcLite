@@ -77,5 +77,10 @@ namespace RpcLite.Formatters
 		/// 
 		/// </summary>
 		public bool SupportException { get; } = false;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public string Name { get; } = "xml";
 	}
 }

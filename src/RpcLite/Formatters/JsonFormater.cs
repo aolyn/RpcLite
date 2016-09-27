@@ -74,5 +74,11 @@ namespace RpcLite.Formatters
 		/// 
 		/// </summary>
 		public bool SupportException { get; } = true;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public string Name { get; } = "json";
+
 	}
 }

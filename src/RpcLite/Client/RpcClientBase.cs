@@ -40,6 +40,24 @@ namespace RpcLite.Client
 		/// </summary>
 		public IFormatter Formatter { get; set; }
 
+		/// <summary>
+		/// get Name of Formatter or set Formatter by Name
+		/// </summary>
+		public string Format
+		{
+			get { return Formatter?.Name; }
+			set
+			{
+				if (AppHost == null)
+					throw new InvalidOperationException("when AppHost is null, only Formatter can be set");
+
+				var formatter = AppHost.FormatterManager?.GetFormatterByName(value);
+				if (formatter == null)
+					throw new FormatterNotFoundException(value);
+				Formatter = formatter;
+			}
+		}
+
 		///// <summary>
 		///// Channel to transport data with service
 		///// </summary>

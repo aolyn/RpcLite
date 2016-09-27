@@ -1,24 +1,4 @@
 ﻿<configuration>
-	<configSections>
-		<section name="RpcLite" type="RpcLite.Config.RpcLiteConfigSection, RpcLite.NetFx"/>
-	</configSections>
-	<RpcLite>
-		<version>1.1</version>
-		<appId>10000</appId>
-		<service>
-			<services>
-				<add name="TestService" path="api/test/" type="RpcLiteServiceTest.TestService1,WebHostAssembly"/>
-			</services>
-			<paths>
-				<add value="api/"/>
-			</paths>
-		</service>
-		<client>
-			<clients>
-				<add name="ProductService" address="http://localhost/api/test/" type="ServiceImpl.ProductAsyncService,ServiceImpl" />
-			</clients>
-		</client>
-	</RpcLite>	
 	<system.webServer>
 		<modules>
 			<add name="RpcLite" type="RpcLite.Service.RpcHttpModule, RpcLite.NetFx"/>
