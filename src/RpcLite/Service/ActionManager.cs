@@ -90,9 +90,9 @@ namespace RpcLite.Service
 			var hasReturn = method.ReturnType.FullName != "System.Void";
 
 			var arguments = method.GetParameters();
-			Type argumentType;
-			Delegate methodFunc;
+			var argumentType = TypeCreator.GetParameterType(method);
 
+			Delegate methodFunc;
 			var isTask = false;
 #if NETCORE
 			if (method.ReturnType == typeof(Task)
@@ -104,12 +104,11 @@ namespace RpcLite.Service
 			{
 				isTask = true;
 				//isAsync = true;
-				argumentType = TypeCreator.GetParameterType(method);
 				methodFunc = MethodHelper.GetCallMethodFunc(serviceType, argumentType, arguments, method, hasReturn);
 			}
 			else
 			{
-				argumentType = TypeCreator.GetParameterType(method);
+				//argumentType = TypeCreator.GetParameterType(method);
 				methodFunc = MethodHelper.GetCallMethodFunc(serviceType, argumentType, arguments, method, hasReturn);
 			}
 

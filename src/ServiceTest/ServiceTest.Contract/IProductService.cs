@@ -5,27 +5,40 @@ namespace ServiceTest.Contract
 {
 	public interface IProductService
 	{
-		int GetCount();
+		int GetNumber();
 
-		Task<int> GetCountAsync();
+		Task<int> GetNumberAsync();
 
-		void SetCount(int age);
 
-		Task SetCountAsync(int age);
+		void SetNumber(int num);
+
+		Task SetNumberAsync(int num);
+
 
 		Product[] GetAll();
 
+		Task<Product[]> GetAllAsync();
+
+
+		Product GetInput(Product product);
+
+		Task<Product> GetInputAsync(Product product);
+
+
 		Product[] GetPage(int pageIndex, int pageSize);
 
-		Task<Product[]> GetAllAsync();
+		Task<Product[]> GetPageAsync(int pageIndex, int pageSize);
+
 
 		int Add(Product product);
 
 		Task<int> AddAsync(Product product);
 
+
 		Product GetById(int id);
 
 		Task<Product> GetByIdAsync(int id);
+
 
 		void ExceptionTest();
 

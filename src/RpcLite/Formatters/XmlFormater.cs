@@ -72,5 +72,10 @@ namespace RpcLite.Formatters
 		/// 
 		/// </summary>
 		public List<string> SupportMimes { get; } = new List<string>();
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public bool SupportException { get; } = false;
 	}
 }

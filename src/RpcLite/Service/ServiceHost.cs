@@ -243,7 +243,8 @@ namespace RpcLite.Service
 #if OUTPUT_SERIALIZATION_TIME
 				var serializationStopwatch = Stopwatch.StartNew();
 #endif
-				context.Formatter.Serialize(context.Response.ResponseStream, context.Exception, context.GetType());
+				if (context.Formatter.SupportException)
+					context.Formatter.Serialize(context.Response.ResponseStream, context.Exception, context.Exception.GetType());
 #if OUTPUT_SERIALIZATION_TIME
 				serializationStopwatch.Stop();
 				Console.WriteLine("serializationStopwatch.ElapsedMilliseconds {0}", serializationStopwatch.ElapsedMilliseconds);

@@ -30,6 +30,7 @@ namespace RpcLite.Formatters
 		/// </summary>
 		/// <param name="outputStream"></param>
 		/// <param name="source"></param>
+		/// <param name="type"></param>
 		void Serialize(Stream outputStream, object source, Type type);
 
 		/// <summary>
@@ -37,11 +38,17 @@ namespace RpcLite.Formatters
 		/// </summary>
 		/// <param name="writer"></param>
 		/// <param name="source"></param>
+		/// <param name="type"></param>
 		void Serialize(TextWriter writer, object source, Type type);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		List<string> SupportMimes { get; }
+
+		/// <summary>
+		/// get if the Formatter can serialize Type of Exception
+		/// </summary>
+		bool SupportException { get; }
 	}
 }

@@ -1,4 +1,6 @@
-﻿#define USE_CUSTOMIZE_JSON_DESERIALIZE
+﻿#if NETCORE
+#define USE_CUSTOMIZE_JSON_DESERIALIZE
+#endif
 
 using System;
 using System.IO;

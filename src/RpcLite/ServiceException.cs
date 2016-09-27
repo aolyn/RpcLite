@@ -9,6 +9,10 @@ namespace RpcLite
 	/// <summary>
 	/// Represents errors that occor during application execution in RpcLite server
 	/// </summary>
+#if NETCORE
+#else
+	[Serializable]
+#endif
 	public class ServiceException : RpcLiteException
 	{
 		/// <summary>
@@ -205,6 +209,48 @@ namespace RpcLite
 		/// </summary>
 		/// <param name="actionName">message</param>
 		public DeserializeRequestException(string actionName)
+			: base($"Action {actionName} Not Found")
+		{ }
+
+	}
+
+
+	/// <summary>
+	/// Represents errors that occor during application execution in RpcLite server
+	/// </summary>
+	public class SerializeRequestException : ServiceException
+	{
+		/// <summary>
+		/// Initializes a new instance of RpcLite.ServiceException with specifid message and inner exception
+		/// </summary>
+		/// <param name="message">message</param>
+		/// <param name="innerException">inner exception</param>
+		public SerializeRequestException(string message, Exception innerException)
+			: base(message, innerException)
+		{ }
+
+#if !NETCORE
+	///// <summary>
+		///// 
+		///// </summary>
+		///// <param name="info"></param>
+		///// <param name="context"></param>
+		//protected SerializeRequestException(SerializationInfo info, StreamingContext context) : base(info, context)
+		//{
+		//}
+#endif
+
+		/// <summary>
+		/// Initializes a new instance of RpcLite.ServiceException with specifid message and inner exception
+		/// </summary>
+		public SerializeRequestException()
+		{ }
+
+		/// <summary>
+		/// Initializes a new instance of RpcLite.ServiceException with specifid message and inner exception
+		/// </summary>
+		/// <param name="actionName">message</param>
+		public SerializeRequestException(string actionName)
 			: base($"Action {actionName} Not Found")
 		{ }
 

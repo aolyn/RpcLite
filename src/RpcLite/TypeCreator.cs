@@ -83,7 +83,7 @@ namespace RpcLite
 
 			var setValuesMethod = typeBuilder.DefineMethod("SetValues", MethodAttributes.Public, typeof(void), paraTypes);
 			var setValuesIL = setValuesMethod.GetILGenerator();
-			setValuesIL.Emit(OpCodes.Nop);
+			//setValuesIL.Emit(OpCodes.Nop);
 
 			if (paraTypes.Length > 0)
 			{
@@ -232,15 +232,13 @@ namespace RpcLite
 			if (typeBuilder.BaseType == null) throw new ArgumentException("typeBuilder.BaseType is null");
 
 			const MethodAttributes methodAttributes = MethodAttributes.Public
-				| MethodAttributes.NewSlot | MethodAttributes.Virtual | MethodAttributes.Final | MethodAttributes.HideBySig;
+				| MethodAttributes.NewSlot | MethodAttributes.Virtual | MethodAttributes.HideBySig;
 
 			var paramTypes = method.GetParameters().Select(it => it.ParameterType).ToArray();
 			var methodBuilder = typeBuilder.DefineMethod(method.Name, methodAttributes, method.ReturnType, paramTypes);
 
-			//var body1 =
-
 			var methodIL = methodBuilder.GetILGenerator();
-			methodIL.Emit(OpCodes.Nop);
+			//methodIL.Emit(OpCodes.Nop);
 
 			var methodGetTypeFromHandle = typeof(Type).GetMethod("GetTypeFromHandle");
 
@@ -266,11 +264,10 @@ namespace RpcLite
 			{
 				callMethodName = "GetResponse";
 			}
-			var returnType = method.ReturnType;
-			var hasReturn = (returnType != typeof(void));
+			var returnType = isTask ? taskParam : method.ReturnType;
+			var hasReturn = returnType != null && returnType != typeof(void);
 			var paramCount = paramTypes.Length;
 
-			//taskParam = taskParam ?? returnType;
 			// ReSharper disable once PossibleNullReferenceException
 			var getResponse = typeBuilder.BaseType.GetMethod(callMethodName, BindingFlags.Instance | BindingFlags.NonPublic);
 			if (isTask)
@@ -285,6 +282,27 @@ namespace RpcLite
 			}
 
 			var paramType = GetParameterType(method);
+
+			methodIL.DeclareLocal(typeof(Type));
+			if (paramType != null)
+				methodIL.DeclareLocal(typeof(Type));
+			if (paramCount > 1)
+				methodIL.DeclareLocal(paramType);
+
+			if (hasReturn)
+			{
+				methodIL.Emit(OpCodes.Ldtoken, returnType);
+				methodIL.EmitCall(OpCodes.Call, methodGetTypeFromHandle, new[] { typeof(RuntimeTypeHandle) });
+				methodIL.Emit(OpCodes.Stloc_0);
+			}
+
+			if (paramType != null)
+			{
+				methodIL.Emit(OpCodes.Ldtoken, paramType);
+				methodIL.EmitCall(OpCodes.Call, methodGetTypeFromHandle, new[] { typeof(RuntimeTypeHandle) });
+				methodIL.Emit(OpCodes.Stloc_1);
+			}
+
 			if (paramCount > 1)
 			{
 				var ctor = paramType.GetConstructor(Type.EmptyTypes);
@@ -293,15 +311,12 @@ namespace RpcLite
 
 				var setValues = paramType.GetMethod("SetValues", paramTypes);
 
-				methodIL.DeclareLocal(paramType);
-				methodIL.DeclareLocal(returnType);
-
-
 				//set values
-				methodIL.Emit(OpCodes.Nop);
+				//methodIL.Emit(OpCodes.Nop);
 				methodIL.Emit(OpCodes.Newobj, ctor);
-				methodIL.Emit(OpCodes.Stloc_0);
-				methodIL.Emit(OpCodes.Ldloc_0);
+				methodIL.Emit(OpCodes.Stloc_2);
+				methodIL.Emit(OpCodes.Ldloc_2);
+
 				if (paramCount > 0) methodIL.Emit(OpCodes.Ldarg_1);
 				if (paramCount > 1) methodIL.Emit(OpCodes.Ldarg_2);
 				if (paramCount > 2) methodIL.Emit(OpCodes.Ldarg_3);
@@ -310,20 +325,19 @@ namespace RpcLite
 					methodIL.Emit(OpCodes.Ldarg_S, paramIndex);
 				}
 				methodIL.EmitCall(OpCodes.Callvirt, setValues, paramTypes);
-				methodIL.Emit(OpCodes.Nop);
-
+				//methodIL.Emit(OpCodes.Nop);
 
 				//GetResponse
 				methodIL.Emit(OpCodes.Ldarg_0);
 				methodIL.Emit(OpCodes.Ldstr, method.Name);
-				methodIL.Emit(OpCodes.Ldloc_0);
+				methodIL.Emit(OpCodes.Ldloc_2);
 			}
 			else
 			{
-				if (hasReturn)
-					methodIL.DeclareLocal(returnType);
+				//if (hasReturn)
+				//	methodIL.DeclareLocal(returnType);
 
-				methodIL.Emit(OpCodes.Nop);
+				//methodIL.Emit(OpCodes.Nop);
 				methodIL.Emit(OpCodes.Ldarg_0);
 				methodIL.Emit(OpCodes.Ldstr, method.Name);
 
@@ -331,11 +345,11 @@ namespace RpcLite
 				{
 					methodIL.Emit(OpCodes.Ldarg_1);
 					//set request object
+					if (paramType
 #if NETCORE
-					if (paramType.GetTypeInfo().IsValueType)
-#else
-					if (paramType.IsValueType)
+						.GetTypeInfo()
 #endif
+						.IsValueType)
 					{
 						methodIL.Emit(OpCodes.Box, paramType);
 					}
@@ -346,12 +360,20 @@ namespace RpcLite
 				}
 			}
 
+			//set parameter argumentType of "GetResponse(string action, object request, Type argumentType, Type returnType)"
+			if (paramType != null)
+			{
+				methodIL.Emit(OpCodes.Ldloc_1);
+			}
+			else
+			{
+				methodIL.Emit(OpCodes.Ldnull);
+			}
 
-			//set parameter returnType of "GetResponse(string action, object request, Type returnType)"
+			//set parameter returnType of "GetResponse(string action, object request, Type argumentType, Type returnType)"
 			if (hasReturn)
 			{
-				methodIL.Emit(OpCodes.Ldtoken, returnType);
-				methodIL.EmitCall(OpCodes.Call, methodGetTypeFromHandle, new[] { typeof(RuntimeTypeHandle) });
+				methodIL.Emit(OpCodes.Ldloc_0);
 			}
 			else
 			{
@@ -360,7 +382,10 @@ namespace RpcLite
 			methodIL.EmitCall(OpCodes.Call, getResponse, null);
 
 			//return response
-			if (hasReturn)
+			if (isTask)
+			{
+			}
+			else if (hasReturn)
 			{
 #if NETCORE
 				if (returnType.GetTypeInfo().IsValueType)
@@ -379,58 +404,62 @@ namespace RpcLite
 		}
 
 		private static readonly Dictionary<string, Type> ActionParameterTypes = new Dictionary<string, Type>();
+
+
 		/// <summary>
 		/// 
 		/// </summary>
 		public static Type GetParameterType(MethodBase method)
 		{
-			var paras = method.GetParameters();
-			return GetParameterType(method, paras);
+			return GetParameterType(method, null);
 		}
 
 		/// <summary>
 		/// 
 		/// </summary>
-		public static Type GetParameterType(MethodBase method, ParameterInfo[] paras)
+		private static Type GetParameterType(MethodBase method, string paraTypename)
 		{
 			var declareType = method.DeclaringType;
 			if (declareType == null) return null;
 
-			var methodName = method.Name;
-			var newTypeName = $"{declareType.FullName}RequestTypes.{methodName}RequestType";
-			newTypeName = null;
-			return GetParameterType(newTypeName, paras, declareType, methodName);
-		}
+			var paras = method.GetParameters();
+			if (paras.Length == 0) return null;
+			if (paras.Length == 1) return paras[0].ParameterType;
 
-		/// <summary>
-		/// 
-		/// </summary>
-		public static Type GetParameterType(string newTypeName, ParameterInfo[] paras, Type declareType, string methodName)
-		{
-			Type parameterType = null;
+			Type parameterType;
 			//prepare call parameter
-			if (paras.Length > 1)
-			{
-				var paraTypeName = newTypeName
-					?? string.Format("{0}_{1}_{2}_ParameterType", declareType.FullName.Replace(".", "_").Replace("+", "__"), methodName, paras.Length);
-				if (!ActionParameterTypes.TryGetValue(paraTypeName, out parameterType))
-				{
-					var properties = paras
-						.Select(it => new PropertyItemInfo
-						{
-							Name = it.Name,
-							Type = it.ParameterType,
-						})
-						.ToList();
 
-					parameterType = CreateType(paraTypeName, properties);
-					ActionParameterTypes.Add(paraTypeName, parameterType);
-				}
-			}
-			else if (paras.Length > 0)
+			if (!declareType.GetTypeInfoEx().IsInterface)
 			{
-				parameterType = paras[0].ParameterType;
+				var paraTypes = method.GetParameters()
+					.Select(it => it.ParameterType)
+					.ToArray();
+
+				var interfaceMethod = declareType.GetInterfaces()
+					.Select(it => it.GetMethod(method.Name, paraTypes))
+					.FirstOrDefault(it => it != null);
+				if (interfaceMethod != null)
+					declareType = interfaceMethod.DeclaringType;
 			}
+
+
+			var methodName = method.Name;
+			var paraTypeName = paraTypename
+					?? string.Format("{0}_{1}_{2}_ParameterType", declareType.FullName.Replace(".", "_").Replace("+", "__"), methodName, paras.Length);
+			if (!ActionParameterTypes.TryGetValue(paraTypeName, out parameterType))
+			{
+				var properties = paras
+					.Select(it => new PropertyItemInfo
+					{
+						Name = it.Name,
+						Type = it.ParameterType,
+					})
+					.ToList();
+
+				parameterType = CreateType(paraTypeName, properties);
+				ActionParameterTypes.Add(paraTypeName, parameterType);
+			}
+
 			return parameterType;
 		}
 

@@ -9,8 +9,9 @@ namespace ServiceTest.ServiceImpl
 {
 	public class ProductService : IProductService
 	{
-		static readonly List<Product> Products = new List<Product>();
+		private static readonly List<Product> Products = new List<Product>();
 		private static readonly Random Rnd = new Random();
+		private static int _num;
 
 		static ProductService()
 		{
@@ -27,6 +28,11 @@ namespace ServiceTest.ServiceImpl
 			}
 		}
 
+		public Task<Product[]> GetPageAsync(int pageIndex, int pageSize)
+		{
+			return Task.FromResult(GetPage(pageIndex, pageSize));
+		}
+
 		public int Add(Product product)
 		{
 			return AddAsync(product).Result;
@@ -35,7 +41,7 @@ namespace ServiceTest.ServiceImpl
 		public Task<int> AddAsync(Product product)
 		{
 			Products.Add(product);
-			return Task.FromResult(product.Id);
+			return Task.FromResult(product?.Id ?? -1);
 		}
 
 		public Product GetById(int id)
@@ -59,29 +65,40 @@ namespace ServiceTest.ServiceImpl
 			throw new NotImplementedException("test exception");
 		}
 
-		public int GetCount()
+		public int GetNumber()
 		{
-			return GetCountAsync().Result;
+			return GetNumberAsync().Result;
 		}
 
-		public Task<int> GetCountAsync()
+		public Task<int> GetNumberAsync()
 		{
-			return Task.FromResult(Products.Count);
+			return Task.FromResult(_num);
 		}
 
-		public void SetCount(int age)
+		public void SetNumber(int num)
 		{
-			SetCountAsync(age).Wait();
+			SetNumberAsync(num).Wait();
 		}
 
-		public Task SetCountAsync(int age)
+		public Task SetNumberAsync(int num)
 		{
+			_num = num;
 			return Task.FromResult<object>(null);
 		}
 
 		public Product[] GetAll()
 		{
 			return GetAllAsync().Result;
+		}
+
+		public Product GetInput(Product product)
+		{
+			return product;
+		}
+
+		public Task<Product> GetInputAsync(Product product)
+		{
+			return Task.FromResult(product);
 		}
 
 		public Product[] GetPage(int pageIndex, int pageSize)

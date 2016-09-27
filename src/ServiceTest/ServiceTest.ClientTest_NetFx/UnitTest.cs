@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Threading.Tasks;
 using NUnit.Framework;
 using RpcLite;
@@ -79,7 +81,6 @@ namespace ServiceTest.ClientTest_NetFx
 			//appHost.AddFilter(new EmptyFilter());
 			//appHost.AddFilter(new EmptyFilter());
 
-
 			var client = appHost.ClientFactory.GetInstance<IProductService>();
 			var clientInfo = client as IRpcClient<IProductService>;
 			if (clientInfo != null)
@@ -88,39 +89,8 @@ namespace ServiceTest.ClientTest_NetFx
 				clientInfo.Formatter = new XmlFormatter();
 			}
 
-			Console.WriteLine("start test");
+			TestService(client).Wait();
 
-			try
-			{
-				var id1 = client.Add(new Product
-				{
-					Id = 1,
-				});
-				Assert.AreEqual(id1, 1);
-
-				client.Add(null);
-			}
-			catch (Exception ex)
-			{
-				Console.WriteLine(ex);
-			}
-
-			var exObj = new PlatformNotSupportedException("win31");
-			try
-			{
-				client.ThrowException(exObj);
-			}
-			catch (Exception ex)
-			{
-				Assert.AreEqual(ex.GetType(), exObj.GetType());
-				Assert.AreEqual(ex.Message, exObj.Message);
-			}
-
-			var ps = client.GetByIdAsync(1).Result;
-			Assert.AreEqual(ps.Id, 1);
-
-
-			var products = client.GetAll();
 			while (true)
 			{
 				var times = 1000;
@@ -142,6 +112,218 @@ namespace ServiceTest.ClientTest_NetFx
 			}
 
 			Console.ReadLine();
+		}
+
+		private static async Task TestService(IProductService client)
+		{
+			//ExceptionSerializationTest();
+
+			Console.WriteLine("start test");
+
+			var clientInfo = client as IRpcClient<IProductService>;
+			if (clientInfo != null)
+			{
+				Console.WriteLine("formatter is " + clientInfo.Formatter?.GetType());
+			}
+
+			var testBatchName = "GetAll";
+			try
+			{
+				var ps1 = client.GetAll();
+				Assert.AreNotEqual(ps1, null);
+				Assert.Greater(ps1.Length, 0);
+				Assert.AreEqual(ps1.Length, 10);
+
+				ps1 = await client.GetAllAsync();
+				Assert.AreNotEqual(ps1, null);
+				Assert.Greater(ps1.Length, 0);
+				Assert.AreEqual(ps1.Length, 10);
+
+				Console.WriteLine(testBatchName + " Test Success");
+			}
+			catch (Exception ex)
+			{
+				Console.BackgroundColor = ConsoleColor.Red;
+				Console.WriteLine(testBatchName + " Test Failed. " + ex);
+				Console.ResetColor();
+			}
+
+			testBatchName = "Add, GetById";
+			try
+			{
+				var id1 = client.Add(new Product
+				{
+					Id = 1001,
+					Name = "1001-name",
+					Tags = new List<string> { "Tag1", "Tag2" }
+				});
+				Assert.AreEqual(id1, 1001);
+
+				id1 = await client.AddAsync(new Product
+				{
+					Id = 1002,
+					Name = "1002-name",
+					Tags = new List<string> { "Tag1", "Tag2" }
+				});
+				Assert.AreEqual(id1, 1002);
+
+				var product1 = client.GetById(1001);
+				Assert.AreEqual(product1.Id, 1001);
+				Assert.AreEqual(product1.Name, "1001-name");
+				Assert.AreEqual(product1.Tags.Count, 2);
+				Assert.AreEqual(product1.Tags[0], "Tag1");
+				Assert.AreEqual(product1.Tags[1], "Tag2");
+
+				var product2 = await client.GetByIdAsync(1002);
+				Assert.AreEqual(product2.Id, 1002);
+				Assert.AreEqual(product2.Name, "1002-name");
+				Assert.AreEqual(product2.Tags.Count, 2);
+				Assert.AreEqual(product2.Tags[0], "Tag1");
+				Assert.AreEqual(product2.Tags[1], "Tag2");
+
+				var id2 = client.Add(null);
+				Console.WriteLine(testBatchName + " Test Success");
+			}
+			catch (Exception ex)
+			{
+				Console.BackgroundColor = ConsoleColor.Red;
+				Console.WriteLine(testBatchName + " Test Failed. " + ex);
+				Console.ResetColor();
+			}
+
+			testBatchName = "SetNumber, GetNumber";
+			try
+			{
+				client.SetNumber(98);
+				var num = client.GetNumber();
+				Assert.AreEqual(num, 98);
+
+				await client.SetNumberAsync(97);
+				var num2 = await client.GetNumberAsync();
+				Assert.AreEqual(num2, 97);
+				Console.WriteLine(testBatchName + " Test Success");
+			}
+			catch (Exception ex)
+			{
+				Console.BackgroundColor = ConsoleColor.Red;
+				Console.WriteLine(testBatchName + " Test Failed. " + ex);
+				Console.ResetColor();
+			}
+
+			testBatchName = "GetPage";
+			try
+			{
+				var ps1 = client.GetPage(1, 5);
+				Assert.AreNotEqual(ps1, null);
+				Assert.AreEqual(ps1.Length, 5);
+
+				var ps2 = await client.GetPageAsync(1, 5);
+				Assert.AreNotEqual(ps2, null);
+				Assert.AreEqual(ps2.Length, 5);
+				Console.WriteLine(testBatchName + " Test Success");
+			}
+			catch (Exception ex)
+			{
+				Console.BackgroundColor = ConsoleColor.Red;
+				Console.WriteLine(testBatchName + " Test Failed. " + ex);
+				Console.ResetColor();
+			}
+
+			testBatchName = "ThrowException";
+			try
+			{
+				client.ExceptionTest();
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine(ex);
+			}
+
+			testBatchName = "ExceptionTestAsync";
+			try
+			{
+				client.ExceptionTestAsync().Wait();
+			}
+			catch (AggregateException ex)
+			{
+				Console.WriteLine(ex.InnerException);
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine(ex);
+			}
+
+			var exObj = new PlatformNotSupportedException("win31");
+
+			testBatchName = "ThrowException";
+			try
+			{
+				client.ThrowException(exObj);
+			}
+			catch (Exception ex)
+			{
+				try
+				{
+					if (ex.GetType() != exObj.GetType())
+					{
+						Console.ForegroundColor = ConsoleColor.Yellow;
+						Console.WriteLine($"Warning: Exception Type not equal: {ex.GetType()} <-> {exObj.GetType()}");
+						Console.ResetColor();
+					}
+					else
+					{
+						Console.WriteLine($"Exception Type are equal: {ex.GetType()} <-> {exObj.GetType()}");
+					}
+					Assert.AreEqual(ex.Message, exObj.Message);
+					Console.WriteLine(testBatchName + " Test Success");
+				}
+				catch (Exception ex2)
+				{
+					Console.BackgroundColor = ConsoleColor.Red;
+					Console.WriteLine(testBatchName + " Test Failed. " + ex2);
+					Console.ResetColor();
+				}
+			}
+
+			Console.WriteLine("Test Finished.");
+		}
+
+		private static void ExceptionSerializationTest()
+		{
+			var formatter = new XmlFormatter();
+			var ms = new MemoryStream();
+			try
+			{
+				formatter.Serialize(ms, new NotImplementedException("test ex 23432"), typeof(Exception));
+			}
+			catch (Exception ex)
+			{
+			}
+
+			try
+			{
+				var exObject = new ServiceException("test ex 234234");
+				var type = exObject.GetType();
+				formatter.Serialize(ms, exObject, type);
+				ms.Position = 0;
+				var dexObj = formatter.Deserialize(ms, type);
+			}
+			catch (Exception ex)
+			{
+			}
+
+			try
+			{
+				var exObject = new NotImplementedException("test ex 23432");
+				var type = exObject.GetType();
+				formatter.Serialize(ms, exObject, type);
+				ms.Position = 0;
+				var dexObj = formatter.Deserialize(ms, type);
+			}
+			catch (Exception ex)
+			{
+
+			}
 		}
 
 #if NETCORE
@@ -212,7 +394,7 @@ namespace ServiceTest.ClientTest_NetFx
 
 		public Product[] GetAll()
 		{
-			throw new NotImplementedException();
+			return (Product[])base.GetResponse<Product[]>("GetAll", null, null, typeof(Product[]));
 		}
 
 		public Product[] GetPage(int pageIndex, int pageSize)
@@ -225,9 +407,9 @@ namespace ServiceTest.ClientTest_NetFx
 			throw new NotImplementedException();
 		}
 
-		public int Add(Product product)
+		public virtual int Add(Product product)
 		{
-			return (int)GetResponse<int>("Add", product, typeof(int));
+			return (int)GetResponse<int>("Add", product, typeof(Product), typeof(int));
 		}
 
 		public Task<int> AddAsync(Product product)

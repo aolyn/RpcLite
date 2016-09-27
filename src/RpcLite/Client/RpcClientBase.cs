@@ -56,14 +56,15 @@ namespace RpcLite.Client
 		/// </summary>
 		/// <param name="action"></param>
 		/// <param name="request"></param>
+		/// <param name="argumentType"></param>
 		/// <param name="returnType"></param>
 		/// <returns></returns>
-		protected object GetResponse<TResult>(string action, object request, Type returnType)
+		protected object GetResponse<TResult>(string action, object request, Type argumentType, Type returnType)
 		{
 #if DEBUG && LogDuration
 			var stopwatch = Stopwatch.StartNew();
 #endif
-			var response = GetResponseAsync<TResult>(action, request, returnType);
+			var response = GetResponseAsync<TResult>(action, request, argumentType, returnType);
 			try
 			{
 #if DEBUG && LogDuration
@@ -84,14 +85,15 @@ namespace RpcLite.Client
 		/// </summary>
 		/// <param name="action"></param>
 		/// <param name="request"></param>
+		/// <param name="argumentType"></param>
 		/// <param name="returnType"></param>
 		/// <returns></returns>
-		protected Task<TResult> GetResponseAsync<TResult>(string action, object request, Type returnType)
+		protected Task<TResult> GetResponseAsync<TResult>(string action, object request, Type argumentType, Type returnType)
 		{
 			if (Formatter == null)
 				throw new ServiceException("Formatter can't be null");
 
-			var resultObj = DoRequestAsync<TResult>(action, request, request?.GetType(), returnType);
+			var resultObj = DoRequestAsync<TResult>(action, request, argumentType, returnType);
 			return resultObj;
 		}
 
@@ -131,7 +133,17 @@ namespace RpcLite.Client
 			};
 
 			var content = new MemoryStream();
-			Formatter.Serialize(content, param, argumentType);
+			if (argumentType != null)
+			{
+				try
+				{
+					Formatter.Serialize(content, param, argumentType);
+				}
+				catch (Exception ex)
+				{
+					throw new SerializeRequestException("Serialize Request Object failed.", ex);
+				}
+			}
 			content.Position = 0;
 
 #if DEBUG && LogDuration
@@ -185,7 +197,7 @@ namespace RpcLite.Client
 #if NETCORE
 				var asm = Assembly.Load(new AssemblyName(exceptionAssembly));
 #else
-					var asm = Assembly.Load(exceptionAssembly);
+				var asm = Assembly.Load(exceptionAssembly);
 #endif
 				exceptionType = asm.GetType(exceptionTypeName);
 			}
@@ -202,7 +214,9 @@ namespace RpcLite.Client
 				//var readLength = resultMessage.Result.Read(buf, 0, buf.Length);
 				//var json = Encoding.UTF8.GetString(buf);
 
-				exObj = Formatter.Deserialize(resultMessage.Result, exceptionType);
+				exObj = Formatter.SupportException
+					? Formatter.Deserialize(resultMessage.Result, exceptionType)
+					: Activator.CreateInstance(exceptionType);
 			}
 			catch (Exception ex)
 			{
