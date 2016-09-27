@@ -73,6 +73,7 @@ namespace RpcLite.Client
 				: _clusterFactory.GetCluster<TContract>(url);
 			client.Formatter = _appHost?.FormatterManager?.DefaultFormatter
 				?? FormatterManager.Default.DefaultFormatter;
+			client.AppHost = _appHost;
 			return client as TContract;
 		}
 

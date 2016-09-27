@@ -16,7 +16,7 @@ namespace RpcLite.Formatters
 		/// </summary>
 		public XmlFormatter()
 		{
-			SupportMimes.Add("text/xml");
+			SupportMimes.Add("application/xml");
 		}
 
 		/// <summary>

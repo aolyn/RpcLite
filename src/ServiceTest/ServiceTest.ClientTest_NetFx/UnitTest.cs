@@ -11,6 +11,7 @@ using RpcLite.Monitor;
 using RpcLite.Registry.Http;
 using ServiceTest.Contract;
 using ServiceTest.ServiceImpl;
+using RpcLite.Config;
 
 #if NETCORE
 using Microsoft.Extensions.Configuration;
@@ -20,9 +21,39 @@ namespace ServiceTest.ClientTest_NetFx
 {
 	public class UnitTest
 	{
+		private static string serviceBaseUrl = "http://localhost:5000";
+
 		internal static void Test()
 		{
+			TestHttpClient();
+
 			Test2();
+		}
+
+		private static void TestHttpClient()
+		{
+			try
+			{
+				var address = serviceBaseUrl + @"/api/service/";
+#if NETCORE
+				var config = new RpcConfigBuilder()
+					.UseClient<IProductService>(null, address)
+					.Build();
+
+				RpcLite.AspNetCore.RpcInitializer.Initialize(config);
+#else
+				RpcLite.AspNet.RpcInitializer.Initialize();
+#endif
+				var client = ClientFactory.GetInstance<IProductService>(address);
+				var clientInfo = (IRpcClient)client;
+				clientInfo.Formatter = new XmlFormatter();
+
+				TestService(client).Wait();
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine(ex);
+			}
 		}
 
 		public static void Test2()
@@ -120,7 +151,7 @@ namespace ServiceTest.ClientTest_NetFx
 
 			Console.WriteLine("start test");
 
-			var clientInfo = client as IRpcClient<IProductService>;
+			var clientInfo = client as IRpcClient;
 			if (clientInfo != null)
 			{
 				Console.WriteLine("formatter is " + clientInfo.Formatter?.GetType());

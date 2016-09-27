@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using RpcLite.Client;
@@ -20,6 +21,8 @@ namespace RpcLite.Net
 	/// </summary>
 	public class WebRequestHelper
 	{
+		private const string HeadPrefix = "RpcLite-";
+
 		/// <summary>
 		/// post data to web server and get retrieve response data
 		/// </summary>
@@ -331,14 +334,11 @@ namespace RpcLite.Net
 
 		private static ResponseMessage GetResponseMessage(HttpWebResponse response)
 		{
-			var headers = response.Headers
-				.Cast<string>()
-				.Where(it => it.StartsWith("RpcLite-"))
-				.ToDictionary(item => item, item => response.Headers[item]);
+			var headers = GetRpcHeaders(response.Headers);
 
 			string statusCode;
-			var isSuccess = headers.TryGetValue("RpcLite-StatusCode", out statusCode)
-				&& statusCode == ((int)HttpStatusCode.OK).ToString();
+			var isSuccess = headers.TryGetValue(HeaderName.StatusCode, out statusCode)
+				&& statusCode == RpcStatusCode.Ok;
 
 			var responseMessage = new ResponseMessage(response)
 			{
@@ -347,6 +347,21 @@ namespace RpcLite.Net
 				Headers = headers,
 			};
 			return responseMessage;
+		}
+
+		private static Dictionary<string, string> GetRpcHeaders(WebHeaderCollection headers)
+		{
+			return headers
+				.Cast<string>()
+				.Where(it => it.StartsWith(HeadPrefix))
+				.ToDictionary(item => item.Substring(HeadPrefix.Length, item.Length - HeadPrefix.Length), item => headers[item]);
+		}
+
+		private static Dictionary<string, string> GetRpcHeaders(HttpResponseHeaders headers)
+		{
+			return headers
+				.Where(it => it.Key.StartsWith(HeadPrefix))
+				.ToDictionary(item => item.Key.Substring(HeadPrefix.Length, item.Key.Length - HeadPrefix.Length), item => item.Value.FirstOrDefault());
 		}
 
 		/// <summary>
@@ -435,10 +450,7 @@ namespace RpcLite.Net
 
 		private static ServiceReponseMessage GetResponseMessage(Encoding encoding, HttpWebResponse response)
 		{
-			var headers = response.Headers
-				.Cast<string>()
-				.Where(it => it.StartsWith("RpcLite-"))
-				.ToDictionary(item => item, item => response.Headers[item]);
+			var headers = GetRpcHeaders(response.Headers);
 
 			string jsonResult = null;
 
@@ -459,7 +471,7 @@ namespace RpcLite.Net
 			}
 
 			string statusCode;
-			var isSuccess = headers.TryGetValue("RpcLite-StatusCode", out statusCode)
+			var isSuccess = headers.TryGetValue(HeaderName.StatusCode, out statusCode)
 				&& statusCode == ((int)HttpStatusCode.OK).ToString();
 
 			var responseMessage = new ServiceReponseMessage
@@ -492,7 +504,8 @@ namespace RpcLite.Net
 				string contentType;
 				if (headDic.TryGetValue("Content-Type", out contentType))
 				{
-					requestMessage.Headers.TryAddWithoutValidation("Content-Type", contentType);
+					requestMessage.Content.Headers.ContentType = new MediaTypeHeaderValue(contentType);
+					//requestMessage.Headers.TryAddWithoutValidation("Content-Type", contentType);
 				}
 			}
 
@@ -569,19 +582,11 @@ namespace RpcLite.Net
 
 		private static ResponseMessage GetResponseMessage(HttpResponseMessage response)
 		{
-			//var headers = response.Headers
-			//	.Cast<string>()
-			//	.Where(it => it.StartsWith("RpcLite-"))
-			//	.ToDictionary(item => item, item => response.Headers.GetValues(item).FirstOrDefault());
-
-			var headers = response.Headers
-				.Where(it => it.Key.StartsWith("RpcLite-"))
-				.ToDictionary(item => item.Key, item => item.Value.FirstOrDefault());
-
+			var headers = GetRpcHeaders(response.Headers);
 			//var contentEncoding = response.Headers.GetValues("Transfer-Encoding").FirstOrDefault();
 			string statusCode;
-			var isSuccess = headers.TryGetValue("RpcLite-StatusCode", out statusCode)
-				&& statusCode == ((int)HttpStatusCode.OK).ToString();
+			var isSuccess = headers.TryGetValue(HeaderName.StatusCode, out statusCode)
+				&& statusCode == RpcStatusCode.Ok;
 
 			var responseMessage = new ResponseMessage(response)
 			{

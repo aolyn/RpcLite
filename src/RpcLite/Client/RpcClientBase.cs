@@ -4,7 +4,6 @@ using System.Diagnostics;
 #endif
 
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -183,8 +182,8 @@ namespace RpcLite.Client
 			if (resultMessage.Headers.Count == 0)
 				throw new ServiceException("service url is not a service address");
 
-			var exceptionAssembly = resultMessage.Headers["RpcLite-ExceptionAssembly"];
-			var exceptionTypeName = resultMessage.Headers["RpcLite-ExceptionType"];
+			var exceptionAssembly = resultMessage.Headers[HeaderName.ExceptionAssembly];
+			var exceptionTypeName = resultMessage.Headers[HeaderName.ExceptionType];
 
 			if (string.IsNullOrWhiteSpace(exceptionAssembly) || string.IsNullOrWhiteSpace(exceptionTypeName))
 			{
@@ -233,11 +232,16 @@ namespace RpcLite.Client
 		/// <summary>
 		/// 
 		/// </summary>
-		public TContract Client => this as TContract;
+		//public TContract Client => this as TContract;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		internal AppHost AppHost { get; set; }
 	}
 
-	internal static class StaticDataHolder
-	{
-		internal static readonly ConcurrentDictionary<string, DateTime> DotFoundAssemblyDictionary = new ConcurrentDictionary<string, DateTime>();
-	}
+	//internal static class StaticDataHolder
+	//{
+	//	internal static readonly ConcurrentDictionary<string, DateTime> DotFoundAssemblyDictionary = new ConcurrentDictionary<string, DateTime>();
+	//}
 }

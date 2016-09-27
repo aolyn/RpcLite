@@ -1,0 +1,63 @@
+{
+  "version": "1.1",
+  "appId": "10000",
+
+  //"registry": {
+  //  "address": "192.168.9.1:2181",
+  //  //"type": "RpcLite.Registry.Zookeeper.ZookeeperRegistryFactory, RpcLite.Registry.Zookeeper",
+  //},
+
+  "registry": {
+    "address": "http://localhost:12974/api/service/",
+    "type": "RpcLite.Registry.Http.HttpRegistryFactory, RpcLite.Registry.Http"
+  },
+
+  "monitor": {
+    "address": "http://localhost:12974/api/service/",
+    "type": "RpcLite.Monitor.Http.HttpMonitorFactory, RpcLite.Monitor.Http"
+  },
+
+  "formatter": {
+    "removeDefault": false,
+    "formatters": [
+      { "type": "RpcLite.Formatters.JsonFormatter, RpcLite" }
+    ]
+  },
+
+  "service": {
+    "mapper": {
+      "name": "ServiceMapper",
+      "type": "RpcLite.Service.DefaultServiceMapperFactory, RpcLite"
+    },
+    "services": [
+      {
+        "name": "ProductService",
+        "path": "/api/service/",
+        "type": "ServiceTest.ServiceImpl.ProductService, ServiceTest.ServiceImpl"
+        //"address": "http://192.168.9.1:5000/api/service/"
+      }
+    ]
+  },
+
+  "client": {
+    "cluster": {
+      "type": "RpcLite.Client.SimpleClusterFactory, RpcLite"
+    },
+    "clients": [
+      //{
+      //  "name": "RegistryService",
+      //  "type": "ServiceRegistry.Contract.IRegistryService, ServiceRegistry.Contract",
+      //  "namespace": "v1",
+      //  "address": "http://localhost:12974/api/service/"
+      //},
+      {
+        "name": "ProductService",
+        "type": "ServiceTest.Contract.IProductService, ServiceTest.Contract",
+        "namespace": "v1",
+        "environment": "IT",
+        "address": "http://localhost:5000/api/service/"
+      }
+    ]
+  }
+
+}

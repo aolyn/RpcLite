@@ -9,5 +9,6 @@
 		/// 
 		/// </summary>
 		public static readonly string Ok = "OK";
+		internal static readonly string InternalServerError = "500";
 	}
 }

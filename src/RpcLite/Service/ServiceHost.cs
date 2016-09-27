@@ -218,20 +218,20 @@ namespace RpcLite.Service
 			var endTimeObj = context.GetExtensionData("EndTime");
 			if (startTimeObj != null && endTimeObj != null)
 			{
-				httpContext.SetResponseHeader("RpcLite-ExecutionDuration",
+				httpContext.SetResponseHeader(HeaderName.ExecutionDuration,
 					((DateTime)endTimeObj - (DateTime)startTimeObj).TotalMilliseconds.ToString(CultureInfo.InvariantCulture));
 			}
 #endif
 
 			if (context.Exception != null)
 			{
-				httpContext.SetResponseHeader("RpcLite-ExceptionType", context.Exception.GetType().FullName);
-				httpContext.SetResponseHeader("RpcLite-ExceptionAssembly", context.Exception.GetType()
+				httpContext.SetResponseHeader(HeaderName.ExceptionType, context.Exception.GetType().FullName);
+				httpContext.SetResponseHeader(HeaderName.ExceptionAssembly, context.Exception.GetType()
 #if NETCORE
 					.GetTypeInfo()
 #endif
 					.Assembly.FullName);
-				httpContext.SetResponseHeader("RpcLite-StatusCode", ((int)HttpStatusCode.InternalServerError).ToString());
+				httpContext.SetResponseHeader(HeaderName.StatusCode, RpcStatusCode.InternalServerError);
 				//httpContext.SetResponseStatusCode((int)HttpStatusCode.InternalServerError);
 
 				if (context.Formatter == null)
@@ -252,7 +252,7 @@ namespace RpcLite.Service
 			}
 			else
 			{
-				httpContext.SetResponseHeader("RpcLite-StatusCode", ((int)HttpStatusCode.OK).ToString());
+				httpContext.SetResponseHeader(HeaderName.StatusCode, RpcStatusCode.Ok);
 
 				if (context.Result != null)
 				{

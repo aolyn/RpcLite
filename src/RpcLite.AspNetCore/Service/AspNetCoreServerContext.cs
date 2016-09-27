@@ -12,6 +12,7 @@ namespace RpcLite.Service
 	{
 		private readonly HttpContext _httpContext;
 		private string _requestPath;
+		private const string HeadPrefix = "RpcLite-";
 
 		/// <summary>
 		/// 
@@ -89,7 +90,7 @@ namespace RpcLite.Service
 		/// <returns></returns>
 		public string GetRequestHeader(string key)
 		{
-			return _httpContext.Request.Headers[key];
+			return _httpContext.Request.Headers[HeadPrefix + key];
 		}
 
 		/// <summary>
@@ -99,7 +100,7 @@ namespace RpcLite.Service
 		/// <param name="value"></param>
 		public void SetResponseHeader(string key, string value)
 		{
-			_httpContext.Response.Headers[key] = value;
+			_httpContext.Response.Headers[HeadPrefix + key] = value;
 		}
 
 		/// <summary>
@@ -109,7 +110,7 @@ namespace RpcLite.Service
 		/// <returns></returns>
 		public string GetResponseHeader(string key)
 		{
-			return _httpContext.Response.Headers[key];
+			return _httpContext.Response.Headers[HeadPrefix + key];
 		}
 
 	}
