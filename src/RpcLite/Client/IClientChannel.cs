@@ -21,6 +21,6 @@ namespace RpcLite.Client
 		/// <param name="content"></param>
 		/// <param name="headers"></param>
 		/// <returns></returns>
-		Task<ResponseMessage> SendAsync(string action, Stream content, IDictionary<string, string> headers);
+		Task<IResponseMessage> SendAsync(string action, Stream content, IDictionary<string, string> headers);
 	}
 }

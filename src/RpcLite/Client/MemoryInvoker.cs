@@ -8,7 +8,7 @@ namespace RpcLite.Client
 	/// 
 	/// </summary>
 	/// <typeparam name="TContract"></typeparam>
-	public class MemoryInvoker<TContract> : IInvoker<TContract>
+	public class MemoryInvoker<TContract> : InvokerBase<TContract>
 	{
 		private string _address;
 		private readonly IClientChannel _channel;
@@ -27,7 +27,7 @@ namespace RpcLite.Client
 		/// <summary>
 		/// 
 		/// </summary>
-		public string Address
+		public override string Address
 		{
 			get { return _address; }
 			set { _address = value; }
@@ -40,7 +40,7 @@ namespace RpcLite.Client
 		/// <param name="content"></param>
 		/// <param name="headers"></param>
 		/// <returns></returns>
-		public Task<ResponseMessage> SendAsync(string action, Stream content, IDictionary<string, string> headers)
+		protected override Task<IResponseMessage> SendAsync(string action, Stream content, IDictionary<string, string> headers)
 		{
 			_channel.Address = Address;
 			return _channel.SendAsync(action, content, headers);

@@ -492,7 +492,7 @@ namespace RpcLite.Net
 		/// <param name="content"></param>
 		/// <param name="headDic"></param>
 		/// <returns></returns>
-		public static Task<ResponseMessage> PostAsync(string url, Stream content, IDictionary<string, string> headDic)
+		public static Task<IResponseMessage> PostAsync(string url, Stream content, IDictionary<string, string> headDic)
 		{
 			var requestMessage = new HttpRequestMessage(HttpMethod.Post, url)
 			{
@@ -520,7 +520,7 @@ namespace RpcLite.Net
 					var duration1 = stopwatch1.GetAndRest();
 #endif
 
-				ResponseMessage responseMessage;
+				IResponseMessage responseMessage;
 				if (tsk.Exception != null)
 				{
 					var webException = tsk.Exception.InnerException as HttpRequestException;
@@ -580,7 +580,7 @@ namespace RpcLite.Net
 			});
 		}
 
-		private static ResponseMessage GetResponseMessage(HttpResponseMessage response)
+		private static IResponseMessage GetResponseMessage(HttpResponseMessage response)
 		{
 			var headers = GetRpcHeaders(response.Headers);
 			//var contentEncoding = response.Headers.GetValues("Transfer-Encoding").FirstOrDefault();

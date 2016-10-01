@@ -31,7 +31,7 @@ namespace RpcLite.Client
 		/// <param name="content"></param>
 		/// <param name="headers"></param>
 		/// <returns></returns>
-		public Task<ResponseMessage> SendAsync(string action, Stream content, IDictionary<string, string> headers)
+		public Task<IResponseMessage> SendAsync(string action, Stream content, IDictionary<string, string> headers)
 		{
 			if (string.IsNullOrWhiteSpace(Address))
 				throw new ServiceException("service address not provided");

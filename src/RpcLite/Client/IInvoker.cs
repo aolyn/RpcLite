@@ -1,6 +1,5 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using RpcLite.Formatters;
 
 namespace RpcLite.Client
 {
@@ -17,10 +16,12 @@ namespace RpcLite.Client
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <typeparam name="TResult"></typeparam>
 		/// <param name="action"></param>
-		/// <param name="content"></param>
-		/// <param name="headers"></param>
+		/// <param name="request"></param>
+		/// <param name="actionInfo"></param>
+		/// <param name="formatter">prefer formatter</param>
 		/// <returns></returns>
-		Task<ResponseMessage> SendAsync(string action, Stream content, IDictionary<string, string> headers);
+		Task<TResult> InvokeAsync<TResult>(string action, object request, RpcActionInfo actionInfo, IFormatter formatter);
 	}
 }

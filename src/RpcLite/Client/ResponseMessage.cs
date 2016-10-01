@@ -4,11 +4,10 @@ using System.IO;
 
 namespace RpcLite.Client
 {
-
 	/// <summary>
 	/// 
 	/// </summary>
-	public class ResponseMessage : IDisposable
+	public class ResponseMessage : IResponseMessage
 	{
 		private readonly IDisposable _obj;
 

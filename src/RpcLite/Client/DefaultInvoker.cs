@@ -10,7 +10,7 @@ namespace RpcLite.Client
 	/// 
 	/// </summary>
 	/// <typeparam name="TContract"></typeparam>
-	public class DefaultInvoker<TContract> : IInvoker<TContract>
+	public class DefaultInvoker<TContract> : InvokerBase<TContract>
 	{
 		private string _address;
 		private readonly IRegistry _registry;
@@ -36,7 +36,7 @@ namespace RpcLite.Client
 		/// <summary>
 		/// 
 		/// </summary>
-		public string Address
+		public override string Address
 		{
 			get { return _address ?? _registry?.LookupAsync<TContract>().Result?.FirstOrDefault(); }
 			set
@@ -54,7 +54,7 @@ namespace RpcLite.Client
 		/// <param name="content"></param>
 		/// <param name="headers"></param>
 		/// <returns></returns>
-		public Task<ResponseMessage> SendAsync(string action, Stream content, IDictionary<string, string> headers)
+		protected override Task<IResponseMessage> SendAsync(string action, Stream content, IDictionary<string, string> headers)
 		{
 			if (_channel == null)
 				_channel = _channelFactory.GetClientChannel(Address);

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Net;
 using System.Threading.Tasks;
 using RpcLite.Service;
 
@@ -22,7 +21,7 @@ namespace RpcLite.Client
 		/// <summary>
 		/// 
 		/// </summary>
-		public Func<string, Stream, IDictionary<string, string>, Task<ResponseMessage>> SendAsyncFunc { get; set; }
+		public Func<string, Stream, IDictionary<string, string>, Task<IResponseMessage>> SendAsyncFunc { get; set; }
 
 		/// <summary>
 		/// 
@@ -40,7 +39,7 @@ namespace RpcLite.Client
 		/// <param name="content"></param>
 		/// <param name="headers"></param>
 		/// <returns></returns>
-		public virtual Task<ResponseMessage> SendAsync(string action, Stream content, IDictionary<string, string> headers)
+		public virtual Task<IResponseMessage> SendAsync(string action, Stream content, IDictionary<string, string> headers)
 		{
 			if (SendAsyncFunc != null)
 				return SendAsyncFunc(action, content, headers);
@@ -78,7 +77,7 @@ namespace RpcLite.Client
 					Result = outputStream,
 				};
 
-				return response;
+				return (IResponseMessage)response;
 			});
 
 		}
