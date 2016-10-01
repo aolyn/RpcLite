@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using RpcLite.Config;
@@ -115,15 +116,16 @@ namespace RpcLite.AspNetCore
 			}
 		}
 
-		///// <summary>
-		///// initialize RpcLite with config in specific basePath
-		///// </summary>
-		///// <param name="basePath"></param>
-		//private static void Initilize(string basePath)
-		//{
-		//	var config = GetConfiguration(basePath);
-		//	Initialize(config);
-		//}
+
+		/// <summary>
+		/// initialize with RpcConfigBuilder
+		/// </summary>
+		/// <param name="builder"></param>
+		/// <returns></returns>
+		public static void Initialize(Action<RpcConfigBuilder> builder)
+		{
+			RpcManager.Initialize(builder);
+		}
 
 		private static IConfigurationRoot GetConfiguration(string basePath)
 		{

@@ -7,10 +7,10 @@
     "Microsoft.AspNetCore.Diagnostics": "1.0.0",
     "Microsoft.AspNetCore.Server.IISIntegration": "1.0.0",
     "Microsoft.Extensions.Logging.Console": "1.0.0",
-    "Npgsql.EntityFrameworkCore.PostgreSQL": "1.0.1",
     "RpcLite.Monitor.Contract": "1.0.0-*",
     "RpcLite.AspNetCore": "1.0.1-*",
-    "Microsoft.AspNetCore.Server.Kestrel": "1.0.1"
+    "Microsoft.AspNetCore.Server.Kestrel": "1.0.1",
+    "Npgsql.EntityFrameworkCore.PostgreSQL": "1.0.2"
   },
 
   "tools": {

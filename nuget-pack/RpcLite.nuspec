@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
   <metadata>
     <id>RpcLite</id>
-    <version>1.0.1.31</version>
+    <version>1.0.1.33</version>
     <title>RpcLite</title>
     <authors>Chris Huang</authors>
     <owners>Aolyn Inc</owners>
@@ -19,19 +19,19 @@
         <dependency id="Microsoft.Extensions.Configuration.Json" version="1.0.0" />
         <dependency id="System.Net.Http" version="4.1.0" />
         <dependency id="Newtonsoft.Json" version="9.0.1" />
-        <dependency id="Microsoft.AspNetCore.Routing" version="1.0.0" />
+        <dependency id="Microsoft.AspNetCore.Routing" version="1.0.1" />
       </group>
       <group targetFramework=".NETStandard1.3">
         <dependency id="Microsoft.Extensions.Configuration.Json" version="1.0.0" />
         <dependency id="System.Net.Http" version="4.1.0" />
         <dependency id="Newtonsoft.Json" version="9.0.1" />
-        <dependency id="Microsoft.AspNetCore.Routing" version="1.0.0" />
+        <dependency id="Microsoft.AspNetCore.Routing" version="1.0.1" />
       </group>
       <group targetFramework=".NETStandard1.5">
         <dependency id="Microsoft.Extensions.Configuration.Json" version="1.0.0" />
         <dependency id="System.Net.Http" version="4.1.0" />
         <dependency id="Newtonsoft.Json" version="9.0.1" />
-        <dependency id="Microsoft.AspNetCore.Routing" version="1.0.0" />
+        <dependency id="Microsoft.AspNetCore.Routing" version="1.0.1" />
       </group>
       <group targetFramework=".NETFramework4.0">
         <dependency id="Microsoft.Net.Http" version="2.2.29" />
