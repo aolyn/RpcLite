@@ -15,11 +15,6 @@ namespace RpcLite.Config
 		public string Name { get; set; }
 
 		/// <summary>
-		/// namespace
-		/// </summary>
-		public string Namespace { get; set; }
-
-		/// <summary>
 		/// environment
 		/// </summary>
 		public string Environment { get; set; }

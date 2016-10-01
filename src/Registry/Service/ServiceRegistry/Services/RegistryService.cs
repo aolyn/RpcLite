@@ -15,9 +15,9 @@ namespace ServiceRegistry.Services
 			var response = new GetServiceAddressResponse
 			{
 				ServiceName = request.ServiceName,
-				Namespace = request.Namespace,
+				//Namespace = request.Namespace,
 				Environment = request.Environment,
-				Address = ServiceDal.GetServiceAddress(request.ServiceName, request.Namespace, request.Environment)
+				Address = ServiceDal.GetServiceAddress(request.ServiceName, request.Environment)
 			};
 
 			return response;

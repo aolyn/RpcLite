@@ -15,13 +15,13 @@ namespace ServiceRegistry.Service.Services
 			using (var repository = new ServiceMappingRepository())
 			{
 				var serviceMapping = repository.GetAsync(it => it.Service.Name == request.ServiceName
-						&& it.Namespace == request.Namespace
+						//&& it.Namespace == request.Namespace
 						&& it.Environment == request.Environment).Result;
 
 				var response = new GetServiceAddressResponse
 				{
 					ServiceName = request.ServiceName,
-					Namespace = request.Namespace,
+					//Namespace = request.Namespace,
 					Environment = request.Environment,
 					Address = serviceMapping?.Address,
 				};
@@ -37,7 +37,7 @@ namespace ServiceRegistry.Service.Services
 
 			var repository = new ServiceMappingRepository();
 			var serviceMappingTask = repository.GetAsync(it => it.Service.Name == request.ServiceName
-					&& it.Namespace == request.Namespace
+					//&& it.Namespace == request.Namespace
 					&& it.Environment == request.Environment);
 
 			return serviceMappingTask.ContinueWith(tsk =>
@@ -45,7 +45,7 @@ namespace ServiceRegistry.Service.Services
 				var response = new GetServiceAddressResponse
 				{
 					ServiceName = request.ServiceName,
-					Namespace = request.Namespace,
+					//Namespace = request.Namespace,
 					Environment = request.Environment,
 					Address = tsk.Result?.Address,
 				};

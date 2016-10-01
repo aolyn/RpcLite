@@ -19,7 +19,7 @@ namespace ServiceTest.ClientTest
 				var resp = client.GetServiceAddressAsync(new GetServiceAddressRequest
 				{
 					ServiceName = "ProductService",
-					Namespace = "v1",
+					//Namespace = "v1",
 					Environment = "IT",
 				});
 

@@ -43,7 +43,7 @@ namespace RpcLite.Config
 					var address = item["address"]; //GetAttribute("path", item);
 					var type = item["type"]; //GetAttribute("type", item);
 					var env = item["environment"]; //GetAttribute("type", item);
-					var nameSpace = item["namespace"]; // GetAttribute("namespace", item);
+					//var nameSpace = item["namespace"]; // GetAttribute("namespace", item);
 
 					if (string.IsNullOrEmpty(name))
 						throw new RpcConfigException("name of RpcLite configuration client node can't be null or empty");
@@ -51,8 +51,8 @@ namespace RpcLite.Config
 					//	throw new ConfigurationErrorsException("path of RpcLite configuration node can't be null or empty");
 					if (string.IsNullOrEmpty(type))
 						throw new RpcConfigException(string.Format("type of RpcLite configuration client node '{0}' can't be null or empty", name));
-					if (string.IsNullOrEmpty(nameSpace))
-						throw new RpcConfigException(string.Format("namespace of RpcLite configuration client node '{0}' can't be null or empty", name));
+					//if (string.IsNullOrEmpty(nameSpace))
+					//	throw new RpcConfigException(string.Format("namespace of RpcLite configuration client node '{0}' can't be null or empty", name));
 
 					var serviceConfigItem = new ClientConfigItem
 					{
@@ -61,7 +61,7 @@ namespace RpcLite.Config
 						//TypeName = typeName,
 						//AssemblyName = assemblyName,
 						Address = address,
-						Namespace = nameSpace,
+						//Namespace = nameSpace,
 						Environment = string.IsNullOrWhiteSpace(env) ? environment : env,
 					};
 					instance.Client.Clients.Add(serviceConfigItem);

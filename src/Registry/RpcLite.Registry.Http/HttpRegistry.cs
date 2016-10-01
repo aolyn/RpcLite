@@ -68,7 +68,7 @@ namespace RpcLite.Registry.Http
 				var request = new GetServiceAddressRequest
 				{
 					ServiceName = clientConfigItem.Name,
-					Namespace = clientConfigItem.Namespace,
+					//Namespace = clientConfigItem.Namespace,
 					Environment = clientInfo.Environment,
 				};
 				var response = _registryClient.Value.GetServiceAddress(request);
