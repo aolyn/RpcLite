@@ -15,6 +15,6 @@ namespace RpcLite.Config
 		/// <summary>
 		/// 
 		/// </summary>
-		public ClusterConfig Cluster { get; set; }
+		public InvokerConfig Invoker { get; set; }
 	}
 }

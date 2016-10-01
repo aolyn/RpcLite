@@ -10,7 +10,7 @@ namespace RpcLite.Client
 		/// <summary>
 		/// Channel to transport data with service
 		/// </summary>
-		ICluster<TContract> Cluster { get; set; }
+		IInvoker<TContract> Invoker { get; set; }
 	}
 
 	/// <summary>

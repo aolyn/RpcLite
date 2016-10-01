@@ -3,9 +3,9 @@
 namespace RpcLite.Config
 {
 	/// <summary>
-	/// ClusterConfigItem
+	/// InvokerConfigItem
 	/// </summary>
-	public class ClusterConfig
+	public class InvokerConfig
 	{
 		/// <summary>
 		/// name of ServiceMapper
@@ -20,7 +20,7 @@ namespace RpcLite.Config
 		/// <summary>
 		/// 
 		/// </summary>
-		public ClusterConfig() { }
+		public InvokerConfig() { }
 
 		//public IDictionary<string,string> Items { get; set; }
 
@@ -29,7 +29,7 @@ namespace RpcLite.Config
 		/// </summary>
 		/// <param name="name"></param>
 		/// <param name="type"></param>
-		public ClusterConfig(string name, Type type)
+		public InvokerConfig(string name, Type type)
 		{
 			Name = name;
 			Type = RpcConfigHelper.GetTypeIdentifier(type);

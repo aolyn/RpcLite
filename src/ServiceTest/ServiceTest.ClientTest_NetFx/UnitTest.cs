@@ -101,7 +101,7 @@ namespace ServiceTest.ClientTest_NetFx
 				.UseMonitor<ConsoleMonitorFactory>("ConsoleMonitor", "http://localhost:6201/api/service/")
 				//.UseServiceMapper<DefaultServiceMapperFactory>("DefaultServiceMapper")
 				.UseService<ProductService>("ProductService", path, null)
-				.UseCluster<SimpleClusterFactory>(null)
+				.UseInvoker<SimpleInvokerFactory>(null)
 				//.UseClient<IProductService>("ProductService", "/service/")
 				.Build();
 
@@ -117,7 +117,7 @@ namespace ServiceTest.ClientTest_NetFx
 			var clientInfo = client as IRpcClient<IProductService>;
 			if (clientInfo != null)
 			{
-				clientInfo.Cluster = new MemoryCluster<IProductService>(appHost, path);
+				clientInfo.Invoker = new MemoryInvoker<IProductService>(appHost, path);
 				clientInfo.Formatter = new XmlFormatter();
 			}
 
@@ -375,7 +375,7 @@ namespace ServiceTest.ClientTest_NetFx
 
 			var channel = new MemoryClientChannel(appHost) { Address = "/api/service/" };
 
-			((IRpcClient<IProductService>)client).Cluster = new MemoryCluster<IProductService>(appHost, "/api/service/");
+			((IRpcClient<IProductService>)client).Invoker = new MemoryInvoker<IProductService>(appHost, "/api/service/");
 
 			//((IRpcClient)client).Channel = channel;
 			var products = client.GetAll();

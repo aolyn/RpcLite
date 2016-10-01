@@ -40,8 +40,8 @@
   },
 
   "client": {
-    "cluster": {
-      "type": "RpcLite.Client.SimpleClusterFactory, RpcLite"
+    "invoker": {
+      "type": "RpcLite.Client.SimpleInvokerFactory, RpcLite"
     },
     "clients": [
       //{

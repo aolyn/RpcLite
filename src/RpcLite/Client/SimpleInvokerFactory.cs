@@ -5,7 +5,7 @@ namespace RpcLite.Client
 	/// <summary>
 	/// 
 	/// </summary>
-	public class SimpleClusterFactory : IClusterFactory
+	public class SimpleInvokerFactory : IInvokerFactory
 	{
 		/// <summary>
 		/// 
@@ -22,18 +22,18 @@ namespace RpcLite.Client
 		/// </summary>
 		/// <param name="address"></param>
 		/// <returns></returns>
-		public ICluster<TContract> GetCluster<TContract>(string address)
+		public IInvoker<TContract> GetInvoker<TContract>(string address)
 		{
-			return new DefaultCluster<TContract>(address, Registry, ChannelFactory);
+			return new DefaultInvoker<TContract>(address, Registry, ChannelFactory);
 		}
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		public ICluster<TContract> GetCluster<TContract>()
+		public IInvoker<TContract> GetInvoker<TContract>()
 		{
-			return GetCluster<TContract>(null);
+			return GetInvoker<TContract>(null);
 		}
 
 		/// <summary>

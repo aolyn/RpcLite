@@ -16,7 +16,7 @@ namespace RpcLite.Service
 
 		private readonly QuickReadConcurrentDictionary<string, RpcAction> _actions = new QuickReadConcurrentDictionary<string, RpcAction>();
 		private readonly Type _defaultServiceType;
-		private RpcService _service;
+		private readonly RpcService _service;
 
 		/// <summary>
 		/// 

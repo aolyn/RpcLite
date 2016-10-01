@@ -155,9 +155,9 @@ namespace RpcLite
 		/// </summary>
 		/// <param name="name"></param>
 		/// <returns></returns>
-		public AppHostBuilder UseCluster<TFactory>(string name)
+		public AppHostBuilder UseInvoker<TFactory>(string name)
 		{
-			_config.UseCluster<TFactory>(name);
+			_config.UseInvoker<TFactory>(name);
 
 			return this;
 		}

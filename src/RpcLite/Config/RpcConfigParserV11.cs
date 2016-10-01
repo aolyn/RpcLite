@@ -111,13 +111,13 @@ namespace RpcLite.Config
 
 			instance.Client = new ClientConfig();
 
-			var clusterNode = clientNode.GetSection("cluster");
-			if (clusterNode?.GetChildren()?.Any() == true)
+			var invokerNode = clientNode.GetSection("invoker");
+			if (invokerNode?.GetChildren()?.Any() == true)
 			{
-				var name = clusterNode["name"];
-				var type = clusterNode["type"];
+				var name = invokerNode["name"];
+				var type = invokerNode["type"];
 
-				instance.Client.Cluster = new ClusterConfig
+				instance.Client.Invoker = new InvokerConfig
 				{
 					Name = name,
 					Type = type,

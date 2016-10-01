@@ -12,7 +12,7 @@ namespace RpcLite.Client
 	public class RpcClientFactory
 	{
 		private readonly ConcurrentDictionary<Type, object> _clienBuilders = new ConcurrentDictionary<Type, object>();
-		private readonly IClusterFactory _clusterFactory;
+		private readonly IInvokerFactory _invokerFactory;
 		private readonly AppHost _appHost;
 		//private readonly IClientChannelFactory _channelFactory;
 
@@ -26,14 +26,14 @@ namespace RpcLite.Client
 			_appHost = appHost;
 			if (config?.Client != null)
 			{
-				//get ClusterFactory from config
+				//get InvokerFactory from config
 			}
 
-			_clusterFactory = config?.Client?.Cluster?.Type != null
-				? TypeCreator.CreateInstanceByIdentifier<IClusterFactory>(config.Client?.Cluster?.Type)
-				: new SimpleClusterFactory();
+			_invokerFactory = config?.Client?.Invoker?.Type != null
+				? TypeCreator.CreateInstanceByIdentifier<IInvokerFactory>(config.Client?.Invoker?.Type)
+				: new SimpleInvokerFactory();
 			//todo: create DefaultClientChannelFactory from config
-			_clusterFactory.Initilize(appHost?.Registry, new DefaultClientChannelFactory());
+			_invokerFactory.Initilize(appHost?.Registry, new DefaultClientChannelFactory());
 		}
 
 		/// <summary>
@@ -68,9 +68,9 @@ namespace RpcLite.Client
 		{
 			var builder = GetBuilder<TContract>();
 			var client = builder.GetInstance(url);
-			client.Cluster = string.IsNullOrWhiteSpace(url)
-				? _clusterFactory.GetCluster<TContract>()
-				: _clusterFactory.GetCluster<TContract>(url);
+			client.Invoker = string.IsNullOrWhiteSpace(url)
+				? _invokerFactory.GetInvoker<TContract>()
+				: _invokerFactory.GetInvoker<TContract>(url);
 			client.Formatter = _appHost?.FormatterManager?.DefaultFormatter
 				?? FormatterManager.Default.DefaultFormatter;
 			client.AppHost = _appHost;

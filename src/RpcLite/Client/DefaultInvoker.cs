@@ -10,7 +10,7 @@ namespace RpcLite.Client
 	/// 
 	/// </summary>
 	/// <typeparam name="TContract"></typeparam>
-	public class DefaultCluster<TContract> : ICluster<TContract>
+	public class DefaultInvoker<TContract> : IInvoker<TContract>
 	{
 		private string _address;
 		private readonly IRegistry _registry;
@@ -23,7 +23,7 @@ namespace RpcLite.Client
 		/// <param name="address"></param>
 		/// <param name="registry"></param>
 		/// <param name="channelFactory"></param>
-		public DefaultCluster(string address, IRegistry registry, IClientChannelFactory channelFactory)
+		public DefaultInvoker(string address, IRegistry registry, IClientChannelFactory channelFactory)
 		{
 			_channelFactory = channelFactory;
 			//if (address == null && registry == null)

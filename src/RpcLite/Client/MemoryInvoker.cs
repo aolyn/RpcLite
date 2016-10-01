@@ -8,7 +8,7 @@ namespace RpcLite.Client
 	/// 
 	/// </summary>
 	/// <typeparam name="TContract"></typeparam>
-	public class MemoryCluster<TContract> : ICluster<TContract>
+	public class MemoryInvoker<TContract> : IInvoker<TContract>
 	{
 		private string _address;
 		private readonly IClientChannel _channel;
@@ -18,7 +18,7 @@ namespace RpcLite.Client
 		/// </summary>
 		/// <param name="appHost"></param>
 		/// <param name="address"></param>
-		public MemoryCluster(AppHost appHost, string address)
+		public MemoryInvoker(AppHost appHost, string address)
 		{
 			_address = address;
 			_channel = new MemoryClientChannel(appHost) { Address = _address };

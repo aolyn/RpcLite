@@ -3,7 +3,7 @@
 namespace RpcLite.Config
 {
 	/// <summary>
-	/// ClusterConfigItem
+	/// InvokerConfigItem
 	/// </summary>
 	public class FormatterItemConfig
 	{

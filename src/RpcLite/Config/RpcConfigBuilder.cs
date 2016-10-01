@@ -106,15 +106,15 @@ namespace RpcLite.Config
 		/// </summary>
 		/// <param name="name"></param>
 		/// <returns></returns>
-		public RpcConfigBuilder UseCluster<TFactory>(string name)
+		public RpcConfigBuilder UseInvoker<TFactory>(string name)
 		{
-			if (!typeof(IClusterFactory).IsAssignableFrom(typeof(TFactory)))
-				throw new ArgumentOutOfRangeException(nameof(TFactory), $"typeof {nameof(TFactory)} must implements { nameof(IClusterFactory)}");
+			if (!typeof(IInvokerFactory).IsAssignableFrom(typeof(TFactory)))
+				throw new ArgumentOutOfRangeException(nameof(TFactory), $"typeof {nameof(TFactory)} must implements { nameof(IInvokerFactory)}");
 
 			if (_config.Client == null)
 				_config.Client = new ClientConfig();
 
-			_config.Client.Cluster = new ClusterConfig(name, typeof(TFactory));
+			_config.Client.Invoker = new InvokerConfig(name, typeof(TFactory));
 
 			return this;
 		}

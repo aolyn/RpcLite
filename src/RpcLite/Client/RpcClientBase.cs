@@ -26,11 +26,11 @@ namespace RpcLite.Client
 		/// </summary>
 		public string Address
 		{
-			get { return Cluster?.Address; }
+			get { return Invoker?.Address; }
 			set
 			{
-				if (Cluster != null)
-					Cluster.Address = value;
+				if (Invoker != null)
+					Invoker.Address = value;
 			}
 		}
 
@@ -58,15 +58,10 @@ namespace RpcLite.Client
 			}
 		}
 
-		///// <summary>
-		///// Channel to transport data with service
-		///// </summary>
-		//public IClientChannel Channel { get; set; }
-
 		/// <summary>
 		/// Channel to transport data with service
 		/// </summary>
-		public ICluster<TContract> Cluster { get; set; }
+		public IInvoker<TContract> Invoker { get; set; }
 
 		/// <summary>
 		/// 
@@ -167,7 +162,7 @@ namespace RpcLite.Client
 			var stopwatch1 = Stopwatch.StartNew();
 #endif
 
-			var sendTask = Cluster.SendAsync(action, content, headDic);
+			var sendTask = Invoker.SendAsync(action, content, headDic);
 			return sendTask;
 		}
 
@@ -250,16 +245,6 @@ namespace RpcLite.Client
 		/// <summary>
 		/// 
 		/// </summary>
-		//public TContract Client => this as TContract;
-
-		/// <summary>
-		/// 
-		/// </summary>
 		internal AppHost AppHost { get; set; }
 	}
-
-	//internal static class StaticDataHolder
-	//{
-	//	internal static readonly ConcurrentDictionary<string, DateTime> DotFoundAssemblyDictionary = new ConcurrentDictionary<string, DateTime>();
-	//}
 }
