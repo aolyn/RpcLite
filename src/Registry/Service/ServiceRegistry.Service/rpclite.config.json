@@ -5,12 +5,12 @@
     "services": [
       {
         "name": "RegistryService",
-        "path": "/api/service/",
+        "path": "api/service/",
         "type": "ServiceRegistry.Service.Services.RegistryService,ServiceRegistry.Service"
       }
     ],
     "paths": [
-      ""
+      "api/"
     ]
   }
 }

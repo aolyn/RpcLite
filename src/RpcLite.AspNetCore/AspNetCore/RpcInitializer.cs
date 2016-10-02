@@ -68,7 +68,7 @@ namespace RpcLite.AspNetCore
 
 			foreach (var path in rpcConfig.Service.Paths)
 			{
-				routers.MapRoute(path, context => RpcManager.ProcessAsync(new AspNetCoreServerContext(context)));
+				routers.MapRoute(path + "{*RpcLiteServicePath}", context => RpcManager.ProcessAsync(new AspNetCoreServerContext(context)));
 			}
 			var routes1 = routers.Build();
 			app.UseRouter(routes1);

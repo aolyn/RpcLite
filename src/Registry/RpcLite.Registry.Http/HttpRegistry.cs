@@ -69,7 +69,7 @@ namespace RpcLite.Registry.Http
 				{
 					ServiceName = clientConfigItem.Name,
 					//Namespace = clientConfigItem.Namespace,
-					Environment = clientInfo.Environment,
+					Group = clientInfo.Group,
 				};
 				var response = _registryClient.Value.GetServiceAddress(request);
 				var uri = string.IsNullOrWhiteSpace(response?.Address)

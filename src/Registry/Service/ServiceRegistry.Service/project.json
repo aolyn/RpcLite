@@ -29,7 +29,8 @@
 
   "buildOptions": {
     "emitEntryPoint": true,
-    "preserveCompilationContext": true
+    "preserveCompilationContext": true,
+    "copyToOutput": [ "rpclite.config.json" ]
   },
 
   "runtimeOptions": {

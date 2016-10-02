@@ -20,7 +20,7 @@ namespace RpcLite.Config
 		/// <summary>
 		/// Current app environment
 		/// </summary>
-		public string Environment { get; set; }
+		public string Group { get; set; }
 
 		///// <summary>
 		///// Default environment of ServiceClient used to get ServiceClientAddress

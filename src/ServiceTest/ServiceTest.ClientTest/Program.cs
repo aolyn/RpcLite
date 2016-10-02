@@ -16,14 +16,14 @@ namespace ServiceTest.ClientTest
 			//return;
 			//Test222(null);
 
-			UnitTest.Test();
+			//UnitTest.Test();
 			//ClientTest1();
 			//PerformanceTest();
 			//appHost.ProcessAsync()
 
 			//UnitTest.Test();
 			//RpcLite.AspNetCore.RpcLiteInitializer.Initialize();
-			//RegistryTest();
+			RegistryTest();
 			//Test2();
 		}
 
@@ -72,7 +72,7 @@ namespace ServiceTest.ClientTest
 				registry.RegisterAsync(new ServiceConfigItem
 				{
 					Name = "ProductService",
-					Environment = "UAT",
+					Group = "UAT",
 					Address = "http://localhost:5000/api/product/",
 				}).Wait();
 			}
@@ -85,7 +85,7 @@ namespace ServiceTest.ClientTest
 				var lookupTask = registry.LookupAsync(new ClientConfigItem
 				{
 					Name = "ProductService",
-					Environment = "UAT",
+					Group = "UAT",
 				});
 
 				Console.WriteLine("started lookup");
@@ -104,7 +104,7 @@ namespace ServiceTest.ClientTest
 				var lookupTask = registry.LookupAsync(new ClientConfigItem
 				{
 					Name = "ProductService",
-					Environment = "UAT",
+					Group = "UAT",
 				});
 
 				Console.WriteLine("started lookup");

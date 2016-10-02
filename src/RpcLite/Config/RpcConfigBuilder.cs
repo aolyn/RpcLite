@@ -188,7 +188,7 @@ namespace RpcLite.Config
 					throw new ArgumentOutOfRangeException(nameof(paths), "all path must ends with /");
 
 				paths = paths
-					.Select(it => it + "{*RpcLiteServicePath}")
+					.Select(it => it)
 					//.Select(it => it + "{*path}")
 					.ToArray();
 #endif

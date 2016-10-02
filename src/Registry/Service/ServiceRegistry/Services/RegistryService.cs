@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using ServiceRegistry.Contract;
 using ServiceRegistry.Dal;
 
@@ -16,8 +15,8 @@ namespace ServiceRegistry.Services
 			{
 				ServiceName = request.ServiceName,
 				//Namespace = request.Namespace,
-				Environment = request.Environment,
-				Address = ServiceDal.GetServiceAddress(request.ServiceName, request.Environment)
+				Group = request.Group,
+				Address = ServiceDal.GetServiceAddress(request.ServiceName, request.Group)
 			};
 
 			return response;

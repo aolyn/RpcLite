@@ -16,7 +16,7 @@ namespace RpcLite.Config
 			var instance = new RpcConfig
 			{
 				AppId = config["appId"],
-				Environment = config["environment"],
+				Group = config["environment"],
 			};
 
 			InitializeServiceConfig(config, instance);
@@ -156,7 +156,7 @@ namespace RpcLite.Config
 						//AssemblyName = assemblyName,
 						Address = address,
 						//Namespace = nameSpace,
-						Environment = string.IsNullOrWhiteSpace(env) ? environment : env,
+						Group = string.IsNullOrWhiteSpace(env) ? environment : env,
 					};
 					instance.Client.Clients.Add(serviceConfigItem);
 				}
@@ -277,7 +277,7 @@ namespace RpcLite.Config
 							//AssemblyName = assemblyName,
 							Path = path,
 							Address = address,
-							Environment = env,
+							Group = env,
 						};
 						serviceItems.Add(serviceConfigItem);
 					}

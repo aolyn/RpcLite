@@ -54,7 +54,7 @@ namespace RpcLite.Registry.Zookeeper
 
 			EnsureStartComplete();
 
-			var key = clientInfo.Name + "/" + clientInfo.Environment;
+			var key = clientInfo.Name + "/" + clientInfo.Group;
 			var url = _serviceAddressDictionary.GetOrAdd(key, key1 =>
 			{
 				try
@@ -90,7 +90,7 @@ namespace RpcLite.Registry.Zookeeper
 				var appId = clientInfo.Name;
 
 				var appNodePath = GetAppNodePath(appId);
-				var envNodePath = appNodePath + "/" + (string.IsNullOrWhiteSpace(clientInfo.Environment) ? "_" : clientInfo.Environment);
+				var envNodePath = appNodePath + "/" + (string.IsNullOrWhiteSpace(clientInfo.Group) ? "_" : clientInfo.Group);
 
 				var serviceNodes = await _zookeeper.GetChildrenAsync(envNodePath, true).ConfigureAwait(false);
 				if (serviceNodes?.Children?.Count > 0)
@@ -184,7 +184,7 @@ namespace RpcLite.Registry.Zookeeper
 				}
 			}
 
-			var envNodePath = appNodePath + "/" + (string.IsNullOrWhiteSpace(serviceInfo.Environment) ? "_" : serviceInfo.Environment);
+			var envNodePath = appNodePath + "/" + (string.IsNullOrWhiteSpace(serviceInfo.Group) ? "_" : serviceInfo.Group);
 			var envNode = await _zookeeper.ExistsAsync(envNodePath).ConfigureAwait(false);
 			if (envNode == null)
 			{

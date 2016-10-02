@@ -17,7 +17,7 @@ namespace RpcLite.Config
 		/// <summary>
 		/// environment
 		/// </summary>
-		public string Environment { get; set; }
+		public string Group { get; set; }
 
 		/// <summary>
 		/// service url, eg: http://localhost/api/product

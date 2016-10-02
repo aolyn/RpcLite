@@ -14,13 +14,13 @@ namespace ServiceTest.ClientTest
 			{
 				RpcInitializer.Initialize();
 
-				var client = ClientFactory.GetInstance<IRegistryService>();
+				var client = ClientFactory.GetInstance<IRegistryService>("http://localhost:12974/api/service/");
 
 				var resp = client.GetServiceAddressAsync(new GetServiceAddressRequest
 				{
 					ServiceName = "ProductService",
 					//Namespace = "v1",
-					Environment = "IT",
+					Group = "IT",
 				});
 
 				Console.WriteLine(resp.Result.Address.ToString());

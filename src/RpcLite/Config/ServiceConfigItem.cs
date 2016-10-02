@@ -25,7 +25,7 @@ namespace RpcLite.Config
 		/// <summary>
 		/// Environment
 		/// </summary>
-		public string Environment { get; set; }
+		public string Group { get; set; }
 
 		///// <summary>
 		///// assembly of service implement class
