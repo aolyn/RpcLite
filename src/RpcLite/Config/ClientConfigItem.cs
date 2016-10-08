@@ -54,7 +54,6 @@ namespace RpcLite.Config
 			}
 		}
 
-
 		/// <summary>
 		/// 
 		/// </summary>
@@ -63,8 +62,8 @@ namespace RpcLite.Config
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="name"></param>
-		/// <param name="type"></param>
+		/// <param name="name">service name</param>
+		/// <param name="type">contract type</param>
 		/// <param name="address"></param>
 		public ClientConfigItem(string name, Type type, string address)
 		{
@@ -73,11 +72,10 @@ namespace RpcLite.Config
 			Address = address;
 		}
 
-
-		/// <summary>
-		/// extra attribute of service
-		/// </summary>
-		public string[] Items { get; set; }
+		///// <summary>
+		///// extra attribute of service
+		///// </summary>
+		//public string[] Items { get; set; }
 
 		/// <summary>
 		/// get description string

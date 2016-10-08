@@ -2,6 +2,7 @@
 using RpcLite.Client;
 using RpcLite.Config;
 using RpcLite.Formatters;
+using RpcLite.Registry;
 using RpcLite.Registry.Zookeeper;
 using RpcLiteClientTestNetCore;
 using ServiceTest.Contract;
@@ -15,12 +16,10 @@ namespace ServiceTest.ClientTest
 			//Test.SerializeTest.InnerExceptionTest();
 			//return;
 			//Test222(null);
-
 			//UnitTest.Test();
 			//ClientTest1();
 			//PerformanceTest();
 			//appHost.ProcessAsync()
-
 			//UnitTest.Test();
 			//RpcLite.AspNetCore.RpcLiteInitializer.Initialize();
 			RegistryTest();
@@ -29,7 +28,7 @@ namespace ServiceTest.ClientTest
 
 		private static void Test222(Type type)
 		{
-			
+
 		}
 
 		//public static Task<ResponseMessage> SendAsync(string action, Stream content, IDictionary<string, string> headers)
@@ -69,7 +68,7 @@ namespace ServiceTest.ClientTest
 			var registry = new ZookeeperRegistry("192.168.9.1:2181", 10 * 1000);
 			if (registry.CanRegister)
 			{
-				registry.RegisterAsync(new ServiceConfigItem
+				registry.RegisterAsync(new ServiceInfo
 				{
 					Name = "ProductService",
 					Group = "UAT",

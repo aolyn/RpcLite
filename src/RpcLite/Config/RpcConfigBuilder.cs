@@ -218,24 +218,37 @@ namespace RpcLite.Config
 		}
 
 		/// <summary>
-		/// 
+		/// if Registry will be use, Service Name must be set, use UseClient&lt;TClient&gt;(string name, string address)
 		/// </summary>
 		/// <returns></returns>
-		public RpcConfigBuilder UseClient<TClient>()
+		public RpcConfigBuilder UseClient<TClient>(string name)
 		{
-			return UseClient<TClient>(null, null);
+			return UseClient<TClient>(name, null);
 		}
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="name"></param>
+		/// <param name="name">name of Service<para>if Registry will be use, Service Name must be set</para></param>
 		/// <param name="address"></param>
 		/// <returns></returns>
 		public RpcConfigBuilder UseClient<TClient>(string name, string address)
 		{
+			return UseClient<TClient>(name, null, address);
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="name">name of Service<para>if Registry will be use, Service Name must be set</para></param>
+		/// <param name="group"></param>
+		/// <param name="address"></param>
+		/// <returns></returns>
+		public RpcConfigBuilder UseClient<TClient>(string name, string group, string address)
+		{
 			var item = new ClientConfigItem(name, typeof(TClient), address)
 			{
+				Group = group,
 				Address = address
 			};
 

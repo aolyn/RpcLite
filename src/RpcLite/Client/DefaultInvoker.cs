@@ -38,7 +38,12 @@ namespace RpcLite.Client
 		/// </summary>
 		public override string Address
 		{
-			get { return _address ?? _registry?.LookupAsync<TContract>().Result?.FirstOrDefault(); }
+			get
+			{
+				return _address ?? _registry?.LookupAsync<TContract>().Result?
+					.Select(it => it.Address)
+					.FirstOrDefault();
+			}
 			set
 			{
 				_address = value;

@@ -5,15 +5,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using org.apache.zookeeper;
-using RpcLite.Config;
 using RpcLite.Logging;
 
 namespace RpcLite.Registry.Zookeeper
 {
 	internal class ZookeeperRegistryInternal : Watcher
 	{
-		private readonly ConcurrentDictionary<string, ClientLookupItem> _serviceAddressDictionary = new ConcurrentDictionary<string, ClientLookupItem>();
-		private readonly ConcurrentDictionary<ServiceConfigItem, DateTime> _registerServiceDictionary = new ConcurrentDictionary<ServiceConfigItem, DateTime>();
+		private readonly ConcurrentDictionary<ServiceIdentifier, ClientLookupItem> _serviceAddressDictionary = new ConcurrentDictionary<ServiceIdentifier, ClientLookupItem>();
+		private readonly ConcurrentDictionary<ServiceInfo, DateTime> _registerServiceDictionary = new ConcurrentDictionary<ServiceInfo, DateTime>();
 		private IZookeeper _zookeeper;
 		private Task _startTask;
 		private bool _isDisposed;
@@ -48,21 +47,21 @@ namespace RpcLite.Registry.Zookeeper
 
 		public bool CanRegister => true;
 
-		public Task<string[]> LookupAsync(ClientConfigItem clientInfo)
+		public Task<ServiceInfo[]> LookupAsync(string name, string group)
 		{
-			if (clientInfo == null) return Task.FromResult((string[])null);
+			if (name == null) return Task.FromResult((ServiceInfo[])null);
 
 			EnsureStartComplete();
 
-			var key = clientInfo.Name + "/" + clientInfo.Group;
+			var key = new ServiceIdentifier(name, group);
 			var url = _serviceAddressDictionary.GetOrAdd(key, key1 =>
 			{
 				try
 				{
-					var urls = LookupInternalAsync(clientInfo);
+					var urls = LookupInternalAsync(key1);
 					var item = new ClientLookupItem
 					{
-						ClientInfo = clientInfo,
+						ClientInfo = key1,
 						Addresses = urls.Result,
 					};
 					return item;
@@ -83,7 +82,7 @@ namespace RpcLite.Registry.Zookeeper
 			return Task.FromResult(url?.Addresses);
 		}
 
-		public async Task<string[]> LookupInternalAsync(ClientConfigItem clientInfo)
+		public async Task<ServiceInfo[]> LookupInternalAsync(ServiceIdentifier clientInfo)
 		{
 			try
 			{
@@ -104,11 +103,11 @@ namespace RpcLite.Registry.Zookeeper
 					}
 					return addresses
 						.Distinct()
-						.Select(it => (it))
+						.Select(it => new ServiceInfo { Name = clientInfo.Name, Group = clientInfo.Group, Address = it })
 						.ToArray();
 				}
 
-				return new string[0];
+				return new ServiceInfo[0];
 			}
 			catch (KeeperException)
 			{
@@ -135,7 +134,7 @@ namespace RpcLite.Registry.Zookeeper
 			_startTask?.Wait();
 		}
 
-		public async Task RegisterAsync(ServiceConfigItem serviceInfo)
+		public async Task RegisterAsync(ServiceInfo serviceInfo)
 		{
 			if (string.IsNullOrWhiteSpace(serviceInfo?.Address))
 				return;
@@ -164,7 +163,7 @@ namespace RpcLite.Registry.Zookeeper
 			}
 		}
 
-		private async Task RegisterInternalAsync(ServiceConfigItem serviceInfo)
+		private async Task RegisterInternalAsync(ServiceInfo serviceInfo)
 		{
 			var appId = serviceInfo.Name;
 
@@ -278,7 +277,7 @@ namespace RpcLite.Registry.Zookeeper
 				{
 					foreach (var item in _serviceAddressDictionary)
 					{
-						await LookupInternalAsync(item.Value.ClientInfo);
+						await LookupInternalAsync(new ServiceIdentifier(item.Value.ClientInfo.Name, item.Value.ClientInfo.Group));
 					}
 				}
 
@@ -298,8 +297,8 @@ namespace RpcLite.Registry.Zookeeper
 
 		internal class ClientLookupItem
 		{
-			public string[] Addresses { get; internal set; }
-			public ClientConfigItem ClientInfo { get; internal set; }
+			public ServiceInfo[] Addresses { get; internal set; }
+			public ServiceIdentifier ClientInfo { get; internal set; }
 		}
 	}
 }

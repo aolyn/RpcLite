@@ -10,7 +10,7 @@ namespace RpcLite.Registry
 	/// </summary>
 	internal static class RegistryHelper
 	{
-		internal static IRegistry GetRegistry(RpcConfig config)
+		internal static IRegistry GetRegistry(AppHost appHost, RpcConfig config)
 		{
 			var registryItem = config.Registry;
 			if (registryItem == null)
@@ -27,7 +27,7 @@ namespace RpcLite.Registry
 				{
 					throw new ConfigException(@"registry type not implements IRegistryFactory");
 				}
-				var registry = factory.CreateRegistry(config);
+				var registry = factory.CreateRegistry(appHost, config);
 				return registry;
 			}
 			catch (Exception ex)
@@ -44,7 +44,7 @@ namespace RpcLite.Registry
 		/// <param name="config"></param>
 		/// <returns></returns>
 		public static TDictionary GetAddresses<TDictionary>(RpcConfig config)
-			where TDictionary : IDictionary<ClientConfigItem, string>, new()
+			where TDictionary : IDictionary<ServiceIdentifier, ServiceInfo[]>, new()
 		{
 			if (config.Client?.Clients == null)
 				return new TDictionary();
@@ -53,7 +53,15 @@ namespace RpcLite.Registry
 			foreach (var item in config.Client?.Clients)
 			{
 				if (!string.IsNullOrWhiteSpace(item.Address))
-					tempDic.Add(item, item.Address);
+					tempDic.Add(new ServiceIdentifier(item.Name, item.Group), new[]
+					{
+						new ServiceInfo
+						{
+							Name = item.Name,
+							Group = item.Group,
+							Address = item.Address
+						}
+					});
 			}
 
 			return tempDic;

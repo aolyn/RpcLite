@@ -4,13 +4,13 @@ namespace RpcLite.Registry.Http
 {
 	public class HttpRegistryFactory : IRegistryFactory
 	{
-		public void Dispose()
+		public IRegistry CreateRegistry(AppHost appHost, RpcConfig config)
 		{
+			return new HttpRegistry(appHost, config);
 		}
 
-		public IRegistry CreateRegistry(RpcConfig config)
+		public void Dispose()
 		{
-			return new HttpRegistry(config);
 		}
 	}
 }

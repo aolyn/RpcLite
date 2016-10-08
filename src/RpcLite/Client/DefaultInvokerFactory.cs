@@ -5,7 +5,7 @@ namespace RpcLite.Client
 	/// <summary>
 	/// 
 	/// </summary>
-	public class SimpleInvokerFactory : IInvokerFactory
+	public class DefaultInvokerFactory : IInvokerFactory
 	{
 		/// <summary>
 		/// 

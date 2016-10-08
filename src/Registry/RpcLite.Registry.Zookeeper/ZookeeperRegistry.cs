@@ -11,6 +11,11 @@ namespace RpcLite.Registry.Zookeeper
 		private string _registryAddress;
 		private readonly RpcConfig _config;
 
+		public Task<ServiceInfo[]> LookupAsync(string name, string @group)
+		{
+			throw new System.NotImplementedException();
+		}
+
 		public bool CanRegister => true;
 
 		public ZookeeperRegistry(RpcConfig config)
@@ -54,11 +59,12 @@ namespace RpcLite.Registry.Zookeeper
 			_zookeeper.Dispose();
 		}
 
-		public async Task<string[]> LookupAsync(ClientConfigItem clientInfo)
+		public async Task<ServiceInfo[]> LookupAsync(ClientConfigItem clientInfo)
 		{
+			if (clientInfo == null) return null;
 			try
 			{
-				var result = await _zookeeper.LookupAsync(clientInfo);
+				var result = await _zookeeper.LookupAsync(clientInfo.Name, clientInfo.Group);
 				return result;
 			}
 			catch (KeeperException ex)
@@ -76,7 +82,7 @@ namespace RpcLite.Registry.Zookeeper
 			//}
 		}
 
-		public async Task RegisterAsync(ServiceConfigItem serviceInfo)
+		public async Task RegisterAsync(ServiceInfo serviceInfo)
 		{
 			try
 			{
@@ -97,15 +103,18 @@ namespace RpcLite.Registry.Zookeeper
 			}
 		}
 
-		public Task<string[]> LookupAsync<TContract>()
+		public Task<ServiceInfo[]> LookupAsync(string name)
+		{
+			throw new System.NotImplementedException();
+		}
+
+		public Task<ServiceInfo[]> LookupAsync<TContract>()
 		{
 			var type = typeof(TContract);
 			var clientConfigItem = _config.Client.Clients
 				.FirstOrDefault(it => it.TypeName == type.FullName);
 
-			return clientConfigItem == null
-				? Task.FromResult<string[]>(null)
-				: LookupAsync(clientConfigItem);
+			return LookupAsync(clientConfigItem);
 		}
 
 	}

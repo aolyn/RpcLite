@@ -91,7 +91,7 @@ namespace RpcLite
 			Config = config;
 
 			AppId = config.AppId;
-			Registry = RegistryHelper.GetRegistry(config);
+			Registry = RegistryHelper.GetRegistry(this, config);
 			ServiceHost = new ServiceHost(this, config);
 			FormatterManager = new FormatterManager(config);
 			ClientFactory = new RpcClientFactory(this, config);
@@ -123,7 +123,7 @@ namespace RpcLite
 
 			foreach (var service in Config.Service.Services)
 			{
-				Registry.RegisterAsync(service);
+				Registry.RegisterAsync(service.ToServiceInfo());
 			}
 		}
 

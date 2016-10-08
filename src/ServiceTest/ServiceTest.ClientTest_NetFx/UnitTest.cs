@@ -37,7 +37,7 @@ namespace ServiceTest.ClientTest_NetFx
 				var address = serviceBaseUrl + @"/api/service/";
 #if NETCORE
 				var config = new RpcConfigBuilder()
-					.UseClient<IProductService>()
+					.UseClient<IProductService>("ProductService")
 					.Build();
 
 				RpcLite.AspNetCore.RpcInitializer.Initialize(config);
@@ -101,7 +101,7 @@ namespace ServiceTest.ClientTest_NetFx
 				.UseMonitor<ConsoleMonitorFactory>("ConsoleMonitor", "http://localhost:6201/api/service/")
 				//.UseServiceMapper<DefaultServiceMapperFactory>("DefaultServiceMapper")
 				.UseService<ProductService>("ProductService", path, null)
-				.UseInvoker<SimpleInvokerFactory>(null)
+				.UseInvoker<DefaultInvokerFactory>(null)
 				//.UseClient<IProductService>("ProductService", "/service/")
 				.Build();
 

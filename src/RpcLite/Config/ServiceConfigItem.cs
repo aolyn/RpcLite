@@ -1,4 +1,5 @@
 ﻿using System;
+using RpcLite.Registry;
 
 namespace RpcLite.Config
 {
@@ -26,16 +27,6 @@ namespace RpcLite.Config
 		/// Environment
 		/// </summary>
 		public string Group { get; set; }
-
-		///// <summary>
-		///// assembly of service implement class
-		///// </summary>
-		//public string AssemblyName { get; private set; }
-
-		///// <summary>
-		///// full service type name, eg: ServiceImpl.ProductAsyncService
-		///// </summary>
-		//public string TypeName { get; private set; }
 
 		/// <summary>
 		/// original configured type name, eg: ServiceImpl.ProductAsyncService,ServiceImpl
@@ -67,6 +58,21 @@ namespace RpcLite.Config
 		public override string ToString()
 		{
 			return $"{Name}, { Type }, {Path}";
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		public ServiceInfo ToServiceInfo()
+		{
+			var serviceInfo = new ServiceInfo
+			{
+				Name = Name,
+				Address = Address,
+				Group = Group,
+			};
+			return serviceInfo;
 		}
 	}
 }

@@ -53,7 +53,7 @@ namespace RpcLite.Service
 
 				foreach (var service in services)
 				{
-					_appHost.Registry.RegisterAsync(service);
+					_appHost.Registry.RegisterAsync(service.ToServiceInfo());
 				}
 
 				return null;

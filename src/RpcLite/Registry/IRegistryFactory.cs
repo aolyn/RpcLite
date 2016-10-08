@@ -12,9 +12,10 @@ namespace RpcLite.Registry
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <param name="appHost"></param>
 		/// <param name="config"></param>
 		/// <returns></returns>
-		IRegistry CreateRegistry(RpcConfig config);
+		IRegistry CreateRegistry(AppHost appHost, RpcConfig config);
 	}
 
 }

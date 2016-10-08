@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using RpcLite.Client;
 using RpcLite.Config;
@@ -7,23 +9,23 @@ using ServiceRegistry.Contract;
 
 namespace RpcLite.Registry.Http
 {
+
 	public class HttpRegistry : RegistryBase
 	{
 		private static readonly object InitializeLocker = new object();
-		private static QuickReadConcurrentDictionary<ClientConfigItem, string> _defaultBaseUrlDictionary = new QuickReadConcurrentDictionary<ClientConfigItem, string>();
+		private static QuickReadConcurrentDictionary<ServiceIdentifier, ServiceInfo[]> _defaultBaseUrlDictionary = new QuickReadConcurrentDictionary<ServiceIdentifier, ServiceInfo[]>();
 		private readonly Lazy<IRegistryService> _registryClient;
+		private readonly AppHost _appHost;
 
-		public HttpRegistry(RpcConfig config)
+		public HttpRegistry(AppHost appHost, RpcConfig config)
 			: base(config)
 		{
 			Config = config;
+			_appHost = appHost;
 
 			_registryClient = new Lazy<IRegistryService>(() =>
 			{
 				var address = Config?.Registry?.Address;
-
-				//var registryClientConfigItem = _config.Clients
-				//	.FirstOrDefault(it => it.TypeName == typeof(IRegistryService).FullName);
 
 				if (string.IsNullOrWhiteSpace(address))
 				{
@@ -31,7 +33,9 @@ namespace RpcLite.Registry.Http
 					return null;
 				}
 
-				var client = ClientFactory.GetInstance<IRegistryService>(address);
+				var client = _appHost == null
+					? ClientFactory.GetInstance<IRegistryService>(address)
+					: _appHost.ClientFactory.GetInstance<IRegistryService>(address);
 				return client;
 			});
 
@@ -48,53 +52,73 @@ namespace RpcLite.Registry.Http
 
 		private void InitilizeBaseUrls()
 		{
-			var tempDic = GetAddresses<QuickReadConcurrentDictionary<ClientConfigItem, string>>(Config);
+			var tempDic = GetAddresses<Dictionary<ServiceIdentifier, ServiceInfo[]>>(Config)
+				.Where(it => it.Value?.Select(v => v.Address).FirstOrDefault() != null)
+				.ToDictionary(it => it.Key, it => it.Value);
 
-			_defaultBaseUrlDictionary = tempDic;
+			var tmp = new QuickReadConcurrentDictionary<ServiceIdentifier, ServiceInfo[]>();
+			foreach (var item in tempDic)
+			{
+				tmp.Add(item.Key, item.Value);
+			}
+
+			_defaultBaseUrlDictionary = tmp;
 		}
 
 		public override bool CanRegister => false;
 
-		private string[] GetAddressInternal(ClientConfigItem clientInfo)
+		private ServiceInfo[] GetAddressInternal(string name, string group)
 		{
+			var itemKey = new ServiceIdentifier(name, group);
 			// ReSharper disable once InconsistentlySynchronizedField
-			var url = _defaultBaseUrlDictionary.GetOrAdd(clientInfo, key =>
+			var url = _defaultBaseUrlDictionary.GetOrAdd(itemKey, key =>
 			{
-				var clientConfigItem = clientInfo;
-
-				if (clientConfigItem == null) return null;
+				if (key == ServiceIdentifier.Empty) return null;
 				if (_registryClient.Value == null) return null;
 
 				var request = new GetServiceAddressRequest
 				{
-					ServiceName = clientConfigItem.Name,
-					//Namespace = clientConfigItem.Namespace,
-					Group = clientInfo.Group,
+					ServiceName = name,
+					Group = group,
 				};
-				var response = _registryClient.Value.GetServiceAddress(request);
-				var uri = string.IsNullOrWhiteSpace(response?.Address)
-					? null
-					: response.Address;
+				try
+				{
+					var response = _registryClient.Value.GetServiceAddress(request);
+					var uri = string.IsNullOrWhiteSpace(response?.Address)
+						? null
+						: response.Address;
 
-				return uri;
+					return new[]
+					{
+					new ServiceInfo
+					{
+						Name = name,
+						Address = uri,
+						Group = group,
+					}
+				};
+				}
+				catch (Exception ex)
+				{
+					LogHelper.Error(ex);
+					throw;
+				}
 			});
 
-			return string.IsNullOrEmpty(url)
-				? null
-				: new[] { (url) };
+			return url;
 		}
 
-		public override Task RegisterAsync(ServiceConfigItem serviceInfo)
+		public override Task RegisterAsync(ServiceInfo serviceInfo)
 		{
 			throw new NotImplementedException();
 		}
 
-		public override Task<string[]> LookupAsync(ClientConfigItem clientInfo)
+		public override Task<ServiceInfo[]> LookupAsync(string name, string group)
 		{
 #if NETCORE
-			return Task.FromResult(GetAddressInternal(clientInfo));
+			return Task.FromResult(GetAddressInternal(name, group));
 #else
-			return TaskHelper.FromResult(GetAddressInternal(clientInfo));
+			return TaskHelper.FromResult(GetAddressInternal(name, group));
 #endif
 		}
 	}

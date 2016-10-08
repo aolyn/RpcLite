@@ -52,7 +52,7 @@ namespace RpcLite.Client
 				if (resultMessage == null)
 					throw new ClientException("get service data error");
 
-				return GetResult<TResult>(tsk.Result, returnType, formatter);
+				return GetResult<TResult>(resultMessage, returnType, formatter);
 			});
 
 			return task;

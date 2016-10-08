@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using RpcLite.Config;
 
 namespace RpcLite.Registry
 {
@@ -14,20 +13,25 @@ namespace RpcLite.Registry
 		/// </summary>
 		/// <param name="serviceInfo"></param>
 		/// <returns></returns>
-		Task RegisterAsync(ServiceConfigItem serviceInfo);
+		Task RegisterAsync(ServiceInfo serviceInfo);
 
 		/// <summary>
-		/// 
+		/// search first config item by TContract and then lookup
 		/// </summary>
-		/// <param name="clientInfo"></param>
 		/// <returns></returns>
-		Task<string[]> LookupAsync(ClientConfigItem clientInfo);
+		Task<ServiceInfo[]> LookupAsync<TContract>();
 
 		/// <summary>
-		/// 
+		/// search config item by name and then lookup
 		/// </summary>
 		/// <returns></returns>
-		Task<string[]> LookupAsync<TContract>();
+		Task<ServiceInfo[]> LookupAsync(string name);
+
+		/// <summary>
+		/// lookup by name and group
+		/// </summary>
+		/// <returns></returns>
+		Task<ServiceInfo[]> LookupAsync(string name, string group);
 
 		/// <summary>
 		/// if or not support registry current service to registry server

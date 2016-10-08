@@ -4,7 +4,7 @@ namespace RpcLite.Registry.Zookeeper
 {
 	public class ZookeeperRegistryFactory : IRegistryFactory
 	{
-		public IRegistry CreateRegistry(RpcConfig config)
+		public IRegistry CreateRegistry(AppHost appHost, RpcConfig config)
 		{
 			return new ZookeeperRegistry(config);
 		}

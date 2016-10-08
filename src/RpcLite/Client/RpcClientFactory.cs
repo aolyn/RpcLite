@@ -31,7 +31,7 @@ namespace RpcLite.Client
 
 			_invokerFactory = config?.Client?.Invoker?.Type != null
 				? TypeCreator.CreateInstanceByIdentifier<IInvokerFactory>(config.Client?.Invoker?.Type)
-				: new SimpleInvokerFactory();
+				: new DefaultInvokerFactory();
 			//todo: create DefaultClientChannelFactory from config
 			_invokerFactory.Initilize(appHost?.Registry, new DefaultClientChannelFactory());
 		}
