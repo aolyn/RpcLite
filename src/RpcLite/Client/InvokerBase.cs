@@ -21,6 +21,16 @@ namespace RpcLite.Client
 		public virtual string Address { get; set; }
 
 		/// <summary>
+		/// service name
+		/// </summary>
+		public string Name { get;private set; }
+
+		/// <summary>
+		/// service group
+		/// </summary>
+		public string Group { get; private set; }
+
+		/// <summary>
 		/// 
 		/// </summary>
 		/// <typeparam name="TResult"></typeparam>
@@ -190,5 +200,15 @@ namespace RpcLite.Client
 			throw new ServiceException("exception occored but no exception data transported");
 		}
 
+		/// <summary>
+		/// optional initialize method
+		/// </summary>
+		/// <param name="name">service name</param>
+		/// <param name="group">service group</param>
+		public void Initialize(string name, string group)
+		{
+			Name = name;
+			Group = group;
+		}
 	}
 }

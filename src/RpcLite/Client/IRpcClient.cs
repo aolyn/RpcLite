@@ -34,6 +34,16 @@ namespace RpcLite.Client
 		/// <para>set: find property Formatter set to Formatter field</para>
 		/// </summary>
 		string Format { get; set; }
+
+		/// <summary>
+		/// service name
+		/// </summary>
+		string Name { get; }
+
+		/// <summary>
+		/// service group
+		/// </summary>
+		string Group { get; }
 	}
 
 }

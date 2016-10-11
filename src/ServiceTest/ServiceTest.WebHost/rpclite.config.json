@@ -44,7 +44,7 @@
         "name": "ProductService",
         "path": "~/api/products/",
         "type": "ServiceImpl.ProductAsyncService,ServiceImpl",
-        "namespace": "v1"
+        "group": null
       }
     ]
   }

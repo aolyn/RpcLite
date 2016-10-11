@@ -41,7 +41,7 @@
 
   "client": {
     "invoker": {
-      "type": "RpcLite.Client.SimpleInvokerFactory, RpcLite"
+      "type": "RpcLite.Client.DefaultInvokerFactory, RpcLite"
     },
     "clients": [
       //{
@@ -53,8 +53,7 @@
       {
         "name": "ProductService",
         "type": "ServiceTest.Contract.IProductService, ServiceTest.Contract",
-        "namespace": "v1",
-        "environment": "IT",
+        "group": "IT",
         "address": "http://localhost:5000/api/service/"
       }
     ]

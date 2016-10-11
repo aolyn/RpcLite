@@ -525,6 +525,9 @@ namespace RpcLite
 				throw new ArgumentNullException(nameof(identifier));
 
 			var type = GetTypeByIdentifier(identifier);
+			if (type == null)
+				throw new InvalidOperationException($"can not found type \"{identifier}\"");
+
 			return (T)Activator.CreateInstance(type);
 		}
 

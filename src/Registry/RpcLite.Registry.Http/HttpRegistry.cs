@@ -90,13 +90,13 @@ namespace RpcLite.Registry.Http
 
 					return new[]
 					{
-					new ServiceInfo
-					{
-						Name = name,
-						Address = uri,
-						Group = group,
-					}
-				};
+						new ServiceInfo
+						{
+							Name = name,
+							Address = uri,
+							Group = group,
+						}
+					};
 				}
 				catch (Exception ex)
 				{

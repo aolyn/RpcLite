@@ -4,7 +4,7 @@
 	{
 		public static void Main(string[] args)
 		{
-			//UnitTest.Test();
+			UnitTest.Test();
 		}
 	}
 }

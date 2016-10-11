@@ -6,7 +6,7 @@ namespace RpcLite.Client
 	/// 
 	/// </summary>
 	/// <typeparam name="TContract">contract interface</typeparam>
-	public class RpcClientBuilder<TContract>
+	internal class RpcClientBuilder<TContract>
 		where TContract : class
 	{
 		private static readonly Lazy<Func<RpcClientBase<TContract>>> ClientCreateFunc = new Lazy<Func<RpcClientBase<TContract>>>(() =>

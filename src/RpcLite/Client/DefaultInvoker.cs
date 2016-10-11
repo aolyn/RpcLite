@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -40,16 +41,35 @@ namespace RpcLite.Client
 		{
 			get
 			{
-				return _address ?? _registry?.LookupAsync<TContract>().Result?
-					.Select(it => it.Address)
-					.FirstOrDefault();
+				return _address ?? GetAddressFromRegistry();
 			}
 			set
 			{
 				_address = value;
+				if (_channel == null) return;
+
+				Uri oldUri, newUri;
+
+				var oldCreateResult = Uri.TryCreate(_channel.Address, UriKind.Absolute, out oldUri);
+				var newCreateResult = Uri.TryCreate(value, UriKind.Absolute, out newUri);
+
+				if ((oldCreateResult && newCreateResult && !newUri.Scheme.Equals(oldUri.Scheme, StringComparison.OrdinalIgnoreCase))
+					|| oldCreateResult || newCreateResult)
+				{
+					_channel = null;
+					return;
+				}
+
 				if (_channel != null)
 					_channel.Address = value;
 			}
+		}
+
+		private string GetAddressFromRegistry()
+		{
+			return _registry?.LookupAsync(Name, Group)?.Result
+				?.Select(it => it.Address)
+				.FirstOrDefault();
 		}
 
 		/// <summary>

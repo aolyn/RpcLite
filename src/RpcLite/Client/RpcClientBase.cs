@@ -4,13 +4,8 @@ using System.Diagnostics;
 #endif
 
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 using RpcLite.Formatters;
-using RpcLite.Logging;
 
 namespace RpcLite.Client
 {
@@ -124,5 +119,15 @@ namespace RpcLite.Client
 		/// 
 		/// </summary>
 		internal AppHost AppHost { get; set; }
+
+		/// <summary>
+		/// service name
+		/// </summary>
+		public string Name { get; internal set; }
+
+		/// <summary>
+		/// service group
+		/// </summary>
+		public string Group { get; internal set; }
 	}
 }
