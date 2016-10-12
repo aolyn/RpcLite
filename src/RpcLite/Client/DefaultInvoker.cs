@@ -27,9 +27,6 @@ namespace RpcLite.Client
 		public DefaultInvoker(string address, IRegistry registry, IChannelFactory channelFactory)
 		{
 			_channelFactory = channelFactory;
-			//if (address == null && registry == null)
-			//	throw new ArgumentOutOfRangeException(nameof(address), $"{nameof(address)} or {nameof(registry)} must provider one");
-
 			_address = address;
 			_registry = registry;
 		}

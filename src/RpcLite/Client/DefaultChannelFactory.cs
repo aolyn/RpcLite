@@ -8,7 +8,7 @@ namespace RpcLite.Client
 	/// <summary>
 	/// 
 	/// </summary>
-	public class DefaultChannelFactory : IChannelFactory
+	internal class DefaultChannelFactory : IChannelFactory
 	{
 		private readonly Dictionary<string, IChannelProvider> _chanelProviderDictionary = new Dictionary<string, IChannelProvider>();
 
@@ -39,13 +39,14 @@ namespace RpcLite.Client
 		/// <param name="config"></param>
 		public void Initialize(RpcConfig config)
 		{
-			if (config?.Client?.Channel?.Providers == null) return;
+			var channelProviders = new List<IChannelProvider> { new DefaultChannelProvider() };
 
-			var channelProviders = new List<IChannelProvider>();
-
-			foreach (var provider in config.Client.Channel.Providers)
+			if (config?.Client?.Channel?.Providers != null)
 			{
-				channelProviders.Add(TypeCreator.CreateInstanceByIdentifier<IChannelProvider>(provider.Type));
+				foreach (var provider in config.Client.Channel.Providers)
+				{
+					channelProviders.Add(TypeCreator.CreateInstanceByIdentifier<IChannelProvider>(provider.Type));
+				}
 			}
 
 			foreach (var provider in channelProviders)

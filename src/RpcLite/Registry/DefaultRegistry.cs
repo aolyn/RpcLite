@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using RpcLite.Config;
 
@@ -54,19 +53,25 @@ namespace RpcLite.Registry
 		//		: null;
 		//}
 
+		///// <summary>
+		///// 
+		///// </summary>
+		///// <param name="serviceInfo"></param>
+		///// <returns></returns>
+		//public Task RegisterAsync(ServiceConfigItem serviceInfo)
+		//{
+		//	return TaskHelper.FromResult<object>(null);
+		//}
+
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="serviceInfo"></param>
 		/// <returns></returns>
-		public Task RegisterAsync(ServiceConfigItem serviceInfo)
-		{
-			return TaskHelper.FromResult<object>(null);
-		}
-
 		public override Task RegisterAsync(ServiceInfo serviceInfo)
 		{
-			throw new NotImplementedException();
+			//throw new NotImplementedException();
+			return TaskHelper.FromResult<object>(null);
 		}
 
 		///// <summary>

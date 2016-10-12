@@ -162,6 +162,28 @@ namespace RpcLite
 			return this;
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <typeparam name="TFactory"></typeparam>
+		/// <returns></returns>
+		public AppHostBuilder UseChannelProvider<TFactory>()
+		{
+			return UseChannelProvider<TFactory>(null);
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="name"></param>
+		/// <returns></returns>
+		public AppHostBuilder UseChannelProvider<TFactory>(string name)
+		{
+			_config.UseChannelProvider<TFactory>(name);
+
+			return this;
+		}
+
 
 		/// <summary>
 		/// 

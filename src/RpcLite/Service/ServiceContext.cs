@@ -80,7 +80,7 @@ namespace RpcLite.Service
 		/// <summary>
 		/// 
 		/// </summary>
-		public IMonitorSession Monitor { get; internal set; }
+		public IServiceMonitorSession Monitor { get; internal set; }
 
 		/// <summary>
 		/// store some use data

@@ -9,7 +9,7 @@ namespace RpcLite
 	/// </summary>
 	/// <typeparam name="TKey"></typeparam>
 	/// <typeparam name="TValue"></typeparam>
-	public class AddOnlyConcurrentDictionary<TKey, TValue> : IDictionary<TKey, TValue>
+	internal class AddOnlyConcurrentDictionary<TKey, TValue> : IDictionary<TKey, TValue>
 	{
 		private readonly Dictionary<TKey, TValue> _innerDictionary = new Dictionary<TKey, TValue>();
 		private readonly object _allLocker = new object();

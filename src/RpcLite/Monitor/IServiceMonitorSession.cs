@@ -5,7 +5,7 @@ namespace RpcLite.Monitor
 	/// <summary>
 	/// 
 	/// </summary>
-	public interface IMonitorSession
+	public interface IServiceMonitorSession
 	{
 		/// <summary>
 		/// 

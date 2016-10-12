@@ -156,6 +156,27 @@ namespace RpcLite.Config
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <typeparam name="TFactory"></typeparam>
+		/// <param name="name"></param>
+		public RpcConfigBuilder UseChannelProvider<TFactory>(string name)
+		{
+			if (!typeof(IChannelProvider).IsAssignableFromEx(typeof(TFactory)))
+				throw new ArgumentOutOfRangeException(nameof(TFactory), "factoryType must implement " + nameof(IChannelProvider));
+
+			if (_config.Client == null)
+				_config.Client = new ClientConfig();
+			if (_config.Client.Channel == null)
+				_config.Client.Channel = new ChannelConfig();
+			if (_config.Client.Channel.Providers == null)
+				_config.Client.Channel.Providers = new List<ChannelProviderConfig>();
+
+			_config.Client.Channel.Providers.Add(new ChannelProviderConfig(name, typeof(TFactory)));
+			return this;
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
 		/// <param name="name"></param>
 		/// <param name="path"></param>
 		/// <param name="address"></param>

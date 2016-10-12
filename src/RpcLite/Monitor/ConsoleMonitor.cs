@@ -12,27 +12,44 @@ namespace RpcLite.Monitor
 		/// </summary>
 		/// <param name="context"></param>
 		/// <returns></returns>
-		public IMonitorSession GetSession(ServiceContext context)
+		public IServiceMonitorSession GetServiceSession(ServiceContext context)
 		{
-			return new ConsoleMonitorSession(this);
+			return new ConsoleMonitorSession();
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		public IClientMonitorSession GetClientSession()
+		{
+			return null;
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public void Dispose()
+		{
+
 		}
 	}
 
 	/// <summary>
 	/// 
 	/// </summary>
-	public class ConsoleMonitorSession : IMonitorSession
+	internal class ConsoleMonitorSession : IServiceMonitorSession
 	{
-		private IMonitor _monitor;
+		//private IMonitor _monitor;
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="monitor"></param>
-		public ConsoleMonitorSession(IMonitor monitor)
-		{
-			_monitor = monitor;
-		}
+		///// <summary>
+		///// 
+		///// </summary>
+		///// <param name="monitor"></param>
+		//public ConsoleMonitorSession(IMonitor monitor)
+		//{
+		//	_monitor = monitor;
+		//}
 
 		/// <summary>
 		/// 

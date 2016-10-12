@@ -15,7 +15,7 @@ namespace RpcLite.Client
 		private readonly ConcurrentDictionary<Type, object> _clienBuilders = new ConcurrentDictionary<Type, object>();
 		private readonly IInvokerFactory _invokerFactory;
 		private readonly AppHost _appHost;
-		private RpcConfig _config;
+		private readonly RpcConfig _config;
 
 		//private readonly IClientChannelFactory _channelFactory;
 
@@ -34,11 +34,13 @@ namespace RpcLite.Client
 
 			_config = config;
 
+			var channelFactory = new DefaultChannelFactory();
+			channelFactory.Initialize(config);
+
 			_invokerFactory = config?.Client?.Invoker?.Type != null
 				? TypeCreator.CreateInstanceByIdentifier<IInvokerFactory>(config.Client?.Invoker?.Type)
 				: new DefaultInvokerFactory();
-			//todo: create DefaultClientChannelFactory from config
-			_invokerFactory.Initilize(appHost?.Registry, new DefaultChannelFactory());
+			_invokerFactory.Initilize(appHost?.Registry, channelFactory);
 		}
 
 		private RpcClientBuilder<TContract> GetBuilder<TContract>() where TContract : class

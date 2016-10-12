@@ -22,9 +22,9 @@ namespace RpcLite.Service
 		///// </summary>
 		//public Type ServiceType { get; set; }
 
-		/// <summary>
-		/// 
-		/// </summary>
+		///// <summary>
+		///// 
+		///// </summary>
 		//public RpcAction ActionInfo { get; set; }
 
 		/// <summary>

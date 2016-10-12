@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using RpcLite.Client;
 using RpcLite.Config;
 using RpcLite.Monitor.Contract;
 using RpcLite.Service;
@@ -13,23 +12,27 @@ namespace RpcLite.Monitor.Http
 	{
 		private readonly IMonitorService _client;
 		private List<InvokeInfo> _invokes = new List<InvokeInfo>();
-		//private readonly ReaderWriterLockSlim _logLock = new ReaderWriterLockSlim();
 		private readonly object _logLock = new object();
-		private AppHost _appHost;
+		private bool _disposed;
 
 		public HttpMonitor(AppHost appHost, RpcConfig config)
 		{
-			_appHost = appHost;
 			//var factory = new RpcClientFactory(null, null);
-			_client = _appHost.ClientFactory.GetInstance<IMonitorService>(config?.Monitor.Address);
+			_client = appHost.ClientFactory.GetInstance<IMonitorService>(config?.Monitor.Address);
+			// ReSharper disable once UnusedVariable
 			var writeTask = WriteLogsAsync();
 		}
 
-		public IMonitorSession GetSession(ServiceContext context)
+		public IServiceMonitorSession GetServiceSession(ServiceContext context)
 		{
-			var session = new HttpMonitorSession(this);
+			var session = new HttpMonitorSession();
 			session.OnEnd += Session_OnEnd;
 			return session;
+		}
+
+		public IClientMonitorSession GetClientSession()
+		{
+			return null;
 		}
 
 		private void Session_OnEnd(object sender, ServiceContext e)
@@ -42,7 +45,7 @@ namespace RpcLite.Monitor.Http
 
 		private async Task WriteLogsAsync()
 		{
-			while (true)
+			while (!_disposed)
 			{
 				List<InvokeInfo> toWriteInvokes = null;
 				lock (_logLock)
@@ -86,23 +89,24 @@ namespace RpcLite.Monitor.Http
 			}
 		}
 
+		public void Dispose()
+		{
+			_disposed = true;
+		}
 	}
 
-	public class HttpMonitorSession : IMonitorSession
+	internal class HttpMonitorSession : IServiceMonitorSession
 	{
-		private IMonitor _monitor;
+		//private IMonitor _monitor;
 		private readonly InvokeInfo _info = new InvokeInfo();
 		public event EventHandler<ServiceContext> OnEnd;
 
-		public HttpMonitorSession(IMonitor monitor)
-		{
-			_monitor = monitor;
-		}
+		//public HttpMonitorSession(IMonitor monitor)
+		//{
+		//	_monitor = monitor;
+		//}
 
-		public InvokeInfo InvokeInfo
-		{
-			get { return _info; }
-		}
+		public InvokeInfo InvokeInfo => _info;
 
 		public void BeginRequest(ServiceContext context)
 		{

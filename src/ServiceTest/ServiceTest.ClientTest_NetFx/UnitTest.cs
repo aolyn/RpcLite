@@ -26,8 +26,7 @@ namespace ServiceTest.ClientTest_NetFx
 		internal static void Test()
 		{
 			TestHttpClient();
-
-			Test2();
+			//MemoryClientTest();
 		}
 
 		private static void TestHttpClient()
@@ -50,6 +49,7 @@ namespace ServiceTest.ClientTest_NetFx
 				clientInfo.Format = "xml";
 
 				TestService(client).Wait();
+				TpsTest(client);
 			}
 			catch (Exception ex)
 			{
@@ -57,7 +57,7 @@ namespace ServiceTest.ClientTest_NetFx
 			}
 		}
 
-		public static void Test2()
+		public static void MemoryClientTest()
 		{
 			#region prepare config
 
@@ -98,11 +98,12 @@ namespace ServiceTest.ClientTest_NetFx
 			var appHost = new AppHostBuilder()
 				.UseAppId("10000")
 				.UseRegistry<HttpRegistryFactory>("HttpRegistry", "http://localhost:12974/api/service/")
-				.UseMonitor<ConsoleMonitorFactory>("ConsoleMonitor", "http://localhost:6201/api/service/")
+				//.UseMonitor<ConsoleMonitorFactory>("ConsoleMonitor", "http://localhost:6201/api/service/")
 				//.UseServiceMapper<DefaultServiceMapperFactory>("DefaultServiceMapper")
 				.UseService<ProductService>("ProductService", path, null)
 				.UseInvoker<DefaultInvokerFactory>(null)
 				//.UseClient<IProductService>("ProductService", "/service/")
+				.UseChannelProvider<DefaultChannelProvider>()
 				.Build();
 
 			appHost.Initialize();
@@ -123,6 +124,14 @@ namespace ServiceTest.ClientTest_NetFx
 
 			TestService(client).Wait();
 
+			TpsTest(client);
+			return;
+
+			Console.ReadLine();
+		}
+
+		private static void TpsTest(IProductService client)
+		{
 			while (true)
 			{
 				var times = 1000;
@@ -142,8 +151,6 @@ namespace ServiceTest.ClientTest_NetFx
 				stopwatch.Stop();
 				Console.WriteLine($"Elapsed: {stopwatch.Elapsed.TotalMilliseconds}, {times * 1000 / stopwatch.Elapsed.TotalMilliseconds} tps, {stopwatch.Elapsed.TotalMilliseconds / times}ms/t");
 			}
-
-			Console.ReadLine();
 		}
 
 		private static async Task TestService(IProductService client)

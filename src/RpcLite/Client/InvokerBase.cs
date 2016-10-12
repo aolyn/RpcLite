@@ -23,7 +23,7 @@ namespace RpcLite.Client
 		/// <summary>
 		/// service name
 		/// </summary>
-		public string Name { get;private set; }
+		public string Name { get; private set; }
 
 		/// <summary>
 		/// service group
@@ -34,17 +34,14 @@ namespace RpcLite.Client
 		/// 
 		/// </summary>
 		/// <typeparam name="TResult"></typeparam>
-		/// <param name="action"></param>
-		/// <param name="param"></param>
-		/// <param name="actionInfo"></param>
-		/// <param name="formatter"></param>
+		/// <param name="request"></param>
 		/// <returns></returns>
-		public virtual Task<TResult> InvokeAsync<TResult>(string action, object param, RpcActionInfo actionInfo, IFormatter formatter)
+		public virtual Task<TResult> InvokeAsync<TResult>(ClientContext request)
 		{
-			var argumentType = actionInfo.ArgumentType;
-			var returnType = actionInfo.ResultType;
+			//var argumentType = request.Action.ArgumentType;
+			//var returnType = request.Action.ResultType;
 
-			var sendTask = SendAsync(action, param, argumentType, formatter);
+			var sendTask = SendAsync(request);
 
 #if DEBUG && LogDuration
 			var duration0 = stopwatch1.GetAndRest();
@@ -62,7 +59,7 @@ namespace RpcLite.Client
 				if (resultMessage == null)
 					throw new ClientException("get service data error");
 
-				return GetResult<TResult>(resultMessage, returnType, formatter);
+				return GetResult<TResult>(resultMessage, request.Action.ResultType, request.Formatter);
 			});
 
 			return task;
@@ -71,30 +68,32 @@ namespace RpcLite.Client
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="action"></param>
-		/// <param name="param"></param>
-		/// <param name="argumentType"></param>
-		/// <param name="formatter"></param>
+		/// <param name="request"></param>
 		/// <returns></returns>
-		protected virtual Task<IResponseMessage> SendAsync(string action, object param, Type argumentType, IFormatter formatter)
+		protected virtual Task<IResponseMessage> SendAsync(ClientContext request)
 		{
-			var mime = formatter.SupportMimes.First();
+			var mime = request.Formatter.SupportMimes.First();
 			var headDic = new Dictionary<string, string>
 			{
-				{"Content-Type",mime},
-				{"Accept",mime},
+				{ "Content-Type", mime },
+				{ "Accept", mime },
 			};
 
 			var content = new MemoryStream();
-			if (argumentType != null)
+			if (request.Action.ArgumentType != null)
 			{
+				request.Monitor?.OnSerializing(request);
 				try
 				{
-					formatter.Serialize(content, param, argumentType);
+					request.Formatter.Serialize(content, request.Request, request.Action.ArgumentType);
 				}
 				catch (Exception ex)
 				{
 					throw new SerializeRequestException("Serialize Request Object failed.", ex);
+				}
+				finally
+				{
+					request.Monitor?.OnSerialized(request);
 				}
 			}
 			content.Position = 0;
@@ -103,7 +102,7 @@ namespace RpcLite.Client
 			var stopwatch1 = Stopwatch.StartNew();
 #endif
 
-			var sendTask = SendAsync(action, content, headDic);
+			var sendTask = SendAsync(request.Action.Name, content, headDic);
 			return sendTask;
 		}
 
@@ -140,8 +139,6 @@ namespace RpcLite.Client
 				}
 				catch (Exception ex)
 				{
-					//return default(TResult);
-					//throw;
 					throw new ServiceException("parse data received error", ex);
 				}
 				finally

@@ -10,12 +10,12 @@ namespace RpcLite.Client
 		/// <summary>
 		/// 
 		/// </summary>
-		public IChannelFactory ChannelFactory { get; private set; }
+		private IChannelFactory ChannelFactory { get; set; }
 
 		/// <summary>
 		/// 
 		/// </summary>
-		public IRegistry Registry { get; private set; }
+		private IRegistry Registry { get; set; }
 
 		/// <summary>
 		/// 

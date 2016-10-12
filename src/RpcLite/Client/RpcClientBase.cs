@@ -111,8 +111,23 @@ namespace RpcLite.Client
 				throw new ServiceException("Formatter can't be null");
 
 			var actionInfo = _actionManager.GetAction(action);
-			var resultObj = Invoker.InvokeAsync<TResult>(action, request, actionInfo, Formatter);
-			return resultObj;
+			var monitor = AppHost?.Monitor?.GetClientSession();
+			var context = new ClientContext
+			{
+				Action = actionInfo,
+				Request = request,
+				Formatter = Formatter,
+				Monitor = monitor,
+			};
+			monitor?.BeginInvoke(context);
+			var task = Invoker.InvokeAsync<TResult>(context);
+			return task.ContinueWith(tsk =>
+			{
+				monitor?.EndInvoke(context);
+				if (tsk.Exception != null)
+					throw tsk.Exception.InnerException;
+				return tsk.Result;
+			});
 		}
 
 		/// <summary>
