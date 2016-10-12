@@ -15,6 +15,11 @@ namespace RpcLite.Config
 		/// <summary>
 		/// 
 		/// </summary>
+		public ChannelConfig Channel { get; set; }
+
+		/// <summary>
+		/// 
+		/// </summary>
 		public InvokerConfig Invoker { get; set; }
 	}
 }

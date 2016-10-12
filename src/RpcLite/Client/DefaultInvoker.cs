@@ -15,8 +15,8 @@ namespace RpcLite.Client
 	{
 		private string _address;
 		private readonly IRegistry _registry;
-		private IClientChannel _channel;
-		private readonly IClientChannelFactory _channelFactory;
+		private IChannel _channel;
+		private readonly IChannelFactory _channelFactory;
 
 		/// <summary>
 		/// address or registry must provider one
@@ -24,7 +24,7 @@ namespace RpcLite.Client
 		/// <param name="address"></param>
 		/// <param name="registry"></param>
 		/// <param name="channelFactory"></param>
-		public DefaultInvoker(string address, IRegistry registry, IClientChannelFactory channelFactory)
+		public DefaultInvoker(string address, IRegistry registry, IChannelFactory channelFactory)
 		{
 			_channelFactory = channelFactory;
 			//if (address == null && registry == null)
@@ -82,7 +82,7 @@ namespace RpcLite.Client
 		protected override Task<IResponseMessage> SendAsync(string action, Stream content, IDictionary<string, string> headers)
 		{
 			if (_channel == null)
-				_channel = _channelFactory.GetClientChannel(Address);
+				_channel = _channelFactory.GetChannel(Address);
 			return _channel.SendAsync(action, content, headers);
 		}
 

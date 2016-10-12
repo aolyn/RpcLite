@@ -7,7 +7,7 @@ namespace RpcLite.Client
 	/// <summary>
 	/// 
 	/// </summary>
-	public interface IClientChannel
+	public interface IChannel
 	{
 		/// <summary>
 		/// 

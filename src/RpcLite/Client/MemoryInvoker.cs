@@ -11,7 +11,7 @@ namespace RpcLite.Client
 	public class MemoryInvoker<TContract> : InvokerBase<TContract>
 	{
 		private string _address;
-		private readonly IClientChannel _channel;
+		private readonly IChannel _channel;
 
 		/// <summary>
 		/// address or registry must provider one

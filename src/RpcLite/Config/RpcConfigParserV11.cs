@@ -67,6 +67,31 @@ namespace RpcLite.Config
 			}
 		}
 
+		private static void InitializeChannelConfig(IConfiguration config, RpcConfig instance)
+		{
+			var channelNode = config.GetSection("channel");
+			if (channelNode?.GetChildren()?.Any() != true) return;
+
+			var providersNode = channelNode.GetSection("providers");
+			var providers = providersNode.GetChildren();
+			instance.Client.Channel = new ChannelConfig { Providers = new List<ChannelProviderConfig>() };
+			foreach (var item in providers)
+			{
+				var name = item["name"];
+				var type = item["type"];
+
+				if (string.IsNullOrEmpty(type))
+					throw new RpcConfigException($"type of RpcLite configuration client node '{name}' can't be null or empty");
+
+				var serviceConfigItem = new ChannelProviderConfig
+				{
+					Name = name,
+					Type = type,
+				};
+				instance.Client.Channel.Providers.Add(serviceConfigItem);
+			}
+		}
+
 		private static void InitializeFormatterConfig(IConfiguration config, RpcConfig instance)
 		{
 			var formatterNode = config.GetSection("formatter");
@@ -161,6 +186,8 @@ namespace RpcLite.Config
 					instance.Client.Clients.Add(serviceConfigItem);
 				}
 			}
+
+			InitializeChannelConfig(clientNode, instance);
 		}
 
 		private static void InitializeRegistryConfig(IConfiguration config, RpcConfig instance)

@@ -9,7 +9,7 @@ namespace RpcLite.Client
 	/// <summary>
 	/// 
 	/// </summary>
-	public class MemoryClientChannel : IClientChannel
+	public class MemoryClientChannel : IChannel
 	{
 		private readonly AppHost _appHost;
 

@@ -23,7 +23,7 @@ namespace RpcLite.Client
 		/// </summary>
 		/// <param name="registry"></param>
 		/// <param name="channelFactory"></param>
-		void Initilize(IRegistry registry, IClientChannelFactory channelFactory);
+		void Initilize(IRegistry registry, IChannelFactory channelFactory);
 
 		/// <summary>
 		/// 

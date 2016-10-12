@@ -10,7 +10,7 @@ namespace RpcLite.Client
 		/// <summary>
 		/// 
 		/// </summary>
-		public IClientChannelFactory ChannelFactory { get; private set; }
+		public IChannelFactory ChannelFactory { get; private set; }
 
 		/// <summary>
 		/// 
@@ -41,7 +41,7 @@ namespace RpcLite.Client
 		/// </summary>
 		/// <param name="registry"></param>
 		/// <param name="channelFactory"></param>
-		public void Initilize(IRegistry registry, IClientChannelFactory channelFactory)
+		public void Initilize(IRegistry registry, IChannelFactory channelFactory)
 		{
 			Registry = registry;
 			ChannelFactory = channelFactory;
