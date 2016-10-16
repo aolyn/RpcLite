@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace RpcLite.Config
 {
@@ -53,6 +54,11 @@ namespace RpcLite.Config
 				}
 			}
 		}
+
+		/// <summary>
+		/// raw configuration items (key/value)
+		/// </summary>
+		public IDictionary<string, string> Items { get; set; }
 
 		/// <summary>
 		/// 

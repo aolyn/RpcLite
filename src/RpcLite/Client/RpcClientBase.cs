@@ -4,8 +4,10 @@ using System.Diagnostics;
 #endif
 
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using RpcLite.Formatters;
+using RpcLite.Logging;
 
 namespace RpcLite.Client
 {
@@ -17,6 +19,8 @@ namespace RpcLite.Client
 		where TContract : class
 	{
 		private readonly ClientActionManager _actionManager;
+		private IClientInvokeFilter[] _invokeFilters;
+		private long _oldFilterVersion = -1;
 
 		/// <summary>
 		/// 
@@ -119,16 +123,95 @@ namespace RpcLite.Client
 				Formatter = Formatter,
 				Monitor = monitor,
 			};
-			monitor?.BeginInvoke(context);
+			monitor?.OnInvoking(context);
+			ApplyOnInvokingFilter(context);
 			var task = Invoker.InvokeAsync<TResult>(context);
 			return task.ContinueWith(tsk =>
 			{
-				monitor?.EndInvoke(context);
+				ApplyOnInvokedFilter(context);
+				monitor?.OnInvoked(context);
 				if (tsk.Exception != null)
 					throw tsk.Exception.InnerException;
 				return tsk.Result;
 			});
 		}
+
+		private void ApplyOnInvokedFilter(ClientContext context)
+		{
+			var filters = GetInvokeFilters();
+			if (filters == null)
+				return;
+
+			foreach (var item in filters)
+			{
+				try
+				{
+					item.OnInvoking(context);
+				}
+				catch (Exception ex)
+				{
+					LogHelper.Error(ex);
+				}
+			}
+		}
+
+		private void ApplyOnInvokingFilter(ClientContext context)
+		{
+			var filters = GetInvokeFilters();
+			if (filters == null)
+				return;
+
+			foreach (var item in filters)
+			{
+				try
+				{
+					item.OnInvoked(context);
+				}
+				catch (Exception ex)
+				{
+					LogHelper.Error(ex);
+				}
+			}
+		}
+
+		private IClientInvokeFilter[] GetInvokeFilters()
+		{
+			if (AppHost?.ClientFilters == null || AppHost.ClientFilters.Version == 0)
+				return null;
+
+			if (AppHost.ClientFilters.Version == _oldFilterVersion)
+				return _invokeFilters;
+
+			var filters = AppHost.ClientFilters
+					.Select(it => it as IClientInvokeFilter)
+					.Where(it => it != null)
+					.ToArray();
+
+			_oldFilterVersion = AppHost.ClientFilters.Version;
+
+			_invokeFilters = filters.Length == 0
+				? null
+				: filters;
+			return filters;
+		}
+
+		//class InvokerHolder<TResult>
+		//{
+		//	public Func<Task<TResult>, ClientContext> Value;
+		//}
+
+		//private IInvoker<TContract> _oldInvoker;
+		//private Func<Task<TResult>, ClientContext> GetInvokeAsyncFunc<TResult>()  //Task<TResult> InvokeAsync<TResult>(ClientContext request);
+		//{
+		//	if (AppHost == null)
+		//		return Invoker.InvokeAsync<TResult>;
+
+		//	var invoker = Invoker;
+		//	if (invoker == _oldInvoker && _oldInvoker == AppHost ?)
+
+		//		_oldInvoker = Invoker;
+		//	return null;
+		//}
 
 		/// <summary>
 		/// 

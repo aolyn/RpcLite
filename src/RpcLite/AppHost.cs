@@ -50,12 +50,12 @@ namespace RpcLite
 		/// <summary>
 		/// 
 		/// </summary>
-		public VersionedList<IServiceFilter> ServiceFilters { get; internal set; } = new VersionedList<IServiceFilter>();
+		public VersionedList<IServiceFilter> ServiceFilters { get; } = new VersionedList<IServiceFilter>();
 
 		/// <summary>
 		/// 
 		/// </summary>
-		public VersionedList<IRpcClientFilter> ClientFilters { get; internal set; } = new VersionedList<IRpcClientFilter>();
+		public VersionedList<IRpcClientFilter> ClientFilters { get; } = new VersionedList<IRpcClientFilter>();
 
 		/// <summary>
 		/// 

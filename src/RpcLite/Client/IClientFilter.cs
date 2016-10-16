@@ -1,8 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-using RpcLite.Service;
-
-namespace RpcLite.Client
+﻿namespace RpcLite.Client
 {
 	/// <summary>
 	/// 
@@ -11,33 +7,33 @@ namespace RpcLite.Client
 	{
 	}
 
-	/// <summary>
-	/// 
-	/// </summary>
-	public interface IServiceProcessFilter : IRpcClientFilter
-	{
-		/// <summary>
-		/// if filter invoke must call next in Invoke 
-		/// </summary>
-		Task ProcessAsync(ServiceContext context, Func<ServiceContext, Task> next);
-	}
+	///// <summary>
+	///// 
+	///// </summary>
+	//public interface IClientProcessFilter : IRpcClientFilter
+	//{
+	//	/// <summary>
+	//	/// if filter invoke must call next in Invoke 
+	//	/// </summary>
+	//	Task ProcessAsync(ServiceContext context, Func<ServiceContext, Task> next);
+	//}
 
 	/// <summary>
 	/// 
 	/// </summary>
-	public interface IServiceInvokeFilter : IRpcClientFilter
+	public interface IClientInvokeFilter : IRpcClientFilter
 	{
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="context"></param>
-		void BeforeInvoke(ServiceContext context);
+		void OnInvoking(ClientContext context);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="context"></param>
-		void AfterInvoke(ServiceContext context);
+		void OnInvoked(ClientContext context);
 	}
 
 }

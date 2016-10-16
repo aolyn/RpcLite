@@ -26,14 +26,6 @@ namespace RpcLite.Config
 			InitializeFormatterConfig(config, instance);
 			InitializeFilterConfig(config, instance);
 
-			//TODO
-			////if (instance.Service?.Paths == null && instance.Service?.Services != null)
-			////{
-			////	instance.Service.Paths = instance.Service.Services
-			////		.Select(it => it.Path)
-			////		.ToArray();
-			////}
-
 			return instance;
 		}
 
@@ -152,7 +144,7 @@ namespace RpcLite.Config
 			var clientsNode = clientNode.GetSection("clients");
 			if (clientsNode?.GetChildren()?.Any() == true)
 			{
-				var environment = clientsNode["environment"];
+				var group = clientsNode["group"];
 				//instance.ClientEnvironment = !string.IsNullOrWhiteSpace(environment) ? environment : instance.Environment;
 
 				var clients = clientsNode.GetChildren();
@@ -161,7 +153,7 @@ namespace RpcLite.Config
 					var name = item["name"];
 					var address = item["address"];
 					var type = item["type"];
-					var env = item["environment"];
+					var env = item["group"];
 					//var nameSpace = item["namespace"];
 
 					if (string.IsNullOrEmpty(name))
@@ -173,6 +165,13 @@ namespace RpcLite.Config
 					//if (string.IsNullOrEmpty(nameSpace))
 					//	throw new RpcConfigException(string.Format("namespace of RpcLite configuration client node '{0}' can't be null or empty", name));
 
+
+					var dic = new Dictionary<string, string>();
+					foreach (var configItem in item.GetChildren())
+					{
+						dic[configItem.Key] = configItem.Value;
+					}
+
 					var serviceConfigItem = new ClientConfigItem
 					{
 						Name = name,
@@ -181,7 +180,8 @@ namespace RpcLite.Config
 						//AssemblyName = assemblyName,
 						Address = address,
 						//Namespace = nameSpace,
-						Group = string.IsNullOrWhiteSpace(env) ? environment : env,
+						Group = string.IsNullOrWhiteSpace(env) ? group : env,
+						Items = dic
 					};
 					instance.Client.Clients.Add(serviceConfigItem);
 				}

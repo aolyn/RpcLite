@@ -10,12 +10,12 @@ namespace RpcLite.Monitor
 		/// <summary>
 		/// 
 		/// </summary>
-		void BeginInvoke(ClientContext request);
+		void OnInvoking(ClientContext request);
 
 		/// <summary>
 		/// 
 		/// </summary>
-		void EndInvoke(ClientContext request);
+		void OnInvoked(ClientContext request);
 
 		/// <summary>
 		/// 

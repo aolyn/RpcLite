@@ -40,6 +40,11 @@
   },
 
   "client": {
+    "channel": {
+      "providers": [
+        { "type": "RpcLite.Client.DefaultChannelProvider, RpcLite" }
+      ]
+    },
     "invoker": {
       "type": "RpcLite.Client.DefaultInvokerFactory, RpcLite"
     },

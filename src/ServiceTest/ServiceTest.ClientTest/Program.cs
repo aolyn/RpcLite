@@ -1,4 +1,6 @@
 ﻿using System;
+using Microsoft.Extensions.Configuration;
+using RpcLite;
 using RpcLite.Client;
 using RpcLite.Config;
 using RpcLite.Formatters;
@@ -13,6 +15,7 @@ namespace ServiceTest.ClientTest
 	{
 		public static void Main(string[] args)
 		{
+			ConfigReadTest();
 			//Test.SerializeTest.InnerExceptionTest();
 			//return;
 			//Test222(null);
@@ -24,6 +27,21 @@ namespace ServiceTest.ClientTest
 			//RpcLite.AspNetCore.RpcLiteInitializer.Initialize();
 			RegistryTest();
 			//Test2();
+
+		}
+
+		private static void ConfigReadTest()
+		{
+			var configBuilder = new ConfigurationBuilder();
+
+			//if (!string.IsNullOrWhiteSpace(basePath))
+			//	configBuilder.SetBasePath(basePath);
+
+			configBuilder
+				.AddJsonFile("rpclite.config.json");
+
+			var config = configBuilder.Build();
+			var rpcConfig = RpcConfigHelper.GetConfig(new CoreConfigurationSection(config));
 		}
 
 		private static void Test222(Type type)
