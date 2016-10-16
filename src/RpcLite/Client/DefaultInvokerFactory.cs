@@ -22,18 +22,18 @@ namespace RpcLite.Client
 		/// </summary>
 		/// <param name="address"></param>
 		/// <returns></returns>
-		public IInvoker<TContract> GetInvoker<TContract>(string address)
+		public IInvoker GetInvoker(string address)
 		{
-			return new DefaultInvoker<TContract>(address, Registry, ChannelFactory);
+			return new DefaultInvoker(address, Registry, ChannelFactory);
 		}
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		public IInvoker<TContract> GetInvoker<TContract>()
+		public IInvoker GetInvoker()
 		{
-			return GetInvoker<TContract>(null);
+			return GetInvoker(null);
 		}
 
 		/// <summary>

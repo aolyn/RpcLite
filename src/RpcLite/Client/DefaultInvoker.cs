@@ -10,8 +10,7 @@ namespace RpcLite.Client
 	/// <summary>
 	/// 
 	/// </summary>
-	/// <typeparam name="TContract"></typeparam>
-	public class DefaultInvoker<TContract> : InvokerBase<TContract>
+	public class DefaultInvoker : InvokerBase
 	{
 		private string _address;
 		private readonly IRegistry _registry;

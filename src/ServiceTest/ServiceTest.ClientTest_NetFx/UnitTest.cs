@@ -7,7 +7,6 @@ using NUnit.Framework;
 using RpcLite;
 using RpcLite.Client;
 using RpcLite.Formatters;
-using RpcLite.Monitor;
 using RpcLite.Registry.Http;
 using ServiceTest.Contract;
 using ServiceTest.ServiceImpl;
@@ -118,7 +117,7 @@ namespace ServiceTest.ClientTest_NetFx
 			var clientInfo = client as IRpcClient<IProductService>;
 			if (clientInfo != null)
 			{
-				clientInfo.Invoker = new MemoryInvoker<IProductService>(appHost, path);
+				clientInfo.Invoker = new MemoryInvoker(appHost, path);
 				clientInfo.Formatter = new XmlFormatter();
 			}
 
@@ -382,7 +381,7 @@ namespace ServiceTest.ClientTest_NetFx
 
 			var channel = new MemoryClientChannel(appHost) { Address = "/api/service/" };
 
-			((IRpcClient<IProductService>)client).Invoker = new MemoryInvoker<IProductService>(appHost, "/api/service/");
+			((IRpcClient<IProductService>)client).Invoker = new MemoryInvoker(appHost, "/api/service/");
 
 			//((IRpcClient)client).Channel = channel;
 			var products = client.GetAll();

@@ -70,7 +70,7 @@ namespace RpcLite.Client
 		/// <summary>
 		/// Channel to transport data with service
 		/// </summary>
-		public IInvoker<TContract> Invoker { get; set; }
+		public IInvoker Invoker { get; set; }
 
 		/// <summary>
 		/// 

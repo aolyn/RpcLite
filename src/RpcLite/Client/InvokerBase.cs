@@ -12,8 +12,7 @@ namespace RpcLite.Client
 	/// <summary>
 	/// 
 	/// </summary>
-	/// <typeparam name="TContract"></typeparam>
-	public abstract class InvokerBase<TContract> : IInvoker<TContract>
+	public abstract class InvokerBase : IInvoker
 	{
 		/// <summary>
 		/// 
@@ -58,7 +57,7 @@ namespace RpcLite.Client
 				if (resultMessage == null)
 					throw new ClientException("get service data error");
 
-				context.Result= GetResult(resultMessage, context.Action.ResultType, context.Formatter);
+				context.Result = GetResult(resultMessage, context.Action.ResultType, context.Formatter);
 			});
 
 			return task;

@@ -30,12 +30,12 @@ namespace RpcLite.Client
 		/// </summary>
 		/// <param name="address"></param>
 		/// <returns></returns>
-		IInvoker<TContract> GetInvoker<TContract>(string address);
+		IInvoker GetInvoker(string address);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		IInvoker<TContract> GetInvoker<TContract>();
+		IInvoker GetInvoker();
 	}
 }

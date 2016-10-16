@@ -5,7 +5,7 @@ namespace RpcLite.Client
 	/// <summary>
 	/// 
 	/// </summary>
-	public interface IInvoker<TContract>
+	public interface IInvoker
 	{
 		/// <summary>
 		/// 

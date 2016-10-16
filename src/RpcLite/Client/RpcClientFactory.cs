@@ -110,8 +110,8 @@ namespace RpcLite.Client
 			client.Name = name;
 			client.Group = group;
 			var invoker = string.IsNullOrWhiteSpace(address)
-				? _invokerFactory.GetInvoker<TContract>()
-				: _invokerFactory.GetInvoker<TContract>(address);
+				? _invokerFactory.GetInvoker()
+				: _invokerFactory.GetInvoker(address);
 			invoker.Initialize(name, group);
 			client.Invoker = invoker;
 			client.Formatter = _appHost?.FormatterManager?.DefaultFormatter

@@ -7,8 +7,7 @@ namespace RpcLite.Client
 	/// <summary>
 	/// 
 	/// </summary>
-	/// <typeparam name="TContract"></typeparam>
-	public class MemoryInvoker<TContract> : InvokerBase<TContract>
+	public class MemoryInvoker : InvokerBase
 	{
 		private string _address;
 		private readonly IChannel _channel;
