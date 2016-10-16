@@ -33,15 +33,14 @@ namespace RpcLite.Client
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <typeparam name="TResult"></typeparam>
-		/// <param name="request"></param>
+		/// <param name="context"></param>
 		/// <returns></returns>
-		public virtual Task<TResult> InvokeAsync<TResult>(ClientContext request)
+		public virtual Task InvokeAsync(ClientContext context)
 		{
 			//var argumentType = request.Action.ArgumentType;
 			//var returnType = request.Action.ResultType;
 
-			var sendTask = SendAsync(request);
+			var sendTask = SendAsync(context);
 
 #if DEBUG && LogDuration
 			var duration0 = stopwatch1.GetAndRest();
@@ -59,7 +58,7 @@ namespace RpcLite.Client
 				if (resultMessage == null)
 					throw new ClientException("get service data error");
 
-				return GetResult<TResult>(resultMessage, request.Action.ResultType, request.Formatter);
+				context.Result= GetResult(resultMessage, context.Action.ResultType, context.Formatter);
 			});
 
 			return task;
@@ -118,24 +117,23 @@ namespace RpcLite.Client
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <typeparam name="TResult"></typeparam>
 		/// <param name="resultMessage"></param>
 		/// <param name="returnType"></param>
 		/// <param name="formatter"></param>
 		/// <returns></returns>
-		protected virtual TResult GetResult<TResult>(IResponseMessage resultMessage, Type returnType, IFormatter formatter)
+		protected virtual object GetResult(IResponseMessage resultMessage, Type returnType, IFormatter formatter)
 		{
 			if (resultMessage.IsSuccess)
 			{
 				if (resultMessage.Result == null || returnType == null)
-					return default(TResult);
+					return null;
 
-				var objType = typeof(TResult);
+				var objType = returnType;
 
 				try
 				{
 					var resultObj = formatter.Deserialize(resultMessage.Result, objType);
-					return (TResult)resultObj;
+					return resultObj;
 				}
 				catch (Exception ex)
 				{

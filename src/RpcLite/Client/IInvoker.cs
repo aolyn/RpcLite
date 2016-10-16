@@ -32,9 +32,8 @@ namespace RpcLite.Client
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <typeparam name="TResult"></typeparam>
 		/// <returns></returns>
-		Task<TResult> InvokeAsync<TResult>(ClientContext request);
+		Task InvokeAsync(ClientContext request);
 	}
 
 }

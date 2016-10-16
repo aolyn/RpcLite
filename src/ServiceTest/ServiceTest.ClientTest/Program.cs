@@ -19,7 +19,7 @@ namespace ServiceTest.ClientTest
 			//Test.SerializeTest.InnerExceptionTest();
 			//return;
 			//Test222(null);
-			//UnitTest.Test();
+			UnitTest.Test();
 			//ClientTest1();
 			//PerformanceTest();
 			//appHost.ProcessAsync()

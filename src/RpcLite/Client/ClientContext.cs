@@ -27,5 +27,10 @@ namespace RpcLite.Client
 		/// 
 		/// </summary>
 		public IClientMonitorSession Monitor;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public object Result { get; internal set; }
 	}
 }

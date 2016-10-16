@@ -125,14 +125,17 @@ namespace RpcLite.Client
 			};
 			monitor?.OnInvoking(context);
 			ApplyOnInvokingFilter(context);
-			var task = Invoker.InvokeAsync<TResult>(context);
+			var task = Invoker.InvokeAsync(context);
 			return task.ContinueWith(tsk =>
 			{
 				ApplyOnInvokedFilter(context);
 				monitor?.OnInvoked(context);
 				if (tsk.Exception != null)
 					throw tsk.Exception.InnerException;
-				return tsk.Result;
+
+				return context.Result == null
+					? default(TResult)
+					: (TResult)context.Result;
 			});
 		}
 
