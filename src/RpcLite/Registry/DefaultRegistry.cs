@@ -45,24 +45,6 @@ namespace RpcLite.Registry
 		/// </summary>
 		public override bool CanRegister => false;
 
-		//private string[] GetAddressInternal(ClientConfigItem clientInfo)
-		//{
-		//	string url;
-		//	return _defaultBaseUrlDictionary.TryGetValue(clientInfo, out url)
-		//		? new[] { url }
-		//		: null;
-		//}
-
-		///// <summary>
-		///// 
-		///// </summary>
-		///// <param name="serviceInfo"></param>
-		///// <returns></returns>
-		//public Task RegisterAsync(ServiceConfigItem serviceInfo)
-		//{
-		//	return TaskHelper.FromResult<object>(null);
-		//}
-
 		/// <summary>
 		/// 
 		/// </summary>
@@ -70,19 +52,8 @@ namespace RpcLite.Registry
 		/// <returns></returns>
 		public override Task RegisterAsync(ServiceInfo serviceInfo)
 		{
-			//throw new NotImplementedException();
 			return TaskHelper.FromResult<object>(null);
 		}
-
-		///// <summary>
-		///// 
-		///// </summary>
-		///// <param name="clientInfo"></param>
-		///// <returns></returns>
-		//public Task<string[]> LookupAsync(ClientConfigItem clientInfo)
-		//{
-		//	return TaskHelper.FromResult(GetAddressInternal(clientInfo));
-		//}
 
 	}
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using RpcLite;
 using RpcLite.AspNetCore;
 using RpcLite.Client;
@@ -13,6 +14,7 @@ namespace ServiceTest.ClientTest
 	{
 		public static void Test()
 		{
+			//HttpRegistryClientTest();
 			HttpRegistryTest();
 			//DefaultRegistryTest();
 		}
@@ -30,6 +32,7 @@ namespace ServiceTest.ClientTest
 			var client = appHost.ClientFactory.GetInstance<IProductService>();
 			var clientInfo = (IRpcClient)client;
 			var serviceAddress = clientInfo.Address;
+			Console.ReadLine();
 		}
 
 		public static void HttpRegistryClientTest()
@@ -42,12 +45,17 @@ namespace ServiceTest.ClientTest
 
 				var resp = client.GetServiceAddressAsync(new GetServiceAddressRequest
 				{
-					ServiceName = "ProductService",
-					//Namespace = "v1",
-					Group = "IT",
+					Services = new[]
+					{
+						new ServiceIdentifierDto
+						{
+							Name = "ProductService",
+							Group = "IT",
+						}
+					}
 				});
 
-				Console.WriteLine(resp.Result.Address.ToString());
+				Console.WriteLine(resp.Result.Results.First().ServiceInfos.First().Address.ToString());
 			}
 			catch (ConnectionException ex)
 			{
@@ -81,8 +89,12 @@ namespace ServiceTest.ClientTest
 			var si7 = appHost.Registry.LookupAsync("IServiceTestService2", "it2").Result;
 		}
 
-		internal interface IServiceTestService1 { }
+		internal interface IServiceTestService1
+		{
+		}
 
-		internal interface IServiceTestService2 { }
+		internal interface IServiceTestService2
+		{
+		}
 	}
 }

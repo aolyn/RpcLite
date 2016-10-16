@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
 using RpcLite;
 using ServiceRegistry.Contract;
 using ServiceRegistry.Repositories;
@@ -9,21 +11,46 @@ namespace ServiceRegistry.Service.Services
 	{
 		public GetServiceAddressResponse GetServiceAddress(GetServiceAddressRequest request)
 		{
-			if (request == null)
+			if (!(request?.Services?.Length > 0))
 				return new GetServiceAddressResponse();
 
 			using (var repository = new ServiceMappingRepository())
 			{
-				var serviceMapping = repository.GetAsync(it => it.Service.Name == request.ServiceName
-						//&& it.Namespace == request.Namespace
-						&& it.Environment == request.Group).Result;
+				var results = request.Services
+					.Select(item =>
+					{
+						try
+						{
+							var serviceMapping = repository.GetAsync(it => it.Service.Name == item.Name
+								&& it.Environment == item.Group).Result;
+
+							var addr = new ServiceInfoDto
+							{
+								Name = item.Name,
+								Group = item.Group,
+								Address = serviceMapping.Address,
+								Data = null,
+							};
+
+							var result = new ResultDto
+							{
+								Identifier = item,
+								ServiceInfos = new[] { addr }
+							};
+
+							return result;
+						}
+						catch (Exception ex)
+						{
+						}
+						return null;
+					})
+					.Where(it => it != null)
+					.ToArray();
 
 				var response = new GetServiceAddressResponse
 				{
-					ServiceName = request.ServiceName,
-					//Namespace = request.Namespace,
-					Group = request.Group,
-					Address = serviceMapping?.Address,
+					Results = results
 				};
 
 				return response;
@@ -32,28 +59,54 @@ namespace ServiceRegistry.Service.Services
 
 		public Task<GetServiceAddressResponse> GetServiceAddressAsync(GetServiceAddressRequest request)
 		{
-			if (request == null)
+			if (!(request?.Services?.Length > 0))
 				return TaskHelper.FromResult(new GetServiceAddressResponse());
 
-			var repository = new ServiceMappingRepository();
-			var serviceMappingTask = repository.GetAsync(it => it.Service.Name == request.ServiceName
-					//&& it.Namespace == request.Namespace
-					&& it.Environment == request.Group);
+			var tcs = new TaskCompletionSource<GetServiceAddressResponse>();
 
-			return serviceMappingTask.ContinueWith(tsk =>
+			using (var repository = new ServiceMappingRepository())
 			{
+				var results = request.Services
+					.Select(item => new
+					{
+						Identifier = item,
+						Task = repository.GetAsync(it => it.Service.Name == item.Name
+							&& it.Environment == item.Group)
+					})
+					.Select(item =>
+					{
+						if (item.Task.IsFaulted || item.Task.Result == null)
+							return null;
+
+						var serviceMapping = item.Task.Result;
+
+						var addr = new ServiceInfoDto
+						{
+							Name = item.Identifier.Name,
+							Group = item.Identifier.Group,
+							Address = serviceMapping.Address,
+							Data = null,
+						};
+
+						var result = new ResultDto
+						{
+							Identifier = item.Identifier,
+							ServiceInfos = new[] { addr }
+						};
+
+						return result;
+					})
+					.Where(it => it != null)
+					.ToArray();
+
 				var response = new GetServiceAddressResponse
 				{
-					ServiceName = request.ServiceName,
-					//Namespace = request.Namespace,
-					Group = request.Group,
-					Address = tsk.Result?.Address,
+					Results = results
 				};
+				tcs.SetResult(response);
+			}
 
-				return response;
-
-			});
-
+			return tcs.Task;
 		}
 	}
 }

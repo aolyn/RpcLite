@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -9,13 +10,31 @@ using ServiceRegistry.Contract;
 
 namespace RpcLite.Registry.Http
 {
-
+	/// <summary>
+	/// simple registry, update service info from registry service periodicity by UpdateInterval
+	/// </summary>
 	public class HttpRegistry : RegistryBase
 	{
-		private static readonly object InitializeLocker = new object();
-		private static QuickReadConcurrentDictionary<ServiceIdentifier, ServiceInfo[]> _defaultBaseUrlDictionary = new QuickReadConcurrentDictionary<ServiceIdentifier, ServiceInfo[]>();
+		private readonly object _initializeLocker = new object();
+		private QuickReadConcurrentDictionary<ServiceIdentifier, ServiceInfo[]> _defaultBaseUrlDictionary = new QuickReadConcurrentDictionary<ServiceIdentifier, ServiceInfo[]>();
+		private readonly ConcurrentDictionary<ServiceIdentifier, DateTime> _updateTimeDic = new ConcurrentDictionary<ServiceIdentifier, DateTime>();
 		private readonly Lazy<IRegistryService> _registryClient;
 		private readonly AppHost _appHost;
+		private int _updateInterval = 3 * 60;
+
+		/// <summary>
+		/// update interval in seconds
+		/// </summary>
+		public int UpdateInterval
+		{
+			get { return _updateInterval; }
+			set
+			{
+				if (value <= 0)
+					throw new ArgumentOutOfRangeException(nameof(value), "UpdateInterval must greater than 0");
+				_updateInterval = value;
+			}
+		}
 
 		public HttpRegistry(AppHost appHost, RpcConfig config)
 			: base(config)
@@ -40,11 +59,83 @@ namespace RpcLite.Registry.Http
 			});
 
 			InitilizeBaseUrlsSafe();
+			UpdateRegistry();
+		}
+
+		private void UpdateRegistry()
+		{
+			Action doUpdate = null;
+
+			doUpdate = () =>
+			{
+				//after 3 minutes update again
+				TaskHelper.Delay(15 * 1000).ContinueWith(tsk =>
+				{
+					try
+					{
+						DoUpdate();
+					}
+					catch (Exception ex)
+					{
+						LogHelper.Error(ex);
+					}
+
+					// ReSharper disable once AccessToModifiedClosure
+					// ReSharper disable once PossibleNullReferenceException
+					doUpdate();
+				});
+			};
+			doUpdate();
+		}
+
+		private void DoUpdate()
+		{
+			var toUpdateServices = _updateTimeDic
+				.Where(it => (DateTime.Now - it.Value).TotalSeconds > UpdateInterval)
+				.Select(it => it.Key)
+				.ToArray();
+
+			var services = toUpdateServices
+				.Select(it => new ServiceIdentifierDto
+				{
+					Name = it.Name,
+					Group = it.Group
+				})
+				.ToArray();
+
+			if (services.Length == 0) return;
+
+			var request = new GetServiceAddressRequest { Services = services };
+
+			try
+			{
+				var response = _registryClient.Value.GetServiceAddress(request);
+				foreach (var item in response.Results)
+				{
+					var serviceInfos = item.ServiceInfos
+						?.Select(it => new ServiceInfo
+						{
+							Name = it.Name,
+							Group = it.Group,
+							Address = it.Address,
+							Data = it.Data,
+						})
+						.ToArray();
+
+					var key = new ServiceIdentifier(item.Identifier.Name, item.Identifier.Group);
+					_defaultBaseUrlDictionary[key] = serviceInfos;
+					_updateTimeDic.AddOrUpdate(key, DateTime.Now, (k, oldValue) => DateTime.Now);
+				}
+			}
+			catch (Exception ex)
+			{
+				LogHelper.Error(ex);
+			}
 		}
 
 		private void InitilizeBaseUrlsSafe()
 		{
-			lock (InitializeLocker)
+			lock (_initializeLocker)
 			{
 				InitilizeBaseUrls();
 			}
@@ -78,25 +169,32 @@ namespace RpcLite.Registry.Http
 
 				var request = new GetServiceAddressRequest
 				{
-					ServiceName = name,
-					Group = group,
+					Services = new[]
+					{
+						new ServiceIdentifierDto
+						{
+							Name = name,
+							Group = group,
+						}
+					}
 				};
 				try
 				{
 					var response = _registryClient.Value.GetServiceAddress(request);
-					var uri = string.IsNullOrWhiteSpace(response?.Address)
-						? null
-						: response.Address;
-
-					return new[]
-					{
-						new ServiceInfo
+					var result = response.Results.FirstOrDefault();
+					var serviceInfos = result?.ServiceInfos
+						.Select(it => new ServiceInfo
 						{
 							Name = name,
-							Address = uri,
 							Group = group,
-						}
-					};
+							Address = it.Address,
+							Data = it.Data,
+						})
+						.ToArray();
+
+					_updateTimeDic.AddOrUpdate(itemKey, DateTime.Now, (k, oldValue) => DateTime.Now);
+
+					return serviceInfos;
 				}
 				catch (Exception ex)
 				{
@@ -110,7 +208,7 @@ namespace RpcLite.Registry.Http
 
 		public override Task RegisterAsync(ServiceInfo serviceInfo)
 		{
-			throw new NotImplementedException();
+			return TaskHelper.FromResult<object>(null);
 		}
 
 		public override Task<ServiceInfo[]> LookupAsync(string name, string group)
@@ -118,9 +216,8 @@ namespace RpcLite.Registry.Http
 #if NETCORE
 			return Task.FromResult(GetAddressInternal(name, group));
 #else
-			return TaskHelper.FromResult(GetAddressInternal(name, group));
+			return RpcLite.TaskHelper.FromResult(GetAddressInternal(name, group));
 #endif
 		}
 	}
-
 }

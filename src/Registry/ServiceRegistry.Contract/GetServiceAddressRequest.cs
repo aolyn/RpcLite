@@ -2,9 +2,7 @@
 {
 	public class GetServiceAddressRequest
 	{
-		public string ServiceName { get; set; }
-		//public string Namespace { get; set; }
-		public string Group { get; set; }
+		public ServiceIdentifierDto[] Services { get; set; }
 	}
 
 }

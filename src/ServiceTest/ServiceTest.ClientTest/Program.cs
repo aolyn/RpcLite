@@ -17,12 +17,12 @@ namespace ServiceTest.ClientTest
 			//return;
 			//Test222(null);
 			//UnitTest.Test();
-			ClientTest1();
+			//ClientTest1();
 			//PerformanceTest();
 			//appHost.ProcessAsync()
 			//UnitTest.Test();
 			//RpcLite.AspNetCore.RpcLiteInitializer.Initialize();
-			//RegistryTest();
+			RegistryTest();
 			//Test2();
 		}
 

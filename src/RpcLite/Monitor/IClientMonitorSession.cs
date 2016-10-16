@@ -16,7 +16,17 @@ namespace RpcLite.Monitor
 		/// 
 		/// </summary>
 		void EndInvoke(ClientContext request);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="request"></param>
 		void OnSerializing(ClientContext request);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="request"></param>
 		void OnSerialized(ClientContext request);
 	}
 }

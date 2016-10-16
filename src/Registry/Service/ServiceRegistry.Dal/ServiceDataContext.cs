@@ -51,6 +51,7 @@ namespace ServiceRegistry.Dal
 			//optionsBuilder.Options.FindExtension<
 			//optionsBuilder.use
 			optionsBuilder.UseNpgsql("server=localhost;user id=chris;password=chris123;database=RpcLite");
+			//optionsBuilder.UseMySQL("server=localhost;user id=chris;password=chris123;database=RpcLite");
 			//optionsBuilder.UseSqlite("Data Source=rpclite.db;Version=3;");
 			//optionsBuilder.UseSqlServer("server=localhost;user id=chris;password=chris123;database=RpcLite");
 			//optionsBuilder.UseSqlServer("Data Source=.;Initial Catalog=RpcLite;Integrated Security=True");
