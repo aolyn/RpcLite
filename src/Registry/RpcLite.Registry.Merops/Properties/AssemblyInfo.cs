@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 // associated with an assembly.
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("RpcLite.Monitor.Http")]
+[assembly: AssemblyProduct("RpcLite.Registry.Merops")]
 [assembly: AssemblyTrademark("")]
 
 // Setting ComVisible to false makes the types in this assembly not visible
@@ -16,4 +16,4 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("5daa8041-debc-4d60-944e-01d395a9a9b0")]
+//[assembly: Guid("b16a6e00-eef1-4176-a34b-f7eb1e3d8935")]

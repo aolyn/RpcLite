@@ -7,7 +7,7 @@ using NUnit.Framework;
 using RpcLite;
 using RpcLite.Client;
 using RpcLite.Formatters;
-using RpcLite.Registry.Http;
+using RpcLite.Registry.Merops;
 using ServiceTest.Contract;
 using ServiceTest.ServiceImpl;
 using RpcLite.Config;
@@ -64,8 +64,8 @@ namespace ServiceTest.ClientTest_NetFx
 			//var config = new RpcLiteConfig
 			//{
 			//	AppId = "10000",
-			//	Registry = new RegistryConfigItem("HttpRegistry", typeof(HttpRegistryFactory), "http://localhost:12974/api/service/"),
-			//	//Monitor = new MonitorConfigItem("ConsoleMonitor", typeof(HttpMonitorFactory), "http://localhost:6201/api/service/"),
+			//	Registry = new RegistryConfigItem("MeropsRegistry", typeof(MeropsRegistryFactory), "http://localhost:12974/api/service/"),
+			//	//Monitor = new MonitorConfigItem("ConsoleMonitor", typeof(MeropsMonitorFactory), "http://localhost:6201/api/service/"),
 			//	Monitor = new MonitorConfigItem("ConsoleMonitor", typeof(ConsoleMonitorFactory), "http://localhost:6201/api/service/"),
 			//	Services = new List<ServiceConfigItem>
 			//	{
@@ -81,7 +81,7 @@ namespace ServiceTest.ClientTest_NetFx
 
 			//var appHost = new AppHostBuilder()
 			//	.UseAppId("10000")
-			//	.UseRegistry("HttpRegistry", typeof(HttpRegistryFactory), "http://localhost:12974/api/service/")
+			//	.UseRegistry("MeropsRegistry", typeof(MeropsRegistryFactory), "http://localhost:12974/api/service/")
 			//	.UseMonitor("ConsoleMonitor", typeof(ConsoleMonitorFactory), "http://localhost:6201/api/service/")
 			//	.UseServices(new ServiceConfigItem("ProductService", typeof(ProductService), "/service/"))
 			//	.UseClients(new ClientConfigItem("ProductService", typeof(IProductService), "/service/"))
@@ -96,7 +96,7 @@ namespace ServiceTest.ClientTest_NetFx
 			var path = "/service/";
 			var appHost = new AppHostBuilder()
 				.UseAppId("10000")
-				.UseRegistry<HttpRegistryFactory>("HttpRegistry", "http://localhost:12974/api/service/")
+				.UseRegistry<MeropsRegistryFactory>("MeropsRegistry", "http://localhost:12974/api/service/")
 				//.UseMonitor<ConsoleMonitorFactory>("ConsoleMonitor", "http://localhost:6201/api/service/")
 				//.UseServiceMapper<DefaultServiceMapperFactory>("DefaultServiceMapper")
 				.UseService<ProductService>("ProductService", path, null)

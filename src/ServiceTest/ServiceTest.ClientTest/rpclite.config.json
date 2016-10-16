@@ -9,12 +9,12 @@
 
   "registry": {
     "address": "http://localhost:12974/api/service/",
-    "type": "RpcLite.Registry.Http.HttpRegistryFactory, RpcLite.Registry.Http"
+    "type": "RpcLite.Registry.Merops.MeropsRegistryFactory, RpcLite.Registry.Merops"
   },
 
   "monitor": {
     "address": "http://localhost:12974/api/service/",
-    "type": "RpcLite.Monitor.Http.HttpMonitorFactory, RpcLite.Monitor.Http"
+    "type": "RpcLite.Monitor.Merops.MeropsMonitorFactory, RpcLite.Monitor.Merops"
   },
 
   "formatter": {

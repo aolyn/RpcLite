@@ -24,7 +24,7 @@
   },
   "dependencies": {
     "RpcLite": "1.0.1-*",
-    "RpcLite.Registry.Http": "1.0.0-*",
+    "RpcLite.Registry.Merops": "1.0.0-*",
     "NUnit": "3.4.1",
     "ServiceTest.Contract": "1.0.0-*",
     "ServiceTest.ServiceImpl": "1.0.0-*"

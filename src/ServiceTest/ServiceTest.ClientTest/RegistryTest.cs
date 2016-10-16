@@ -4,7 +4,7 @@ using RpcLite;
 using RpcLite.AspNetCore;
 using RpcLite.Client;
 using RpcLite.Config;
-using RpcLite.Registry.Http;
+using RpcLite.Registry.Merops;
 using ServiceRegistry.Contract;
 using ServiceTest.Contract;
 
@@ -14,18 +14,18 @@ namespace ServiceTest.ClientTest
 	{
 		public static void Test()
 		{
-			//HttpRegistryClientTest();
-			HttpRegistryTest();
+			//MeropsRegistryClientTest();
+			MeropsRegistryTest();
 			//DefaultRegistryTest();
 		}
 
-		public static void HttpRegistryTest()
+		public static void MeropsRegistryTest()
 		{
 			var config = new RpcConfigBuilder()
 				.UseClient<IProductService>("ProductService", "IT", null)
 				.UseClient<IServiceTestService1>("IServiceTestService1", "http://localhost:5000/api/service/")
 				.UseClient<IServiceTestService2>("IServiceTestService2", "it1", "http://localhost:5000/api/service/")
-				.UseRegistry<HttpRegistryFactory>(null, "http://localhost:12974/api/service/")
+				.UseRegistry<MeropsRegistryFactory>(null, "http://localhost:12974/api/service/")
 				.Build();
 			var appHost = new AppHost(config);
 
@@ -35,7 +35,7 @@ namespace ServiceTest.ClientTest
 			Console.ReadLine();
 		}
 
-		public static void HttpRegistryClientTest()
+		public static void MeropsRegistryClientTest()
 		{
 			try
 			{

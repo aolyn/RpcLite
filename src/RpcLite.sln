@@ -42,7 +42,7 @@ Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "ServiceTest.ClientTest", "S
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "RpcLite.Registry.Zookeeper", "Registry\RpcLite.Registry.Zookeeper\RpcLite.Registry.Zookeeper.xproj", "{A0C7EB3C-1EE4-4C34-A49D-BCA129483581}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "RpcLite.Registry.Http", "Registry\RpcLite.Registry.Http\RpcLite.Registry.Http.xproj", "{B16A6E00-EEF1-4176-A34B-F7EB1E3D8935}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "RpcLite.Registry.Merops", "Registry\RpcLite.Registry.Merops\RpcLite.Registry.Merops.xproj", "{B16A6E00-EEF1-4176-A34B-F7EB1E3D8935}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "service", "service", "{E037D355-97A9-4F9C-B111-DF00159F2D20}"
 EndProject
@@ -52,7 +52,7 @@ Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "RpcLite.NetFx", "RpcLite.Ne
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "monitor", "monitor", "{6096B150-C86D-4E4C-9576-0FA219C17247}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "RpcLite.Monitor.Http", "Monitor\RpcLite.Monitor.Http\RpcLite.Monitor.Http.xproj", "{5DAA8041-DEBC-4D60-944E-01D395A9A9B0}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "RpcLite.Monitor.Merops", "Monitor\RpcLite.Monitor.Merops\RpcLite.Monitor.Merops.xproj", "{5DAA8041-DEBC-4D60-944E-01D395A9A9B0}"
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "RpcLite.Monitor.Contract", "Monitor\RpcLite.Monitor.Contract\RpcLite.Monitor.Contract.xproj", "{C2220FD5-183A-47AB-ADB8-8E8263D35AAA}"
 EndProject

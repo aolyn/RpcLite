@@ -6,16 +6,16 @@ using RpcLite.Config;
 using RpcLite.Monitor.Contract;
 using RpcLite.Service;
 
-namespace RpcLite.Monitor.Http
+namespace RpcLite.Monitor.Merops
 {
-	public class HttpMonitor : IMonitor
+	public class MeropsMonitor : IMonitor
 	{
 		private readonly IMonitorService _client;
 		private List<InvokeInfo> _invokes = new List<InvokeInfo>();
 		private readonly object _logLock = new object();
 		private bool _disposed;
 
-		public HttpMonitor(AppHost appHost, RpcConfig config)
+		public MeropsMonitor(AppHost appHost, RpcConfig config)
 		{
 			//var factory = new RpcClientFactory(null, null);
 			_client = appHost.ClientFactory.GetInstance<IMonitorService>(config?.Monitor.Address);
@@ -25,7 +25,7 @@ namespace RpcLite.Monitor.Http
 
 		public IServiceMonitorSession GetServiceSession(ServiceContext context)
 		{
-			var session = new HttpMonitorSession();
+			var session = new MeropsMonitorSession();
 			session.OnEnd += Session_OnEnd;
 			return session;
 		}
@@ -39,7 +39,7 @@ namespace RpcLite.Monitor.Http
 		{
 			lock (_logLock)
 			{
-				_invokes.Add(((HttpMonitorSession)sender).InvokeInfo);
+				_invokes.Add(((MeropsMonitorSession)sender).InvokeInfo);
 			}
 		}
 
@@ -95,13 +95,13 @@ namespace RpcLite.Monitor.Http
 		}
 	}
 
-	internal class HttpMonitorSession : IServiceMonitorSession
+	internal class MeropsMonitorSession : IServiceMonitorSession
 	{
 		//private IMonitor _monitor;
 		private readonly InvokeInfo _info = new InvokeInfo();
 		public event EventHandler<ServiceContext> OnEnd;
 
-		//public HttpMonitorSession(IMonitor monitor)
+		//public MeropsMonitorSession(IMonitor monitor)
 		//{
 		//	_monitor = monitor;
 		//}

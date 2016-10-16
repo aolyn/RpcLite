@@ -8,12 +8,12 @@ using RpcLite.Config;
 using RpcLite.Logging;
 using ServiceRegistry.Contract;
 
-namespace RpcLite.Registry.Http
+namespace RpcLite.Registry.Merops
 {
 	/// <summary>
 	/// simple registry, update service info from registry service periodicity by UpdateInterval
 	/// </summary>
-	public class HttpRegistry : RegistryBase
+	public class MeropsRegistry : RegistryBase
 	{
 		private readonly object _initializeLocker = new object();
 		private QuickReadConcurrentDictionary<ServiceIdentifier, ServiceInfo[]> _defaultBaseUrlDictionary = new QuickReadConcurrentDictionary<ServiceIdentifier, ServiceInfo[]>();
@@ -36,7 +36,7 @@ namespace RpcLite.Registry.Http
 			}
 		}
 
-		public HttpRegistry(AppHost appHost, RpcConfig config)
+		public MeropsRegistry(AppHost appHost, RpcConfig config)
 			: base(config)
 		{
 			Config = config;
@@ -58,11 +58,12 @@ namespace RpcLite.Registry.Http
 				return client;
 			});
 
-			InitilizeBaseUrlsSafe();
-			UpdateRegistry();
+			InitilizeAddresses();
+			// ReSharper disable once VirtualMemberCallInConstructor
+			StartUpdateRegistry();
 		}
 
-		private void UpdateRegistry()
+		protected virtual void StartUpdateRegistry()
 		{
 			Action doUpdate = null;
 
@@ -133,7 +134,7 @@ namespace RpcLite.Registry.Http
 			}
 		}
 
-		private void InitilizeBaseUrlsSafe()
+		private void InitilizeAddresses()
 		{
 			lock (_initializeLocker)
 			{

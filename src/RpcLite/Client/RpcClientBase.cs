@@ -192,9 +192,11 @@ namespace RpcLite.Client
 
 			_oldFilterVersion = AppHost.ClientFilters.Version;
 
-			_invokeFilters = filters.Length == 0
+			filters = filters.Length == 0
 				? null
 				: filters;
+
+			_invokeFilters = filters;
 			return filters;
 		}
 

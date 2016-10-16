@@ -1,12 +1,12 @@
 ﻿using RpcLite.Config;
 
-namespace RpcLite.Registry.Http
+namespace RpcLite.Registry.Merops
 {
-	public class HttpRegistryFactory : IRegistryFactory
+	public class MeropsRegistryFactory : IRegistryFactory
 	{
 		public IRegistry CreateRegistry(AppHost appHost, RpcConfig config)
 		{
-			return new HttpRegistry(appHost, config);
+			return new MeropsRegistry(appHost, config);
 		}
 
 		public void Dispose()
