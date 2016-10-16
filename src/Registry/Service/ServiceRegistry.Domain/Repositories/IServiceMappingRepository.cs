@@ -2,7 +2,7 @@
 
 namespace ServiceRegistry.Domain.Repositories
 {
-	public interface IServiceMappingRepository : IRepository<ServiceMapping, int>
+	public interface IServiceMappingRepository : IRepository<ServiceProducer, int>
 	{
 	}
 }

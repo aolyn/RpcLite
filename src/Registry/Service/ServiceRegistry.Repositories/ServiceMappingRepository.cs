@@ -3,7 +3,7 @@ using ServiceRegistry.Domain.Repositories;
 
 namespace ServiceRegistry.Repositories
 {
-	public class ServiceMappingRepository : Repository<ServiceMapping, int>, IServiceMappingRepository
+	public class ServiceMappingRepository : Repository<ServiceProducer, int>, IServiceMappingRepository
 	{
 	}
 }

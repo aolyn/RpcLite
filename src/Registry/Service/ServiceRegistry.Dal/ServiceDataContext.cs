@@ -6,30 +6,30 @@ namespace ServiceRegistry.Dal
 	public class ServiceDataContext : DbContext
 	{
 		public DbSet<Service> Services { get; set; }
-		public DbSet<ServiceMapping> ServiceMappings { get; set; }
-		public DbSet<ServiceEnvironment> ServiceEnvironments { get; set; }
+		public DbSet<ServiceProducer> ServiceProducers { get; set; }
+		public DbSet<ServiceGroup> ServiceGroups { get; set; }
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
 			//set table names
 			modelBuilder.Entity<Service>().ToTable(nameof(Service));
-			modelBuilder.Entity<ServiceMapping>().ToTable(nameof(ServiceMapping));
-			modelBuilder.Entity<ServiceEnvironment>().ToTable(nameof(ServiceEnvironment));
+			modelBuilder.Entity<ServiceProducer>().ToTable(nameof(ServiceProducer));
+			modelBuilder.Entity<ServiceGroup>().ToTable(nameof(ServiceGroup));
 
 			modelBuilder.Entity<Service>().HasKey(b => b.Id);
 			modelBuilder.Entity<Service>().Property(it => it.Name).HasMaxLength(64).IsRequired();
 
-			modelBuilder.Entity<ServiceMapping>().HasKey(b => b.Id);
-			modelBuilder.Entity<ServiceMapping>().Property(it => it.Namespace).HasMaxLength(128).IsRequired();
-			modelBuilder.Entity<ServiceMapping>().Property(it => it.Environment).HasMaxLength(64).IsRequired();
-			modelBuilder.Entity<ServiceMapping>().Property(it => it.Address).HasMaxLength(255).IsRequired();
+			modelBuilder.Entity<ServiceProducer>().HasKey(b => b.Id);
+			modelBuilder.Entity<ServiceProducer>().Property(it => it.Data).IsRequired();
+			modelBuilder.Entity<ServiceProducer>().Property(it => it.Group).HasMaxLength(64).IsRequired();
+			modelBuilder.Entity<ServiceProducer>().Property(it => it.Address).HasMaxLength(255).IsRequired();
 
-			modelBuilder.Entity<ServiceEnvironment>().Property(it => it.Id).HasMaxLength(64).HasColumnName("Name").IsRequired();
+			modelBuilder.Entity<ServiceGroup>().Property(it => it.Id).HasMaxLength(64).HasColumnName("Name").IsRequired();
 
-			modelBuilder.Entity<ServiceEnvironment>()
-				.HasMany(it => it.ServiceMappings)
-				.WithOne(t => t.ServiceEnvironment)
-				.HasForeignKey(it => it.Environment);
+			modelBuilder.Entity<ServiceGroup>()
+				.HasMany(it => it.ServiceProducers)
+				.WithOne(t => t.ServiceGroup)
+				.HasForeignKey(it => it.Group);
 
 			//modelBuilder.Entity<ServiceMapping>()
 			//	.Property(e => e.ServiceId)

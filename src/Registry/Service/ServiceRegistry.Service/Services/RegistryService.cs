@@ -22,14 +22,14 @@ namespace ServiceRegistry.Service.Services
 						try
 						{
 							var serviceMapping = repository.GetAsync(it => it.Service.Name == item.Name
-								&& it.Environment == item.Group).Result;
+								&& it.Group == item.Group).Result;
 
 							var addr = new ServiceInfoDto
 							{
 								Name = item.Name,
 								Group = item.Group,
 								Address = serviceMapping.Address,
-								Data = null,
+								Data = serviceMapping.Data,
 							};
 
 							var result = new ResultDto
@@ -71,7 +71,7 @@ namespace ServiceRegistry.Service.Services
 					{
 						Identifier = item,
 						Task = repository.GetAsync(it => it.Service.Name == item.Name
-							&& it.Environment == item.Group)
+							&& it.Group == item.Group)
 					})
 					.Select(item =>
 					{
@@ -85,7 +85,7 @@ namespace ServiceRegistry.Service.Services
 							Name = item.Identifier.Name,
 							Group = item.Identifier.Group,
 							Address = serviceMapping.Address,
-							Data = null,
+							Data = serviceMapping.Data,
 						};
 
 						var result = new ResultDto
