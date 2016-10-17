@@ -17,7 +17,7 @@
     "RpcLite.Monitor.Merops": "1.0.0-*",
     "RpcLite.Registry.Merops": "1.0.0-*",
     "RpcLite.Registry.Zookeeper": "1.0.0-*",
-    "ServiceRegistry.Contract": "1.0.0-*",
+    "RpcLite.Registry.Merops.Contract": "1.0.0-*",
     "ServiceStack.Text.Core": "1.0.15",
     "ServiceTest.Contract": "1.0.0-*",
     "ServiceTest.ServiceImpl": "1.0.0-*",

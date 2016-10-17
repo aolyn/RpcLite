@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace ServiceRegistry.Contract
+namespace RpcLite.Registry.Merops.Contract
 {
 	public interface IRegistryService
 	{

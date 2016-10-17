@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using RpcLite.Client;
 using RpcLite.Config;
 using RpcLite.Logging;
-using ServiceRegistry.Contract;
+using RpcLite.Registry.Merops.Contract;
 
 namespace RpcLite.Registry.Merops
 {

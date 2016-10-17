@@ -5,7 +5,7 @@ using RpcLite.AspNetCore;
 using RpcLite.Client;
 using RpcLite.Config;
 using RpcLite.Registry.Merops;
-using ServiceRegistry.Contract;
+using RpcLite.Registry.Merops.Contract;
 using ServiceTest.Contract;
 
 namespace ServiceTest.ClientTest

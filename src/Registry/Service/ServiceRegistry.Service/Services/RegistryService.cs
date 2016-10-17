@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using RpcLite;
-using ServiceRegistry.Contract;
+using RpcLite.Registry.Merops.Contract;
 using ServiceRegistry.Repositories;
 
 namespace ServiceRegistry.Service.Services

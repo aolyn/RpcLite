@@ -2,7 +2,7 @@
   "version": "1.0.0-*",
   "dependencies": {
     "RpcLite": "1.0.1-*",
-    "ServiceRegistry.Contract": "1.0.0-*"
+    "RpcLite.Registry.Merops.Contract": "1.0.0-*"
   },
 
   "frameworks": {

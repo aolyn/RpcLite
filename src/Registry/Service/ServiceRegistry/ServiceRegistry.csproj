@@ -76,8 +76,8 @@
     <Reference Include="RpcLite.NetFx">
       <HintPath>..\..\..\RpcLite.NetFx\bin\Debug\net40\RpcLite.NetFx.dll</HintPath>
     </Reference>
-    <Reference Include="ServiceRegistry.Contract">
-      <HintPath>..\..\ServiceRegistry.Contract\bin\Debug\net40\ServiceRegistry.Contract.dll</HintPath>
+    <Reference Include="RpcLite.Registry.Merops.Contract">
+      <HintPath>..\..\RpcLite.Registry.Merops.Contract\bin\Debug\net40\RpcLite.Registry.Merops.Contract.dll</HintPath>
     </Reference>
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />

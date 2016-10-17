@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
-using ServiceRegistry.Contract;
+using RpcLite.Registry.Merops.Contract;
 using ServiceRegistry.Dal;
 
 namespace ServiceRegistry.Services

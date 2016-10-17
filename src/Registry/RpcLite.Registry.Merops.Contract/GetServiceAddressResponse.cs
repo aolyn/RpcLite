@@ -1,4 +1,4 @@
-﻿namespace ServiceRegistry.Contract
+﻿namespace RpcLite.Registry.Merops.Contract
 {
 	public class GetServiceAddressResponse
 	{

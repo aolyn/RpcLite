@@ -23,7 +23,7 @@ Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "ServiceRegistry.Domain", "R
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "ServiceRegistry.Repositories", "Registry\Service\ServiceRegistry.Repositories\ServiceRegistry.Repositories.xproj", "{83373279-BD74-49C9-ABC7-FCA05EB3E7E9}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "ServiceRegistry.Contract", "Registry\ServiceRegistry.Contract\ServiceRegistry.Contract.xproj", "{E802D9F9-5A69-4041-9A7C-8646BD975A04}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "RpcLite.Registry.Merops.Contract", "Registry\RpcLite.Registry.Merops.Contract\RpcLite.Registry.Merops.Contract.xproj", "{E802D9F9-5A69-4041-9A7C-8646BD975A04}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{067E5EED-B95F-49F7-B9D7-C5CCDB4F34A6}"
 EndProject

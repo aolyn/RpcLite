@@ -46,7 +46,7 @@
     "clients": [
       //{
       //  "name": "RegistryService",
-      //  "type": "ServiceRegistry.Contract.IRegistryService, ServiceRegistry.Contract",
+      //  "type": "RpcLite.Registry.Merops.Contract.IRegistryService, RpcLite.Registry.Merops.Contract",
       //  "namespace": "v1",
       //  "address": "http://localhost:12974/api/service/"
       //},
