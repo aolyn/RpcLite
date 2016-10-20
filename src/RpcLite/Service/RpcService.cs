@@ -29,7 +29,7 @@ namespace RpcLite.Service
 		public RpcService(Type serviceType, AppHost host)
 		{
 			Type = serviceType;
-			_actionManager = new ActionManager(this);
+			_actionManager = new ActionManager(this, true);
 			_host = host;
 		}
 
@@ -100,7 +100,7 @@ namespace RpcLite.Service
 			}
 
 			LogHelper.Debug("RpcService.BeginProcessRequest: start ActionHelper.GetActionInfo");
-			var action = _actionManager.GetAction(context.Service.Type, context.Request.ActionName);
+			var action = _actionManager.GetAction(context.Request.ActionName);
 			LogHelper.Debug("RpcService.BeginProcessRequest: end ActionHelper.GetActionInfo");
 			if (action == null)
 			{

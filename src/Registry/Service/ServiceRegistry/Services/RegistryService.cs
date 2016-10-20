@@ -7,26 +7,26 @@ namespace ServiceRegistry.Services
 {
 	public class RegistryService : IRegistryService
 	{
-		public GetServiceAddressResponse GetServiceAddress(GetServiceAddressRequest request)
+		public GetServiceInfoResponse GetServiceInfo(GetServiceInfoRequest request)
 		{
 			throw new NotImplementedException();
 			//if (request == null)
-			//	return new GetServiceAddressResponse();
+			//	return new GetServiceInfoResponse();
 
-			//var response = new GetServiceAddressResponse
+			//var response = new GetServiceInfoResponse
 			//{
 			//	ServiceName = request.ServiceName,
 			//	//Namespace = request.Namespace,
 			//	Group = request.Group,
-			//	Address = ServiceDal.GetServiceAddress(request.ServiceName, request.Group)
+			//	Address = ServiceDal.GetServiceInfo(request.ServiceName, request.Group)
 			//};
 
 			//return response;
 		}
 
-		public Task<GetServiceAddressResponse> GetServiceAddressAsync(GetServiceAddressRequest request)
+		public Task<GetServiceInfoResponse> GetServiceInfoAsync(GetServiceInfoRequest request)
 		{
-			return Task.FromResult(GetServiceAddress(request));
+			return Task.FromResult(GetServiceInfo(request));
 		}
 
 	}

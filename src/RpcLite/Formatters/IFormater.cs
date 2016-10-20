@@ -15,7 +15,7 @@ namespace RpcLite.Formatters
 		string Name { get; }
 
 		/// <summary>
-		/// 
+		/// same as HTTP Content-Type, such as application/xml, application/json
 		/// </summary>
 		List<string> SupportMimes { get; }
 

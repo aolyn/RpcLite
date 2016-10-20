@@ -43,7 +43,7 @@ namespace ServiceTest.ClientTest
 
 				var client = ClientFactory.GetInstance<IRegistryService>("http://localhost:12974/api/service/");
 
-				var resp = client.GetServiceAddressAsync(new GetServiceAddressRequest
+				var resp = client.GetServiceInfoAsync(new GetServiceInfoRequest
 				{
 					Services = new[]
 					{
@@ -55,7 +55,7 @@ namespace ServiceTest.ClientTest
 					}
 				});
 
-				Console.WriteLine(resp.Result.Results.First().ServiceInfos.First().Address.ToString());
+				Console.WriteLine(resp.Result.Services.First().ServiceInfos.First().Address.ToString());
 			}
 			catch (ConnectionException ex)
 			{

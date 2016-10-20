@@ -6,28 +6,28 @@ namespace ServiceRegistry.Dal
 	public class ServiceDataContext : DbContext
 	{
 		public DbSet<Service> Services { get; set; }
-		public DbSet<ServiceProducer> ServiceProducers { get; set; }
+		public DbSet<ServiceProvider> ServiceProviders { get; set; }
 		public DbSet<ServiceGroup> ServiceGroups { get; set; }
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
 			//set table names
 			modelBuilder.Entity<Service>().ToTable(nameof(Service));
-			modelBuilder.Entity<ServiceProducer>().ToTable(nameof(ServiceProducer));
+			modelBuilder.Entity<ServiceProvider>().ToTable(nameof(ServiceProvider));
 			modelBuilder.Entity<ServiceGroup>().ToTable(nameof(ServiceGroup));
 
 			modelBuilder.Entity<Service>().HasKey(b => b.Id);
 			modelBuilder.Entity<Service>().Property(it => it.Name).HasMaxLength(64).IsRequired();
 
-			modelBuilder.Entity<ServiceProducer>().HasKey(b => b.Id);
-			modelBuilder.Entity<ServiceProducer>().Property(it => it.Data).IsRequired();
-			modelBuilder.Entity<ServiceProducer>().Property(it => it.Group).HasMaxLength(64).IsRequired();
-			modelBuilder.Entity<ServiceProducer>().Property(it => it.Address).HasMaxLength(255).IsRequired();
+			modelBuilder.Entity<ServiceProvider>().HasKey(b => b.Id);
+			modelBuilder.Entity<ServiceProvider>().Property(it => it.Group).HasMaxLength(64).IsRequired();
+			modelBuilder.Entity<ServiceProvider>().Property(it => it.Address).HasMaxLength(255).IsRequired();
+			modelBuilder.Entity<ServiceProvider>().Property(it => it.Data).HasMaxLength(2048);
 
 			modelBuilder.Entity<ServiceGroup>().Property(it => it.Id).HasMaxLength(64).HasColumnName("Name").IsRequired();
 
 			modelBuilder.Entity<ServiceGroup>()
-				.HasMany(it => it.ServiceProducers)
+				.HasMany(it => it.ServiceProviders)
 				.WithOne(t => t.ServiceGroup)
 				.HasForeignKey(it => it.Group);
 

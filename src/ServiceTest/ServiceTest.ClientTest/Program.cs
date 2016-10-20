@@ -15,7 +15,7 @@ namespace ServiceTest.ClientTest
 	{
 		public static void Main(string[] args)
 		{
-			ConfigReadTest();
+			//ConfigReadTest();
 			//Test.SerializeTest.InnerExceptionTest();
 			//return;
 			//Test222(null);
@@ -25,7 +25,8 @@ namespace ServiceTest.ClientTest
 			//appHost.ProcessAsync()
 			//UnitTest.Test();
 			//RpcLite.AspNetCore.RpcLiteInitializer.Initialize();
-			RegistryTest();
+			ClientTest.RegistryTest.MeropsRegistryTest();
+			//RegistryTest();
 			//Test2();
 
 		}

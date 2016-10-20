@@ -106,12 +106,12 @@ namespace RpcLite.Registry.Merops
 
 			if (services.Length == 0) return;
 
-			var request = new GetServiceAddressRequest { Services = services };
+			var request = new GetServiceInfoRequest { Services = services };
 
 			try
 			{
-				var response = _registryClient.Value.GetServiceAddress(request);
-				foreach (var item in response.Results)
+				var response = _registryClient.Value.GetServiceInfo(request);
+				foreach (var item in response.Services)
 				{
 					var serviceInfos = item.ServiceInfos
 						?.Select(it => new ServiceInfo
@@ -168,7 +168,7 @@ namespace RpcLite.Registry.Merops
 				if (key == ServiceIdentifier.Empty) return null;
 				if (_registryClient.Value == null) return null;
 
-				var request = new GetServiceAddressRequest
+				var request = new GetServiceInfoRequest
 				{
 					Services = new[]
 					{
@@ -181,8 +181,8 @@ namespace RpcLite.Registry.Merops
 				};
 				try
 				{
-					var response = _registryClient.Value.GetServiceAddress(request);
-					var result = response.Results.FirstOrDefault();
+					var response = _registryClient.Value.GetServiceInfo(request);
+					var result = response.Services.FirstOrDefault();
 					var serviceInfos = result?.ServiceInfos
 						.Select(it => new ServiceInfo
 						{

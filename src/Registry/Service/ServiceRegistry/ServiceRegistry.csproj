@@ -120,18 +120,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
-    <Content Include="Dal\EF\ServiceRepository.Context.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>ServiceRepository.Context.cs</LastGenOutput>
-    </Content>
-    <EntityDeploy Include="Dal\EF\ServiceRepository.edmx">
-      <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>ServiceRepository.Designer.cs</LastGenOutput>
-    </EntityDeploy>
-    <Content Include="Model\MusicStory.Model.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>MusicStory.Model.cs</LastGenOutput>
-    </Content>
     <Content Include="default.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -144,31 +132,26 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Dal\EF\ServiceRepository.Context.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>ServiceRepository.Context.tt</DependentUpon>
+    <Compile Include="..\ServiceRegistry.Domain\IAggregateRoot.cs">
+      <Link>Model\IAggregateRoot.cs</Link>
     </Compile>
-    <Compile Include="Dal\EF\ServiceRepository.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>ServiceRepository.edmx</DependentUpon>
+    <Compile Include="..\ServiceRegistry.Domain\IEntity.cs">
+      <Link>Model\IEntity.cs</Link>
     </Compile>
+    <Compile Include="..\ServiceRegistry.Domain\Model\AggregateRoot.cs">
+      <Link>Model\AggregateRoot.cs</Link>
+    </Compile>
+    <Compile Include="..\ServiceRegistry.Domain\Model\Service.cs">
+      <Link>Model\Service.cs</Link>
+    </Compile>
+    <Compile Include="..\ServiceRegistry.Domain\Model\ServiceGroup.cs">
+      <Link>Model\ServiceGroup.cs</Link>
+    </Compile>
+    <Compile Include="..\ServiceRegistry.Domain\Model\ServiceProvider.cs">
+      <Link>Model\ServiceProvider.cs</Link>
+    </Compile>
+    <Compile Include="Dal\EF\ServiceRepositoryEntities.cs" />
     <Compile Include="Dal\ServiceDal.cs" />
-    <Compile Include="Model\MusicStory.Model.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>MusicStory.Model.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Model\Service.cs">
-      <DependentUpon>MusicStory.Model.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Model\ServiceEnvironment.cs">
-      <DependentUpon>MusicStory.Model.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Model\ServiceMapping.cs">
-      <DependentUpon>MusicStory.Model.tt</DependentUpon>
-    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\RegistryService.cs" />
   </ItemGroup>

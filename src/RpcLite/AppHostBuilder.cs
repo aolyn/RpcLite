@@ -208,6 +208,28 @@ namespace RpcLite
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <typeparam name="TFormatter"></typeparam>
+		/// <returns></returns>
+		public AppHostBuilder UseFormatter<TFormatter>()
+		{
+			_config.UseFormatter<TFormatter>(null);
+			return this;
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		public AppHostBuilder UseFormatter<TFormatter>(string name)
+		{
+			_config.UseFormatter<TFormatter>(name);
+			return this;
+		}
+
+
+		/// <summary>
+		/// 
+		/// </summary>
 		/// <returns></returns>
 		public AppHost Build()
 		{

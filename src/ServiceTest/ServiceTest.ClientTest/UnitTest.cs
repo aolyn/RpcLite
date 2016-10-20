@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using NUnit.Framework;
 using RpcLite;
 using RpcLite.Client;
+using RpcLite.Config;
 using RpcLite.Formatters;
 using RpcLite.Monitor;
 using RpcLite.Registry.Merops;
@@ -56,6 +57,15 @@ namespace ServiceTest.ClientTest
 			////	.Build();
 			////var config2 = RpcConfigHelper.GetConfig(new CoreConfiguration(config1));
 
+			var config = new RpcConfigBuilder()
+				.UseAppId("10000")
+				.UseRegistry<MeropsRegistryFactory>("MeropsRegistry", "http://localhost:12974/api/service/")
+				.UseMonitor<ConsoleMonitorFactory>("ConsoleMonitor", "http://localhost:6201/api/service/")
+				.UseInvoker<DefaultInvokerFactory>(null)
+				.UseFilter<UnitTestFilterFactory>()
+				.Build();
+			var appHost2 = new AppHost(config);
+
 			var path = "/service/";
 			var appHost = new AppHostBuilder()
 				.UseAppId("10000")
@@ -67,7 +77,6 @@ namespace ServiceTest.ClientTest
 				//.UseClient<IProductService>("ProductService", "/service/")
 				.UseFilter<UnitTestFilterFactory>()
 				.Build();
-
 			appHost.Initialize();
 
 			//appHost.AddFilter(new LogTimeFilter());
@@ -78,12 +87,10 @@ namespace ServiceTest.ClientTest
 
 
 			var client = appHost.ClientFactory.GetInstance<IProductService>();
-			var clientInfo = client as IRpcClient<IProductService>;
-			if (clientInfo != null)
-			{
-				clientInfo.Invoker = new MemoryInvoker(appHost, path);
-				clientInfo.Formatter = new XmlFormatter();
-			}
+			var clientInfo = (IRpcClient<IProductService>)client;
+			clientInfo.Invoker = new MemoryInvoker(appHost, path);
+			clientInfo.Formatter = new XmlFormatter();
+			clientInfo.Format = "xml";
 
 			Console.WriteLine("start test");
 
@@ -139,6 +146,16 @@ namespace ServiceTest.ClientTest
 			}
 
 			Console.ReadLine();
+		}
+
+		private void Test234234()
+		{
+			var appHost = new AppHostBuilder()
+				.UseAppId("10000")
+				.UseRegistry<MeropsRegistryFactory>("MeropsRegistry", "http://localhost:12974/api/service/")
+				//其它配置
+				.Build();
+			appHost.Initialize();
 		}
 
 		public static void Test1()

@@ -1,0 +1,35 @@
+﻿@using ServiceRegistry.Management.ViewModels
+@model ServiceRegistry.Management.ViewModels.ServiceProvidersViewModel
+
+@{
+	ViewData["Title"] = "Service Provider List";
+}
+<div class="container">
+	<div class="block-container">
+		<a class="btn btn-default" href="@Url.Action("EditProvider", new { serviceId = Model.ServiceId })">Add Provider</a>
+	</div>
+	<div class="block-container">
+		<table class="table table-bordered">
+			<thead>
+				<tr>
+					<td>Id</td>
+					<td>Group</td>
+					<td>Address</td>
+					<td>Data</td>
+					<td>View</td>
+				</tr>
+			</thead>
+			@foreach (var service in Model.ServiceProviers)
+			{
+				<tr>
+					<td>@service.Id</td>
+					<td>@service.Group</td>
+					<td>@service.Address</td>
+					<td>@service.Data</td>
+					<td><a href="@Url.Action("EditProvider", new { id = service.Id })">Edit</a></td>
+				</tr>
+			}
+		</table>
+	</div>
+</div>
+

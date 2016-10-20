@@ -5,8 +5,6 @@ namespace ServiceRegistry.Domain.Model
 
 	public class ServiceGroup : AggregateRoot<string>
 	{
-		//public string Name { get; set; }
-
-		public virtual List<ServiceProducer> ServiceProducers { get; set; }
+		public virtual List<ServiceProvider> ServiceProviders { get; set; }
 	}
 }

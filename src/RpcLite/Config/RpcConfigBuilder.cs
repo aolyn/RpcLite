@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using RpcLite.Client;
+using RpcLite.Formatters;
 using RpcLite.Monitor;
 using RpcLite.Registry;
 #if NETCORE
@@ -41,7 +42,6 @@ namespace RpcLite.Config
 			{
 				throw new ArgumentOutOfRangeException(nameof(factoryType), "factoryType must implement " + nameof(IRegistryFactory));
 			}
-
 			_config.Registry = new RegistryConfig(name, factoryType, address);
 			return this;
 		}
@@ -306,6 +306,38 @@ namespace RpcLite.Config
 			}
 
 			_config.Filter.Filters.Add(new FilterItemConfig(name, typeof(TFactory)));
+
+			return this;
+		}
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		public RpcConfigBuilder UseFormatter<TFormatter>()
+		{
+			UseFormatter<TFormatter>(null);
+			return this;
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		public RpcConfigBuilder UseFormatter<TFormatter>(string name)
+		{
+			if (_config.Formatter == null)
+				_config.Formatter = new FormatterConfig();
+			if (_config.Formatter.Formatters == null)
+				_config.Formatter.Formatters = new List<FormatterItemConfig>();
+
+			if (!typeof(IFormatter).IsAssignableFromEx(typeof(TFormatter)))
+			{
+				throw new ArgumentOutOfRangeException(nameof(TFormatter), "factoryType must implement " + nameof(IFormatter));
+			}
+
+			_config.Formatter.Formatters.Add(new FormatterItemConfig(name, typeof(TFormatter)));
 
 			return this;
 		}

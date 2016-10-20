@@ -1,0 +1,35 @@
+﻿@using ServiceRegistry.Management.ViewModels
+@model ServiceRegistry.Management.ViewModels.EditServiceViewModel
+
+@{
+	ViewData["Title"] = "Edit Service";
+}
+
+<div>
+	<form class="form-horizontal" role="form" method="post">
+		<div class="form-group">
+			<label class="col-sm-2 control-label">Id</label>
+			<div class="col-sm-6">
+				<label class="control-label">@Model?.Service.Id</label>
+				<input type="hidden" class="form-control" id="inputIdl31" asp-for="Service.Id">
+			</div>
+		</div>
+		<div class="form-group">
+			<label for="inputPassword3" class="col-sm-2 control-label">Name</label>
+			<div class="col-sm-6">
+				<input type="text" class="form-control" id="inputPassword3" asp-for="Service.Name">
+			</div>
+		</div>
+		<div class="form-group">
+			<div class="col-sm-offset-2 col-sm-10">
+				<button type="submit" class="btn btn-default">Submit</button>
+			</div>
+		</div>
+		<div class="col-sm-offset-2 col-sm-10">
+			@if (Model?.Service != null)
+			{
+				<a href="@Url.Action("Providers", new { id = Model.Service.Id })">Providers</a>
+			}
+		</div>
+	</form>
+</div>

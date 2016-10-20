@@ -1,0 +1,41 @@
+﻿@using ServiceRegistry.Management.ViewModels
+@model ServiceRegistry.Management.ViewModels.EditProviderViewModel
+
+@{
+	ViewData["Title"] = "Edir Service Provider";
+}
+
+<a href="@Url.Action("Service", new { id = Model.ServiceId })">Return Service</a>
+<form class="form-horizontal" role="form" method="post">
+	<div class="form-group">
+		<label class="col-sm-2 control-label">Id</label>
+		<div class="col-sm-6">
+			<span type="text" class="form-control" id="inputIdl3">@Model?.Provider?.Id</span>
+			<input type="hidden" asp-for="Provider.Id" />
+			<input type="hidden" asp-for="Provider.ServiceId" />
+		</div>
+	</div>
+	<div class="form-group">
+		<label for="inputPassword4" class="col-sm-2 control-label">Group</label>
+		<div class="col-sm-6">
+			<select class="form-control" id="inputPassword4" asp-for="Provider.Group" asp-items="Model.GroupItems"></select>
+		</div>
+	</div>
+	<div class="form-group">
+		<label for="inputPassword5" class="col-sm-2 control-label">Address</label>
+		<div class="col-sm-6">
+			<input type="text" class="form-control" id="inputPassword5" asp-for="Provider.Address">
+		</div>
+	</div>
+	<div class="form-group">
+		<label for="inputPassword6" class="col-sm-2 control-label">Data</label>
+		<div class="col-sm-6">
+			<textarea type="text" class="form-control" id="inputPassword6" asp-for="Provider.Data"></textarea>
+		</div>
+	</div>
+	<div class="form-group">
+		<div class="col-sm-offset-2 col-sm-10">
+			<button type="submit" class="btn btn-default">Submit</button>
+		</div>
+	</div>
+</form>

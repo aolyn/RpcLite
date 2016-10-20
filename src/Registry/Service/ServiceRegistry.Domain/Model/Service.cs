@@ -6,6 +6,6 @@ namespace ServiceRegistry.Domain.Model
 	{
 		public string Name { get; set; }
 
-		public virtual List<ServiceProducer> ServiceMappings { get; set; }
+		public virtual List<ServiceProvider> ServiceMappings { get; set; }
 	}
 }

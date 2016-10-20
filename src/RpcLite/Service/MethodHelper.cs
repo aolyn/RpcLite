@@ -195,12 +195,21 @@ namespace RpcLite.Service
 
 		public static MethodInfo GetActionMethod(Type serviceType, string action)
 		{
+			return GetActionMethod(serviceType, action, false);
+		}
+
+		public static MethodInfo GetActionMethod(Type serviceType, string action, bool ignoreCase)
+		{
 			var methodKey = serviceType.Name + "." + action;
-			return ActionMethods.GetOrAdd(methodKey, (k) =>
+			return ActionMethods.GetOrAdd(methodKey, k =>
 			{
 				var methods = serviceType.GetMethods();
-				var method = methods
-					.FirstOrDefault(it => string.CompareOrdinal(it.Name, action) == 0);
+				var method = ignoreCase
+					? methods
+						.FirstOrDefault(it => string.Compare(it.Name, action, StringComparison.OrdinalIgnoreCase) == 0)
+					: methods
+						.FirstOrDefault(it => string.CompareOrdinal(it.Name, action) == 0);
+
 				return method;
 			});
 		}

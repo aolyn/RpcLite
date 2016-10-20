@@ -1,20 +1,19 @@
 ﻿using System.Linq;
+using ServiceRegistry.Dal.EF;
 
 namespace ServiceRegistry.Dal
 {
 	public class ServiceDal
 	{
-		internal static string GetServiceAddress(string name, string environment)
+		internal static string GetServiceAddress(string name, string group)
 		{
 			using (var ctx = new ServiceRepositoryEntities())
 			{
-				var mapping = ctx.ServiceMapping
+				var mapping = ctx.ServiceProviders
 					.FirstOrDefault(it => it.Service.Name == name
-						&& it.Environment == environment);
+						&& it.Group == group);
 
-				return mapping != null
-					? mapping.Address
-					: null;
+				return mapping?.Address;
 			}
 		}
 	}

@@ -17,18 +17,29 @@ namespace RpcLite.Service
 		private readonly QuickReadConcurrentDictionary<string, RpcAction> _actions = new QuickReadConcurrentDictionary<string, RpcAction>();
 		private readonly Type _defaultServiceType;
 		private readonly RpcService _service;
+		private readonly bool _ignoreCase;
 
-		/// <summary>
-		/// 
-		/// </summary>
-		public ActionManager() { }
+		///// <summary>
+		///// 
+		///// </summary>
+		//public ActionManager() { }
+
+		//public ActionManager(RpcService service)
+		//	: this(service, true)
+		//{
+		//}
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="service"></param>
-		public ActionManager(RpcService service)
+		/// <param name="ignoreCase">ignore action name case</param>
+		public ActionManager(RpcService service, bool ignoreCase)
 		{
+			if (service == null)
+				throw new ArgumentNullException(nameof(service));
+
+			_ignoreCase = ignoreCase;
 			_service = service;
 			_defaultServiceType = service.Type;
 		}
@@ -48,7 +59,7 @@ namespace RpcLite.Service
 		/// <param name="serviceType"></param>
 		/// <param name="actionName"></param>
 		/// <returns></returns>
-		public RpcAction GetAction(Type serviceType, string actionName)
+		private RpcAction GetAction(Type serviceType, string actionName)
 		{
 			if (serviceType == null && _defaultServiceType == null)
 			{
@@ -56,7 +67,9 @@ namespace RpcLite.Service
 			}
 
 			serviceType = serviceType ?? _defaultServiceType;
-			var actionKey = /*serviceType.FullName + "." + */actionName;
+			var actionKey = _ignoreCase
+				? actionName.ToLower()
+				: actionName;
 			return _actions.GetOrAdd(actionKey, k => GetActionInternal(serviceType, actionName));
 		}
 
@@ -72,16 +85,28 @@ namespace RpcLite.Service
 
 		private RpcAction GetActionInternal(Type serviceType, string actionName)
 		{
-			var method = MethodHelper.GetActionMethod(serviceType, actionName);
+			var method = MethodHelper.GetActionMethod(serviceType, actionName, _ignoreCase);
 
 			if (method == null)
 			{
-				method = MethodHelper.GetActionMethod(serviceType, "Begin" + actionName);
-				var endMethod = MethodHelper.GetActionMethod(serviceType, "End" + actionName);
-				if (method == null && endMethod == null)
+				string tryName;
+				if (actionName.EndsWith("Async", StringComparison.OrdinalIgnoreCase))
 				{
-					return null;
+					tryName = actionName.Substring(0, actionName.Length - 5);
 				}
+				else
+				{
+					tryName = actionName + "Async";
+				}
+
+				method = MethodHelper.GetActionMethod(serviceType, tryName, _ignoreCase);
+
+				//method = MethodHelper.GetActionMethod(serviceType, "Begin" + actionName);
+				//var endMethod = MethodHelper.GetActionMethod(serviceType, "End" + actionName);
+				//if (method == null && endMethod == null)
+				//{
+				//	return null;
+				//}
 			}
 
 			if (method == null)

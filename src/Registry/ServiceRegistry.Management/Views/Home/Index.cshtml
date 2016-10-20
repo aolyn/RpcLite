@@ -1,0 +1,12 @@
+﻿@{
+	ViewData["Title"] = "RpcLite Service Registry Management";
+}
+
+<div class="row">
+	<div class="col-md-12">
+		<h5>
+			<a asp-controller="Service" asp-action="Index">Service List</a>
+		</h5>
+		@await Component.InvokeAsync("ServiceList")
+	</div>
+</div>

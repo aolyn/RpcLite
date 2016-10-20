@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using RpcLite;
 using RpcLite.Registry.Merops.Contract;
 using ServiceRegistry.Repositories;
 
@@ -9,20 +8,30 @@ namespace ServiceRegistry.Service.Services
 {
 	public class RegistryService : IRegistryService
 	{
-		public GetServiceAddressResponse GetServiceAddress(GetServiceAddressRequest request)
+		public GetServiceInfoResponse GetServiceInfo(GetServiceInfoRequest request)
 		{
 			if (!(request?.Services?.Length > 0))
-				return new GetServiceAddressResponse();
+				return new GetServiceInfoResponse();
 
-			using (var repository = new ServiceMappingRepository())
+			var results = GetResultsAsync(request.Services);
+			var response = new GetServiceInfoResponse
 			{
-				var results = request.Services
-					.Select(item =>
+				Services = results.Result
+			};
+			return response;
+		}
+
+		private static async Task<ServiceResultDto[]> GetResultsAsync(ServiceIdentifierDto[] identifiers)
+		{
+			using (var repository = new ServiceProviderRepository())
+			{
+				var tasks = identifiers
+					.Select(async item =>
 					{
 						try
 						{
-							var serviceMapping = repository.GetAsync(it => it.Service.Name == item.Name
-								&& it.Group == item.Group).Result;
+							var serviceMapping = await repository.GetAsync(it => it.Service.Name == item.Name
+								&& it.Group == item.Group).ConfigureAwait(false);
 
 							var addr = new ServiceInfoDto
 							{
@@ -32,7 +41,7 @@ namespace ServiceRegistry.Service.Services
 								Data = serviceMapping.Data,
 							};
 
-							var result = new ResultDto
+							var result = new ServiceResultDto
 							{
 								Identifier = item,
 								ServiceInfos = new[] { addr }
@@ -42,71 +51,33 @@ namespace ServiceRegistry.Service.Services
 						}
 						catch (Exception ex)
 						{
+							//log ex
 						}
 						return null;
 					})
-					.Where(it => it != null)
 					.ToArray();
 
-				var response = new GetServiceAddressResponse
-				{
-					Results = results
-				};
+				await Task.WhenAll(tasks).ConfigureAwait(false);
 
-				return response;
+				var results = tasks
+						.Select(it => it.Result)
+						.Where(it => it != null)
+						.ToArray();
+				return results;
 			}
 		}
 
-		public Task<GetServiceAddressResponse> GetServiceAddressAsync(GetServiceAddressRequest request)
+		public async Task<GetServiceInfoResponse> GetServiceInfoAsync(GetServiceInfoRequest request)
 		{
 			if (!(request?.Services?.Length > 0))
-				return TaskHelper.FromResult(new GetServiceAddressResponse());
+				return new GetServiceInfoResponse();
 
-			var tcs = new TaskCompletionSource<GetServiceAddressResponse>();
-
-			using (var repository = new ServiceMappingRepository())
+			var results = await GetResultsAsync(request.Services).ConfigureAwait(false);
+			var response = new GetServiceInfoResponse
 			{
-				var results = request.Services
-					.Select(item => new
-					{
-						Identifier = item,
-						Task = repository.GetAsync(it => it.Service.Name == item.Name
-							&& it.Group == item.Group)
-					})
-					.Select(item =>
-					{
-						if (item.Task.IsFaulted || item.Task.Result == null)
-							return null;
-
-						var serviceMapping = item.Task.Result;
-
-						var addr = new ServiceInfoDto
-						{
-							Name = item.Identifier.Name,
-							Group = item.Identifier.Group,
-							Address = serviceMapping.Address,
-							Data = serviceMapping.Data,
-						};
-
-						var result = new ResultDto
-						{
-							Identifier = item.Identifier,
-							ServiceInfos = new[] { addr }
-						};
-
-						return result;
-					})
-					.Where(it => it != null)
-					.ToArray();
-
-				var response = new GetServiceAddressResponse
-				{
-					Results = results
-				};
-				tcs.SetResult(response);
-			}
-
-			return tcs.Task;
+				Services = results
+			};
+			return response;
 		}
 	}
 }

@@ -1,0 +1,11 @@
+﻿@model ServiceRegistry.Management.ViewModels.ServiceIndexViewModel
+
+@{
+	ViewData["Title"] = "Service List";
+}
+
+<div class="block-container">
+	<a class="btn btn-default" asp-action="EditService">AddService</a>
+</div>
+
+@await Component.InvokeAsync("ServiceList")

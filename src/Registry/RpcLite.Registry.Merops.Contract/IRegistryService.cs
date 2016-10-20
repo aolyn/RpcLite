@@ -4,8 +4,8 @@ namespace RpcLite.Registry.Merops.Contract
 {
 	public interface IRegistryService
 	{
-		GetServiceAddressResponse GetServiceAddress(GetServiceAddressRequest request);
+		GetServiceInfoResponse GetServiceInfo(GetServiceInfoRequest request);
 
-		Task<GetServiceAddressResponse> GetServiceAddressAsync(GetServiceAddressRequest request);
+		Task<GetServiceInfoResponse> GetServiceInfoAsync(GetServiceInfoRequest request);
 	}
 }
