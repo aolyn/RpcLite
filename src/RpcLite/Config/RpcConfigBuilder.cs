@@ -78,6 +78,15 @@ namespace RpcLite.Config
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <returns></returns>
+		public RpcConfigBuilder UseMonitor<TFactory>()
+		{
+			return UseMonitor<TFactory>(null, null);
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
 		/// <param name="name"></param>
 		/// <param name="address"></param>
 		/// <returns></returns>
@@ -350,6 +359,24 @@ namespace RpcLite.Config
 		public RpcConfig Build()
 		{
 			return _config;
+		}
+
+		/// <summary>
+		/// build config by call builder(new RpcConfigBuilder()), if builder is null return new RpcConfig()
+		/// </summary>
+		/// <param name="builder"></param>
+		/// <returns></returns>
+		public static RpcConfig BuildConfig(Action<RpcConfigBuilder> builder)
+		{
+			if (builder == null)
+			{
+				return new RpcConfig();
+			}
+
+			var builderObj = new RpcConfigBuilder();
+			builder(builderObj);
+			var config = builderObj.Build();
+			return config;
 		}
 
 	}

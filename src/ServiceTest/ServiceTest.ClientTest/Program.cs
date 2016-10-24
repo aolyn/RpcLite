@@ -31,6 +31,13 @@ namespace ServiceTest.ClientTest
 
 		}
 
+		private static void InitializeTest()
+		{
+			RpcInitializer.Initialize(builder => builder
+				.UseAppId("10000")
+				.UseClient<IProductService>("ProductService"));
+		}
+
 		private static void ConfigReadTest()
 		{
 			var configBuilder = new ConfigurationBuilder();
@@ -142,7 +149,7 @@ namespace ServiceTest.ClientTest
 
 		private static void PerformanceTest()
 		{
-			RpcLite.AspNetCore.RpcInitializer.Initialize();
+			RpcInitializer.Initialize();
 
 			var client = ClientFactory.GetInstance<IProductService>(serviceBaseUrl + "/api/service/");
 			try
@@ -209,7 +216,7 @@ namespace ServiceTest.ClientTest
 			//var baseUrl = @"https://www.baidu.com/test/api/service/";
 			//var baseUrl = @"http://localhost/config/asfsdfs";
 
-			RpcLite.AspNetCore.RpcInitializer.Initialize();
+			RpcInitializer.Initialize();
 
 			var address = serviceBaseUrl + @"/api/service/";
 			var client = ClientFactory.GetInstance<IProductService>(address);

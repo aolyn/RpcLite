@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using RpcLite.Utility;
 using RpcLiteClientTestNetCore;
-using RpcLiteServiceTest;
+using ServiceTest.Contract;
 
 namespace ServiceTest.ClientTest.Test
 {

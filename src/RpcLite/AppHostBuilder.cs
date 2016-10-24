@@ -61,6 +61,15 @@ namespace RpcLite
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <returns></returns>
+		public AppHostBuilder UseMonitor<TFactory>()
+		{
+			return UseMonitor<TFactory>(null, null);
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
 		/// <param name="name"></param>
 		/// <param name="address"></param>
 		/// <returns></returns>
