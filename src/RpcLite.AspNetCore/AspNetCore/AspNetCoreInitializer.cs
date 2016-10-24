@@ -1,47 +1,15 @@
-﻿using System;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
-using Microsoft.Extensions.Configuration;
 using RpcLite.Config;
 using RpcLite.Service;
-using CoreConfig = Microsoft.Extensions.Configuration;
 
 namespace RpcLite.AspNetCore
 {
 	/// <summary>
 	/// 
 	/// </summary>
-	public class RpcInitializer
+	internal class AspNetCoreInitializer
 	{
-		/// <summary>
-		/// initialize with default config file "rpclite.config.json"
-		/// </summary>
-		public static void Initialize()
-		{
-			Initialize(null, (string)null);
-		}
-
-		/// <summary>
-		/// initialize from configuration
-		/// </summary>
-		/// <param name="config"></param>
-		public static void Initialize(CoreConfig.IConfiguration config)
-		{
-			var rpcConfig = RpcConfigHelper.GetConfig(new CoreConfigurationSection(config));
-			//RpcLiteConfig.SetInstance(rpcConfig);
-
-			Initialize(rpcConfig);
-		}
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="rpcConfig"></param>
-		public static void Initialize(RpcConfig rpcConfig)
-		{
-			RpcManager.Initialize(rpcConfig);
-		}
-
 		/// <summary>
 		/// default initialize from rpclite.config.json
 		/// </summary>
@@ -81,7 +49,7 @@ namespace RpcLite.AspNetCore
 		/// <param name="basePath">base path to search config file rpclite.config.json</param>
 		public static void Initialize(IApplicationBuilder app, string basePath)
 		{
-			var config = GetConfiguration(null);
+			var config = RpcInitializer.GetConfiguration(null);
 			var rpcConfig = RpcConfigHelper.GetConfig(new CoreConfigurationSection(config));
 			Initialize(app, rpcConfig);
 		}
@@ -92,7 +60,7 @@ namespace RpcLite.AspNetCore
 		/// <param name="routers">used to UseMiddleware, keep null if not need set</param>
 		public static void Initialize(IRouteBuilder routers)
 		{
-			var config = GetConfiguration(null);
+			var config = RpcInitializer.GetConfiguration(null);
 			var rpcConfig = RpcConfigHelper.GetConfig(new CoreConfigurationSection(config));
 
 			Initialize(routers, rpcConfig);
@@ -116,29 +84,5 @@ namespace RpcLite.AspNetCore
 			}
 		}
 
-
-		/// <summary>
-		/// initialize with RpcConfigBuilder
-		/// </summary>
-		/// <param name="builder"></param>
-		/// <returns></returns>
-		public static void Initialize(Action<RpcConfigBuilder> builder)
-		{
-			RpcManager.Initialize(builder);
-		}
-
-		private static IConfigurationRoot GetConfiguration(string basePath)
-		{
-			var configBuilder = new ConfigurationBuilder();
-
-			if (!string.IsNullOrWhiteSpace(basePath))
-				configBuilder.SetBasePath(basePath);
-
-			configBuilder
-				.AddJsonFile("rpclite.config.json");
-
-			var config = configBuilder.Build();
-			return config;
-		}
 	}
 }

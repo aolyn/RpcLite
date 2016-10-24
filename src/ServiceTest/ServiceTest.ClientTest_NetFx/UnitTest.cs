@@ -38,9 +38,9 @@ namespace ServiceTest.ClientTest_NetFx
 					.UseClient<IProductService>("ProductService")
 					.Build();
 
-				RpcLite.AspNetCore.RpcInitializer.Initialize(config);
+				RpcInitializer.Initialize(config);
 #else
-				RpcLite.AspNet.RpcInitializer.Initialize();
+				RpcInitializer.Initialize();
 #endif
 				var client = ClientFactory.GetInstance<IProductService>(address);
 				var clientInfo = (IRpcClient)client;

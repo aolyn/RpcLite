@@ -78,6 +78,15 @@ namespace RpcLite.Config
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <returns></returns>
+		public RpcConfigBuilder UseMonitor<TFactory>()
+		{
+			return UseMonitor<TFactory>(null, null);
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
 		/// <param name="name"></param>
 		/// <param name="address"></param>
 		/// <returns></returns>

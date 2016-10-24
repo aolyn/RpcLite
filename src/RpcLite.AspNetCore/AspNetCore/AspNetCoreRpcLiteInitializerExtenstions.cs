@@ -8,7 +8,7 @@ namespace Microsoft.AspNetCore.Routing
 	/// <summary>
 	/// 
 	/// </summary>
-	public static class AspNetCoreRpcLiteInitializerExtenstions
+	public static class RpcLiteRouterBuilderExtenstions
 	{
 		/// <summary>
 		/// 
@@ -17,7 +17,7 @@ namespace Microsoft.AspNetCore.Routing
 		/// <returns></returns>
 		public static IRouteBuilder UseRpcLite(this IRouteBuilder routes)
 		{
-			RpcInitializer.Initialize(routes);
+			AspNetCoreInitializer.Initialize(routes);
 			return routes;
 		}
 	}
@@ -28,16 +28,16 @@ namespace Microsoft.AspNetCore.Builder
 	/// <summary>
 	/// 
 	/// </summary>
-	public static class AspNetCoreRpcLiteIApplicationBuilderExtenstions
+	public static class RpcLiteIApplicationBuilderExtenstions
 	{
 		/// <summary>
-		/// 
+		/// default initialize from rpclite.config.json
 		/// </summary>
 		/// <param name="app"></param>
 		/// <returns></returns>
 		public static IApplicationBuilder UseRpcLite(this IApplicationBuilder app)
 		{
-			RpcInitializer.Initialize(app);
+			AspNetCoreInitializer.Initialize(app);
 			return app;
 		}
 
@@ -53,7 +53,7 @@ namespace Microsoft.AspNetCore.Builder
 			builder(builderObj);
 			var config = builderObj.Build();
 
-			RpcInitializer.Initialize(app, config);
+			AspNetCoreInitializer.Initialize(app, config);
 			return app;
 		}
 

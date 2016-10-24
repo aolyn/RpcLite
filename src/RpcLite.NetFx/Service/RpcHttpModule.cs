@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using System.Web;
-using RpcLite.AspNet;
+using RpcLite.Config;
 
 namespace RpcLite.Service
 {

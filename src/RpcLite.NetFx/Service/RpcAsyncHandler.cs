@@ -3,7 +3,7 @@
 using System;
 using System.Threading.Tasks;
 using System.Web;
-using RpcLite.AspNet;
+using RpcLite.Config;
 
 namespace RpcLite.Service
 {

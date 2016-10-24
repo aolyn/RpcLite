@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Configuration;
-using RpcLite.Config;
-using RpcLite.Service;
 
-namespace RpcLite.AspNet
+namespace RpcLite.Config
 {
 	/// <summary>
 	/// 
@@ -24,9 +22,18 @@ namespace RpcLite.AspNet
 					return;
 
 				var config = ConfigurationManager.GetSection("RpcLite") as RpcConfig;
-				RpcManager.Initialize(config);
+				Initialize(config);
 				_initialized = true;
 			}
+		}
+
+		/// <summary>
+		/// initialize with RpcConfig
+		/// </summary>
+		/// <param name="config"></param>
+		public static void Initialize(RpcConfig config)
+		{
+			RpcManager.Initialize(config);
 		}
 
 		/// <summary>

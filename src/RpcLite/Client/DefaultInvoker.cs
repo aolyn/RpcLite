@@ -77,6 +77,9 @@ namespace RpcLite.Client
 		/// <returns></returns>
 		protected override Task<IResponseMessage> SendAsync(string action, Stream content, IDictionary<string, string> headers)
 		{
+			if (string.IsNullOrEmpty(Address))
+				throw new ServiceException("service address not provided");
+
 			if (_channel == null)
 				_channel = _channelFactory.GetChannel(Address);
 			return _channel.SendAsync(action, content, headers);
