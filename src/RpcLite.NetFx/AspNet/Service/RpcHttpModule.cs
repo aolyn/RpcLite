@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Web;
 using RpcLite.Config;
 
-namespace RpcLite.Service
+namespace RpcLite.AspNet.Service
 {
 	/// <summary>
 	/// 

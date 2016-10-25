@@ -1,6 +1,6 @@
 ﻿using System.Web;
 
-namespace RpcLite.Service
+namespace RpcLite.AspNet.Service
 {
 	/// <summary>
 	/// 

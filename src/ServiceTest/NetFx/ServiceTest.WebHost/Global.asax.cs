@@ -1,5 +1,5 @@
 ﻿using System;
-using RpcLite.AspNet;
+using RpcLite.Config;
 using ServiceTest.ServiceImpl;
 
 namespace ServiceTest.WebHost
@@ -8,7 +8,6 @@ namespace ServiceTest.WebHost
 	{
 		protected void Application_Start(object sender, EventArgs e)
 		{
-			//RpcInitializer.Initialize();
 			RpcInitializer.Initialize(builder => builder
 					.UseService<ProductService>("ProductService", "api/service/")
 					.UseService<TestService>("ProductService", "api/test/")

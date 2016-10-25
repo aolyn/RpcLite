@@ -2,8 +2,9 @@
 
 using System.IO;
 using System.Web;
+using RpcLite.Service;
 
-namespace RpcLite.Service
+namespace RpcLite.AspNet.Service
 {
 	/// <summary>
 	/// 

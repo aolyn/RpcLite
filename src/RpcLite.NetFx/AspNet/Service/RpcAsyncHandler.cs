@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using System.Web;
 using RpcLite.Config;
 
-namespace RpcLite.Service
+namespace RpcLite.AspNet.Service
 {
 	/// <summary>
 	/// <para>RpcLite AsyncHandler to process service request</para>
