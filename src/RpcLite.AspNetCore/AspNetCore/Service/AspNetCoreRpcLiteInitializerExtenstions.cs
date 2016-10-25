@@ -1,5 +1,5 @@
 ﻿using System;
-using RpcLite.AspNetCore;
+using RpcLite.AspNetCore.Service;
 using RpcLite.Config;
 
 // ReSharper disable once CheckNamespace

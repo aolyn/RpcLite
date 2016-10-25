@@ -1,7 +1,7 @@
 ﻿<configuration>
 	<system.webServer>
 		<modules>
-			<add name="RpcLite" type="RpcLite.Service.RpcHttpModule, RpcLite.NetFx"/>
+			<add name="RpcLite" type="RpcLite.AspNet.Service.RpcHttpModule, RpcLite.NetFx" />
 		</modules>
 	</system.webServer>
 </configuration>

@@ -2,13 +2,14 @@
 
 using System.IO;
 using Microsoft.AspNetCore.Http;
+using RpcLite.Service;
 
-namespace RpcLite.Service
+namespace RpcLite.AspNetCore.Service
 {
 	/// <summary>
 	/// 
 	/// </summary>
-	public class AspNetCoreServerContext : IServerContext
+	internal class AspNetCoreServerContext : IServerContext
 	{
 		private readonly HttpContext _httpContext;
 		private string _requestPath;

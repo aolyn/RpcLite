@@ -1,9 +1,8 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
 using RpcLite.Config;
-using RpcLite.Service;
 
-namespace RpcLite.AspNetCore
+namespace RpcLite.AspNetCore.Service
 {
 	/// <summary>
 	/// 
