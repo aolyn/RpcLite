@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using RpcLite.Logging;
 using RpcLite.Registry.Merops.Contract;
 using ServiceRegistry.Repositories;
 
@@ -51,7 +52,7 @@ namespace ServiceRegistry.Service.Services
 						}
 						catch (Exception ex)
 						{
-							//log ex
+							LogHelper.Error(ex);
 						}
 						return null;
 					})

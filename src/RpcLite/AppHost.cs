@@ -98,7 +98,7 @@ namespace RpcLite
 
 			if (!string.IsNullOrWhiteSpace(config.Monitor?.Type))
 			{
-				var monitorFactory = TypeCreator.CreateInstanceByIdentifier<IMonitorFactory>(config.Monitor.Type);
+				var monitorFactory = ReflectHelper.CreateInstanceByIdentifier<IMonitorFactory>(config.Monitor.Type);
 				Monitor = monitorFactory.CreateMonitor(this, config);
 			}
 
@@ -106,7 +106,7 @@ namespace RpcLite
 			{
 				foreach (var item in config.Filter.Filters)
 				{
-					var factory = TypeCreator.CreateInstanceByIdentifier<IFilterFactory>(item.Type);
+					var factory = ReflectHelper.CreateInstanceByIdentifier<IFilterFactory>(item.Type);
 					var filters = factory.CreateFilters();
 					if (filters == null) continue;
 					foreach (var filter in filters)

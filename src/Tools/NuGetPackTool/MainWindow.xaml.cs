@@ -60,21 +60,7 @@ namespace NuGetPackTool
 		{
 			var file = txtNuspec.Text;
 
-			var xml = new XmlDocument();
-			xml.Load(file);
-
-			var xmlnsm = new XmlNamespaceManager(xml.NameTable);
-			xmlnsm.AddNamespace("def", xml.DocumentElement?.NamespaceURI);
-			//xmlnsm.DefaultNamespace = xml.DocumentElement?.Name;
-
-			var versionNode = xml.DocumentElement?.SelectSingleNode("/def:package/def:metadata/def:version", xmlnsm);
-
-			if (versionNode != null)
-			{
-				versionNode.InnerText = txtVersion.Text.Trim();
-			}
-
-			xml.Save(file);
+			NuspecHelper.SetVersion(file, txtVersion.Text.Trim());
 		}
 
 		private void btnRead_Click(object sender, RoutedEventArgs e)
@@ -85,21 +71,13 @@ namespace NuGetPackTool
 		private void ReadNuspec()
 		{
 			var file = txtNuspec.Text;
-			var dir = System.IO.Path.GetDirectoryName(file);
+			var dir = Path.GetDirectoryName(file);
 			Environment.CurrentDirectory = dir;
 
-			var xml = new XmlDocument();
-			xml.Load(file);
-
-			var xmlnsm = new XmlNamespaceManager(xml.NameTable);
-			xmlnsm.AddNamespace("def", xml.DocumentElement?.NamespaceURI);
-			//xmlnsm.DefaultNamespace = xml.DocumentElement?.Name;
-
-			var versionNode = xml.DocumentElement?.SelectSingleNode("/def:package/def:metadata/def:version", xmlnsm);
-
-			if (versionNode != null)
+			string version = NuspecHelper.GetVerson(file);
+			if (version != null)
 			{
-				txtVersion.Text = versionNode.InnerText;
+				txtVersion.Text = version;
 			}
 		}
 
@@ -113,20 +91,11 @@ namespace NuGetPackTool
 			var args = $"nuget push RpcLite.{txtVersion.Text}.nupkg -Source https://www.nuget.org";
 			args += Environment.NewLine + "pause";
 
-			RunCommand(args);
+			CommandLineHelper.RunCommand(args);
 
 			//var result = RunCommand("nuget.exe", args);
 			//if (!string.IsNullOrWhiteSpace(result))
 			//	MessageBox.Show(result);
-		}
-
-		private static void RunCommand(string args)
-		{
-			var shellFile = Guid.NewGuid().ToString() + ".cmd";
-			File.WriteAllText(shellFile, args);
-			var proc = Process.Start(shellFile);
-			proc.WaitForExit();
-			File.Delete(shellFile);
 		}
 
 		private static string RunCommand(string file, string cmd)
@@ -205,12 +174,12 @@ namespace NuGetPackTool
 		{
 			var args = $@"copy RpcLite.{txtVersion.Text}.nupkg E:\Users\Chris\Desktop\Topic\C#\NuGet\NuGet.Server\src\NuGet.Server\Packages\";
 			args += Environment.NewLine + "pause";
-			RunCommand(args);
+			CommandLineHelper.RunCommand(args);
 		}
 
 		private void btnBuild_Click(object sender, RoutedEventArgs e)
 		{
-			RunCommand("build.cmd");
+			CommandLineHelper.RunCommand("build.cmd");
 		}
 	}
 }

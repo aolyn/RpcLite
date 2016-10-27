@@ -157,4 +157,9 @@ $RECYCLE.BIN/
 
 src/packages/*
 .vs/
+.vscode/
 *.lock.json
+
+nuget-pack/*.nupkg
+
+**/wwwroot/lib

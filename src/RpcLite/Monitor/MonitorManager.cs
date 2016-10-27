@@ -18,7 +18,7 @@ namespace RpcLite.Monitor
 
 			try
 			{
-				var type = TypeCreator.GetTypeByIdentifier(registryItem.Type);
+				var type = ReflectHelper.GetTypeByIdentifier(registryItem.Type);
 				if (type != null)
 				{
 					var constructors = type

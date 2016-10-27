@@ -136,7 +136,7 @@ namespace RpcLite.Service
 			{
 				foreach (var item in config.Formatter?.Formatters)
 				{
-					var formatter = TypeCreator.CreateInstanceByIdentifier<IFormatter>(item.Type);
+					var formatter = ReflectHelper.CreateInstanceByIdentifier<IFormatter>(item.Type);
 					AddFormatter(formatter);
 				}
 			}

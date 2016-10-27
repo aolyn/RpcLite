@@ -8,8 +8,8 @@
     "Microsoft.EntityFrameworkCore.SqlServer": "1.0.1",
     "Microsoft.EntityFrameworkCore.SqlServer.Design": "1.0.1",
     "Npgsql.EntityFrameworkCore.PostgreSQL": "1.0.2",
-    "Npgsql.EntityFrameworkCore.PostgreSQL.Design": "1.0.2"
-    // "MySql.Data.EntityFrameworkCore": "7.0.5-IR21"
+    "Npgsql.EntityFrameworkCore.PostgreSQL.Design": "1.0.2",
+    "Aolyn.Data.Npgsql": "1.0.0-*"
   },
 
   "buildOptions": {

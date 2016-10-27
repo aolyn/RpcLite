@@ -1,9 +1,19 @@
-﻿{
+{
   "version": "1.0.0-*",
+
+  "dependencies": {
+    "RpcLite": "1.0.1-*",
+    "RpcLite.Registry.Merops": "1.0.0-*",
+    "NUnit": "3.5.0",
+    "ServiceTest.Contract": "1.0.0-*",
+    "ServiceTest.ServiceImpl": "1.0.0-*"
+  },
+
   "buildOptions": {
     "emitEntryPoint": true,
     "copyToOutput": [ "rpclite.config.json" ]
   },
+
   "frameworks": {
     "netcoreapp1.0": {
       "imports": "dnxcore50",
@@ -21,12 +31,6 @@
         "RpcLite.NetFx": "1.0.0-*"
       }
     }
-  },
-  "dependencies": {
-    "RpcLite": "1.0.1-*",
-    "RpcLite.Registry.Merops": "1.0.0-*",
-    "NUnit": "3.4.1",
-    "ServiceTest.Contract": "1.0.0-*",
-    "ServiceTest.ServiceImpl": "1.0.0-*"
   }
+
 }

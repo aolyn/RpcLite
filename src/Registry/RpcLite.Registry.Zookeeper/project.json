@@ -3,7 +3,7 @@
 
   "dependencies": {
     "RpcLite": "1.0.1-*",
-    "ZooKeeperNetEx": "3.4.8.5"
+    "ZooKeeperNetEx": "3.4.9"
   },
 
   "frameworks": {

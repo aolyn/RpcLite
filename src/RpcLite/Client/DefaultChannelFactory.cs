@@ -45,7 +45,7 @@ namespace RpcLite.Client
 			{
 				foreach (var provider in config.Client.Channel.Providers)
 				{
-					channelProviders.Add(TypeCreator.CreateInstanceByIdentifier<IChannelProvider>(provider.Type));
+					channelProviders.Add(ReflectHelper.CreateInstanceByIdentifier<IChannelProvider>(provider.Type));
 				}
 			}
 

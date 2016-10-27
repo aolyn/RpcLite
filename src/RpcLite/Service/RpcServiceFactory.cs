@@ -31,7 +31,7 @@ namespace RpcLite.Service
 
 			if (config?.Service?.Mapper != null)
 			{
-				var factory = TypeCreator.CreateInstanceByIdentifier<IServiceMapperFactory>(config.Service.Mapper.Type);
+				var factory = ReflectHelper.CreateInstanceByIdentifier<IServiceMapperFactory>(config.Service.Mapper.Type);
 				_serviceMapper = factory.CreateServiceMapper(this, config);
 			}
 			else
@@ -50,7 +50,7 @@ namespace RpcLite.Service
 
 			foreach (var item in _config.Service.Services)
 			{
-				var typeInfo = TypeCreator.GetTypeByIdentifier(item.Type);
+				var typeInfo = ReflectHelper.GetTypeByIdentifier(item.Type);
 				if (typeInfo == null)
 				{
 					throw new ServiceException("can't load service type: " + item.Type);

@@ -18,7 +18,7 @@ namespace RpcLite.Registry
 
 			try
 			{
-				var type = TypeCreator.GetTypeByIdentifier(registryItem.Type);
+				var type = ReflectHelper.GetTypeByIdentifier(registryItem.Type);
 				if (type == null)
 					throw new ConfigException($"can't get type '{registryItem.Type}' from registry config");
 

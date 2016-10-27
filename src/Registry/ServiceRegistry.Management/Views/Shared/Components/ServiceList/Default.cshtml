@@ -1,21 +1,28 @@
 ﻿@model ServiceRegistry.Management.ViewModels.ServiceListComponentViewModel
 
-<table class="table table-bordered">
-	<tr>
-		<td>Id</td>
-		<td>Name</td>
-		<td>View</td>
-		<td>Providers</td>
-		<td>Delete</td>
-	</tr>
-	@foreach (var service in Model.Services)
-	{
+@if (Model.ErrorMessage != null)
+{
+	<div class="alert-danger">@Model.ErrorMessage</div>
+}
+else
+{
+	<table class="table table-bordered">
 		<tr>
-			<td>@service.Id</td>
-			<td>@service.Name</td>
-			<td><a href="@Url.Action("EditService","Service", new { id = service.Id })">Edit</a></td>
-			<td><a href="@Url.Action("Providers", "Service", new { id = service.Id })">Providers</a></td>
-			<td><a href="@Url.Action("DeleteService","Service", new { id = service.Id })">Delete</a></td>
+			<td>Id</td>
+			<td>Name</td>
+			<td>View</td>
+			<td>Providers</td>
+			<td>Delete</td>
 		</tr>
-	}
-</table>
+		@foreach (var service in Model.Services)
+		{
+			<tr>
+				<td>@service.Id</td>
+				<td>@service.Name</td>
+				<td><a href="@Url.Action("EditService", "Service", new { id = service.Id })">Edit</a></td>
+				<td><a href="@Url.Action("Providers", "Service", new { id = service.Id })">Providers</a></td>
+				<td><a href="@Url.Action("DeleteService", "Service", new { id = service.Id })">Delete</a></td>
+			</tr>
+		}
+	</table>
+}
