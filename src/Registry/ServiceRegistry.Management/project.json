@@ -1,9 +1,6 @@
 {
   "dependencies": {
-    "Microsoft.NETCore.App": {
-      "version": "1.0.1",
-      "type": "platform"
-    },
+    "BundlerMinifier.Core": "2.2.281",
     "Microsoft.AspNetCore.Diagnostics": "1.0.0",
     "Microsoft.AspNetCore.Mvc": "1.0.1",
     "Microsoft.AspNetCore.Razor.Tools": {
@@ -20,10 +17,13 @@
     "Microsoft.Extensions.Logging.Console": "1.0.0",
     "Microsoft.Extensions.Logging.Debug": "1.0.0",
     "Microsoft.Extensions.Options.ConfigurationExtensions": "1.0.0",
+    "Microsoft.NETCore.App": {
+      "version": "1.0.1",
+      "type": "platform"
+    },
     "Microsoft.VisualStudio.Web.BrowserLink.Loader": "14.0.0",
-    "ServiceRegistry.Repositories": "1.0.0-*",
     "ServiceRegistry.Domain": "1.0.0-*",
-    "BundlerMinifier.Core": "2.2.296"
+    "ServiceRegistry.Repositories": "1.0.0-*"
   },
 
   "tools": {

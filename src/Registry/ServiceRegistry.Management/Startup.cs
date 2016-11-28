@@ -18,7 +18,7 @@ namespace ServiceRegistry.Management
 				.AddEnvironmentVariables();
 			Configuration = builder.Build();
 
-			ConfigManager.Initialize(Configuration);
+			ConfigurationManager.Initialize(Configuration);
 		}
 
 		public IConfigurationRoot Configuration { get; }

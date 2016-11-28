@@ -19,6 +19,7 @@ namespace RpcLite.Service
 		private readonly AppHost _host;
 		private long _oldVersion;
 		private long _processFilterOldVersion;
+		private MetaInfoBuilder _MetaInfoBuilder = new MetaInfoBuilder();
 
 		Func<ServiceContext, Task> _filterFunc;
 		/// <summary>
@@ -86,7 +87,7 @@ namespace RpcLite.Service
 				LogHelper.Debug("RpcService.BeginProcessRequest: start ActionHelper.InvokeAction");
 				try
 				{
-					var metaInfo = GetMetaInfo(context.Service);
+					var metaInfo = _MetaInfoBuilder.GetMetaInfo(context.Service);
 					context.Result = metaInfo;
 					context.Request.RequestType = RequestType.MetaData;
 				}
@@ -234,52 +235,6 @@ namespace RpcLite.Service
 					LogHelper.Error(ex);
 				}
 			}
-		}
-
-		private object GetMetaInfo(RpcService service)
-		{
-			var type = service.Type;
-			var sb = new StringBuilder();
-			sb.AppendFormat("Service Name: {0}", type.Name);
-			sb.AppendLine();
-			sb.Append("Actions:");
-
-			//			var typeInfo =
-			//#if NETCORE
-			//				type.GetTypeInfo();
-			//#else
-			//				type;
-			//#endif
-
-			var methods = type.GetMethods(BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
-
-			foreach (var method in methods)
-			{
-				if (method.DeclaringType == typeof(object))
-					continue;
-
-				sb.AppendLine();
-				sb.Append(method.ReturnType.Name);
-				sb.Append(" ");
-				sb.AppendFormat("{0}(", method.Name);
-
-				var isFirstArgument = true;
-				foreach (var arg in method.GetParameters())
-				{
-					if (isFirstArgument)
-						isFirstArgument = false;
-					else
-						sb.Append(", ");
-
-					sb.Append(arg.ParameterType.Name);
-					sb.Append(" ");
-					sb.Append(arg.Name);
-				}
-
-				sb.AppendFormat(");");
-			}
-
-			return sb.ToString();
 		}
 	}
 }

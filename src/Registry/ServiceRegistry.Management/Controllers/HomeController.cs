@@ -19,7 +19,7 @@ namespace ServiceRegistry.Management.Controllers
 
 		public IActionResult Contact()
 		{
-			ViewData["Message"] = "Your contact page.";
+			//ViewData["Message"] = "Contact way.";
 
 			return View();
 		}

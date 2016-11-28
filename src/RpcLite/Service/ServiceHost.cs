@@ -265,11 +265,11 @@ namespace RpcLite.Service
 							using (var writer = new StreamWriter(context.Response.ResponseStream))
 							{
 								var value = context.Result.ToString();
-								var html = WebUtility.HtmlEncode(value);
-								html = html
-									.Replace(" ", "&nbsp;")
-									.Replace(Environment.NewLine, "<br />");
-								writer.Write(html);
+								//var html = WebUtility.HtmlEncode(value);
+								//html = html
+								//	.Replace(" ", "&nbsp;")
+								//	.Replace(Environment.NewLine, "<br />");
+								writer.Write(value);
 							}
 						}
 						else

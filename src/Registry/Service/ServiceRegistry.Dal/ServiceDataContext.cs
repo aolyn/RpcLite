@@ -50,7 +50,7 @@ namespace ServiceRegistry.Dal
 
 		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 		{
-			ConfigManager.Default.Entity.Use(optionsBuilder, "RegistryDb");
+			ConfigurationManager.Entity.Use(optionsBuilder, "RegistryDb");
 
 			//optionsBuilder.UseNpgsql("server=localhost;user id=chris;password=chris123;database=RpcLite");
 			//optionsBuilder.UseMySQL("server=localhost;user id=chris;password=chris123;database=RpcLite");
