@@ -1,0 +1,42 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp1.0</TargetFramework>
+    <AssemblyName>ServiceTest.ClientTest</AssemblyName>
+    <OutputType>Exe</OutputType>
+    <PackageId>ServiceTest.ClientTest</PackageId>
+    <RuntimeFrameworkVersion>1.0.4</RuntimeFrameworkVersion>
+    <PackageTargetFallback>$(PackageTargetFallback);dnxcore50</PackageTargetFallback>
+    <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
+    <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
+    <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Update="rpclite.config.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\RpcLite.AspNetCore\RpcLite.AspNetCore.csproj" />
+    <ProjectReference Include="..\..\Monitor\RpcLite.Monitor.Merops\RpcLite.Monitor.Merops.csproj" />
+    <ProjectReference Include="..\..\Registry\RpcLite.Registry.Merops\RpcLite.Registry.Merops.csproj" />
+    <ProjectReference Include="..\..\Registry\RpcLite.Registry.Zookeeper\RpcLite.Registry.Zookeeper.csproj" />
+    <ProjectReference Include="..\..\Registry\RpcLite.Registry.Merops.Contract\RpcLite.Registry.Merops.Contract.csproj" />
+    <ProjectReference Include="..\ServiceTest.Contract\ServiceTest.Contract.csproj" />
+    <ProjectReference Include="..\ServiceTest.ServiceImpl\ServiceTest.ServiceImpl.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
+    <PackageReference Include="protobuf-net" Version="2.1.0" />
+    <PackageReference Include="System.Runtime.Serialization.Json" Version="4.0.2" />
+    <PackageReference Include="System.Runtime.Serialization.Primitives" Version="4.1.1" />
+    <PackageReference Include="System.Runtime.Serialization.Xml" Version="4.1.1" />
+    <PackageReference Include="System.Xml.XmlSerializer" Version="4.0.11" />
+    <PackageReference Include="NUnit" Version="3.5.0" />
+    <PackageReference Include="ServiceStack.Text.Core" Version="1.0.24" />
+  </ItemGroup>
+
+</Project>
