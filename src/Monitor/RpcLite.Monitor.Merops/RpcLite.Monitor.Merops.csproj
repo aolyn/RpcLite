@@ -4,7 +4,6 @@
     <TargetFramework>netstandard1.3</TargetFramework>
     <AssemblyName>RpcLite.Monitor.Merops</AssemblyName>
     <PackageId>RpcLite.Monitor.Merops</PackageId>
-    <NetStandardImplicitPackageVersion>1.6.0</NetStandardImplicitPackageVersion>
     <PackageTargetFallback>$(PackageTargetFallback);dnxcore50</PackageTargetFallback>
     <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
     <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
