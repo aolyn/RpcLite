@@ -1,4 +1,5 @@
 ﻿//#define LogDuration
+
 #if DEBUG && LogDuration
 using System.Diagnostics;
 #endif
@@ -6,10 +7,7 @@ using System.Diagnostics;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
-using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using RpcLite.Client;
@@ -19,23 +17,23 @@ namespace RpcLite.Net
 	/// <summary>
 	/// Contain simple methods to process web request &amp; response
 	/// </summary>
-	public class WebRequestHelper
+	public partial class WebRequestHelper
 	{
 		private const string HeadPrefix = "RpcLite-";
 
-		/// <summary>
-		/// post data to web server and get retrieve response data
-		/// </summary>
-		/// <param name="url"></param>
-		/// <param name="postData"></param>
-		/// <param name="encoding"></param>
-		/// <param name="headDic"></param>
-		/// <returns></returns>
-		public static string PostData(string url, string postData, Encoding encoding, Dictionary<string, string> headDic)
-		{
-			var response = Post(url, postData, encoding, headDic);
-			return response.Result;
-		}
+		///// <summary>
+		///// post data to web server and get retrieve response data
+		///// </summary>
+		///// <param name="url"></param>
+		///// <param name="postData"></param>
+		///// <param name="encoding"></param>
+		///// <param name="headDic"></param>
+		///// <returns></returns>
+		//public static string PostData(string url, string postData, Encoding encoding, Dictionary<string, string> headDic)
+		//{
+		//	var response = Post(url, postData, encoding, headDic);
+		//	return response.Result;
+		//}
 
 #if NETFX_40
 		private int a2324234 = 2;
@@ -205,12 +203,12 @@ namespace RpcLite.Net
 			Action setp2 = () =>
 			{
 #if DEBUG && LogDuration
-				var stopwatch1 = Stopwatch.StartNew();
+						var stopwatch1 = Stopwatch.StartNew();
 
-				//#if NETCORE
-				//				var response1 = request.GetResponseAsync().Result;
-				//				var duration0 = stopwatch1.GetAndRest();
-				//#endif
+						//#if NETCORE
+						//				var response1 = request.GetResponseAsync().Result;
+						//				var duration0 = stopwatch1.GetAndRest();
+						//#endif
 #endif
 				var getResponseTask = Task.Factory.FromAsync(request.BeginGetResponse, request.EndGetResponse, null);
 
@@ -218,7 +216,7 @@ namespace RpcLite.Net
 				var task1 = getResponseTask.ContinueWith(tsk =>
 				{
 #if DEBUG && LogDuration
-					var duration1 = stopwatch1.GetAndRest();
+							var duration1 = stopwatch1.GetAndRest();
 #endif
 
 					ResponseMessage responseMessage;
@@ -282,18 +280,16 @@ namespace RpcLite.Net
 
 			if (content != null)
 			{
-
 #if DEBUG && LogDuration
-				var stopwatch1 = Stopwatch.StartNew();
+						var stopwatch1 = Stopwatch.StartNew();
 #endif
 
 				var getRequestStreamTask = Task.Factory.FromAsync(request.BeginGetRequestStream, request.EndGetRequestStream, null);
 				// ReSharper disable once UnusedVariable
 				var task1 = getRequestStreamTask.ContinueWith(tsk =>
 				{
-
 #if DEBUG && LogDuration
-					var duration0 = stopwatch1.GetAndRest();
+							var duration0 = stopwatch1.GetAndRest();
 #endif
 
 					if (tsk.Exception != null)
@@ -312,7 +308,7 @@ namespace RpcLite.Net
 						requestStream.Dispose();
 
 #if DEBUG && LogDuration
-						var duration1 = stopwatch1.GetAndRest();
+								var duration1 = stopwatch1.GetAndRest();
 #endif
 					}
 					catch (Exception ex)
@@ -330,38 +326,6 @@ namespace RpcLite.Net
 			}
 
 			return tcs.Task;
-		}
-
-		private static ResponseMessage GetResponseMessage(HttpWebResponse response)
-		{
-			var headers = GetRpcHeaders(response.Headers);
-
-			string statusCode;
-			var isSuccess = headers.TryGetValue(HeaderName.StatusCode, out statusCode)
-				&& statusCode == RpcStatusCode.Ok;
-
-			var responseMessage = new ResponseMessage(response)
-			{
-				IsSuccess = isSuccess,
-				Result = response.GetResponseStream(),
-				Headers = headers,
-			};
-			return responseMessage;
-		}
-
-		private static Dictionary<string, string> GetRpcHeaders(WebHeaderCollection headers)
-		{
-			return headers
-				.Cast<string>()
-				.Where(it => it.StartsWith(HeadPrefix))
-				.ToDictionary(item => item.Substring(HeadPrefix.Length, item.Length - HeadPrefix.Length), item => headers[item]);
-		}
-
-		private static Dictionary<string, string> GetRpcHeaders(HttpResponseHeaders headers)
-		{
-			return headers
-				.Where(it => it.Key.StartsWith(HeadPrefix))
-				.ToDictionary(item => item.Key.Substring(HeadPrefix.Length, item.Key.Length - HeadPrefix.Length), item => item.Value.FirstOrDefault());
 		}
 
 		/// <summary>
@@ -388,7 +352,8 @@ namespace RpcLite.Net
 			//}
 			//return task.Result;
 
-			#region 
+			#region
+
 			//			ServiceReponseMessage responseMessage;
 			//			var request = WebRequest.Create(url) as HttpWebRequest;
 			//			if (request == null) return null;
@@ -456,7 +421,7 @@ namespace RpcLite.Net
 
 			//var contentEncoding = response.Headers[HttpRequestHeader.TransferEncoding];
 #if NETCORE
-			var contentEncoding = response.Headers["Transfer-Encoding"];
+            var contentEncoding = response.Headers["Transfer-Encoding"];
 #else
 			var contentEncoding = response.Headers.Get("Transfer-Encoding");
 #endif
@@ -484,120 +449,6 @@ namespace RpcLite.Net
 			return responseMessage;
 		}
 
-		private static readonly HttpClient HttpClient = new HttpClient();
-		/// <summary>
-		/// post data to web server and get retrieve response data
-		/// </summary>
-		/// <param name="url"></param>
-		/// <param name="content"></param>
-		/// <param name="headDic"></param>
-		/// <returns></returns>
-		public static Task<IResponseMessage> PostAsync(string url, Stream content, IDictionary<string, string> headDic)
-		{
-			var requestMessage = new HttpRequestMessage(HttpMethod.Post, url)
-			{
-				Content = new StreamContent(content)
-			};
-
-			if (headDic != null && headDic.Count > 0)
-			{
-				string contentType;
-				if (headDic.TryGetValue("Content-Type", out contentType))
-				{
-					requestMessage.Content.Headers.ContentType = new MediaTypeHeaderValue(contentType);
-					//requestMessage.Headers.TryAddWithoutValidation("Content-Type", contentType);
-				}
-			}
-
-#if DEBUG && LogDuration
-			var stopwatch1 = Stopwatch.StartNew();
-#endif
-
-			var responseTask = HttpClient.SendAsync(requestMessage);
-			return responseTask.ContinueWith(tsk =>
-			{
-#if DEBUG && LogDuration
-					var duration1 = stopwatch1.GetAndRest();
-#endif
-
-				IResponseMessage responseMessage;
-				if (tsk.Exception != null)
-				{
-					var webException = tsk.Exception.InnerException as HttpRequestException;
-					if (webException == null)
-					{
-						throw tsk.Exception.InnerException;
-					}
-
-					//TODO check error like 500, 403
-					//if (webException.Response != null)
-					//{
-					//	try
-					//	{
-					//		responseMessage = GetResponseMessage((HttpWebResponse)webException.Response);
-					//		return responseMessage;
-					//	}
-					//	catch (Exception ex)
-					//	{
-					//		LogHelper.Error(ex);
-					//		throw;
-					//	}
-					//}
-					throw new ConnectionException("connection error when transport data with server", webException);
-				}
-
-				if (!tsk.Result.IsSuccessStatusCode)
-				{
-					throw new ConnectionException("connection error when transport data with server: " + tsk.Result.ReasonPhrase);
-				}
-
-				try
-				{
-					responseMessage = GetResponseMessage(tsk.Result);
-				}
-				catch (WebException ex)
-				{
-					if (ex.Response != null)
-					{
-						responseMessage = GetResponseMessage((HttpWebResponse)ex.Response);
-						((IDisposable)ex.Response).Dispose();
-					}
-					else
-					{
-						throw;
-					}
-				}
-				return responseMessage;
-
-				//#if DEBUG && LogDuration
-				//				var duration1 = stopwatch1.GetAndRest();
-				//#endif
-				//				var responseMessage = GetResponseMessage(tsk.Result);
-				//#if DEBUG && LogDuration
-				//				var duration2 = stopwatch1.GetAndRest();
-				//#endif
-				//				return responseMessage;
-			});
-		}
-
-		private static IResponseMessage GetResponseMessage(HttpResponseMessage response)
-		{
-			var headers = GetRpcHeaders(response.Headers);
-			//var contentEncoding = response.Headers.GetValues("Transfer-Encoding").FirstOrDefault();
-			string statusCode;
-			var isSuccess = headers.TryGetValue(HeaderName.StatusCode, out statusCode)
-				&& statusCode == RpcStatusCode.Ok;
-
-			var responseMessage = new ResponseMessage(response)
-			{
-				IsSuccess = isSuccess, // response.StatusCode == HttpStatusCode.OK,
-				Result = response.Content.ReadAsStreamAsync().Result,
-				Headers = headers,
-			};
-			return responseMessage;
-		}
-
-
 		/// <summary>
 		/// 
 		/// </summary>
@@ -607,16 +458,16 @@ namespace RpcLite.Net
 			/// 
 			/// </summary>
 			public bool IsSuccess { get; set; }
+
 			/// <summary>
 			/// 
 			/// </summary>
 			public Dictionary<string, string> Header { get; set; }
+
 			/// <summary>
 			/// 
 			/// </summary>
 			public string Result { get; set; }
 		}
-
 	}
-
 }
