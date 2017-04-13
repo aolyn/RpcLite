@@ -16,6 +16,14 @@ namespace RpcLite.Utility
 	/// </summary>
 	public static class JsonHelper
 	{
+		static JsonHelper()
+		{
+#if USE_CUSTOMIZE_JSON_DESERIALIZE
+			Settings.Converters.Add(new ExceptionConverter());
+#endif
+
+		}
+
 		/// <summary>
 		/// </summary>
 		/// <param name="stream"></param>
@@ -69,6 +77,7 @@ namespace RpcLite.Utility
 		{
 			Formatting = Formatting.Indented,
 			ContractResolver = new SerializeContractResolver(),
+			ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
 			//Converters = new List<JsonConverter>
 			//{
 			//	new ExceptionConverter(),
@@ -86,9 +95,9 @@ namespace RpcLite.Utility
 			//{
 			//	ContractResolver = Settings.ContractResolver,
 			//};
-			var jsonSerializer = JsonSerializer.Create();
-			jsonSerializer.ContractResolver = Settings.ContractResolver;
-			jsonSerializer.Converters.Add(new ExceptionConverter());
+			var jsonSerializer = JsonSerializer.Create(Settings);
+			//jsonSerializer.ContractResolver = Settings.ContractResolver;
+			//jsonSerializer.Converters.Add(new ExceptionConverter());
 
 			return jsonSerializer;
 
