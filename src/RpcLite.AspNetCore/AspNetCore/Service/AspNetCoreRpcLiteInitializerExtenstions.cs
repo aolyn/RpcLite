@@ -65,8 +65,7 @@ namespace Microsoft.AspNetCore.Builder
 			builder(builderObj);
 			var config = builderObj.Build();
 
-			AspNetCoreInitializer.Initialize(app, config);
-			return app;
+			return UseRpcLite(app, config);
 		}
 
 		/// <summary>

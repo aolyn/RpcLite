@@ -56,11 +56,11 @@ namespace RpcLite
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="httpContext"></param>
+		/// <param name="serverContext"></param>
 		/// <returns>if true process processed or else the path not a service path</returns>
-		public static Task<bool> ProcessAsync(IServerContext httpContext)
+		public static Task<bool> ProcessAsync(IServerContext serverContext)
 		{
-			return AppHost.ProcessAsync(httpContext);
+			return AppHost.ProcessAsync(serverContext);
 		}
 
 		///// <summary>

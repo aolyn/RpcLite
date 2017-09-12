@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
   <metadata>
     <id>RpcLite</id>
-    <version>1.0.2.7</version>
+    <version>1.0.2.9</version>
     <title>RpcLite</title>
     <authors>Chris Huang</authors>
     <owners>Aolyn Inc</owners>

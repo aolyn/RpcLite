@@ -28,7 +28,11 @@ namespace RpcLite.AspNetCore.Service
 		{
 			RpcManager.Initialize(rpcConfig);
 
-			if (rpcConfig?.Service?.Paths == null) return;
+			if (rpcConfig.Service?.Paths?.Length == 0)
+			{
+				throw new ConfigException("service path not supported");
+			}
+
 			if (app == null) return;
 
 			var routers = new RouteBuilder(app);

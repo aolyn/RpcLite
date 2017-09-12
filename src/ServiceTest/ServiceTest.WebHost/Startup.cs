@@ -31,9 +31,9 @@ namespace ServiceTest.WebHost
 			app.UseRpcLite(builder =>
 			{
 				builder
+					.UseServicePaths("api/")
 					.UseService<TestService>("TestService", "api/test/")
 					.UseService<ProductService>("TestService", "api/service/")
-					.UseServicePaths("api/")
 					.UseFilter<TestFilterFactory>();
 			});
 

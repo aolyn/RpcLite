@@ -152,10 +152,10 @@ namespace RpcLite.Config
 		}
 
 		/// <summary>
-		/// 
+		/// add a service, eg: UseService&lt;TestService&gt;("TestService", "api/test/")
 		/// </summary>
 		/// <param name="name"></param>
-		/// <param name="path"></param>
+		/// <param name="path">url path, must ends with /</param>
 		/// <returns></returns>
 		public RpcConfigBuilder UseService<TService>(string name, string path)
 		{
