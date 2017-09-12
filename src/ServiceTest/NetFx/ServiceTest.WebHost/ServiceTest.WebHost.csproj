@@ -22,6 +22,7 @@
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
     <UseGlobalApplicationHostFile />
+    <Use64BitIISExpress />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -42,14 +43,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="RpcLite, Version=1.0.1.6, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\bin\net40\RpcLite.dll</HintPath>
-    </Reference>
-    <Reference Include="RpcLite.NetFx, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\bin\net40\RpcLite.NetFx.dll</HintPath>
-    </Reference>
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -99,6 +92,14 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\RpcLite.NetFx\RpcLite.NetFx.csproj">
+      <Project>{85834866-2e39-46c1-9b56-5b2eaa522905}</Project>
+      <Name>RpcLite.NetFx</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\RpcLite\RpcLite.csproj">
+      <Project>{c155d138-fae3-4080-a2bf-f5483bf0b226}</Project>
+      <Name>RpcLite</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ServiceTest.Contract\ServiceTest.Contract.csproj">
       <Project>{5D2CC80C-942A-4B5A-810D-B8594EFF2937}</Project>
       <Name>ServiceTest.Contract</Name>

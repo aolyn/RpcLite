@@ -124,16 +124,16 @@ namespace RpcLite
 			return UseService<TService>(name, path, null);
 		}
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="paths"></param>
-		/// <returns></returns>
-		public AppHostBuilder UseServicePaths(params string[] paths)
-		{
-			_config.UseServicePaths(paths);
-			return this;
-		}
+		///// <summary>
+		///// 
+		///// </summary>
+		///// <param name="paths"></param>
+		///// <returns></returns>
+		//public AppHostBuilder UseServicePaths(params string[] paths)
+		//{
+		//	_config.UseServicePaths(paths);
+		//	return this;
+		//}
 
 		/// <summary>
 		/// 

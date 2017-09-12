@@ -11,7 +11,7 @@ namespace ServiceTest.WebHost
 			RpcInitializer.Initialize(builder => builder
 					.UseService<ProductService>("ProductService", "api/service/")
 					.UseService<TestService>("ProductService", "api/test/")
-					.UseServicePaths("api/")
+					//.UseServicePaths("api/")
 			);
 		}
 

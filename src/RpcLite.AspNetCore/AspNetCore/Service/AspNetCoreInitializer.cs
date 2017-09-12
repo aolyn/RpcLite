@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System.Collections.Generic;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
 using RpcLite.Config;
 
@@ -27,22 +28,21 @@ namespace RpcLite.AspNetCore.Service
 		public static void Initialize(IApplicationBuilder app, RpcConfig rpcConfig)
 		{
 			RpcManager.Initialize(rpcConfig);
-
-			if (rpcConfig.Service?.Paths?.Length == 0)
-			{
-				throw new ConfigException("service path not supported");
-			}
-
 			if (app == null) return;
 
 			var routers = new RouteBuilder(app);
-
-			foreach (var path in rpcConfig.Service.Paths)
-			{
-				routers.MapRoute(path + "{*RpcLiteServicePath}", context => RpcManager.ProcessAsync(new AspNetCoreServerContext(context)));
-			}
+			MapService(rpcConfig.Service.Services, routers);
 			var routes1 = routers.Build();
 			app.UseRouter(routes1);
+		}
+
+		private static void MapService(List<ServiceConfigItem> serviceServices, IRouteBuilder routers)
+		{
+			foreach (var path in serviceServices)
+			{
+				routers.MapRoute(path.Path + "{*RpcLiteServicePath}",
+					context => RpcManager.ProcessAsync(new AspNetCoreServerContext(context)));
+			}
 		}
 
 		/// <summary>
@@ -77,15 +77,7 @@ namespace RpcLite.AspNetCore.Service
 		public static void Initialize(IRouteBuilder routers, RpcConfig rpcConfig)
 		{
 			RpcManager.Initialize(rpcConfig);
-
-			if (rpcConfig?.Service?.Paths != null)
-			{
-				foreach (var path in rpcConfig.Service.Paths)
-				{
-					routers.MapRoute(path, context => RpcManager.ProcessAsync(new AspNetCoreServerContext(context)));
-				}
-			}
+			MapService(rpcConfig.Service.Services, routers);
 		}
-
 	}
 }

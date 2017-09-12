@@ -317,20 +317,20 @@ namespace RpcLite.Config
 					instance.Service.Mapper = InitializeServiceMapperConfig(mapperNode);
 				}
 
-				var pathsNode = serviceNode.GetSection("paths");
-				if (pathsNode != null)
-				{
-					var paths = new List<string>();
-					var pathNodes = pathsNode.GetChildren();
-					foreach (var path in pathNodes)
-					{
-						if (!string.IsNullOrWhiteSpace(path.Value))
-							paths.Add(path.Value);
-						else if (!string.IsNullOrWhiteSpace(path["value"]))
-							paths.Add(path["value"]);
-					}
-					instance.Service.Paths = paths.ToArray();
-				}
+				//var pathsNode = serviceNode.GetSection("paths");
+				//if (pathsNode != null)
+				//{
+				//	var paths = new List<string>();
+				//	var pathNodes = pathsNode.GetChildren();
+				//	foreach (var path in pathNodes)
+				//	{
+				//		if (!string.IsNullOrWhiteSpace(path.Value))
+				//			paths.Add(path.Value);
+				//		else if (!string.IsNullOrWhiteSpace(path["value"]))
+				//			paths.Add(path["value"]);
+				//	}
+				//	instance.Service.Paths = paths.ToArray();
+				//}
 
 			}
 			catch (Exception ex)
