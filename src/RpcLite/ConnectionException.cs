@@ -1,7 +1,5 @@
 ﻿using System;
-#if !NETCORE
 using System.Runtime.Serialization;
-#endif
 
 namespace RpcLite
 {
@@ -15,8 +13,6 @@ namespace RpcLite
 		/// </summary>
 		public ConnectionException() { }
 
-#if NETCORE
-#else
 		/// <summary>
 		/// 
 		/// </summary>
@@ -25,7 +21,6 @@ namespace RpcLite
 		protected ConnectionException(SerializationInfo info, StreamingContext context) : base(info, context)
 		{
 		}
-#endif
 
 		/// <summary>
 		/// Initializes a new instance of RpcLite.ConnectException with specifid message and inner exception

@@ -419,12 +419,7 @@ namespace RpcLite.Net
 
 			string jsonResult = null;
 
-			//var contentEncoding = response.Headers[HttpRequestHeader.TransferEncoding];
-#if NETCORE
-            var contentEncoding = response.Headers["Transfer-Encoding"];
-#else
-			var contentEncoding = response.Headers.Get("Transfer-Encoding");
-#endif
+			var contentEncoding = response.Headers[HttpRequestHeader.TransferEncoding];
 			if (response.ContentLength > 0 || contentEncoding == "chunked")
 			{
 				var stream = response.GetResponseStream();

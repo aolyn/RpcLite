@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Linq;
-#if NETCORE
-using System.Reflection;
-#endif
 using System.Threading.Tasks;
 
 namespace RpcLite.Service
@@ -116,16 +113,12 @@ namespace RpcLite.Service
 
 			var arguments = method.GetParameters();
 			var argumentType = TypeCreator.GetParameterType(method);
+			var defaultArgument = GetDefaultValue(argumentType, method.GetParameters().Length);
 
 			Delegate methodFunc;
 			var isTask = false;
-#if NETCORE
 			if (method.ReturnType == typeof(Task)
-				|| (method.ReturnType.GetTypeInfo().IsGenericType && method.ReturnType.GetTypeInfo().BaseType == typeof(Task)))
-#else
-			if (method.ReturnType == typeof(Task)
-				|| (method.ReturnType.IsGenericType && method.ReturnType.BaseType == typeof(Task)))
-#endif
+				|| method.ReturnType.IsGenericType && method.ReturnType.BaseType == typeof(Task))
 			{
 				isTask = true;
 				//isAsync = true;
@@ -142,7 +135,7 @@ namespace RpcLite.Service
 				Name = actionName,
 				ArgumentCount = arguments.Length,
 				ArgumentType = argumentType,
-				DefaultArgument = GetDefaultValue(argumentType),
+				DefaultArgument = defaultArgument,
 				MethodInfo = method,
 				HasReturnValue = hasReturn,
 				ServiceCreator = TypeCreator.GetCreateInstanceFunc(serviceType),
@@ -170,14 +163,9 @@ namespace RpcLite.Service
 			return action;
 		}
 
-		private static object GetDefaultValue(Type type)
+		private static object GetDefaultValue(Type type, int argumentCount)
 		{
-			if (type == null || !type
-#if NETCORE
-				.GetTypeInfo()
-#endif
-				.IsValueType) return null;
-
+			if (type == null || !type.IsValueType && argumentCount == 1) return null;
 			return Activator.CreateInstance(type);
 		}
 

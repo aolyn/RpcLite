@@ -13,8 +13,6 @@ namespace RpcLite.Client
 		/// </summary>
 		public ClientException() { }
 
-#if NETCORE
-#else
 		/// <summary>
 		/// 
 		/// </summary>
@@ -23,7 +21,6 @@ namespace RpcLite.Client
 		protected ClientException(SerializationInfo info, StreamingContext context) : base(info, context)
 		{
 		}
-#endif
 
 
 		/// <summary>

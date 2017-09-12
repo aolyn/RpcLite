@@ -344,11 +344,7 @@ namespace RpcLite.Utility
 				il.Emit(OpCodes.Castclass, targetType);
 				// Load the value of the object's field (fi) onto the stack
 				il.Emit(OpCodes.Ldfld, field);
-				if (valueType
-#if NETCORE
-					.GetTypeInfo()
-#endif
-					.IsValueType)
+				if (valueType.IsValueType)
 				{
 					il.Emit(OpCodes.Box, valueType);
 				}
@@ -381,11 +377,7 @@ namespace RpcLite.Utility
 				il.Emit(OpCodes.Ldarg_0);
 				il.Emit(OpCodes.Castclass, targetType);
 				il.Emit(OpCodes.Ldarg_1);
-				if (valueType
-#if NETCORE
-					.GetTypeInfo()
-#endif
-				.IsValueType)
+				if (valueType.IsValueType)
 				{
 					il.Emit(OpCodes.Unbox_Any, valueType);
 				}
@@ -424,11 +416,7 @@ namespace RpcLite.Utility
 #else
 				il.Emit(OpCodes.Callvirt, field.GetGetMethod());
 #endif
-				if (valueType
-#if NETCORE
-					.GetTypeInfo()
-#endif
-					.IsValueType)
+				if (valueType.IsValueType)
 				{
 					il.Emit(OpCodes.Box, valueType);
 				}
@@ -461,11 +449,7 @@ namespace RpcLite.Utility
 				il.Emit(OpCodes.Ldarg_0);
 				il.Emit(OpCodes.Castclass, targetType);
 				il.Emit(OpCodes.Ldarg_1);
-				if (valueType
-#if NETCORE
-					.GetTypeInfo()
-#endif
-					.IsValueType)
+				if (valueType.IsValueType)
 				{
 					il.Emit(OpCodes.Unbox_Any, valueType);
 				}

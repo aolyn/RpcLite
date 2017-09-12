@@ -19,11 +19,7 @@ namespace RpcLite.Service
 
 		private static Delegate GetCallMethodFuncInternal(Type serviceType, Type argumentType, ParameterInfo[] arguments, MethodInfo method, bool hasReturn)
 		{
-#if NETCORE
-			if (method.ReturnType.GetTypeInfo().IsGenericType && method.ReturnType.GetTypeInfo().BaseType == typeof(Task))
-#else
 			if (method.ReturnType.IsGenericType && method.ReturnType.BaseType == typeof(Task))
-#endif
 				return GetCallTaskMethodFuncInternal(serviceType, argumentType, arguments, method, hasReturn);
 
 			if (arguments.Length > 0 && argumentType == null)

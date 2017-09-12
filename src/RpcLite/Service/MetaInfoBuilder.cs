@@ -18,13 +18,6 @@ namespace RpcLite.Service
 			sb.AppendLine();
 			sb.Append("<h3>Actions:</h3><p>");
 
-			//			var typeInfo =
-			//#if NETCORE
-			//				type.GetTypeInfo();
-			//#else
-			//				type;
-			//#endif
-
 			var methods = type.GetMethods(BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
 
 			var methodString = GetActionString(methods);
@@ -69,8 +62,7 @@ namespace RpcLite.Service
 
 		private static string GetTypeName(Type type)
 		{
-			var typeInfo = type.GetTypeInfoEx();
-			if (typeInfo.IsGenericType && typeInfo.BaseType == typeof(Task))
+			if (type.IsGenericType && type.BaseType == typeof(Task))
 			{
 				var gpts = type.GetGenericArguments();
 				if (gpts.Length > 0)

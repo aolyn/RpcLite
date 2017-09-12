@@ -6,8 +6,8 @@ using RpcLite.Service;
 
 namespace RpcLite.AspNetCore.Service
 {
+	/// <inheritdoc />
 	/// <summary>
-	/// 
 	/// </summary>
 	internal class AspNetCoreServerContext : IServerContext
 	{

@@ -250,11 +250,7 @@ namespace RpcLite
 				callMethodName = "GetResponseAsync";
 				isTask = true;
 			}
-#if NETCORE
-			else if (method.ReturnType.GetTypeInfo().IsGenericType && method.ReturnType.GetTypeInfo().BaseType == typeof(Task))
-#else
 			else if (method.ReturnType.IsGenericType && method.ReturnType.BaseType == typeof(Task))
-#endif
 			{
 				callMethodName = "GetResponseAsync";
 				taskParam = method.ReturnType.GetGenericArguments()[0];
@@ -345,11 +341,7 @@ namespace RpcLite
 				{
 					methodIL.Emit(OpCodes.Ldarg_1);
 					//set request object
-					if (paramType
-#if NETCORE
-						.GetTypeInfo()
-#endif
-						.IsValueType)
+					if (paramType.IsValueType)
 					{
 						methodIL.Emit(OpCodes.Box, paramType);
 					}
@@ -387,11 +379,7 @@ namespace RpcLite
 			}
 			else if (hasReturn)
 			{
-#if NETCORE
-				if (returnType.GetTypeInfo().IsValueType)
-#else
 				if (returnType.IsValueType)
-#endif
 					methodIL.Emit(OpCodes.Unbox_Any, returnType);
 				else
 					methodIL.Emit(OpCodes.Castclass, returnType);
@@ -429,7 +417,7 @@ namespace RpcLite
 			Type parameterType;
 			//prepare call parameter
 
-			if (!declareType.GetTypeInfoEx().IsInterface)
+			if (!declareType.IsInterface)
 			{
 				var paraTypes = method.GetParameters()
 					.Select(it => it.ParameterType)
@@ -480,11 +468,6 @@ namespace RpcLite
 			Func<object> func;
 			if (CreateInstanceFuncs.TryGetValue(serviceType, out func))
 				return func;
-
-			//#if NETCORE
-			//			var ctor1 = serviceType.GetConstructors();
-			//#else
-			//#endif
 
 			var ctor = serviceType.GetConstructor(Type.EmptyTypes);
 			if (ctor == null)

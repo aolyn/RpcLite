@@ -51,11 +51,7 @@ namespace RpcLite.Config
 		/// <returns></returns>
 		public static string GetTypeIdentifier(Type type)
 		{
-			return type.FullName + ", " + type
-#if NETCORE
-				.GetTypeInfo()
-#endif
-				.Assembly.GetName().Name;
+			return type.FullName + ", " + type.Assembly.GetName().Name;
 		}
 	}
 

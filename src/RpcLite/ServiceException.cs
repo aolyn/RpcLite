@@ -1,36 +1,29 @@
 ﻿using System;
-
-#if !NETCORE
 using System.Runtime.Serialization;
-#endif
 
 namespace RpcLite
 {
+	/// <inheritdoc />
 	/// <summary>
 	/// Represents errors that occor during application execution in RpcLite server
 	/// </summary>
-#if NETCORE
-#else
 	[Serializable]
-#endif
 	public class ServiceException : RpcLiteException
 	{
+		/// <inheritdoc />
 		/// <summary>
 		/// Initializes a new instance of RpcLite.ServiceException class
 		/// </summary>
 		public ServiceException() { }
 
-#if NETCORE
-#else
+		/// <inheritdoc />
 		/// <summary>
-		/// 
 		/// </summary>
 		/// <param name="info"></param>
 		/// <param name="context"></param>
 		protected ServiceException(SerializationInfo info, StreamingContext context) : base(info, context)
 		{
 		}
-#endif
 
 		/// <summary>
 		/// Initializes a new instance of RpcLite.ServiceException with specifid message and inner exception
@@ -142,8 +135,6 @@ namespace RpcLite
 		/// </summary>
 		public NotInitializedException() { }
 
-#if NETCORE
-#else
 		/// <summary>
 		/// 
 		/// </summary>
@@ -152,7 +143,6 @@ namespace RpcLite
 		protected NotInitializedException(SerializationInfo info, StreamingContext context) : base(info, context)
 		{
 		}
-#endif
 
 		/// <summary>
 		/// Initializes a new instance of RpcLite.RpcNotInitializedException with specifid message and inner exception

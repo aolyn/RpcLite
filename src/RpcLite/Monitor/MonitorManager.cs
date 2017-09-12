@@ -3,10 +3,6 @@ using System.Linq;
 using RpcLite.Config;
 using RpcLite.Logging;
 
-#if NETCORE
-using System.Reflection;
-#endif
-
 namespace RpcLite.Monitor
 {
 	internal class MonitorManager
@@ -21,14 +17,7 @@ namespace RpcLite.Monitor
 				var type = ReflectHelper.GetTypeByIdentifier(registryItem.Type);
 				if (type != null)
 				{
-					var constructors = type
-#if NETCORE
-						.GetTypeInfo()
-						.DeclaredConstructors
-						.ToArray();
-#else
-					.GetConstructors();
-#endif
+					var constructors = type.GetConstructors();
 					var constructorWithConfig = constructors
 						.Where(it =>
 						{

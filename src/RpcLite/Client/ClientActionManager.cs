@@ -67,13 +67,8 @@ namespace RpcLite.Client
 
 			Delegate methodFunc;
 			var isTask = false;
-#if NETCORE
-			if (method.ReturnType == typeof(Task)
-				|| (method.ReturnType.GetTypeInfo().IsGenericType && method.ReturnType.GetTypeInfo().BaseType == typeof(Task)))
-#else
 			if (method.ReturnType == typeof(Task)
 				|| (method.ReturnType.IsGenericType && method.ReturnType.BaseType == typeof(Task)))
-#endif
 			{
 				isTask = true;
 				//isAsync = true;
@@ -116,11 +111,7 @@ namespace RpcLite.Client
 
 		private static object GetDefaultValue(Type type)
 		{
-			if (type == null || !type
-#if NETCORE
-				.GetTypeInfo()
-#endif
-				.IsValueType) return null;
+			if (type == null || !type.IsValueType) return null;
 
 			return Activator.CreateInstance(type);
 		}

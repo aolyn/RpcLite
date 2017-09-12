@@ -5,9 +5,6 @@ using RpcLite.Client;
 using RpcLite.Formatters;
 using RpcLite.Monitor;
 using RpcLite.Registry;
-#if NETCORE
-using System.Reflection;
-#endif
 
 namespace RpcLite.Config
 {
@@ -38,7 +35,7 @@ namespace RpcLite.Config
 		/// <returns></returns>
 		public RpcConfigBuilder UseRegistry(string name, Type factoryType, string address)
 		{
-			if (!typeof(IRegistryFactory).IsAssignableFromEx(factoryType))
+			if (!typeof(IRegistryFactory).IsAssignableFrom(factoryType))
 			{
 				throw new ArgumentOutOfRangeException(nameof(factoryType), "factoryType must implement " + nameof(IRegistryFactory));
 			}
@@ -66,7 +63,7 @@ namespace RpcLite.Config
 		/// <returns></returns>
 		public RpcConfigBuilder UseMonitor(string name, Type factoryType, string address)
 		{
-			if (!typeof(IMonitorFactory).IsAssignableFromEx(factoryType))
+			if (!typeof(IMonitorFactory).IsAssignableFrom(factoryType))
 			{
 				throw new ArgumentOutOfRangeException(nameof(factoryType), "factoryType must implement " + nameof(IMonitorFactory));
 			}
@@ -169,7 +166,7 @@ namespace RpcLite.Config
 		/// <param name="name"></param>
 		public RpcConfigBuilder UseChannelProvider<TFactory>(string name)
 		{
-			if (!typeof(IChannelProvider).IsAssignableFromEx(typeof(TFactory)))
+			if (!typeof(IChannelProvider).IsAssignableFrom(typeof(TFactory)))
 				throw new ArgumentOutOfRangeException(nameof(TFactory), "factoryType must implement " + nameof(IChannelProvider));
 
 			if (_config.Client == null)
@@ -309,7 +306,7 @@ namespace RpcLite.Config
 				};
 			}
 
-			if (!typeof(IFilterFactory).IsAssignableFromEx(typeof(TFactory)))
+			if (!typeof(IFilterFactory).IsAssignableFrom(typeof(TFactory)))
 			{
 				throw new ArgumentOutOfRangeException(nameof(TFactory), "factoryType must implement " + nameof(IFilterFactory));
 			}
@@ -341,7 +338,7 @@ namespace RpcLite.Config
 			if (_config.Formatter.Formatters == null)
 				_config.Formatter.Formatters = new List<FormatterItemConfig>();
 
-			if (!typeof(IFormatter).IsAssignableFromEx(typeof(TFormatter)))
+			if (!typeof(IFormatter).IsAssignableFrom(typeof(TFormatter)))
 			{
 				throw new ArgumentOutOfRangeException(nameof(TFormatter), "factoryType must implement " + nameof(IFormatter));
 			}

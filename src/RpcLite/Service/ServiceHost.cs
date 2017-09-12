@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Net;
 using System.Threading.Tasks;
 using RpcLite.Config;
 using RpcLite.Formatters;
@@ -12,10 +11,6 @@ using RpcLite.Logging;
 
 #if OUTPUT_SERIALIZATION_TIME
 using System.Diagnostics;
-#endif
-#if NETCORE
-using System.Reflection;
-
 #endif
 
 namespace RpcLite.Service
@@ -228,9 +223,6 @@ namespace RpcLite.Service
 			{
 				httpContext.SetResponseHeader(HeaderName.ExceptionType, context.Exception.GetType().FullName);
 				httpContext.SetResponseHeader(HeaderName.ExceptionAssembly, context.Exception.GetType()
-#if NETCORE
-					.GetTypeInfo()
-#endif
 					.Assembly.FullName);
 				httpContext.SetResponseHeader(HeaderName.StatusCode, RpcStatusCode.InternalServerError);
 				//httpContext.SetResponseStatusCode((int)HttpStatusCode.InternalServerError);
