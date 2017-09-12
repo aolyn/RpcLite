@@ -28,14 +28,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
-    <PackageReference Include="protobuf-net" Version="2.1.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
+    <PackageReference Include="protobuf-net" Version="2.3.2" />
     <PackageReference Include="System.Runtime.Serialization.Json" Version="4.3.0" />
     <PackageReference Include="System.Runtime.Serialization.Primitives" Version="4.3.0" />
     <PackageReference Include="System.Runtime.Serialization.Xml" Version="4.3.0" />
     <PackageReference Include="System.Xml.XmlSerializer" Version="4.3.0" />
-    <PackageReference Include="NUnit" Version="3.6.1" />
-    <PackageReference Include="ServiceStack.Text.Core" Version="1.0.37" />
+    <PackageReference Include="NUnit" Version="3.8.1" />
+    <PackageReference Include="ServiceStack.Text.Core" Version="1.0.44" />
   </ItemGroup>
 
 </Project>

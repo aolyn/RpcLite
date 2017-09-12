@@ -1,8 +1,10 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Security.Cryptography.X509Certificates;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Server.Kestrel.Https;
 
 namespace ServiceTest.WebHost
 {
@@ -24,7 +26,6 @@ namespace ServiceTest.WebHost
 				//var pfxFile = @"E:\Users\Chris\Desktop\Topic\OpenSsl\cer\localhost2\localhost.pfx";
 				var pfxFile = Path.Combine(contentRoot, "ssl.pfx");
 				var certificate = new X509Certificate2(pfxFile);
-
 				var host = new WebHostBuilder()
 					.UseKestrel()
 					.UseContentRoot(contentRoot)
@@ -32,8 +33,13 @@ namespace ServiceTest.WebHost
 					.UseUrls("https://*:5001", "http://*:5000")
 					.UseKestrel((options) =>
 					{
-						options.ThreadCount = 16;
-						options.UseHttps(certificate);
+						//options.ThreadCount = 16;
+						//options.UseHttps(certificate);
+						//options.Listen(IPAddress.Loopback, 5000);
+						options.Listen(IPAddress.Loopback, 5001, listenOptions =>
+						{
+							listenOptions.UseHttps(certificate);
+						});
 					})
 					.UseStartup<Startup>()
 					.Build();
@@ -50,9 +56,9 @@ namespace ServiceTest.WebHost
 					.UseUrls("http://*:5000/")
 					.UseKestrel((options) =>
 					{
-						options.ThreadCount = 32;
-						if (useTestConnectionFilter)
-							options.UseHttpsTest();
+						//options.ThreadCount = 32;
+						//if (useTestConnectionFilter)
+						//	options.UseHttpsTest();
 						//HttpsConnectionFilterExtensionFunc.
 					})
 					.UseStartup<Startup>()

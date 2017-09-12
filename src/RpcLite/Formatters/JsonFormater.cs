@@ -5,8 +5,8 @@ using RpcLite.Utility;
 
 namespace RpcLite.Formatters
 {
+	/// <inheritdoc />
 	/// <summary>
-	/// 
 	/// </summary>
 	public class JsonFormatter : IFormatter
 	{
@@ -18,8 +18,8 @@ namespace RpcLite.Formatters
 			SupportMimes.Add("application/json");
 		}
 
+		/// <inheritdoc />
 		/// <summary>
-		/// 
 		/// </summary>
 		/// <param name="inputStream"></param>
 		/// <param name="targetType"></param>
@@ -30,8 +30,8 @@ namespace RpcLite.Formatters
 			return Deserialize(reader, targetType);
 		}
 
+		/// <inheritdoc />
 		/// <summary>
-		/// 
 		/// </summary>
 		/// <param name="reader"></param>
 		/// <param name="targetType"></param>
@@ -41,8 +41,8 @@ namespace RpcLite.Formatters
 			return JsonHelper.Deserialize(reader, targetType);
 		}
 
+		/// <inheritdoc />
 		/// <summary>
-		/// 
 		/// </summary>
 		/// <param name="outputStream"></param>
 		/// <param name="source"></param>
@@ -54,8 +54,8 @@ namespace RpcLite.Formatters
 			writer.Flush();
 		}
 
+		/// <inheritdoc />
 		/// <summary>
-		/// 
 		/// </summary>
 		/// <param name="writer"></param>
 		/// <param name="source"></param>
@@ -65,16 +65,19 @@ namespace RpcLite.Formatters
 			JsonHelper.Serialize(writer, source);
 		}
 
+		/// <inheritdoc />
 		/// <summary>
 		/// 
 		/// </summary>
 		public List<string> SupportMimes { get; } = new List<string>();
 
+		/// <inheritdoc />
 		/// <summary>
 		/// 
 		/// </summary>
 		public bool SupportException { get; } = true;
 
+		/// <inheritdoc />
 		/// <summary>
 		/// 
 		/// </summary>

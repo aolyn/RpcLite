@@ -19,33 +19,19 @@ namespace ServiceTest.WebHost
 		{
 			loggerFactory.AddConsole(LogLevel.Error);
 
-			////Method1: use Middleware
-			//RpcLite.AspNetCore.RpcInitializer.Initialize(app);
-
 			//RpcManager.AddFilter(new LogTimeFilter());
 			//RpcManager.AddFilter(new LogRequestTimeFilter());
 
-			//RpcLite.AspNetCore.RpcLiteInitializer.Initialize(app);
-
 			//Method 3: use builder
-			app.UseRpcLite(builder =>
-			{
-				builder
-					//.UseServicePaths("api/")
-					.UseService<TestService>("TestService", "api/test/")
-					.UseService<ProductService>("TestService", "api/service/")
-					.UseFilter<TestFilterFactory>();
-			});
+			app.UseRpcLite(builder => builder
+				.UseService<TestService>("TestService", "api/test/")
+				.UseService<ProductService>("TestService", "api/service/")
+				.UseFilter<TestFilterFactory>());
 
 			if (env.IsDevelopment())
 			{
 				app.UseDeveloperExceptionPage();
 			}
-
-			//app.Run(async (context) =>
-			//{
-			//	await context.Response.WriteAsync("Hello World!");
-			//});
 
 			app.UseMvc(routes =>
 			{
@@ -54,7 +40,10 @@ namespace ServiceTest.WebHost
 					template: "{controller=Home}/{action=Index}/{id?}");
 
 				////Method2: use IRouteBuilder
-				//routes.UseRpcLite();
+				//routes.UseRpcLite(builder => builder
+				//	.UseService<TestService>("TestService", "api/test/")
+				//	.UseService<ProductService>("TestService", "api/service/")
+				//	.UseFilter<TestFilterFactory>());
 			});
 		}
 	}

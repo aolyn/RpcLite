@@ -32,12 +32,12 @@ namespace RpcLite.AspNet.Service
 
 		private void Context_PostResolveRequestCache(object sender, EventArgs e)
 		{
-			if (!(RpcManager.AppHost?.Config?.Service?.Paths?.Length > 0)) return;
+			if (HttpContext.Current?.Request == null) return;
+			if (RpcManager.AppHost?.Config?.Service?.Services?.Count == 0) return;
 
-			foreach (var item in RpcManager.AppHost?.Config?.Service?.Paths)
+			foreach (var service in RpcManager.AppHost?.Config?.Service?.Services)
 			{
-				if (HttpContext.Current?.Request == null)
-					continue;
+				var item = service.Path;
 
 				var start = HttpContext.Current?.Request.ApplicationPath?.Length > 1
 					? HttpContext.Current.Request.ApplicationPath.Length + 1
