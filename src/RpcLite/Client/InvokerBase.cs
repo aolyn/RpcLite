@@ -9,6 +9,7 @@ using RpcLite.Logging;
 
 namespace RpcLite.Client
 {
+	/// <inheritdoc />
 	/// <summary>
 	/// 
 	/// </summary>

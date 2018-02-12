@@ -51,15 +51,23 @@ namespace RpcLite.Service
 				throw new ArgumentException("request.AppRelativeCurrentExecutionFilePath is null or white space");
 
 			var service = _factory.Services.FirstOrDefault(it =>
-				requestPath.StartsWith(it.Path, StringComparison.OrdinalIgnoreCase));
+					requestPath.StartsWith(it.Path, StringComparison.OrdinalIgnoreCase));
+
 			if (service == null)
 			{
-				LogHelper.Debug("BeginProcessReques Can't find service " + requestPath);
-				throw new ServiceNotFoundException(requestPath);
+				service = _factory.Services.FirstOrDefault(it =>
+					it.Path.StartsWith(requestPath, StringComparison.OrdinalIgnoreCase));
+				if (service == null)
+				{
+					LogHelper.Debug("BeginProcessReques Can't find service " + requestPath);
+					throw new ServiceNotFoundException(requestPath);
+				}
 			}
-			var actionName = requestPath.Substring(service.Path.Length);
-
-			serviceContext.Request.ActionName = actionName;
+			else
+			{
+				var actionName = requestPath.Substring(service.Path.Length);
+				serviceContext.Request.ActionName = actionName;
+			}
 			serviceContext.Service = service;
 
 			return new MapServiceResult

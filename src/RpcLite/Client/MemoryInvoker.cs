@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 
 namespace RpcLite.Client
 {
+	/// <inheritdoc />
 	/// <summary>
 	/// 
 	/// </summary>
@@ -23,8 +24,8 @@ namespace RpcLite.Client
 			_channel = new MemoryClientChannel(appHost) { Address = _address };
 		}
 
+		/// <inheritdoc />
 		/// <summary>
-		/// 
 		/// </summary>
 		public override string Address
 		{
@@ -32,6 +33,7 @@ namespace RpcLite.Client
 			set { _address = value; }
 		}
 
+		/// <inheritdoc />
 		/// <summary>
 		/// 
 		/// </summary>

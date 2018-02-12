@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26228.4
+VisualStudioVersion = 15.0.26730.15
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "registry", "registry", "{56677A53-0484-41A2-8045-89CB63537E10}"
 EndProject
@@ -72,6 +72,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServiceRegistry.Service", "Registry\Service\ServiceRegistry.Service\ServiceRegistry.Service.csproj", "{3D6F8CF6-D28D-4B25-BB5C-2F9E8CA9B5D9}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RpcLite.Monitor.Service", "Monitor\RpcLite.Monitor.Service\RpcLite.Monitor.Service.csproj", "{C5AE9DBA-0D61-4AEC-A65C-13DAD057BC7B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceTest.UnitTests", "ServiceTest\ServiceTest.UnitTests\ServiceTest.UnitTests.csproj", "{4F3F87F3-8D53-4C24-AB73-E3AA1888F026}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -381,6 +383,18 @@ Global
 		{C5AE9DBA-0D61-4AEC-A65C-13DAD057BC7B}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{C5AE9DBA-0D61-4AEC-A65C-13DAD057BC7B}.Release|x86.ActiveCfg = Release|Any CPU
 		{C5AE9DBA-0D61-4AEC-A65C-13DAD057BC7B}.Release|x86.Build.0 = Release|Any CPU
+		{4F3F87F3-8D53-4C24-AB73-E3AA1888F026}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4F3F87F3-8D53-4C24-AB73-E3AA1888F026}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4F3F87F3-8D53-4C24-AB73-E3AA1888F026}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{4F3F87F3-8D53-4C24-AB73-E3AA1888F026}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{4F3F87F3-8D53-4C24-AB73-E3AA1888F026}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{4F3F87F3-8D53-4C24-AB73-E3AA1888F026}.Debug|x86.Build.0 = Debug|Any CPU
+		{4F3F87F3-8D53-4C24-AB73-E3AA1888F026}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4F3F87F3-8D53-4C24-AB73-E3AA1888F026}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4F3F87F3-8D53-4C24-AB73-E3AA1888F026}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{4F3F87F3-8D53-4C24-AB73-E3AA1888F026}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{4F3F87F3-8D53-4C24-AB73-E3AA1888F026}.Release|x86.ActiveCfg = Release|Any CPU
+		{4F3F87F3-8D53-4C24-AB73-E3AA1888F026}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -415,5 +429,9 @@ Global
 		{FF2F4A70-A339-493C-B414-257435A41FF0} = {77B3B2FB-6E00-47A5-9627-A573B2EEF72B}
 		{3D6F8CF6-D28D-4B25-BB5C-2F9E8CA9B5D9} = {77B3B2FB-6E00-47A5-9627-A573B2EEF72B}
 		{C5AE9DBA-0D61-4AEC-A65C-13DAD057BC7B} = {6096B150-C86D-4E4C-9576-0FA219C17247}
+		{4F3F87F3-8D53-4C24-AB73-E3AA1888F026} = {067E5EED-B95F-49F7-B9D7-C5CCDB4F34A6}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {9AD0DBEC-C387-492F-AF0E-0E67A2C88148}
 	EndGlobalSection
 EndGlobal
