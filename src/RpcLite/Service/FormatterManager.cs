@@ -12,7 +12,7 @@ namespace RpcLite.Service
 	public class FormatterManager
 	{
 		private List<IFormatter> _formaters;
-		private readonly object _formatterLock = new object();
+		//private readonly object _formatterLock = new object();
 		private Dictionary<string, IFormatter> _typeToFormatterDictionary = new Dictionary<string, IFormatter>();
 
 		/// <summary>
@@ -72,32 +72,32 @@ namespace RpcLite.Service
 			if (formatter == null)
 				throw new ArgumentNullException(nameof(formatter));
 
-			lock (_formatterLock)
-			{
-				var formatters = _formaters == null
-					? new List<IFormatter>().ToList()
-					: _formaters.ToList();
-				formatters.Add(formatter);
+			//lock (_formatterLock)
+			//{
+			var formatters = _formaters == null
+				? new List<IFormatter>().ToList()
+				: _formaters.ToList();
+			formatters.Add(formatter);
 
-				ReLinkFormatters(formatters);
-			}
+			ReLinkFormatters(formatters);
+			//}
 		}
 
-		private void RemoveFormatter(IFormatter formatter)
-		{
-			if (formatter == null)
-				throw new ArgumentNullException(nameof(formatter));
+		//private void RemoveFormatter(IFormatter formatter)
+		//{
+		//	if (formatter == null)
+		//		throw new ArgumentNullException(nameof(formatter));
 
-			lock (_formatterLock)
-			{
-				var formatters = _formaters == null
-					? new List<IFormatter>().ToList()
-					: _formaters.ToList();
-				formatters.Remove(formatter);
+		//	lock (_formatterLock)
+		//	{
+		//		var formatters = _formaters == null
+		//			? new List<IFormatter>().ToList()
+		//			: _formaters.ToList();
+		//		formatters.Remove(formatter);
 
-				ReLinkFormatters(formatters);
-			}
-		}
+		//		ReLinkFormatters(formatters);
+		//	}
+		//}
 
 		private void ReLinkFormatters(List<IFormatter> formatters)
 		{

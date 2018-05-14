@@ -26,7 +26,7 @@ namespace ServiceTest.WebHost
 			//Method 3: use builder
 			app.UseRpcLite(builder => builder
 				.UseService<TestService>("TestService", "api/test/")
-				.UseService<ProductService>("TestService", "api/service/")
+				.UseService<ProductService>("ProductService", "api/service/")
 				.UseFilter<TestFilterFactory>());
 
 			if (env.IsDevelopment())

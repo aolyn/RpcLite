@@ -96,7 +96,7 @@ namespace RpcLite
 			FormatterManager = new FormatterManager(config);
 			ClientFactory = new RpcClientFactory(this, config);
 
-			if (!string.IsNullOrWhiteSpace(config.Monitor?.Type))
+			if (config.Monitor != null && !string.IsNullOrWhiteSpace(config.Monitor.Type))
 			{
 				var monitorFactory = ReflectHelper.CreateInstanceByIdentifier<IMonitorFactory>(config.Monitor.Type);
 				Monitor = monitorFactory.CreateMonitor(this, config);

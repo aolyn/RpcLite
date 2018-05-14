@@ -24,6 +24,5 @@
 		{
 			return new HttpClientChannel(address);
 		}
-
 	}
 }

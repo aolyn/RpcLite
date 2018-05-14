@@ -5,7 +5,7 @@ namespace RpcLite.Net
 {
 	internal class WebProxy : IWebProxy
 	{
-		private Uri _uri;
+		private readonly Uri _uri;
 
 		public WebProxy(string uri)
 		{

@@ -43,7 +43,9 @@ namespace ServiceTest.ClientTest_NetFx
 				RpcInitializer.Initialize();
 #endif
 				var client = ClientFactory.GetInstance<IProductService>(address);
-				var clientInfo = (IRpcClient)client;
+
+
+				var clientInfo = (RpcClientBase<IProductService>)client;
 				//clientInfo.Formatter = new XmlFormatter();
 				clientInfo.Format = "xml";
 

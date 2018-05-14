@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Reflection;
-using System.Text;
 using System.Threading.Tasks;
 using RpcLite.Logging;
 
@@ -12,14 +10,14 @@ namespace RpcLite.Service
 	public class RpcService
 	{
 		private readonly ActionManager _actionManager;
+		private readonly AppHost _host;
+		private readonly MetaInfoBuilder _metaInfoBuilder = new MetaInfoBuilder();
 		private VersionedList<IServiceFilter> Filters => _host?.ServiceFilters;
 		private VersionedList<IServiceInvokeFilter> _invokeFilters;
 		private VersionedList<IProcessFilter> _processFilters;
 		internal VersionedList<IActionExecteFilter> ActionExecteFilter;
-		private readonly AppHost _host;
 		private long _oldVersion;
 		private long _processFilterOldVersion;
-		private MetaInfoBuilder _MetaInfoBuilder = new MetaInfoBuilder();
 
 		Func<ServiceContext, Task> _filterFunc;
 		/// <summary>
@@ -87,7 +85,7 @@ namespace RpcLite.Service
 				LogHelper.Debug("RpcService.BeginProcessRequest: start ActionHelper.InvokeAction");
 				try
 				{
-					var metaInfo = _MetaInfoBuilder.GetMetaInfo(context.Service);
+					var metaInfo = _metaInfoBuilder.GetMetaInfo(context.Service);
 					context.Result = metaInfo;
 					context.Request.RequestType = RequestType.MetaData;
 				}

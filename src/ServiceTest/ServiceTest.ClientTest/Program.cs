@@ -1,6 +1,5 @@
 ﻿using System;
 using Microsoft.Extensions.Configuration;
-using RpcLite;
 using RpcLite.Client;
 using RpcLite.Config;
 using RpcLite.Formatters;
@@ -13,7 +12,7 @@ namespace ServiceTest.ClientTest
 {
 	public class Program
 	{
-		public static void Main(string[] args)
+		public static void Main2(string[] args)
 		{
 			//ConfigReadTest();
 			//Test.SerializeTest.InnerExceptionTest();

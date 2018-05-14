@@ -65,8 +65,7 @@ namespace RpcLite.Client
 				if (!processed)
 					return null;
 
-				string statusCode;
-				var isSuccess = responseHeader.TryGetValue(HeaderName.StatusCode, out statusCode)
+				var isSuccess = responseHeader.TryGetValue(HeaderName.StatusCode, out var statusCode)
 					&& statusCode == RpcStatusCode.Ok;
 
 				outputStream.Position = 0;

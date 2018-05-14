@@ -1,5 +1,5 @@
 ﻿#if NETCORE
-#define USE_CUSTOMIZE_JSON_DESERIALIZE
+//#define USE_CUSTOMIZE_JSON_DESERIALIZE
 #endif
 
 using System;

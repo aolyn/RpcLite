@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using Microsoft.Extensions.Configuration;
-using NUnit.Framework;
 using RpcLite;
 using RpcLite.Client;
 using RpcLite.Config;
@@ -10,6 +9,7 @@ using RpcLite.Monitor;
 using RpcLite.Registry.Merops;
 using ServiceTest.Contract;
 using ServiceTest.ServiceImpl;
+using Xunit;
 
 namespace ServiceTest.ClientTest
 {
@@ -20,6 +20,81 @@ namespace ServiceTest.ClientTest
 			Test2();
 		}
 
+		[Fact]
+		public static void Test4()
+		{
+			var appHost = new AppHostBuilder()
+				.UseAppId("10000")
+				.UseInvoker<DefaultInvokerFactory>(null)
+				.UseClient<IProductService>("ProductService", "http://localhost:5000/api/service/")
+				.UseChannelProvider<DefaultChannelProvider>()
+				.Build();
+			appHost.Initialize();
+
+			var client = appHost.ClientFactory.GetInstance<IProductService>();
+			//var clientInfo = (IRpcClient<IProductService>)client;
+			//clientInfo.Invoker = new MemoryInvoker(appHost, path);
+			//clientInfo.Formatter = new XmlFormatter();
+			//clientInfo.Format = "xml";
+
+			Console.WriteLine("start test");
+
+			try
+			{
+				var id1 = client.Add(new Product
+				{
+					Id = 1,
+				});
+				Assert.Equal(1, id1);
+
+				client.Add(null);
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine(ex);
+			}
+
+			var exObj = new PlatformNotSupportedException("win31");
+			try
+			{
+				client.ThrowException(exObj);
+			}
+			catch (Exception ex)
+			{
+				Assert.Equal(ex.GetType(), exObj.GetType());
+				Assert.Equal(ex.Message, exObj.Message);
+			}
+
+			var ps = client.GetByIdAsync(1).Result;
+			Assert.Equal(1, ps.Id);
+
+
+			var products = client.GetAll();
+			while (true)
+			{
+				var times = 1000;
+				Console.WriteLine();
+				Console.Write($"press enter to start {times} test");
+				Console.ReadLine();
+				Console.WriteLine("testing...");
+
+				var stopwatch = Stopwatch.StartNew();
+				for (int i = 0; i < times; i++)
+				{
+					//var products2 = client.GetPage(1, 1000);
+					var products22 = client.GetPage(1, 1);
+					//var products3 = client.GetCount();
+				}
+
+				stopwatch.Stop();
+				Console.WriteLine($"Elapsed: {stopwatch.Elapsed.TotalMilliseconds}, {times * 1000 / stopwatch.Elapsed.TotalMilliseconds} tps, {stopwatch.Elapsed.TotalMilliseconds / times}ms/t");
+			}
+
+			Console.ReadLine();
+		}
+
+
+		[Fact]
 		public static void Test2()
 		{
 			#region prepare config
@@ -100,7 +175,7 @@ namespace ServiceTest.ClientTest
 				{
 					Id = 1,
 				});
-				Assert.AreEqual(id1, 1);
+				Assert.Equal(1, id1);
 
 				client.Add(null);
 			}
@@ -116,12 +191,12 @@ namespace ServiceTest.ClientTest
 			}
 			catch (Exception ex)
 			{
-				//Assert.AreEqual(ex.GetType(), exObj.GetType());
-				//Assert.AreEqual(ex.Message, exObj.Message);
+				Assert.Equal(ex.GetType(), exObj.GetType());
+				Assert.Equal(ex.Message, exObj.Message);
 			}
 
 			var ps = client.GetByIdAsync(1).Result;
-			Assert.AreEqual(ps.Id, 1);
+			Assert.Equal(1, ps.Id);
 
 
 			var products = client.GetAll();

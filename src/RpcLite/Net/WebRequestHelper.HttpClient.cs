@@ -10,14 +10,15 @@ using RpcLite.Client;
 
 namespace RpcLite.Net
 {
-	public partial class WebRequestHelper
+	internal static class WebRequestHelper
 	{
+		private const string HeadPrefix = "RpcLite-";
+
 		private static ResponseMessage GetResponseMessage(HttpWebResponse response)
 		{
 			var headers = GetRpcHeaders(response.Headers);
 
-			string statusCode;
-			var isSuccess = headers.TryGetValue(HeaderName.StatusCode, out statusCode)
+			var isSuccess = headers.TryGetValue(HeaderName.StatusCode, out var statusCode)
 				&& statusCode == RpcStatusCode.Ok;
 
 			var responseMessage = new ResponseMessage(response)
@@ -43,16 +44,17 @@ namespace RpcLite.Net
 				.Where(it => it.Key.StartsWith(HeadPrefix))
 				.ToDictionary(item => item.Key.Substring(HeadPrefix.Length, item.Key.Length - HeadPrefix.Length), item => item.Value.FirstOrDefault());
 		}
-		
-		private static readonly HttpClient HttpClient = new HttpClient();
+
 		/// <summary>
 		/// post data to web server and get retrieve response data
 		/// </summary>
+		/// <param name="httpClient"></param>
 		/// <param name="url"></param>
 		/// <param name="content"></param>
 		/// <param name="headDic"></param>
 		/// <returns></returns>
-		public static Task<IResponseMessage> PostAsync(string url, Stream content, IDictionary<string, string> headDic)
+		public static Task<IResponseMessage> PostAsync(HttpClient httpClient, string url, Stream content,
+			IDictionary<string, string> headDic)
 		{
 			var requestMessage = new HttpRequestMessage(HttpMethod.Post, url)
 			{
@@ -61,8 +63,7 @@ namespace RpcLite.Net
 
 			if (headDic != null && headDic.Count > 0)
 			{
-				string contentType;
-				if (headDic.TryGetValue("Content-Type", out contentType))
+				if (headDic.TryGetValue("Content-Type", out var contentType))
 				{
 					requestMessage.Content.Headers.ContentType = new MediaTypeHeaderValue(contentType);
 					//requestMessage.Headers.TryAddWithoutValidation("Content-Type", contentType);
@@ -73,7 +74,7 @@ namespace RpcLite.Net
 			var stopwatch1 = Stopwatch.StartNew();
 #endif
 
-			var responseTask = HttpClient.SendAsync(requestMessage);
+			var responseTask = httpClient.SendAsync(requestMessage);
 			return responseTask.ContinueWith(tsk =>
 			{
 #if DEBUG && LogDuration
@@ -130,13 +131,13 @@ namespace RpcLite.Net
 				return responseMessage;
 
 				//#if DEBUG && LogDuration
-				//				var duration1 = stopwatch1.GetAndRest();
+				//	var duration1 = stopwatch1.GetAndRest();
 				//#endif
-				//				var responseMessage = GetResponseMessage(tsk.Result);
+				//	var responseMessage = GetResponseMessage(tsk.Result);
 				//#if DEBUG && LogDuration
-				//				var duration2 = stopwatch1.GetAndRest();
+				//	var duration2 = stopwatch1.GetAndRest();
 				//#endif
-				//				return responseMessage;
+				//	return responseMessage;
 			});
 		}
 
@@ -156,6 +157,5 @@ namespace RpcLite.Net
 			};
 			return responseMessage;
 		}
-
 	}
 }

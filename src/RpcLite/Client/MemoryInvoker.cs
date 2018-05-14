@@ -30,7 +30,11 @@ namespace RpcLite.Client
 		public override string Address
 		{
 			get { return _address; }
-			set { _address = value; }
+			set
+			{
+				_address = value;
+				_channel.Address = value;
+			}
 		}
 
 		/// <inheritdoc />
@@ -43,7 +47,6 @@ namespace RpcLite.Client
 		/// <returns></returns>
 		protected override Task<IResponseMessage> SendAsync(string action, Stream content, IDictionary<string, string> headers)
 		{
-			_channel.Address = Address;
 			return _channel.SendAsync(action, content, headers);
 		}
 
