@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace RpcLite
+namespace RpcLite.Service
 {
 	/// <summary>
 	/// Respresnts request error that occor during process request in server side

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace RpcLite
+namespace RpcLite.Service
 {
 	/// <inheritdoc />
 	/// <summary>

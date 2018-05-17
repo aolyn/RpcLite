@@ -1,4 +1,4 @@
-﻿namespace RpcLite
+﻿namespace RpcLite.Service
 {
 	/// <summary>
 	/// 

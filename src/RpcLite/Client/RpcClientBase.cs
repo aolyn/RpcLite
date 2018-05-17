@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using RpcLite.Formatters;
 using RpcLite.Logging;
+using RpcLite.Service;
 
 namespace RpcLite.Client
 {

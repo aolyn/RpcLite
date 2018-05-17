@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace RpcLite
+namespace RpcLite.Service
 {
 	/// <summary>
 	/// 

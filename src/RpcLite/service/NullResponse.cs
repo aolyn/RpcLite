@@ -1,5 +1,5 @@
 ﻿
-namespace RpcLite
+namespace RpcLite.Service
 {
 	/// <summary>
 	/// Represents a Response with no data retrieve

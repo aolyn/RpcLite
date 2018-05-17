@@ -7,9 +7,9 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <AssemblyName>RpcLite</AssemblyName>
     <PackageId>RpcLite</PackageId>
-    <Version>1.2.1</Version>
-    <AssemblyVersion>1.0.2.1</AssemblyVersion>
-    <FileVersion>1.0.2.0</FileVersion>
+    <Version>1.2.2</Version>
+    <AssemblyVersion>1.0.2.2</AssemblyVersion>
+    <FileVersion>1.0.2.2</FileVersion>
     <Copyright>Copyright © Aolyn Inc 2014</Copyright>
     <PackageProjectUrl>https://github.com/aolyn/RpcLite</PackageProjectUrl>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
