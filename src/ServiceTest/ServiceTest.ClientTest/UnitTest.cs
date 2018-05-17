@@ -93,7 +93,6 @@ namespace ServiceTest.ClientTest
 			Console.ReadLine();
 		}
 
-
 		[Fact]
 		public static void Test2()
 		{
