@@ -73,7 +73,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServiceRegistry.Service", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RpcLite.Monitor.Service", "Monitor\RpcLite.Monitor.Service\RpcLite.Monitor.Service.csproj", "{C5AE9DBA-0D61-4AEC-A65C-13DAD057BC7B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceTest.UnitTests", "ServiceTest\ServiceTest.UnitTests\ServiceTest.UnitTests.csproj", "{4F3F87F3-8D53-4C24-AB73-E3AA1888F026}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServiceTest.UnitTests", "ServiceTest\ServiceTest.UnitTests\ServiceTest.UnitTests.csproj", "{4F3F87F3-8D53-4C24-AB73-E3AA1888F026}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RpcLite.Server.Kestrel", "RpcLite.Server.Kestrel\RpcLite.Server.Kestrel.csproj", "{E86CA24E-36E8-4420-9851-50CC73C005C2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -395,6 +397,18 @@ Global
 		{4F3F87F3-8D53-4C24-AB73-E3AA1888F026}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{4F3F87F3-8D53-4C24-AB73-E3AA1888F026}.Release|x86.ActiveCfg = Release|Any CPU
 		{4F3F87F3-8D53-4C24-AB73-E3AA1888F026}.Release|x86.Build.0 = Release|Any CPU
+		{E86CA24E-36E8-4420-9851-50CC73C005C2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E86CA24E-36E8-4420-9851-50CC73C005C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E86CA24E-36E8-4420-9851-50CC73C005C2}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{E86CA24E-36E8-4420-9851-50CC73C005C2}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{E86CA24E-36E8-4420-9851-50CC73C005C2}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{E86CA24E-36E8-4420-9851-50CC73C005C2}.Debug|x86.Build.0 = Debug|Any CPU
+		{E86CA24E-36E8-4420-9851-50CC73C005C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E86CA24E-36E8-4420-9851-50CC73C005C2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E86CA24E-36E8-4420-9851-50CC73C005C2}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{E86CA24E-36E8-4420-9851-50CC73C005C2}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{E86CA24E-36E8-4420-9851-50CC73C005C2}.Release|x86.ActiveCfg = Release|Any CPU
+		{E86CA24E-36E8-4420-9851-50CC73C005C2}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -430,6 +444,7 @@ Global
 		{3D6F8CF6-D28D-4B25-BB5C-2F9E8CA9B5D9} = {77B3B2FB-6E00-47A5-9627-A573B2EEF72B}
 		{C5AE9DBA-0D61-4AEC-A65C-13DAD057BC7B} = {6096B150-C86D-4E4C-9576-0FA219C17247}
 		{4F3F87F3-8D53-4C24-AB73-E3AA1888F026} = {067E5EED-B95F-49F7-B9D7-C5CCDB4F34A6}
+		{E86CA24E-36E8-4420-9851-50CC73C005C2} = {6CBD1F77-F8FC-4C60-8D56-04FB7DF029D9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9AD0DBEC-C387-492F-AF0E-0E67A2C88148}

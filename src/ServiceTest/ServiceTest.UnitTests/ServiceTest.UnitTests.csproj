@@ -13,6 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\RpcLite.Server.Kestrel\RpcLite.Server.Kestrel.csproj" />
     <ProjectReference Include="..\..\RpcLite\RpcLite.csproj" />
     <ProjectReference Include="..\ServiceTest.Contract\ServiceTest.Contract.csproj" />
   </ItemGroup>

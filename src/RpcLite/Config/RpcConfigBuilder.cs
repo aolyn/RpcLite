@@ -156,6 +156,12 @@ namespace RpcLite.Config
 		/// <returns></returns>
 		public RpcConfigBuilder UseService<TService>(string name, string path)
 		{
+			if (path == null)
+				throw new ArgumentNullException(nameof(path));
+
+			if (!path.EndsWith("/"))
+				throw new ArgumentOutOfRangeException($"{nameof(path)} must ends with /");
+
 			return UseService<TService>(name, path, null);
 		}
 
@@ -197,34 +203,34 @@ namespace RpcLite.Config
 			return UseServices(item);
 		}
 
-//		/// <summary>
-//		/// <para>set service path prefix, eg: api/service/</para>
-//		/// <para> all match paths will be processed as service request</para>
-//		/// </summary>
-//		/// <param name="paths">must ends with "/", eg: api/service/</param>
-//		/// <returns></returns>
-//		public RpcConfigBuilder UseServicePaths(params string[] paths)
-//		{
-//			if (_config.Service == null)
-//				_config.Service = new ServiceConfig();
+		//		/// <summary>
+		//		/// <para>set service path prefix, eg: api/service/</para>
+		//		/// <para> all match paths will be processed as service request</para>
+		//		/// </summary>
+		//		/// <param name="paths">must ends with "/", eg: api/service/</param>
+		//		/// <returns></returns>
+		//		public RpcConfigBuilder UseServicePaths(params string[] paths)
+		//		{
+		//			if (_config.Service == null)
+		//				_config.Service = new ServiceConfig();
 
-//			if (paths != null)
-//			{
-//#if NETCORE
-//				if (!paths.All(it => it.EndsWith("/")))
-//					throw new ArgumentOutOfRangeException(nameof(paths), "all path must ends with /");
+		//			if (paths != null)
+		//			{
+		//#if NETCORE
+		//				if (!paths.All(it => it.EndsWith("/")))
+		//					throw new ArgumentOutOfRangeException(nameof(paths), "all path must ends with /");
 
-//				paths = paths
-//					.Select(it => it)
-//					//.Select(it => it + "{*path}")
-//					.ToArray();
-//#endif
-//			}
+		//				paths = paths
+		//					.Select(it => it)
+		//					//.Select(it => it + "{*path}")
+		//					.ToArray();
+		//#endif
+		//			}
 
-//			_config.Service.Paths = paths;
+		//			_config.Service.Paths = paths;
 
-//			return this;
-//		}
+		//			return this;
+		//		}
 
 		/// <summary>
 		/// 

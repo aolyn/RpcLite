@@ -33,12 +33,6 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.0' ">
-    <DotNetCliToolReference Include="Microsoft.EntityFrameworkCore.Tools.DotNet">
-      <Version>1.0.0-msbuild1-final</Version>
-    </DotNetCliToolReference>
-  </ItemGroup>
-
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
     <DefineConstants>$(DefineConstants);NETCORE</DefineConstants>
   </PropertyGroup>
