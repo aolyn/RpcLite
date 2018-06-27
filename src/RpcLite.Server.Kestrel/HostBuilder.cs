@@ -24,13 +24,13 @@ namespace RpcLite.Server.Kestrel
 
 		public Host Build()
 		{
-			RpcLiteStartup.ConfigBuilder = _configBuilder;
+			var startupType = StartupBuilder.Create(_configBuilder);
 
 			var builder = new WebHostBuilder()
 				.UseKestrel()
 				.UseContentRoot(Directory.GetCurrentDirectory())
 				.UseKestrel()
-				.UseStartup<RpcLiteStartup>();
+				.UseStartup(startupType);
 
 			if (_urls != null && _urls.Length > 0)
 			{
