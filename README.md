@@ -4,23 +4,47 @@
 
 ## 概述
 
-    RpcLite是一个轻量级、易于使用、可扩展、跨平台的SOA框架。
-    
-    SOA最基本的功能就是提供远程服务调用，在.Net平台下用得比较多的方案有WebService、WCF、ServiceStack、WebApi等。这些方案都只包括RPC，相对这些方案RpcLite还提供了治理系统、监控、负载均衡、多种传输协议支持。
-    
-    RpcLite在设计时充分考虑了扩展性，主要部件都进行了抽象提供了默认的实现，使用者可以根据自己的需求扩展或替换默认部件来实现自定义的功能。
-    
-    RpcLite支持Full .Net Framework、.Net Core、Mono，在正文中会介绍Full .Net Framework及.Net Core中的使用方式。
+RpcLite是一个轻量级、易于使用、可扩展、跨平台的SOA框架。
+
+SOA最基本的功能就是提供远程服务调用，在.Net平台下用得比较多的方案有WebService、WCF、ServiceStack、WebApi等。这些方案都只包括RPC，相对这些方案RpcLite还提供了治理系统、监控、负载均衡、多种传输协议支持。
+
+RpcLite在设计时充分考虑了扩展性，主要部件都进行了抽象提供了默认的实现，使用者可以根据自己的需求扩展或替换默认部件来实现自定义的功能。
+
+RpcLite支持Full .Net Framework、.Net Core、Mono，在正文中会介绍Full .Net Framework及.Net Core中的使用方式。
+
+## 自宿主服务示例
+
+.Net Core下创建自宿主服务只需要几行代码。
+添加依赖RpcLite.Server.Kestrel
+https://www.nuget.org/packages/RpcLite.Server.Kestrel/
+
+```
+public void Test()
+{
+	var host = new HostBuilder()
+		.UseConfig(config => config.UseService<Service1>("api/service/"))
+		.Build();
+	host.Run();
+}
+
+public class Service1
+{
+	public string GetDateTime()
+	{
+		return DateTime.Now.ToString(CultureInfo.InvariantCulture);
+	}
+}
+```
 
 ## 架构描述
 
-    RpcLite包括服务端和客户端。
-    
-    RpcLite的入口是AppHost，AppHost包括向外提供服务的ServiceHost及调用其它服务要使用的ClientFactory，此外包括有监控（Monitor）、Invoker、注册服务（Registry）、序列化（Formatter）、过滤器（Filter）等。
+RpcLite包括服务端和客户端。
+
+RpcLite的入口是AppHost，AppHost包括向外提供服务的ServiceHost及调用其它服务要使用的ClientFactory，此外包括有监控（Monitor）、Invoker、注册服务（Registry）、序列化（Formatter）、过滤器（Filter）等。
 
 ## 开始使用（Getting Started）
 
-    要使用RpcLite提供服务或调用其它服务首先要创建AppHost，创建AppHost需要RpcConfig参数。RpcConfig有两种生成方式：从配置文件读取、通过Fluent风格从ConfigBuilder创建。在本指南中主要通过Fluent风格创建。
+要使用RpcLite提供服务或调用其它服务首先要创建AppHost，创建AppHost需要RpcConfig参数。RpcConfig有两种生成方式：从配置文件读取、通过Fluent风格从ConfigBuilder创建。在本指南中主要通过Fluent风格创建。
 
 ### 在Full .Net Framework中使用RpcLite
 
