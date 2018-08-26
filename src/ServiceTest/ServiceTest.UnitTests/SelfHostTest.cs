@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Globalization;
-using System.Reflection;
-using System.Reflection.Emit;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using RpcLite.Config;
 using RpcLite.Server.Kestrel;
 using Xunit;
 
@@ -19,7 +16,7 @@ namespace ServiceTest.UnitTests
 		public void Test1()
 		{
 			var host = new HostBuilder()
-				.UseConfig(config => config.UseService<Service1>(nameof(Service1), "api/service1/"))
+				.UseConfig(config => config.UseService<Service1>("api/service1/"))
 				.Build();
 			host.Run();
 		}

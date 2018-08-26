@@ -149,7 +149,7 @@ namespace RpcLite.Config
 		}
 
 		/// <summary>
-		/// add a service, eg: UseService&lt;TestService&gt;("TestService", "api/test/")
+		/// add a service with name as Type name, eg: UseService&lt;TestService&gt;("api/test/")
 		/// </summary>
 		/// <param name="name"></param>
 		/// <param name="path">url path, must ends with /</param>
@@ -163,6 +163,16 @@ namespace RpcLite.Config
 				throw new ArgumentOutOfRangeException($"{nameof(path)} must ends with /");
 
 			return UseService<TService>(name, path, null);
+		}
+
+		/// <summary>
+		/// add a service, eg: UseService&lt;TestService&gt;("TestService", "api/test/")
+		/// </summary>
+		/// <param name="path">url path, must ends with /</param>
+		/// <returns></returns>
+		public RpcConfigBuilder UseService<TService>(string path)
+		{
+			return UseService<TService>(typeof(TService).Name, path);
 		}
 
 		/// <summary>

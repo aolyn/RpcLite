@@ -3,7 +3,6 @@
   <PropertyGroup>
     <Description>RpcLite.AspNetCore Class Library</Description>
     <AssemblyTitle>RpcLite.AspNetCore</AssemblyTitle>
-    <VersionPrefix>1.0.1</VersionPrefix>
     <Authors>chrishwang</Authors>
     <TargetFramework>netstandard2.0</TargetFramework>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
@@ -15,7 +14,7 @@
     <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
     <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
     <GenerateAssemblyCopyrightAttribute>false</GenerateAssemblyCopyrightAttribute>
-    <Version>1.2.0</Version>
+    <Version>1.2.0.1</Version>
     <RootNamespace>RpcLite</RootNamespace>
   </PropertyGroup>
 
