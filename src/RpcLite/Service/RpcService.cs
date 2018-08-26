@@ -134,26 +134,29 @@ namespace RpcLite.Service
 			if (Filters.Version == _oldVersion)
 				return;
 
-			//todo: add lock
-			_processFilters = new VersionedList<IProcessFilter>();
-			_invokeFilters = new VersionedList<IServiceInvokeFilter>();
-			ActionExecteFilter = new VersionedList<IActionExecteFilter>();
+			//copy on write instead of lock
+			var processFilters = new VersionedList<IProcessFilter>();
+			var invokeFilters = new VersionedList<IServiceInvokeFilter>();
+			var actionExecteFilter = new VersionedList<IActionExecteFilter>();
 
 			foreach (var item in Filters)
 			{
-				if (item is IProcessFilter)
+				switch (item)
 				{
-					_processFilters.Add(item as IProcessFilter);
-				}
-				else if (item is IServiceInvokeFilter)
-				{
-					_invokeFilters.Add(item as IServiceInvokeFilter);
-				}
-				else if (item is IActionExecteFilter)
-				{
-					ActionExecteFilter.Add(item as IActionExecteFilter);
+					case IProcessFilter _:
+						processFilters.Add(item as IProcessFilter);
+						break;
+					case IServiceInvokeFilter _:
+						invokeFilters.Add(item as IServiceInvokeFilter);
+						break;
+					case IActionExecteFilter _:
+						actionExecteFilter.Add(item as IActionExecteFilter);
+						break;
 				}
 			}
+			_processFilters = processFilters;
+			_invokeFilters = invokeFilters;
+			ActionExecteFilter = actionExecteFilter;
 
 			_oldVersion = Filters.Version;
 		}
@@ -167,9 +170,8 @@ namespace RpcLite.Service
 			if (_processFilterOldVersion == version)
 				return _filterFunc;
 
-			//todo: add lock
+			//use copy on write instead of lock
 			Func<ServiceContext, Task> filterFunc = ProcessRequest;
-
 			var preFilterFunc = filterFunc;
 			for (var idxFilter = _processFilters.Count - 1; idxFilter > -1; idxFilter--)
 			{

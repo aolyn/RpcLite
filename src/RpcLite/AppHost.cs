@@ -50,12 +50,12 @@ namespace RpcLite
 		/// <summary>
 		/// 
 		/// </summary>
-		public VersionedList<IServiceFilter> ServiceFilters { get; } = new VersionedList<IServiceFilter>();
+		internal VersionedList<IServiceFilter> ServiceFilters { get; } = new VersionedList<IServiceFilter>();
 
 		/// <summary>
 		/// 
 		/// </summary>
-		public VersionedList<IRpcClientFilter> ClientFilters { get; } = new VersionedList<IRpcClientFilter>();
+		internal VersionedList<IRpcClientFilter> ClientFilters { get; } = new VersionedList<IRpcClientFilter>();
 
 		/// <summary>
 		/// 
@@ -133,9 +133,6 @@ namespace RpcLite
 		public void Initialize()
 		{
 			ServiceHost.Initialize();
-
-			// ReSharper disable once UnusedVariable
-			//var initilizeResult = _initializeRegistry.Value;
 			RegisterServices();
 		}
 
@@ -145,29 +142,21 @@ namespace RpcLite
 		/// <param name="filter"></param>
 		private void AddFilter(IRpcFilter filter)
 		{
-			if (filter == null)
-				throw new ArgumentNullException(nameof(filter));
-
-			if (filter is IServiceFilter)
-				ServiceFilters.Add((IServiceFilter)filter);
-			else if (filter is IRpcClientFilter)
-				ClientFilters.Add((IRpcClientFilter)filter);
+			switch (filter)
+			{
+				case null:
+					throw new ArgumentNullException(nameof(filter));
+				case IServiceFilter _:
+					ServiceFilters.Add((IServiceFilter)filter);
+					break;
+				case IRpcClientFilter _:
+					ClientFilters.Add((IRpcClientFilter)filter);
+					break;
+			}
 		}
 
-		///// <summary>
-		///// 
-		///// </summary>
-		///// <param name="filter"></param>
-		//private void RemoveFilter(IServiceFilter filter)
-		//{
-		//	if (filter == null)
-		//		throw new ArgumentNullException(nameof(filter));
-
-		//	ServiceFilters.Remove(filter);
-		//}
-
 		/// <summary>
-		/// 
+		/// process service request
 		/// </summary>
 		/// <param name="serverContext"></param>
 		/// <returns>if true process processed or else the path not a service path</returns>
