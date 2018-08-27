@@ -36,7 +36,7 @@ namespace RpcLite.Service
 			}
 			else
 			{
-				_serviceMapper = new DefaultServiceMapper(this, config);
+				_serviceMapper = new DefaultServiceMapper(this);
 			}
 		}
 

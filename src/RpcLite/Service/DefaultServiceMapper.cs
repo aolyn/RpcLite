@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using RpcLite.Config;
 using RpcLite.Logging;
 
 namespace RpcLite.Service
@@ -10,29 +9,23 @@ namespace RpcLite.Service
 	/// </summary>
 	public class DefaultServiceMapper : IServiceMapper
 	{
-		private readonly RpcConfig _config;
 		private readonly RpcServiceFactory _factory;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="factory"></param>
-		/// <param name="config"></param>
-		public DefaultServiceMapper(RpcServiceFactory factory, RpcConfig config)
+		public DefaultServiceMapper(RpcServiceFactory factory)
 		{
 			if (factory == null)
 				throw new ArgumentNullException(nameof(factory));
 
-			if (config == null)
-				throw new ArgumentNullException(nameof(config));
-
-			_config = config;
 			_factory = factory;
 		}
 
 		/// <summary>
 		/// <para>determinate if the request path is Service path</para>
-		/// <para>get and set Service to serviceContext</para>
+		/// <para>if yes get and set Service to serviceContext</para>
 		/// <para>compute and set ActionName to serviceContext.Request</para>
 		/// </summary>
 		/// <param name="serviceContext"></param>

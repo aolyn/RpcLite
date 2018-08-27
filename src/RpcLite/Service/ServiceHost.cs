@@ -1,7 +1,6 @@
 ﻿//#define OUTPUT_SERIALIZATION_TIME
 
 using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Threading.Tasks;
@@ -21,28 +20,20 @@ namespace RpcLite.Service
 	public class ServiceHost
 	{
 		private readonly RpcServiceFactory _serviceFactory;
-		private readonly RpcConfig _config;
 		private readonly Lazy<object> _initializeRegistry;
 		private readonly AppHost _appHost;
 
 		/// <summary>
 		/// 
 		/// </summary>
-		public List<IServiceFilter> Filters { get; internal set; } = new List<IServiceFilter>();
-
-		/// <summary>
-		/// 
-		/// </summary>
 		public ServiceHost(AppHost appHost, RpcConfig config)
 		{
-			_config = config;
 			_appHost = appHost;
-
 			_serviceFactory = new RpcServiceFactory(_appHost, config);
 
 			_initializeRegistry = new Lazy<object>(() =>
 			{
-				var services = _config?.Service?.Services;
+				var services = config?.Service?.Services;
 				if (services == null || _appHost.Registry?.CanRegister != true)
 					return null;
 

@@ -11,6 +11,7 @@ using RpcLite.Registry.Merops;
 using ServiceTest.Contract;
 using ServiceTest.ServiceImpl;
 using RpcLite.Config;
+using RpcLite.Service;
 
 #if NETCORE
 using Microsoft.Extensions.Configuration;
