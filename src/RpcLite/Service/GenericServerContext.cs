@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace RpcLite.Service
@@ -17,7 +18,7 @@ namespace RpcLite.Service
 		/// 
 		/// </summary>
 		public IDictionary<string, string> ResponseHeader;
-		
+
 		/// <summary>
 		/// 
 		/// </summary>
@@ -52,6 +53,13 @@ namespace RpcLite.Service
 		/// 
 		/// </summary>
 		public Stream ResponseStream { get; set; }
+
+#if NETCORE
+		/// <summary>
+		/// 
+		/// </summary>
+		public IServiceProvider RequestServices { get; set; }
+#endif
 
 		/// <summary>
 		/// 

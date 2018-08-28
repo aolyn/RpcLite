@@ -115,5 +115,11 @@ namespace RpcLite.Service
 			return data;
 		}
 
+#if NETCORE
+		/// <summary>
+		/// 
+		/// </summary>
+		public IServiceProvider RequestServices { get; set; }
+#endif
 	}
 }

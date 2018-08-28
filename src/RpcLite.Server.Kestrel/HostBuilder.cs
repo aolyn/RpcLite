@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.DependencyInjection;
 using RpcLite.Config;
 
 namespace RpcLite.Server.Kestrel
@@ -8,6 +9,7 @@ namespace RpcLite.Server.Kestrel
 	public class HostBuilder
 	{
 		private Action<RpcConfigBuilder> _configBuilder;
+		private Action<IServiceCollection> _configServices;
 		private string[] _urls;
 
 		public HostBuilder UseConfig(Action<RpcConfigBuilder> configBuilder)
@@ -22,6 +24,12 @@ namespace RpcLite.Server.Kestrel
 			return this;
 		}
 
+		public HostBuilder ConfigureServices(Action<IServiceCollection> configServices)
+		{
+			_configServices = configServices;
+			return this;
+		}
+
 		public Host Build()
 		{
 			var startupType = StartupBuilder.Create(_configBuilder);
@@ -31,6 +39,11 @@ namespace RpcLite.Server.Kestrel
 				.UseContentRoot(Directory.GetCurrentDirectory())
 				.UseKestrel()
 				.UseStartup(startupType);
+
+			if (_configServices != null)
+			{
+				builder.ConfigureServices(_configServices);
+			}
 
 			if (_urls != null && _urls.Length > 0)
 			{

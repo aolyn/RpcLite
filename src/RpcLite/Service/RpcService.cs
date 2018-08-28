@@ -164,14 +164,14 @@ namespace RpcLite.Service
 		private Func<ServiceContext, Task> GetProcessFilterFunc()
 		{
 			if (_processFilters == null || _processFilters.Count == 0)
-				return ProcessRequest;
+				return ProcessRequestAsync;
 
 			var version = _processFilters.Version;
 			if (_processFilterOldVersion == version)
 				return _filterFunc;
 
 			//use copy on write instead of lock
-			Func<ServiceContext, Task> filterFunc = ProcessRequest;
+			Func<ServiceContext, Task> filterFunc = ProcessRequestAsync;
 			var preFilterFunc = filterFunc;
 			for (var idxFilter = _processFilters.Count - 1; idxFilter > -1; idxFilter--)
 			{
@@ -190,7 +190,7 @@ namespace RpcLite.Service
 			return filterFunc;
 		}
 
-		private Task ProcessRequest(ServiceContext context)
+		private Task ProcessRequestAsync(ServiceContext context)
 		{
 			ApplyBeforeInvokeFilters(context);
 

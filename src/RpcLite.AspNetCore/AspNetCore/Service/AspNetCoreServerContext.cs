@@ -1,5 +1,6 @@
 ﻿#if NETCORE
 
+using System;
 using System.IO;
 using Microsoft.AspNetCore.Http;
 using RpcLite.Service;
@@ -11,22 +12,16 @@ namespace RpcLite.AspNetCore.Service
 	/// </summary>
 	internal class AspNetCoreServerContext : IServerContext
 	{
+		private const string HeadPrefix = "RpcLite-";
 		private readonly HttpContext _httpContext;
 		private string _requestPath;
-		private const string HeadPrefix = "RpcLite-";
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="httpContext"></param>
 		public AspNetCoreServerContext(HttpContext httpContext)
 		{
 			_httpContext = httpContext;
+			RequestServices = _httpContext.RequestServices;
 		}
 
-		/// <summary>
-		/// 
-		/// </summary>
 		public string RequestPath
 		{
 			get
@@ -46,74 +41,46 @@ namespace RpcLite.AspNetCore.Service
 			}
 		}
 
-		/// <summary>
-		/// 
-		/// </summary>
+		/// <inheritdoc />
 		public int RequestContentLength => (int)(_httpContext.Request.ContentLength ?? 0);
 
-		/// <summary>
-		/// 
-		/// </summary>
+		/// <inheritdoc />
 		public string ResponseContentType
 		{
-			get { return _httpContext.Response.ContentType; }
-			set { _httpContext.Response.ContentType = value; }
+			get => _httpContext.Response.ContentType;
+			set => _httpContext.Response.ContentType = value;
 		}
 
-		/// <summary>
-		/// 
-		/// </summary>
+		/// <inheritdoc />
 		public string RequestContentType => _httpContext.Request.ContentType;
 
-		/// <summary>
-		/// 
-		/// </summary>
+		/// <inheritdoc />
 		public Stream RequestStream => _httpContext.Request.Body;
 
-		/// <summary>
-		/// 
-		/// </summary>
 		public Stream ResponseStream => _httpContext.Response.Body;
 
-		/// <summary>
-		/// 
-		/// </summary>
 		public int ResponseStatusCode
 		{
-			get { return _httpContext.Response.StatusCode; }
-			set { _httpContext.Response.StatusCode = value; }
+			get => _httpContext.Response.StatusCode;
+			set => _httpContext.Response.StatusCode = value;
 		}
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="key"></param>
-		/// <returns></returns>
 		public string GetRequestHeader(string key)
 		{
 			return _httpContext.Request.Headers[HeadPrefix + key];
 		}
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="key"></param>
-		/// <param name="value"></param>
 		public void SetResponseHeader(string key, string value)
 		{
 			_httpContext.Response.Headers[HeadPrefix + key] = value;
 		}
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="key"></param>
-		/// <returns></returns>
 		public string GetResponseHeader(string key)
 		{
 			return _httpContext.Response.Headers[HeadPrefix + key];
 		}
 
+		public IServiceProvider RequestServices { get; set; }
 	}
 }
 

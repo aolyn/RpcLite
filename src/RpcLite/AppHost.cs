@@ -117,15 +117,15 @@ namespace RpcLite
 			}
 		}
 
-		private void RegisterServices()
-		{
-			if (Registry?.CanRegister != true || Config?.Service.Services == null) return;
+		//private void RegisterServices()
+		//{
+		//	if (Registry?.CanRegister != true || Config?.Service.Services == null) return;
 
-			foreach (var service in Config.Service.Services)
-			{
-				Registry.RegisterAsync(service.ToServiceInfo());
-			}
-		}
+		//	foreach (var service in Config.Service.Services)
+		//	{
+		//		Registry.RegisterAsync(service.ToServiceInfo());
+		//	}
+		//}
 
 		/// <summary>
 		/// initialize service host
@@ -133,7 +133,7 @@ namespace RpcLite
 		public void Initialize()
 		{
 			ServiceHost.Initialize();
-			RegisterServices();
+			//RegisterServices();
 		}
 
 		/// <summary>

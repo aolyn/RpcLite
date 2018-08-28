@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Globalization;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using RpcLite;
+using RpcLite.Config;
 using RpcLite.Server.Kestrel;
 using Xunit;
 
@@ -21,11 +24,46 @@ namespace ServiceTest.UnitTests
 			host.Run();
 		}
 
+		[Fact]
+		public void IocTest1()
+		{
+			var host = new HostBuilder()
+				.UseConfig(config => config.UseService<Service1>("api/service1/"))
+				.ConfigureServices(service => service.AddScoped<Service1>())
+				.Build();
+			host.Run();
+		}
+
+		[Fact]
+		public void IocTest()
+		{
+			var config = new RpcConfigBuilder()
+				.UseService<Service1>("api/service1/")
+				.Build();
+
+			var services = new ServiceCollection()
+				.AddSingleton(typeof(RpcConfig), config)
+				.AddSingleton(typeof(AppHost));
+
+			var serviceProvider = services.BuildServiceProvider();
+			var appHost = serviceProvider.GetService<AppHost>();
+
+			//var host = new HostBuilder()
+			//	.UseConfig(config => config.UseService<Service1>("api/service1/"))
+			//	.Build();
+			//host.Run();
+		}
+
 		public class Service1
 		{
 			public string GetDateTime()
 			{
 				return DateTime.Now.ToString(CultureInfo.InvariantCulture);
+			}
+
+			public Task<DateTime> GetDateTimeAsync()
+			{
+				return Task.FromResult(DateTime.Now);
 			}
 		}
 

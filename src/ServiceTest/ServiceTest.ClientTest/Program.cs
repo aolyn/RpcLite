@@ -7,6 +7,7 @@ using RpcLite.Registry;
 using RpcLite.Registry.Zookeeper;
 using RpcLiteClientTestNetCore;
 using ServiceTest.Contract;
+using Xunit;
 
 namespace ServiceTest.ClientTest
 {
@@ -86,64 +87,6 @@ namespace ServiceTest.ClientTest
 			//setter(exobj, 12);
 
 			//SerializeTest.Test3();
-		}
-
-		private static void ZookeeperRegistryTest()
-		{
-			var registry = new ZookeeperRegistry("192.168.9.1:2181", 10 * 1000);
-			if (registry.CanRegister)
-			{
-				registry.RegisterAsync(new ServiceInfo
-				{
-					Name = "ProductService",
-					Group = "UAT",
-					Address = "http://localhost:5000/api/product/",
-				}).Wait();
-			}
-
-			Console.WriteLine("register finished");
-			Console.ReadLine();
-
-			try
-			{
-				var lookupTask = registry.LookupAsync(new ClientConfigItem
-				{
-					Name = "ProductService",
-					Group = "UAT",
-				});
-
-				Console.WriteLine("started lookup");
-				Console.ReadLine();
-
-				lookupTask.Wait();
-				Console.WriteLine("lookupTask.Wait() " + lookupTask.Result);
-			}
-			catch (Exception ex)
-			{
-				Console.WriteLine(ex);
-			}
-
-			try
-			{
-				var lookupTask = registry.LookupAsync(new ClientConfigItem
-				{
-					Name = "ProductService",
-					Group = "UAT",
-				});
-
-				Console.WriteLine("started lookup");
-				Console.ReadLine();
-
-				lookupTask.Wait();
-				Console.WriteLine("lookupTask.Wait() " + lookupTask.Result);
-			}
-			catch (Exception ex)
-			{
-				Console.WriteLine(ex);
-			}
-
-			Console.ReadLine();
-			registry.Dispose();
 		}
 
 		private static void PerformanceTest()

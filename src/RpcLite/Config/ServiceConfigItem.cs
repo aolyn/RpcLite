@@ -64,7 +64,7 @@ namespace RpcLite.Config
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		public ServiceInfo ToServiceInfo()
+		internal ServiceInfo ToServiceInfo()
 		{
 			var serviceInfo = new ServiceInfo
 			{

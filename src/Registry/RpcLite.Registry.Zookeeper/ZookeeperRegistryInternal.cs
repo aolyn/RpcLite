@@ -11,12 +11,14 @@ namespace RpcLite.Registry.Zookeeper
 {
 	internal class ZookeeperRegistryInternal : Watcher
 	{
-		private readonly ConcurrentDictionary<ServiceIdentifier, ClientLookupItem> _serviceAddressDictionary = new ConcurrentDictionary<ServiceIdentifier, ClientLookupItem>();
-		private readonly ConcurrentDictionary<ServiceInfo, DateTime> _registerServiceDictionary = new ConcurrentDictionary<ServiceInfo, DateTime>();
+		private readonly ConcurrentDictionary<ServiceIdentifier, ClientLookupItem> _serviceAddressDictionary =
+			new ConcurrentDictionary<ServiceIdentifier, ClientLookupItem>();
+		private readonly ConcurrentDictionary<ServiceInfo, DateTime> _registerServiceDictionary =
+			new ConcurrentDictionary<ServiceInfo, DateTime>();
+
 		private IZookeeper _zookeeper;
 		private Task _startTask;
 		private bool _isDisposed;
-		//private TimeSignalDelay _delay;
 		private readonly string _registryAddress;
 		private static readonly string ServiceRootPath = @"/rpclite-services";
 		private readonly int _sessionTimeout;
@@ -33,7 +35,7 @@ namespace RpcLite.Registry.Zookeeper
 
 			_registryAddress = address;
 			_sessionTimeout = expire;
-			_startTask = Start();
+			_startTask = StartAsync();
 		}
 
 		//public ZookeeperRegistryInternal()
@@ -72,7 +74,7 @@ namespace RpcLite.Registry.Zookeeper
 					if (kex?.getCode() == KeeperException.Code.SESSIONEXPIRED)
 					{
 						if (_startTask?.IsCompleted == true)
-							_startTask = Start();
+							_startTask = StartAsync();
 					}
 
 					throw ex.InnerException;
@@ -149,7 +151,7 @@ namespace RpcLite.Registry.Zookeeper
 			{
 				if (ex.getCode() == KeeperException.Code.SESSIONEXPIRED)
 				{
-					_startTask = Start();
+					_startTask = StartAsync();
 				}
 				//else if (ex.getCode() == KeeperException.Code.CONNECTIONLOSS)
 				//{
@@ -224,7 +226,7 @@ namespace RpcLite.Registry.Zookeeper
 			if (@event.getState() == Event.KeeperState.Expired)
 			{
 				if (_startTask?.IsCompleted == true)
-					_startTask = Start();
+					_startTask = StartAsync();
 			}
 
 			switch (@event.get_Type())
@@ -235,7 +237,7 @@ namespace RpcLite.Registry.Zookeeper
 			return Task.FromResult<object>(null);
 		}
 
-		private async Task Start()
+		private async Task StartAsync()
 		{
 			//if (_isStarted)
 			//	return;

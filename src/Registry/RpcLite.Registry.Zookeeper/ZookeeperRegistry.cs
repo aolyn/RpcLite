@@ -11,32 +11,7 @@ namespace RpcLite.Registry.Zookeeper
 		private string _registryAddress;
 		private readonly RpcConfig _config;
 
-		public Task<ServiceInfo[]> LookupAsync(string name, string @group)
-		{
-			throw new System.NotImplementedException();
-		}
-
 		public bool CanRegister => true;
-
-		public ZookeeperRegistry(RpcConfig config)
-		{
-			_config = config;
-			_registryAddress = config.Registry.Address;
-			var sessionExpire = 30 * 1000;
-			Initialize(_registryAddress, sessionExpire);
-		}
-
-		//public ZookeeperRegistry(string address)
-		//{
-		//	_registryAddress = address;
-		//	var sessionExpire = 30 * 1000;
-		//	Initialize(_registryAddress, sessionExpire);
-		//}
-
-		//public ZookeeperRegistry()
-		//{
-		//	Initialize(RpcLiteConfig.Instance.Registry.Address, 30 * 1000);
-		//}
 
 		/// <summary>
 		/// 
@@ -48,23 +23,25 @@ namespace RpcLite.Registry.Zookeeper
 			Initialize(address, expire);
 		}
 
+		public ZookeeperRegistry(RpcConfig config)
+		{
+			_config = config;
+			_registryAddress = config.Registry.Address;
+			var sessionExpire = 30 * 1000;
+			Initialize(_registryAddress, sessionExpire);
+		}
+
 		private void Initialize(string address, int expire)
 		{
 			_registryAddress = address;
 			_zookeeper = new ZookeeperRegistryInternal(_registryAddress, expire);
 		}
 
-		public void Dispose()
+		public async Task<ServiceInfo[]> LookupAsync(string name, string group)
 		{
-			_zookeeper.Dispose();
-		}
-
-		public async Task<ServiceInfo[]> LookupAsync(ClientConfigItem clientInfo)
-		{
-			if (clientInfo == null) return null;
 			try
 			{
-				var result = await _zookeeper.LookupAsync(clientInfo.Name, clientInfo.Group);
+				var result = await _zookeeper.LookupAsync(name, group);
 				return result;
 			}
 			catch (KeeperException ex)
@@ -76,10 +53,18 @@ namespace RpcLite.Registry.Zookeeper
 
 				throw new ZookeeperException(ex.Message, ex);
 			}
-			//catch (Exception ex)
-			//{
-			//	throw;
-			//}
+		}
+
+		public void Dispose()
+		{
+			_zookeeper.Dispose();
+		}
+
+		public Task<ServiceInfo[]> LookupAsync(ClientConfigItem clientInfo)
+		{
+			return clientInfo != null
+				? LookupAsync(clientInfo.Name, clientInfo.Group)
+				: null;
 		}
 
 		public async Task RegisterAsync(ServiceInfo serviceInfo)
@@ -105,7 +90,7 @@ namespace RpcLite.Registry.Zookeeper
 
 		public Task<ServiceInfo[]> LookupAsync(string name)
 		{
-			throw new System.NotImplementedException();
+			return LookupAsync(name, null);
 		}
 
 		public Task<ServiceInfo[]> LookupAsync<TContract>()

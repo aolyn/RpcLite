@@ -10,7 +10,7 @@ namespace RpcLite
 	/// </summary>
 	public static class RpcManager
 	{
-		private static readonly object InitilizeLock = new object();
+		private static readonly object InitializeLock = new object();
 
 		/// <summary>
 		/// default AppHost
@@ -29,7 +29,7 @@ namespace RpcLite
 				//throw new InvalidOperationException("default service host already initialized");
 			}
 
-			lock (InitilizeLock)
+			lock (InitializeLock)
 			{
 				if (AppHost == null)
 				{

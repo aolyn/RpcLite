@@ -1,4 +1,8 @@
-﻿using System.IO;
+﻿#if NETCORE
+using System;
+#endif
+
+using System.IO;
 
 namespace RpcLite.Service
 {
@@ -66,5 +70,12 @@ namespace RpcLite.Service
 		/// 
 		/// </summary>
 		int ResponseStatusCode { get; set; }
+
+#if NETCORE
+		/// <summary>
+		/// services container for this request
+		/// </summary>
+		IServiceProvider RequestServices { get; set; }
+#endif
 	}
 }

@@ -99,6 +99,9 @@ namespace RpcLite.Service
 					ResponseStream = serverContext.ResponseStream,
 				},
 				ExecutingContext = serverContext,
+#if NETCORE
+				RequestServices = serverContext.RequestServices,
+#endif
 			};
 
 			return ProcessInternalAsync(serviceContext)

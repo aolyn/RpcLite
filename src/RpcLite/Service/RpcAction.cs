@@ -187,7 +187,7 @@ namespace RpcLite.Service
 				LogHelper.Debug("RpcService.BeginProcessRequest: start ActionHelper.InvokeAction");
 				try
 				{
-					context.Result = InvokeAction(context.Argument);
+					context.Result = InvokeAction(context);
 				}
 				catch (Exception ex)
 				{
@@ -322,16 +322,23 @@ namespace RpcLite.Service
 			return resultObject;
 		}
 
-		private object InvokeAction(object reqArg)
+		private object InvokeAction(ServiceContext context)
 		{
 			if (IsStatic)
 			{
-				return InvokeAcion(reqArg, null);
+				return InvokeAcion(context.Argument, null);
 			}
 
+//#if NETCORE
+//			if (context.RequestServices != null)
+//			{
+//				var serviceInstance = context.RequestServices.GetService(MethodInfo.DeclaringType);
+//				return InvokeAcion(context.Argument, serviceInstance);
+//			}
+//#endif
 			using (var serviceInstance = ServiceFactory.GetService(this))
 			{
-				return InvokeAcion(reqArg, serviceInstance.ServiceObject);
+				return InvokeAcion(context.Argument, serviceInstance.ServiceObject);
 			}
 		}
 
