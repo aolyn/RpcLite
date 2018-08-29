@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using RpcLite.Filter;
 using RpcLite.Service;
 
 namespace ServiceTest.WebHost
@@ -33,7 +34,7 @@ namespace ServiceTest.WebHost
 
 	}
 
-	class ResultFilter : IActionExecteFilter
+	class ResultFilter : IActionExecuteFilter
 	{
 		public string Name { get; set; } = nameof(LogRequestTimeFilter);
 

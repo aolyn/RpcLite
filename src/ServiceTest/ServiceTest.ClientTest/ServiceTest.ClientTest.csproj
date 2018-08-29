@@ -14,11 +14,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\RpcLite.AspNetCore\RpcLite.AspNetCore.csproj" />
     <ProjectReference Include="..\..\Monitor\RpcLite.Monitor.Merops\RpcLite.Monitor.Merops.csproj" />
     <ProjectReference Include="..\..\Registry\RpcLite.Registry.Merops\RpcLite.Registry.Merops.csproj" />
     <ProjectReference Include="..\..\Registry\RpcLite.Registry.Zookeeper\RpcLite.Registry.Zookeeper.csproj" />
     <ProjectReference Include="..\..\Registry\RpcLite.Registry.Merops.Contract\RpcLite.Registry.Merops.Contract.csproj" />
+    <ProjectReference Include="..\..\RpcLite.AspNetCore\RpcLite.AspNetCore.csproj" />
     <ProjectReference Include="..\ServiceTest.Contract\ServiceTest.Contract.csproj" />
     <ProjectReference Include="..\ServiceTest.ServiceImpl\ServiceTest.ServiceImpl.csproj" />
   </ItemGroup>

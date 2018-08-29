@@ -1,3 +1,4 @@
+using RpcLite;
 using RpcLite.Client;
 using RpcLite.Config;
 using ServiceTest.Contract;
@@ -10,7 +11,7 @@ namespace ServiceTest.UnitTests
 		[Fact]
 		public void Test1()
 		{
-			RpcInitializer.Initialize();
+			RpcManager.Initialize(new RpcConfig());
 
 			var serviceAddress = "http://localhost:5000/api/service/";
 			var client = ClientFactory.GetInstance<IProductService>(serviceAddress);

@@ -268,6 +268,7 @@ namespace RpcLite.Config
 						var name = item["name"];
 						var path = item["path"];
 						var type = item["type"];
+						var lifeCycle = item["lifeCycle"];
 						var address = item["address"];
 						var env = item["environment"]; //GetAttribute("type", item);
 
@@ -302,6 +303,9 @@ namespace RpcLite.Config
 							Type = type,
 							//TypeName = typeName,
 							//AssemblyName = assemblyName,
+							LifeCycle = string.IsNullOrEmpty(lifeCycle)
+								? ServiceLifeCycle.Singleton
+								: (ServiceLifeCycle)Enum.Parse(typeof(ServiceLifeCycle), lifeCycle),
 							Path = path,
 							Address = address,
 							Group = env,

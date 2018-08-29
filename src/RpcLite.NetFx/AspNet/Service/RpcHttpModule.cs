@@ -12,6 +12,8 @@ namespace RpcLite.AspNet.Service
 	{
 		private readonly IHttpHandlerFactory _factory = new RpcHandlerFactory();
 
+		internal static string[] ServicePaths;
+
 		/// <summary>
 		/// 
 		/// </summary>
@@ -32,13 +34,10 @@ namespace RpcLite.AspNet.Service
 
 		private void Context_PostResolveRequestCache(object sender, EventArgs e)
 		{
-			if (HttpContext.Current?.Request == null) return;
-			if (RpcManager.AppHost?.Config?.Service?.Services?.Count == 0) return;
+			if (HttpContext.Current?.Request == null || ServicePaths == null || ServicePaths.Length == 0) return;
 
-			foreach (var service in RpcManager.AppHost?.Config?.Service?.Services)
+			foreach (var item in ServicePaths)
 			{
-				var item = service.Path;
-
 				var start = HttpContext.Current?.Request.ApplicationPath?.Length > 1
 					? HttpContext.Current.Request.ApplicationPath.Length + 1
 					: 1;

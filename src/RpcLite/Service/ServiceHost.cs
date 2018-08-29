@@ -26,14 +26,14 @@ namespace RpcLite.Service
 		/// <summary>
 		/// 
 		/// </summary>
-		public ServiceHost(AppHost appHost, RpcConfig config)
+		public ServiceHost(AppHost appHost, ServiceConfig serviceConfig)
 		{
 			_appHost = appHost;
-			_serviceFactory = new RpcServiceFactory(_appHost, config);
+			_serviceFactory = new RpcServiceFactory(_appHost, serviceConfig);
 
 			_initializeRegistry = new Lazy<object>(() =>
 			{
-				var services = config?.Service?.Services;
+				var services = serviceConfig?.Services;
 				if (services == null || _appHost.Registry?.CanRegister != true)
 					return null;
 
@@ -54,26 +54,8 @@ namespace RpcLite.Service
 			_serviceFactory.Initialize();
 
 			// ReSharper disable once UnusedVariable
-			var initilizeResult = _initializeRegistry.Value;
+			var initializeResult = _initializeRegistry.Value;
 		}
-
-		///// <summary>
-		///// 
-		///// </summary>
-		///// <param name="filter"></param>
-		//public void AddFilter(IRpcServiceFilter filter)
-		//{
-		//	Filters.Add(filter);
-		//}
-
-		///// <summary>
-		///// 
-		///// </summary>
-		///// <param name="filter"></param>
-		//public void RemoveFilter(IRpcServiceFilter filter)
-		//{
-		//	Filters.Remove(filter);
-		//}
 
 		/// <summary>
 		/// 
@@ -99,10 +81,13 @@ namespace RpcLite.Service
 					ResponseStream = serverContext.ResponseStream,
 				},
 				ExecutingContext = serverContext,
-#if NETCORE
-				RequestServices = serverContext.RequestServices,
-#endif
 			};
+#if NETCORE
+			if (_appHost.SupportDi)
+			{
+				serviceContext.RequestServices = serverContext.RequestServices;
+			}
+#endif
 
 			return ProcessInternalAsync(serviceContext)
 				.ContinueWith(tsk =>

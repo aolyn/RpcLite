@@ -35,7 +35,7 @@ namespace ServiceTest.ClientTest
 		{
 			RpcInitializer.Initialize(builder => builder
 				.UseAppId("10000")
-				.UseClient<IProductService>("ProductService"));
+				.AddClient<IProductService>("ProductService"));
 		}
 
 		private static void ConfigReadTest()

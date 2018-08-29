@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using RpcLite.Config;
 using ServiceTest.ServiceImpl;
 
 namespace ServiceTest.WebHost
@@ -13,6 +14,11 @@ namespace ServiceTest.WebHost
 		{
 			//services.AddMvc();
 			services.AddRouting();
+			services.AddRpcLite(builder => builder
+				.AddService<TestService>("TestService", "api/test/")
+				.AddService<ProductService>("ProductService", "api/service/", null, ServiceLifeCycle.Scoped)
+				.AddService<TimeService>("TimeService", "api/time/")
+				.AddFilter<TestFilterFactory>());
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -24,10 +30,11 @@ namespace ServiceTest.WebHost
 			//RpcManager.AddFilter(new LogRequestTimeFilter());
 
 			//Method 3: use builder
-			app.UseRpcLite(builder => builder
-				.UseService<TestService>("TestService", "api/test/")
-				.UseService<ProductService>("ProductService", "api/service/")
-				.UseFilter<TestFilterFactory>());
+			app.UseRpcLite();
+			//app.UseRpcLite(builder => builder
+			//	.UseService<TestService>("TestService", "api/test/")
+			//	.UseService<ProductService>("ProductService", "api/service/")
+			//	.UseFilter<TestFilterFactory>());
 
 			if (env.IsDevelopment())
 			{

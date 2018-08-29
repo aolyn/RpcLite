@@ -4,9 +4,9 @@ namespace RpcLite.Registry.Merops
 {
 	public class MeropsRegistryFactory : IRegistryFactory
 	{
-		public IRegistry CreateRegistry(AppHost appHost, RpcConfig config)
+		public IRegistry CreateRegistry(RpcConfig config)
 		{
-			return new MeropsRegistry(appHost, config);
+			return new MeropsRegistry(config);
 		}
 
 		public void Dispose()

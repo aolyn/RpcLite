@@ -13,7 +13,7 @@ namespace RpcLite.Service
 		/// <param name="factory"></param>
 		/// <param name="config"></param>
 		/// <returns></returns>
-		public IServiceMapper CreateServiceMapper(RpcServiceFactory factory, RpcConfig config)
+		public IServiceMapper CreateServiceMapper(RpcServiceFactory factory, ServiceConfig config)
 		{
 			return new DefaultServiceMapper(factory);
 		}

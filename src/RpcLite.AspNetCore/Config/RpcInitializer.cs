@@ -1,11 +1,7 @@
 ﻿using System;
-
-#if NETFX
-using System.Configuration;
-#else
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using CoreConfig = Microsoft.Extensions.Configuration;
-#endif
 
 namespace RpcLite.Config
 {
@@ -14,29 +10,6 @@ namespace RpcLite.Config
 	/// </summary>
 	public class RpcInitializer
 	{
-		private static readonly object InitLocker = new object();
-		private static bool _initialized;
-
-#if NETFX
-
-		/// <summary>
-		/// initialize with web.config
-		/// </summary>
-		public static void Initialize()
-		{
-			lock (InitLocker)
-			{
-				if (_initialized)
-					return;
-
-				var config = ConfigurationManager.GetSection("RpcLite") as RpcConfig;
-				Initialize(config);
-				_initialized = true;
-			}
-		}
-
-#else
-
 		/// <summary>
 		/// initialize with default config file "rpclite.config.json"
 		/// </summary>
@@ -76,8 +49,6 @@ namespace RpcLite.Config
 			return config;
 		}
 
-#endif
-
 		/// <summary>
 		/// initialize with RpcConfig
 		/// </summary>
@@ -87,6 +58,18 @@ namespace RpcLite.Config
 			RpcManager.Initialize(config);
 		}
 
+#if NETCORE
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="config"></param>
+		/// <param name="services"></param>
+		public static void Initialize(RpcConfig config, IServiceCollection services)
+		{
+			RpcManager.Initialize(config, services);
+		}
+#endif
+
 		/// <summary>
 		/// initialize with RpcConfigBuilder
 		/// </summary>
@@ -94,16 +77,7 @@ namespace RpcLite.Config
 		/// <returns></returns>
 		public static void Initialize(Action<RpcConfigBuilder> builder)
 		{
-			lock (InitLocker)
-			{
-				if (_initialized)
-					return;
-
-				RpcManager.Initialize(builder);
-
-				_initialized = true;
-			}
+			RpcManager.Initialize(builder);
 		}
-
 	}
 }

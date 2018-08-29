@@ -22,9 +22,9 @@ namespace ServiceTest.ClientTest
 		public static void MeropsRegistryTest()
 		{
 			var config = new RpcConfigBuilder()
-				.UseClient<IProductService>("ProductService", "IT", null)
-				.UseClient<IServiceTestService1>("IServiceTestService1", "http://localhost:5000/api/service/")
-				.UseClient<IServiceTestService2>("IServiceTestService2", "it1", "http://localhost:5000/api/service/")
+				.AddClient<IProductService>("ProductService", "IT", null)
+				.AddClient<IServiceTestService1>("IServiceTestService1", "http://localhost:5000/api/service/")
+				.AddClient<IServiceTestService2>("IServiceTestService2", "it1", "http://localhost:5000/api/service/")
 				.UseRegistry<MeropsRegistryFactory>(null, "http://localhost:12974/api/service/")
 				.Build();
 			var appHost = new AppHost(config);
@@ -72,9 +72,9 @@ namespace ServiceTest.ClientTest
 		public static void DefaultRegistryTest()
 		{
 			var config = new RpcConfigBuilder()
-				.UseClient<IProductService>("ProductService", "http://localhost:5000/api/service/")
-				.UseClient<IServiceTestService1>("IServiceTestService1", "http://localhost:5000/api/service/")
-				.UseClient<IServiceTestService2>("IServiceTestService2", "it1", "http://localhost:5000/api/service/")
+				.AddClient<IProductService>("ProductService", "http://localhost:5000/api/service/")
+				.AddClient<IServiceTestService1>("IServiceTestService1", "http://localhost:5000/api/service/")
+				.AddClient<IServiceTestService2>("IServiceTestService2", "it1", "http://localhost:5000/api/service/")
 				.Build();
 
 			var appHost = new AppHost(config);

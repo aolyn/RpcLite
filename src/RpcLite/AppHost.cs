@@ -2,12 +2,13 @@
 using System.Threading.Tasks;
 using RpcLite.Client;
 using RpcLite.Config;
+using RpcLite.Filter;
 using RpcLite.Monitor;
 using RpcLite.Registry;
 using RpcLite.Service;
 
 #if NETCORE
-using CoreConfig = Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 #endif
 
 namespace RpcLite
@@ -38,11 +39,6 @@ namespace RpcLite
 		public IRegistry Registry { get; }
 
 		/// <summary>
-		/// get config, modification to config will not effect except service.paths, so just don't modify it
-		/// </summary>
-		public RpcConfig Config { get; }
-
-		/// <summary>
 		/// 
 		/// </summary>
 		internal FormatterManager FormatterManager { get; set; }
@@ -57,28 +53,47 @@ namespace RpcLite
 		/// </summary>
 		internal VersionedList<IRpcClientFilter> ClientFilters { get; } = new VersionedList<IRpcClientFilter>();
 
-		/// <summary>
-		/// 
-		/// </summary>
-		public string AppId { get; private set; }
-
 #if NETCORE
-		/// <summary>
-		/// 
-		/// </summary>
-		public AppHost(CoreConfig.IConfiguration config)
-			: this(new CoreConfiguration(config))
-		{
-		}
+		internal bool SupportDi { get; }
 #endif
 
 		/// <summary>
 		/// 
 		/// </summary>
-		public AppHost(IConfiguration config)
-			: this(RpcConfigHelper.GetConfig(config))
+		public string AppId { get; }
+
+#if NETCORE
+		/// <summary>
+		/// 
+		/// </summary>
+		public AppHost(RpcConfig config, IServiceCollection services) : this(config)
 		{
+			if (services != null)
+			{
+				SupportDi = true;
+
+				if (config.Service?.Services != null)
+				{
+					foreach (var service in config.Service.Services)
+					{
+						var type = ReflectHelper.GetTypeByIdentifier(service.Type);
+						switch (service.LifeCycle)
+						{
+							case ServiceLifeCycle.Singleton:
+								services.AddSingleton(type);
+								break;
+							case ServiceLifeCycle.Scoped:
+								services.AddScoped(type);
+								break;
+							case ServiceLifeCycle.Transient:
+								services.AddTransient(type);
+								break;
+						}
+					}
+				}
+			}
 		}
+#endif
 
 		/// <summary>
 		/// 
@@ -88,13 +103,11 @@ namespace RpcLite
 			if (config == null)
 				throw new ArgumentNullException(nameof(config));
 
-			Config = config;
-
 			AppId = config.AppId;
-			Registry = RegistryHelper.GetRegistry(this, config);
-			ServiceHost = new ServiceHost(this, config);
-			FormatterManager = new FormatterManager(config);
-			ClientFactory = new RpcClientFactory(this, config);
+			Registry = RegistryHelper.GetRegistry(config);
+			ServiceHost = new ServiceHost(this, config.Service);
+			FormatterManager = new FormatterManager(config.Formatter);
+			ClientFactory = new RpcClientFactory(this, config.Client);
 
 			if (config.Monitor != null && !string.IsNullOrWhiteSpace(config.Monitor.Type))
 			{
@@ -116,16 +129,6 @@ namespace RpcLite
 				}
 			}
 		}
-
-		//private void RegisterServices()
-		//{
-		//	if (Registry?.CanRegister != true || Config?.Service.Services == null) return;
-
-		//	foreach (var service in Config.Service.Services)
-		//	{
-		//		Registry.RegisterAsync(service.ToServiceInfo());
-		//	}
-		//}
 
 		/// <summary>
 		/// initialize service host

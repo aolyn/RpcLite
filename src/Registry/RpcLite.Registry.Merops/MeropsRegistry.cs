@@ -3,7 +3,6 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using RpcLite.Client;
 using RpcLite.Config;
 using RpcLite.Logging;
 using RpcLite.Registry.Merops.Contract;
@@ -19,7 +18,6 @@ namespace RpcLite.Registry.Merops
 		private QuickReadConcurrentDictionary<ServiceIdentifier, ServiceInfo[]> _defaultBaseUrlDictionary = new QuickReadConcurrentDictionary<ServiceIdentifier, ServiceInfo[]>();
 		private readonly ConcurrentDictionary<ServiceIdentifier, DateTime> _updateTimeDic = new ConcurrentDictionary<ServiceIdentifier, DateTime>();
 		private readonly Lazy<IRegistryService> _registryClient;
-		private readonly AppHost _appHost;
 		private int _updateInterval = 3 * 60;
 
 		/// <summary>
@@ -36,11 +34,10 @@ namespace RpcLite.Registry.Merops
 			}
 		}
 
-		public MeropsRegistry(AppHost appHost, RpcConfig config)
+		public MeropsRegistry(RpcConfig config)
 			: base(config)
 		{
 			Config = config;
-			_appHost = appHost;
 
 			_registryClient = new Lazy<IRegistryService>(() =>
 			{
@@ -52,9 +49,12 @@ namespace RpcLite.Registry.Merops
 					return null;
 				}
 
-				var client = _appHost == null
-					? ClientFactory.GetInstance<IRegistryService>(address)
-					: _appHost.ClientFactory.GetInstance<IRegistryService>(address);
+				var ah = new AppHost(new RpcConfig());
+				var client = ah.ClientFactory.GetInstance<IRegistryService>(address);
+
+				//var client = appHost == null
+				//	? ClientFactory.GetInstance<IRegistryService>(address)
+				//	: appHost.ClientFactory.GetInstance<IRegistryService>(address);
 				return client;
 			});
 

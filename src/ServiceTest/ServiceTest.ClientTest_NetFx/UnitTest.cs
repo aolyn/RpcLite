@@ -41,7 +41,7 @@ namespace ServiceTest.ClientTest_NetFx
 
 				RpcInitializer.Initialize(config);
 #else
-				RpcInitializer.Initialize();
+				RpcManager.Initialize(new RpcConfig());
 #endif
 				var client = ClientFactory.GetInstance<IProductService>(address);
 

@@ -69,18 +69,4 @@ namespace ServiceTest.WebHost
 		}
 
 	}
-
-	public class Product
-	{
-		public int Id { get; set; }
-		public string Name { get; set; }
-		public decimal Price { get; set; }
-	}
-
-	public interface ITestService
-	{
-		string GetDateTimeString();
-		int AddProduct(Product product);
-		Product GetProductById(int id);
-	}
 }

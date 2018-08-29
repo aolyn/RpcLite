@@ -11,8 +11,7 @@ namespace RpcLite.Service
 	/// </summary>
 	public class FormatterManager
 	{
-		private List<IFormatter> _formaters;
-		//private readonly object _formatterLock = new object();
+		private List<IFormatter> _formatters;
 		private Dictionary<string, IFormatter> _typeToFormatterDictionary = new Dictionary<string, IFormatter>();
 
 		/// <summary>
@@ -27,18 +26,15 @@ namespace RpcLite.Service
 		/// <returns></returns>
 		public IFormatter GetFormatter(string contentType)
 		{
-			if (_formaters == null || _formaters.Count == 0)
+			if (_formatters == null || _formatters.Count == 0)
 			{
 				throw new ConfigException("Configuration error: no formatters.");
 			}
 
 			if (string.IsNullOrWhiteSpace(contentType))
-				return _formaters.First();
+				return _formatters.First();
 
-			IFormatter formatter;
-			_typeToFormatterDictionary.TryGetValue(contentType, out formatter);
-
-			//var formatter = _formaters.FirstOrDefault(it => it.SupportMimes.Contains(contentType));
+			_typeToFormatterDictionary.TryGetValue(contentType, out var formatter);
 			return formatter;
 		}
 
@@ -49,15 +45,15 @@ namespace RpcLite.Service
 		/// <returns></returns>
 		public IFormatter GetFormatterByName(string name)
 		{
-			if (_formaters == null || _formaters.Count == 0)
+			if (_formatters == null || _formatters.Count == 0)
 			{
 				throw new ConfigException("Configuration error: no formatters.");
 			}
 
 			if (string.IsNullOrWhiteSpace(name))
-				return _formaters.First();
+				return _formatters.First();
 
-			var formatter = _formaters
+			var formatter = _formatters
 				.FirstOrDefault(it => it.Name == name);
 			return formatter;
 		}
@@ -74,30 +70,14 @@ namespace RpcLite.Service
 
 			//lock (_formatterLock)
 			//{
-			var formatters = _formaters == null
+			var formatters = _formatters == null
 				? new List<IFormatter>().ToList()
-				: _formaters.ToList();
+				: _formatters.ToList();
 			formatters.Add(formatter);
 
 			ReLinkFormatters(formatters);
 			//}
 		}
-
-		//private void RemoveFormatter(IFormatter formatter)
-		//{
-		//	if (formatter == null)
-		//		throw new ArgumentNullException(nameof(formatter));
-
-		//	lock (_formatterLock)
-		//	{
-		//		var formatters = _formaters == null
-		//			? new List<IFormatter>().ToList()
-		//			: _formaters.ToList();
-		//		formatters.Remove(formatter);
-
-		//		ReLinkFormatters(formatters);
-		//	}
-		//}
 
 		private void ReLinkFormatters(List<IFormatter> formatters)
 		{
@@ -112,29 +92,29 @@ namespace RpcLite.Service
 
 			_typeToFormatterDictionary = dic;
 			DefaultFormatter = formatters.FirstOrDefault();
-			_formaters = formatters;
+			_formatters = formatters;
 		}
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="config"></param>
-		public FormatterManager(RpcConfig config)
+		public FormatterManager(FormatterConfig config)
 		{
-			if (config?.Formatter?.RemoveDefault != true)
+			if (config?.RemoveDefault != true)
 			{
 				//#if NETCORE
-				//				AddFormatter(new JsonFormatter());
+				//	AddFormatter(new JsonFormatter());
 				//#else
-				//AddFormatter(new NetJsonFormater());
+				//AddFormatter(new NetJsonFormatter());
 				AddFormatter(new JsonFormatter());
 				AddFormatter(new XmlFormatter());
 				//#endif
 			}
 
-			if (config?.Formatter?.Formatters != null)
+			if (config?.Formatters != null)
 			{
-				foreach (var item in config.Formatter?.Formatters)
+				foreach (var item in config.Formatters)
 				{
 					var formatter = ReflectHelper.CreateInstanceByIdentifier<IFormatter>(item.Type);
 					AddFormatter(formatter);

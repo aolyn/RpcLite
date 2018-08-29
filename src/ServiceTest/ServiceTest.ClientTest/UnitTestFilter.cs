@@ -1,5 +1,6 @@
 ﻿using RpcLite;
 using RpcLite.Client;
+using RpcLite.Filter;
 
 namespace ServiceTest.ClientTest
 {

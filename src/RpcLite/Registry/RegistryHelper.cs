@@ -10,7 +10,7 @@ namespace RpcLite.Registry
 	/// </summary>
 	internal static class RegistryHelper
 	{
-		internal static IRegistry GetRegistry(AppHost appHost, RpcConfig config)
+		internal static IRegistry GetRegistry(RpcConfig config)
 		{
 			var registryItem = config.Registry;
 			if (registryItem == null)
@@ -27,7 +27,7 @@ namespace RpcLite.Registry
 				{
 					throw new ConfigException(@"registry type not implements IRegistryFactory");
 				}
-				var registry = factory.CreateRegistry(appHost, config);
+				var registry = factory.CreateRegistry(config);
 				return registry;
 			}
 			catch (Exception ex)

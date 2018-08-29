@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using RpcLite.Filter;
 using RpcLite.Service;
 
 namespace ServiceTest.ClientTest

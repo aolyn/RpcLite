@@ -18,10 +18,10 @@ namespace RpcLite.Registry
 		public DefaultRegistry(RpcConfig config)
 			: base(config)
 		{
-			InitilizeAddresses();
+			InitializeAddresses();
 		}
 
-		private void InitilizeAddresses()
+		private void InitializeAddresses()
 		{
 			var tempDic = GetAddresses<Dictionary<ServiceIdentifier, ServiceInfo[]>>(Config);
 			_defaultBaseUrlDictionary = tempDic;
@@ -35,8 +35,7 @@ namespace RpcLite.Registry
 		/// <returns></returns>
 		public override Task<ServiceInfo[]> LookupAsync(string name, string group)
 		{
-			ServiceInfo[] result;
-			_defaultBaseUrlDictionary.TryGetValue(new ServiceIdentifier(name, group), out result);
+			_defaultBaseUrlDictionary.TryGetValue(new ServiceIdentifier(name, group), out var result);
 			return TaskHelper.FromResult(result);
 		}
 

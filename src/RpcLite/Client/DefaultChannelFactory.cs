@@ -37,13 +37,13 @@ namespace RpcLite.Client
 		/// 
 		/// </summary>
 		/// <param name="config"></param>
-		public void Initialize(RpcConfig config)
+		public void Initialize(ClientConfig config)
 		{
 			var channelProviders = new List<IChannelProvider> { new DefaultChannelProvider() };
 
-			if (config?.Client?.Channel?.Providers != null)
+			if (config?.Channel?.Providers != null)
 			{
-				foreach (var provider in config.Client.Channel.Providers)
+				foreach (var provider in config.Channel.Providers)
 				{
 					channelProviders.Add(ReflectHelper.CreateInstanceByIdentifier<IChannelProvider>(provider.Type));
 				}

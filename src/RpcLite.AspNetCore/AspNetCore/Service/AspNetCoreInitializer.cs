@@ -16,7 +16,6 @@ namespace RpcLite.AspNetCore.Service
 		/// <param name="app">used to UseMiddleware, keep null if not need set</param>
 		public static void Initialize(IApplicationBuilder app)
 		{
-			//var jsonFile = "rpclite.config.json";
 			Initialize(app, (string)null);
 		}
 

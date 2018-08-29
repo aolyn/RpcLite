@@ -10,7 +10,7 @@ namespace RpcLite.Service
 	{
 		private readonly List<RpcService> _services = new List<RpcService>();
 		private readonly AppHost _appHost;
-		private readonly RpcConfig _config;
+		private readonly ServiceConfig _config;
 		private readonly IServiceMapper _serviceMapper;
 
 		/// <summary>
@@ -23,15 +23,15 @@ namespace RpcLite.Service
 		/// </summary>
 		/// <param name="host"></param>
 		/// <param name="config"></param>
-		public RpcServiceFactory(AppHost host, RpcConfig config)
+		public RpcServiceFactory(AppHost host, ServiceConfig config)
 		{
 			_appHost = host;
 			_config = config;
 			Services = new ReadOnlyListWraper<RpcService>(_services);
 
-			if (config?.Service?.Mapper != null)
+			if (config?.Mapper != null)
 			{
-				var factory = ReflectHelper.CreateInstanceByIdentifier<IServiceMapperFactory>(config.Service.Mapper.Type);
+				var factory = ReflectHelper.CreateInstanceByIdentifier<IServiceMapperFactory>(config.Mapper.Type);
 				_serviceMapper = factory.CreateServiceMapper(this, config);
 			}
 			else
@@ -45,10 +45,10 @@ namespace RpcLite.Service
 		/// </summary>
 		public void Initialize()
 		{
-			if (_config.Service?.Services == null)
+			if (_config?.Services == null)
 				return;
 
-			foreach (var item in _config.Service.Services)
+			foreach (var item in _config.Services)
 			{
 				var typeInfo = ReflectHelper.GetTypeByIdentifier(item.Type);
 				if (typeInfo == null)

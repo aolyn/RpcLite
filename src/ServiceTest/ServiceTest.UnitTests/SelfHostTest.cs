@@ -19,7 +19,7 @@ namespace ServiceTest.UnitTests
 		public void Test1()
 		{
 			var host = new HostBuilder()
-				.UseConfig(config => config.UseService<Service1>("api/service1/"))
+				.UseConfig(config => config.AddService<TimeService>("api/service/"))
 				.Build();
 			host.Run();
 		}
@@ -28,8 +28,8 @@ namespace ServiceTest.UnitTests
 		public void IocTest1()
 		{
 			var host = new HostBuilder()
-				.UseConfig(config => config.UseService<Service1>("api/service1/"))
-				.ConfigureServices(service => service.AddScoped<Service1>())
+				.UseConfig(config => config.AddService<TimeService>("api/service/"))
+				.ConfigureServices(services => services.AddSingleton<EmailService>())
 				.Build();
 			host.Run();
 		}
@@ -38,7 +38,7 @@ namespace ServiceTest.UnitTests
 		public void IocTest()
 		{
 			var config = new RpcConfigBuilder()
-				.UseService<Service1>("api/service1/")
+				.AddService<TimeService>("api/service/")
 				.Build();
 
 			var services = new ServiceCollection()
@@ -47,6 +47,7 @@ namespace ServiceTest.UnitTests
 
 			var serviceProvider = services.BuildServiceProvider();
 			var appHost = serviceProvider.GetService<AppHost>();
+			Assert.NotNull(appHost);
 
 			//var host = new HostBuilder()
 			//	.UseConfig(config => config.UseService<Service1>("api/service1/"))
@@ -54,10 +55,23 @@ namespace ServiceTest.UnitTests
 			//host.Run();
 		}
 
-		public class Service1
+		public class TimeService
 		{
+			private readonly EmailService _emailService;
+
+			public TimeService()
+			{
+			}
+
+			public TimeService(EmailService emailService)
+			{
+				_emailService = emailService;
+			}
+
 			public string GetDateTime()
 			{
+				_emailService?.Send("hello");
+
 				return DateTime.Now.ToString(CultureInfo.InvariantCulture);
 			}
 
@@ -67,11 +81,18 @@ namespace ServiceTest.UnitTests
 			}
 		}
 
+		public class EmailService
+		{
+			public void Send(string message)
+			{
+			}
+		}
+
 		[Fact]
-		public void Test2()
+		public void StartupBuilder1()
 		{
 			var startupType = StartupBuilder.Create(
-				config => config.UseService<Service1>(nameof(Service1), "api/service1/"));
+				config => config.AddService<TimeService>(nameof(TimeService), "api/service1/"));
 
 			var host1 = new WebHostBuilder()
 				.UseUrls("http://*:5001")

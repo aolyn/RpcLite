@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using RpcLite.Filter;
 using RpcLite.Logging;
 
 namespace RpcLite.Service
@@ -15,7 +16,7 @@ namespace RpcLite.Service
 		private VersionedList<IServiceFilter> Filters => _host?.ServiceFilters;
 		private VersionedList<IServiceInvokeFilter> _invokeFilters;
 		private VersionedList<IProcessFilter> _processFilters;
-		internal VersionedList<IActionExecteFilter> ActionExecteFilter;
+		internal VersionedList<IActionExecuteFilter> ActionExecteFilter;
 		private long _oldVersion;
 		private long _processFilterOldVersion;
 
@@ -137,7 +138,7 @@ namespace RpcLite.Service
 			//copy on write instead of lock
 			var processFilters = new VersionedList<IProcessFilter>();
 			var invokeFilters = new VersionedList<IServiceInvokeFilter>();
-			var actionExecteFilter = new VersionedList<IActionExecteFilter>();
+			var actionExecteFilter = new VersionedList<IActionExecuteFilter>();
 
 			foreach (var item in Filters)
 			{
@@ -149,8 +150,8 @@ namespace RpcLite.Service
 					case IServiceInvokeFilter _:
 						invokeFilters.Add(item as IServiceInvokeFilter);
 						break;
-					case IActionExecteFilter _:
-						actionExecteFilter.Add(item as IActionExecteFilter);
+					case IActionExecuteFilter _:
+						actionExecteFilter.Add(item as IActionExecuteFilter);
 						break;
 				}
 			}

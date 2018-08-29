@@ -136,7 +136,7 @@ namespace ServiceTest.ClientTest
 				.UseRegistry<MeropsRegistryFactory>("MeropsRegistry", "http://localhost:12974/api/service/")
 				.UseMonitor<ConsoleMonitorFactory>("ConsoleMonitor", "http://localhost:6201/api/service/")
 				.UseInvoker<DefaultInvokerFactory>(null)
-				.UseFilter<UnitTestFilterFactory>()
+				.AddFilter<UnitTestFilterFactory>()
 				.Build();
 			var appHost2 = new AppHost(config);
 
@@ -241,7 +241,8 @@ namespace ServiceTest.ClientTest
 				.AddJsonFile("rpclite.config.json")
 				.Build();
 
-			var appHost = new AppHost(config);
+			var rpcConfig = RpcConfigHelper.GetConfig(new CoreConfiguration(config));
+			var appHost = new AppHost(rpcConfig);
 			appHost.Initialize();
 
 			var client = appHost.ClientFactory.GetInstance<IProductService>();

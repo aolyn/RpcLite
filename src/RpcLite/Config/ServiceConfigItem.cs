@@ -34,6 +34,11 @@ namespace RpcLite.Config
 		public string Type { get; set; }
 
 		/// <summary>
+		/// LifeCycle of service instance
+		/// </summary>
+		public ServiceLifeCycle LifeCycle { get; set; }
+
+		/// <summary>
 		/// 
 		/// </summary>
 		public ServiceConfigItem() { }

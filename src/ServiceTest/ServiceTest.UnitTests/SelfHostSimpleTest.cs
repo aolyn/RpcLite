@@ -11,7 +11,7 @@ namespace ServiceTest.UnitTests
 		public void Test()
 		{
 			var host = new HostBuilder()
-				.UseConfig(config => config.UseService<Service1>("api/service/"))
+				.UseConfig(config => config.AddService<Service1>("api/service/"))
 				.Build();
 			host.Run();
 		}

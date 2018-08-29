@@ -30,7 +30,7 @@ namespace RpcLite
 		/// <returns></returns>
 		public AppHostBuilder UseRegistry(string name, Type factoryType, string address)
 		{
-			_config.UseRegistry(name, factoryType, address);
+			_config.UserRegistry(name, factoryType, address);
 			return this;
 		}
 
@@ -96,7 +96,7 @@ namespace RpcLite
 		/// <returns></returns>
 		public AppHostBuilder UseServices(params ServiceConfigItem[] services)
 		{
-			_config.UseServices(services);
+			_config.AddServices(services);
 			return this;
 		}
 
@@ -109,7 +109,7 @@ namespace RpcLite
 		/// <returns></returns>
 		public AppHostBuilder UseService<TService>(string name, string path, string address)
 		{
-			_config.UseService<TService>(name, path, address);
+			_config.AddService<TService>(name, path, address);
 			return this;
 		}
 
@@ -143,7 +143,7 @@ namespace RpcLite
 		public AppHostBuilder UseClients(params ClientConfigItem[] clients)
 		{
 			if (clients == null) return this;
-			_config.UseClients(clients);
+			_config.AddClients(clients);
 			return this;
 		}
 
@@ -155,7 +155,7 @@ namespace RpcLite
 		/// <returns></returns>
 		public AppHostBuilder UseClient<TClient>(string name, string address)
 		{
-			_config.UseClient<TClient>(name, address);
+			_config.AddClient<TClient>(name, address);
 			return this;
 		}
 
@@ -210,7 +210,7 @@ namespace RpcLite
 		/// <returns></returns>
 		public AppHostBuilder UseFilter<TFactory>(string name)
 		{
-			_config.UseFilter<TFactory>(name);
+			_config.AddFilter<TFactory>(name);
 			return this;
 		}
 
@@ -221,7 +221,7 @@ namespace RpcLite
 		/// <returns></returns>
 		public AppHostBuilder UseFormatter<TFormatter>()
 		{
-			_config.UseFormatter<TFormatter>(null);
+			_config.AddFormatter<TFormatter>(null);
 			return this;
 		}
 
@@ -231,7 +231,7 @@ namespace RpcLite
 		/// <returns></returns>
 		public AppHostBuilder UseFormatter<TFormatter>(string name)
 		{
-			_config.UseFormatter<TFormatter>(name);
+			_config.AddFormatter<TFormatter>(name);
 			return this;
 		}
 

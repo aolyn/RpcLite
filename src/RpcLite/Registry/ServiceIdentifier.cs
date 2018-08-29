@@ -8,12 +8,12 @@
 		/// <summary>
 		/// 
 		/// </summary>
-		public string Name;
+		public readonly string Name;
 
 		/// <summary>
 		/// 
 		/// </summary>
-		public string Group;
+		public readonly string Group;
 
 		/// <summary>
 		/// 

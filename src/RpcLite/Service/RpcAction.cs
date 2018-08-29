@@ -264,7 +264,7 @@ namespace RpcLite.Service
 			try
 			{
 				var type = task.GetType();
-				var func = GetTaskResultFuncs.GetOrAdd(type, (Type key) =>
+				var func = GetTaskResultFuncs.GetOrAdd(type, key =>
 				{
 					var arg = Expression.Parameter(typeof(object), "task");
 					var argConvert = Expression.Convert(arg, type);
@@ -326,23 +326,28 @@ namespace RpcLite.Service
 		{
 			if (IsStatic)
 			{
-				return InvokeAcion(context.Argument, null);
+				return InvokeAction(context.Argument, null);
 			}
 
-//#if NETCORE
-//			if (context.RequestServices != null)
-//			{
-//				var serviceInstance = context.RequestServices.GetService(MethodInfo.DeclaringType);
-//				return InvokeAcion(context.Argument, serviceInstance);
-//			}
-//#endif
+#if NETCORE
+			if (context.RequestServices != null)
+			{
+				var serviceInstance = context.RequestServices.GetService(MethodInfo.DeclaringType);
+				if (serviceInstance == null)
+				{
+					throw new ServiceException("cannot resolve Service Instance from DI Container");
+				}
+				return InvokeAction(context.Argument, serviceInstance);
+			}
+#endif
+
 			using (var serviceInstance = ServiceFactory.GetService(this))
 			{
-				return InvokeAcion(context.Argument, serviceInstance.ServiceObject);
+				return InvokeAction(context.Argument, serviceInstance.ServiceObject);
 			}
 		}
 
-		private object InvokeAcion(object requestObject, object serviceObject)
+		private object InvokeAction(object requestObject, object serviceObject)
 		{
 			object resultObj;
 			if (HasReturnValue)
@@ -357,14 +362,29 @@ namespace RpcLite.Service
 			return resultObj;
 		}
 
-		private static Task InvokeTaskInternal(ServiceContext context)
+		private Task InvokeTaskInternal(ServiceContext context)
 		{
 			object serviceObject = null;
 			if (!context.Action.IsStatic)
 			{
-				var serviceContainer = ServiceFactory.GetService(context.Action);
-				context.ServiceContainer = serviceContainer;
-				serviceObject = serviceContainer.ServiceObject;
+#if NETCORE
+				if (context.RequestServices != null)
+				{
+					serviceObject = context.RequestServices.GetService(MethodInfo.DeclaringType);
+					if (serviceObject == null)
+					{
+						throw new ServiceException("cannot resolve Service Instance from DI Container");
+					}
+				}
+				else
+				{
+#endif
+					var serviceContainer = ServiceFactory.GetService(context.Action);
+					context.ServiceContainer = serviceContainer;
+					serviceObject = serviceContainer.ServiceObject;
+#if NETCORE
+				}
+#endif
 			}
 
 			var ar = (Task)context.Action.InvokeTask(serviceObject, context.Argument);

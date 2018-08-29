@@ -12,10 +12,10 @@ namespace RpcLite.Client
 	/// </summary>
 	public class RpcClientFactory
 	{
-		private readonly ConcurrentDictionary<Type, object> _clienBuilders = new ConcurrentDictionary<Type, object>();
+		private readonly ConcurrentDictionary<Type, object> _clientBuilders = new ConcurrentDictionary<Type, object>();
 		private readonly IInvokerFactory _invokerFactory;
 		private readonly AppHost _appHost;
-		private readonly RpcConfig _config;
+		private readonly ClientConfig _clientConfig;
 
 		//private readonly IClientChannelFactory _channelFactory;
 
@@ -24,21 +24,21 @@ namespace RpcLite.Client
 		/// </summary>
 		/// <param name="appHost"></param>
 		/// <param name="config"></param>
-		public RpcClientFactory(AppHost appHost, RpcConfig config)
+		public RpcClientFactory(AppHost appHost, ClientConfig config)
 		{
 			_appHost = appHost;
-			if (config?.Client != null)
+			if (config != null)
 			{
 				//get InvokerFactory from config
 			}
 
-			_config = config;
+			_clientConfig = config;
 
 			var channelFactory = new DefaultChannelFactory();
 			channelFactory.Initialize(config);
 
-			_invokerFactory = config?.Client?.Invoker?.Type != null
-				? ReflectHelper.CreateInstanceByIdentifier<IInvokerFactory>(config.Client?.Invoker?.Type)
+			_invokerFactory = config?.Invoker?.Type != null
+				? ReflectHelper.CreateInstanceByIdentifier<IInvokerFactory>(config?.Invoker?.Type)
 				: new DefaultInvokerFactory();
 			_invokerFactory.Initilize(appHost?.Registry, channelFactory);
 		}
@@ -46,7 +46,7 @@ namespace RpcLite.Client
 		private RpcClientBuilder<TContract> GetBuilder<TContract>() where TContract : class
 		{
 			var type = typeof(TContract);
-			var builder = (RpcClientBuilder<TContract>)_clienBuilders.GetOrAdd(type, tp =>
+			var builder = (RpcClientBuilder<TContract>)_clientBuilders.GetOrAdd(type, tp =>
 			{
 				var b = new RpcClientBuilder<TContract>();
 				return b;
@@ -63,7 +63,7 @@ namespace RpcLite.Client
 			where TContract : class
 		{
 			var type = typeof(TContract);
-			var clientConfigItem = _config?.Client?.Clients
+			var clientConfigItem = _clientConfig?.Clients
 				.FirstOrDefault(it => it.TypeName == type.FullName);
 
 			return GetInstance<TContract>(clientConfigItem?.Name, clientConfigItem?.Group, null);

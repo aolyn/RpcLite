@@ -9,8 +9,8 @@ namespace ServiceTest.WebHost
 		protected void Application_Start(object sender, EventArgs e)
 		{
 			RpcInitializer.Initialize(builder => builder
-				.UseService<ProductService>("ProductService", "api/service/")
-				.UseService<TestService>("ProductService", "api/test/")
+				.AddService<ProductService>("ProductService", "api/service/")
+				.AddService<TestService>("ProductService", "api/test/")
 			);
 		}
 

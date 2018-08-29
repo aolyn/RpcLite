@@ -18,8 +18,8 @@ namespace RpcLite.Server.Kestrel
 
 		static StartupBuilder()
 		{
-			const string assembliyName = "RpcLiteStartupBuilderAssembly";
-			var asmName = new AssemblyName { Name = assembliyName };
+			const string assemblyName = "RpcLiteStartupBuilderAssembly";
+			var asmName = new AssemblyName { Name = assemblyName };
 			var asmFileName = asmName.Name + ".dll";
 
 			var assemblyBuilder = AssemblyBuilder.DefineDynamicAssembly(asmName, AssemblyBuilderAccess.RunAndCollect);
@@ -37,7 +37,8 @@ namespace RpcLite.Server.Kestrel
 				typeof(void), new[] { typeof(IServiceCollection) });
 			var body1 = configServicesMethod.GetILGenerator();
 			body1.Emit(OpCodes.Ldarg_1);
-			var configureServices = typeof(StartupBuilder).GetMethod("ConfigureServices", 
+			body1.Emit(OpCodes.Ldsfld, field1);
+			var configureServices = typeof(StartupBuilder).GetMethod("ConfigureServices",
 				BindingFlags.Static | BindingFlags.Public);
 			body1.Emit(OpCodes.Call, configureServices);
 			body1.Emit(OpCodes.Ret);
@@ -46,7 +47,7 @@ namespace RpcLite.Server.Kestrel
 				typeof(void), new[] { typeof(IApplicationBuilder), typeof(IHostingEnvironment), typeof(ILoggerFactory) });
 			var il2 = configureMethod.GetILGenerator();
 			il2.Emit(OpCodes.Ldarg_1);
-			il2.Emit(OpCodes.Ldsfld, field1);
+			//il2.Emit(OpCodes.Ldsfld, field1);
 			var sConfig = typeof(StartupBuilder).GetMethod("Configure", BindingFlags.Static | BindingFlags.Public);
 			il2.Emit(OpCodes.Call, sConfig);
 			il2.Emit(OpCodes.Ret);
@@ -59,15 +60,16 @@ namespace RpcLite.Server.Kestrel
 		}
 
 		[Obsolete("for emit use only")]
-		public static void ConfigureServices(IServiceCollection services)
+		public static void ConfigureServices(IServiceCollection services, Action<RpcConfigBuilder> configBuilder)
 		{
 			services.AddRouting();
+			services.AddRpcLite(configBuilder);
 		}
 
 		[Obsolete("for emit use only")]
-		public static void Configure(IApplicationBuilder app, Action<RpcConfigBuilder> configBuilder)
+		public static void Configure(IApplicationBuilder app)
 		{
-			app.UseRpcLite(configBuilder);
+			app.UseRpcLite();
 
 			app.Run(async context =>
 			{

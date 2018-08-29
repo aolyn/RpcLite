@@ -3,6 +3,10 @@ using System.Threading.Tasks;
 using RpcLite.Config;
 using RpcLite.Service;
 
+#if NETCORE
+using Microsoft.Extensions.DependencyInjection;
+#endif
+
 namespace RpcLite
 {
 	/// <summary>
@@ -39,6 +43,31 @@ namespace RpcLite
 			}
 		}
 
+#if NETCORE
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="config"></param>
+		/// <param name="services"></param>
+		public static void Initialize(RpcConfig config, IServiceCollection services)
+		{
+			if (AppHost != null)
+			{
+				return;
+				//throw new InvalidOperationException("default service host already initialized");
+			}
+
+			lock (InitializeLock)
+			{
+				if (AppHost == null)
+				{
+					AppHost = new AppHost(config, services);
+					AppHost.Initialize();
+				}
+			}
+		}
+#endif
+
 		/// <summary>
 		/// 
 		/// </summary>
@@ -62,15 +91,5 @@ namespace RpcLite
 		{
 			return AppHost.ProcessAsync(serverContext);
 		}
-
-		///// <summary>
-		///// 
-		///// </summary>
-		///// <param name="filter"></param>
-		//public static void AddFilter(IServiceFilter filter)
-		//{
-		//	AppHost.AddFilter(filter);
-		//}
-
 	}
 }

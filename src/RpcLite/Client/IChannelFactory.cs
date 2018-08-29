@@ -18,6 +18,6 @@ namespace RpcLite.Client
 		/// 
 		/// </summary>
 		/// <param name="config"></param>
-		void Initialize(RpcConfig config);
+		void Initialize(ClientConfig config);
 	}
 }

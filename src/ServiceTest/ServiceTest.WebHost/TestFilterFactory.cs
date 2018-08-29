@@ -1,4 +1,5 @@
 ﻿using RpcLite;
+using RpcLite.Filter;
 
 namespace ServiceTest.WebHost
 {
