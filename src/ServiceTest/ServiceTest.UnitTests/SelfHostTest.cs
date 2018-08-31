@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using RpcLite;
 using RpcLite.Config;
 using RpcLite.Server.Kestrel;
+using ServiceTest.Common;
 using Xunit;
 
 namespace ServiceTest.UnitTests
@@ -32,6 +33,22 @@ namespace ServiceTest.UnitTests
 				.ConfigureServices(services => services.AddSingleton<EmailService>())
 				.Build();
 			host.Run();
+		}
+
+		[Fact]
+		public void IocTest2()
+		{
+			var host = new HostBuilder()
+				.UseConfig(config => config.AddService<TimeService>("api/service/"))
+				.ConfigureServices(services => services.AddServiceConfiguration<SelfHostTest>())
+				.Build();
+			host.Run();
+		}
+
+		[Service(ServiceLifetime.Singleton)]
+		public static EmailService GetEmailService(IServiceProvider serviceProvider)
+		{
+			return new EmailService();
 		}
 
 		[Fact]

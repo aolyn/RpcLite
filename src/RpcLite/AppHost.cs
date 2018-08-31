@@ -79,18 +79,21 @@ namespace RpcLite
 						var type = ReflectHelper.GetTypeByIdentifier(service.Type);
 						switch (service.LifeCycle)
 						{
-							case ServiceLifeCycle.Singleton:
+							case ServiceLifecycle.Singleton:
 								services.AddSingleton(type);
 								break;
-							case ServiceLifeCycle.Scoped:
+							case ServiceLifecycle.Scoped:
 								services.AddScoped(type);
 								break;
-							case ServiceLifeCycle.Transient:
+							case ServiceLifecycle.Transient:
 								services.AddTransient(type);
 								break;
 						}
 					}
 				}
+
+				services.AddSingleton(this);
+				//services.AddSingleton(ClientFactory);
 			}
 		}
 #endif
@@ -130,14 +133,14 @@ namespace RpcLite
 			}
 		}
 
-		/// <summary>
-		/// initialize service host
-		/// </summary>
-		public void Initialize()
-		{
-			ServiceHost.Initialize();
-			//RegisterServices();
-		}
+		///// <summary>
+		///// initialize service host
+		///// </summary>
+		//public void Initialize()
+		//{
+		//	ServiceHost.Initialize();
+		//	//RegisterServices();
+		//}
 
 		/// <summary>
 		/// 

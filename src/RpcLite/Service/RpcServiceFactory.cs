@@ -38,12 +38,14 @@ namespace RpcLite.Service
 			{
 				_serviceMapper = new DefaultServiceMapper(this);
 			}
+
+			Initialize();
 		}
 
 		/// <summary>
 		/// 
 		/// </summary>
-		public void Initialize()
+		private void Initialize()
 		{
 			if (_config?.Services == null)
 				return;

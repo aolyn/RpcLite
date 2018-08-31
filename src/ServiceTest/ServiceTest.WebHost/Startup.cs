@@ -12,13 +12,21 @@ namespace ServiceTest.WebHost
 	{
 		public void ConfigureServices(IServiceCollection services)
 		{
-			//services.AddMvc();
-			services.AddRouting();
+			services.AddMvc();
+			//services.AddRouting();
 			services.AddRpcLite(builder => builder
 				.AddService<TestService>("TestService", "api/test/")
-				.AddService<ProductService>("ProductService", "api/service/", null, ServiceLifeCycle.Scoped)
+				.AddService<ProductService>("ProductService", "api/service/", null, ServiceLifecycle.Scoped)
 				.AddService<TimeService>("TimeService", "api/time/")
 				.AddFilter<TestFilterFactory>());
+
+			services.AddServiceConfiguration<ServiceConfiguration>();
+
+			//services.Add(new ServiceDescriptor(typeof(IProductService), sp =>
+			//{
+			//	_times++;
+			//	return new ProductService();
+			//}, ServiceLifetime.Singleton));
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -41,18 +49,18 @@ namespace ServiceTest.WebHost
 				app.UseDeveloperExceptionPage();
 			}
 
-			//app.UseMvc(routes =>
-			//{
-			//	routes.MapRoute(
-			//		name: "default",
-			//		template: "{controller=Home}/{action=Index}/{id?}");
+			app.UseMvc(routes =>
+			{
+				routes.MapRoute(
+					name: "default",
+					template: "{controller=Home}/{action=Index}/{id?}");
 
-			//	////Method2: use IRouteBuilder
-			//	//routes.UseRpcLite(builder => builder
-			//	//	.UseService<TestService>("TestService", "api/test/")
-			//	//	.UseService<ProductService>("TestService", "api/service/")
-			//	//	.UseFilter<TestFilterFactory>());
-			//});
+				////Method2: use IRouteBuilder
+				//routes.UseRpcLite(builder => builder
+				//	.UseService<TestService>("TestService", "api/test/")
+				//	.UseService<ProductService>("TestService", "api/service/")
+				//	.UseFilter<TestFilterFactory>());
+			});
 
 			app.Run(async (context) =>
 			{

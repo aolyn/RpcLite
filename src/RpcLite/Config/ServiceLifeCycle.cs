@@ -3,7 +3,7 @@
 	/// <summary>
 	/// ServiceLifeCycle
 	/// </summary>
-	public enum ServiceLifeCycle
+	public enum ServiceLifecycle
 	{
 		/// <summary>
 		/// Singleton

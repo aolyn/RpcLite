@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.Extensions.DependencyInjection;
+using RpcLite;
 using RpcLite.Config;
 
 // ReSharper disable once CheckNamespace
@@ -11,7 +12,7 @@ namespace Microsoft.AspNetCore.Builder
 	public static class RpcLiteIServiceCollectionExtensions
 	{
 		/// <summary>
-		/// 
+		/// create AppHost and register to container
 		/// </summary>
 		/// <param name="services"></param>
 		/// <param name="builder"></param>
@@ -21,9 +22,20 @@ namespace Microsoft.AspNetCore.Builder
 			var builderObj = new RpcConfigBuilder();
 			builder(builderObj);
 			var config = builderObj.Build();
-			services.AddSingleton(typeof(RpcConfig), config);
 
-			RpcInitializer.Initialize(config, services);
+			return AddRpcLite(services, config);
+		}
+
+		/// <summary>
+		/// create AppHost and register to container
+		/// </summary>
+		/// <param name="services"></param>
+		/// <param name="config"></param>
+		/// <returns></returns>
+		public static IServiceCollection AddRpcLite(this IServiceCollection services, RpcConfig config)
+		{
+			services.AddSingleton(typeof(RpcConfig), config);
+			var _ = new AppHost(config, services);
 			return services;
 		}
 	}

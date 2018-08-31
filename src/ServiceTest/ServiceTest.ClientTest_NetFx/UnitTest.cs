@@ -108,7 +108,7 @@ namespace ServiceTest.ClientTest_NetFx
 				.UseChannelProvider<DefaultChannelProvider>()
 				.Build();
 
-			appHost.Initialize();
+			//appHost.Initialize();
 
 			//appHost.AddFilter(new LogTimeFilter());
 			//appHost.AddFilter(new LogRequestTimeFilter());

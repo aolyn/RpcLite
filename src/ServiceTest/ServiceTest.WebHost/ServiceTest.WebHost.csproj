@@ -24,6 +24,7 @@
     <ProjectReference Include="..\..\RpcLite.AspNetCore\RpcLite.AspNetCore.csproj" />
     <ProjectReference Include="..\..\RpcLite.Server.Kestrel\RpcLite.Server.Kestrel.csproj" />
     <ProjectReference Include="..\..\RpcLite\RpcLite.csproj" />
+    <ProjectReference Include="..\ServiceTest.Common\ServiceTest.Common.csproj" />
     <ProjectReference Include="..\ServiceTest.ServiceImpl\ServiceTest.ServiceImpl.csproj" />
     <ProjectReference Include="..\..\Registry\RpcLite.Registry.Zookeeper\RpcLite.Registry.Zookeeper.csproj" />
   </ItemGroup>

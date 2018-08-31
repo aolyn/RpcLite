@@ -19,6 +19,7 @@
     <ProjectReference Include="..\..\Registry\RpcLite.Registry.Zookeeper\RpcLite.Registry.Zookeeper.csproj" />
     <ProjectReference Include="..\..\Registry\RpcLite.Registry.Merops.Contract\RpcLite.Registry.Merops.Contract.csproj" />
     <ProjectReference Include="..\..\RpcLite.AspNetCore\RpcLite.AspNetCore.csproj" />
+    <ProjectReference Include="..\ServiceTest.Common\ServiceTest.Common.csproj" />
     <ProjectReference Include="..\ServiceTest.Contract\ServiceTest.Contract.csproj" />
     <ProjectReference Include="..\ServiceTest.ServiceImpl\ServiceTest.ServiceImpl.csproj" />
   </ItemGroup>

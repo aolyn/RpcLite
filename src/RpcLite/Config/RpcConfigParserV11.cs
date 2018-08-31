@@ -304,8 +304,8 @@ namespace RpcLite.Config
 							//TypeName = typeName,
 							//AssemblyName = assemblyName,
 							LifeCycle = string.IsNullOrEmpty(lifeCycle)
-								? ServiceLifeCycle.Singleton
-								: (ServiceLifeCycle)Enum.Parse(typeof(ServiceLifeCycle), lifeCycle),
+								? ServiceLifecycle.Singleton
+								: (ServiceLifecycle)Enum.Parse(typeof(ServiceLifecycle), lifeCycle),
 							Path = path,
 							Address = address,
 							Group = env,

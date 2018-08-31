@@ -76,6 +76,9 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\ServiceTest.WebHost\Product.cs">
+      <Link>Product.cs</Link>
+    </Compile>
     <Compile Include="..\..\ServiceTest.WebHost\TestService.cs">
       <Link>TestService.cs</Link>
     </Compile>

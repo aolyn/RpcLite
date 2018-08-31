@@ -163,7 +163,7 @@ namespace RpcLite.Config
 		/// <param name="lifeCycle"></param>
 		/// <returns></returns>
 		public RpcConfigBuilder AddService<TService>(string name, string path, string address,
-			ServiceLifeCycle lifeCycle)
+			ServiceLifecycle lifeCycle)
 		{
 			var item = new ServiceConfigItem(name, typeof(TService), path)
 			{
@@ -183,7 +183,7 @@ namespace RpcLite.Config
 		/// <returns></returns>
 		public RpcConfigBuilder AddService<TService>(string name, string path, string address)
 		{
-			return AddService<TService>(name, path, address, ServiceLifeCycle.Singleton);
+			return AddService<TService>(name, path, address, ServiceLifecycle.Singleton);
 		}
 
 		/// <summary>

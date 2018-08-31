@@ -29,7 +29,7 @@ namespace ServiceTest.ClientTest
 				.UseClient<IProductService>("ProductService", "http://localhost:5000/api/service/")
 				.UseChannelProvider<DefaultChannelProvider>()
 				.Build();
-			appHost.Initialize();
+			//appHost.Initialize();
 
 			var client = appHost.ClientFactory.GetInstance<IProductService>();
 			//var clientInfo = (IRpcClient<IProductService>)client;
@@ -151,7 +151,7 @@ namespace ServiceTest.ClientTest
 				//.UseClient<IProductService>("ProductService", "/service/")
 				.UseFilter<UnitTestFilterFactory>()
 				.Build();
-			appHost.Initialize();
+			//appHost.Initialize();
 
 			//appHost.AddFilter(new LogTimeFilter());
 			//appHost.AddFilter(new LogRequestTimeFilter());
@@ -229,7 +229,7 @@ namespace ServiceTest.ClientTest
 				.UseRegistry<MeropsRegistryFactory>("MeropsRegistry", "http://localhost:12974/api/service/")
 				//其它配置
 				.Build();
-			appHost.Initialize();
+			//appHost.Initialize();
 		}
 
 		public static void Test1()
@@ -243,7 +243,7 @@ namespace ServiceTest.ClientTest
 
 			var rpcConfig = RpcConfigHelper.GetConfig(new CoreConfiguration(config));
 			var appHost = new AppHost(rpcConfig);
-			appHost.Initialize();
+			//appHost.Initialize();
 
 			var client = appHost.ClientFactory.GetInstance<IProductService>();
 

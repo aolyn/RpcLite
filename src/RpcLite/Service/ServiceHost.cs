@@ -44,18 +44,18 @@ namespace RpcLite.Service
 
 				return null;
 			});
-		}
-
-		/// <summary>
-		/// initialize service host
-		/// </summary>
-		public void Initialize()
-		{
-			_serviceFactory.Initialize();
-
 			// ReSharper disable once UnusedVariable
 			var initializeResult = _initializeRegistry.Value;
 		}
+
+		///// <summary>
+		///// initialize service host
+		///// </summary>
+		//public void Initialize()
+		//{
+		//	// ReSharper disable once UnusedVariable
+		//	var initializeResult = _initializeRegistry.Value;
+		//}
 
 		/// <summary>
 		/// 

@@ -38,7 +38,7 @@ namespace RpcLite
 				if (AppHost == null)
 				{
 					AppHost = new AppHost(config);
-					AppHost.Initialize();
+					//AppHost.Initialize();
 				}
 			}
 		}
@@ -62,7 +62,7 @@ namespace RpcLite
 				if (AppHost == null)
 				{
 					AppHost = new AppHost(config, services);
-					AppHost.Initialize();
+					//AppHost.Initialize();
 				}
 			}
 		}

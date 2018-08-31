@@ -18,6 +18,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\RpcLite.Server.Kestrel\RpcLite.Server.Kestrel.csproj" />
     <ProjectReference Include="..\..\RpcLite\RpcLite.csproj" />
+    <ProjectReference Include="..\ServiceTest.Common\ServiceTest.Common.csproj" />
     <ProjectReference Include="..\ServiceTest.Contract\ServiceTest.Contract.csproj" />
   </ItemGroup>
 
