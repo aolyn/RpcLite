@@ -19,9 +19,7 @@ namespace Microsoft.AspNetCore.Builder
 		/// <returns></returns>
 		public static IServiceCollection AddRpcLite(this IServiceCollection services, Action<RpcConfigBuilder> builder)
 		{
-			var builderObj = new RpcConfigBuilder();
-			builder(builderObj);
-			var config = builderObj.Build();
+			var config = RpcConfigBuilder.BuildConfig(builder);
 
 			return AddRpcLite(services, config);
 		}

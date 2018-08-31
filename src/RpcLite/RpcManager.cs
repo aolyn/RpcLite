@@ -1,11 +1,6 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using RpcLite.Config;
 using RpcLite.Service;
-
-#if NETCORE
-using Microsoft.Extensions.DependencyInjection;
-#endif
 
 namespace RpcLite
 {
@@ -41,45 +36,6 @@ namespace RpcLite
 					//AppHost.Initialize();
 				}
 			}
-		}
-
-#if NETCORE
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="config"></param>
-		/// <param name="services"></param>
-		public static void Initialize(RpcConfig config, IServiceCollection services)
-		{
-			if (AppHost != null)
-			{
-				return;
-				//throw new InvalidOperationException("default service host already initialized");
-			}
-
-			lock (InitializeLock)
-			{
-				if (AppHost == null)
-				{
-					AppHost = new AppHost(config, services);
-					//AppHost.Initialize();
-				}
-			}
-		}
-#endif
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="builder"></param>
-		/// <returns></returns>
-		public static void Initialize(Action<RpcConfigBuilder> builder)
-		{
-			var builderObj = new RpcConfigBuilder();
-			builder(builderObj);
-			var config = builderObj.Build();
-
-			Initialize(config);
 		}
 
 		/// <summary>

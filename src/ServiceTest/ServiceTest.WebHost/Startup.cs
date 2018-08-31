@@ -21,12 +21,6 @@ namespace ServiceTest.WebHost
 				.AddFilter<TestFilterFactory>());
 
 			services.AddServiceConfiguration<ServiceConfiguration>();
-
-			//services.Add(new ServiceDescriptor(typeof(IProductService), sp =>
-			//{
-			//	_times++;
-			//	return new ProductService();
-			//}, ServiceLifetime.Singleton));
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

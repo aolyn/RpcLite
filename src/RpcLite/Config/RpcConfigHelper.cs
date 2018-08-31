@@ -1,5 +1,9 @@
 ﻿using System;
 
+#if NETCORE
+using CoreConfig = Microsoft.Extensions.Configuration;
+#endif
+
 namespace RpcLite.Config
 {
 	/// <summary>
@@ -7,6 +11,18 @@ namespace RpcLite.Config
 	/// </summary>
 	public class RpcConfigHelper
 	{
+#if NETCORE
+		/// <summary>
+		/// get RpcLiteConfig from IConfiguration
+		/// </summary>
+		/// <param name="config"></param>
+		/// <returns></returns>
+		public static RpcConfig GetConfig(CoreConfig.IConfiguration config)
+		{
+			return GetConfig(new CoreConfigurationSection(config));
+		}
+#endif
+
 		/// <summary>
 		/// get RpcLiteConfig from IConfiguration
 		/// </summary>

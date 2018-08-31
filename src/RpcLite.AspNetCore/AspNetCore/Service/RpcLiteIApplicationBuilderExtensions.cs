@@ -1,6 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
+using Microsoft.AspNetCore.Routing;
+using RpcLite;
 using RpcLite.AspNetCore.Service;
 using RpcLite.Config;
+using RpcLite.Service;
 
 // ReSharper disable once CheckNamespace
 namespace Microsoft.AspNetCore.Builder
@@ -29,10 +33,7 @@ namespace Microsoft.AspNetCore.Builder
 		/// <returns></returns>
 		public static IApplicationBuilder UseRpcLite(this IApplicationBuilder app, Action<RpcConfigBuilder> builder)
 		{
-			var builderObj = new RpcConfigBuilder();
-			builder(builderObj);
-			var config = builderObj.Build();
-
+			var config = RpcConfigBuilder.BuildConfig(builder);
 			return app.UseRpcLite(config);
 		}
 
@@ -44,8 +45,33 @@ namespace Microsoft.AspNetCore.Builder
 		/// <returns></returns>
 		public static IApplicationBuilder UseRpcLite(this IApplicationBuilder app, RpcConfig rpcConfig)
 		{
-			AspNetCoreInitializer.Initialize(app, rpcConfig);
+			Initialize(app, rpcConfig);
 			return app;
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="app"></param>
+		/// <param name="rpcConfig"></param>
+		private static void Initialize(IApplicationBuilder app, RpcConfig rpcConfig)
+		{
+			var appHost = (AppHost)app?.ApplicationServices.GetService(typeof(AppHost));
+			if (appHost == null) throw new ServiceException("AddRpcLite not called in ConfigureService");
+
+			var routersBuilder = new RouteBuilder(app);
+			MapService(rpcConfig.Service.Services, routersBuilder, appHost);
+			var routes = routersBuilder.Build();
+			app.UseRouter(routes);
+		}
+
+		private static void MapService(List<ServiceConfigItem> serviceServices, IRouteBuilder routers, AppHost appHost)
+		{
+			foreach (var path in serviceServices)
+			{
+				routers.MapRoute(path.Path + "{*RpcLiteServicePath}",
+					context => appHost.ProcessAsync(new AspNetCoreServerContext(context)));
+			}
 		}
 
 	}

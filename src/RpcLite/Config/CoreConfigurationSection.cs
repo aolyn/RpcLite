@@ -43,14 +43,10 @@ namespace RpcLite.Config
 		/// </summary>
 		public string Value
 		{
-			get
-			{
-				return (Node as CoreConfig.IConfigurationSection)?.Value;
-			}
+			get => (Node as CoreConfig.IConfigurationSection)?.Value;
 			set
 			{
-				var node = Node as CoreConfig.IConfigurationSection;
-				if (node != null)
+				if (Node is CoreConfig.IConfigurationSection node)
 					node.Value = value;
 			}
 		}

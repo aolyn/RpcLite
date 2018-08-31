@@ -50,10 +50,7 @@ namespace RpcLite.Config
 		/// <returns></returns>
 		public static void Initialize(Action<RpcConfigBuilder> builder)
 		{
-			var builderObj = new RpcConfigBuilder();
-			builder(builderObj);
-			var config = builderObj.Build();
-
+			var config = RpcConfigBuilder.BuildConfig(builder);
 			Initialize(config);
 		}
 
