@@ -57,11 +57,11 @@ namespace Microsoft.AspNetCore.Builder
 		private static void Initialize(IApplicationBuilder app, RpcConfig rpcConfig)
 		{
 			var appHost = (AppHost)app?.ApplicationServices.GetService(typeof(AppHost));
-			if (appHost == null) throw new ServiceException("AddRpcLite not called in ConfigureService");
+			if (appHost == null) throw new ServiceException("AddRpcLite not called in Startup.ConfigureServices");
 
-			var routersBuilder = new RouteBuilder(app);
-			MapService(rpcConfig.Service.Services, routersBuilder, appHost);
-			var routes = routersBuilder.Build();
+			var routerBuilder = new RouteBuilder(app);
+			MapService(rpcConfig.Service.Services, routerBuilder, appHost);
+			var routes = routerBuilder.Build();
 			app.UseRouter(routes);
 		}
 

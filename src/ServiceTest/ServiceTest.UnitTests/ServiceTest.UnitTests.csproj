@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\DependencyInjection\src\Aolyn.Extensions.DependencyInjection\Aolyn.Extensions.DependencyInjection\Aolyn.Extensions.DependencyInjection.csproj" />
     <ProjectReference Include="..\..\RpcLite.Server.Kestrel\RpcLite.Server.Kestrel.csproj" />
     <ProjectReference Include="..\..\RpcLite\RpcLite.csproj" />
     <ProjectReference Include="..\ServiceTest.Common\ServiceTest.Common.csproj" />

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using System.Threading.Tasks;
+using Aolyn.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -9,7 +10,6 @@ using Microsoft.Extensions.Logging;
 using RpcLite;
 using RpcLite.Config;
 using RpcLite.Server.Kestrel;
-using ServiceTest.Common;
 using Xunit;
 
 namespace ServiceTest.UnitTests
@@ -40,7 +40,7 @@ namespace ServiceTest.UnitTests
 		{
 			var host = new HostBuilder()
 				.UseConfig(config => config.AddService<TimeService>("api/service/"))
-				.ConfigureServices(services => services.AddServiceConfiguration<SelfHostTest>())
+				.ConfigureServices(services => services.AddConfigType<SelfHostTest>())
 				.Build();
 			host.Run();
 		}

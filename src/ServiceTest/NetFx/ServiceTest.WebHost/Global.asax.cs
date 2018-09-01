@@ -10,7 +10,7 @@ namespace ServiceTest.WebHost
 		{
 			RpcInitializer.Initialize(builder => builder
 				.AddService<ProductService>("ProductService", "api/service/")
-				.AddService<TestService>("ProductService", "api/test/")
+				.AddService<TestService>("TestService", "api/test/")
 			);
 		}
 

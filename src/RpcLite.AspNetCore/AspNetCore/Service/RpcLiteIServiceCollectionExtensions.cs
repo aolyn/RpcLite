@@ -12,6 +12,18 @@ namespace Microsoft.AspNetCore.Builder
 	public static class RpcLiteIServiceCollectionExtensions
 	{
 		/// <summary>
+		/// initialize with default config file "rpclite.config.json" if exist, or else initialize empty AppHost
+		/// </summary>
+		/// <param name="services"></param>
+		/// <returns></returns>
+		public static IServiceCollection AddRpcLite(this IServiceCollection services)
+		{
+			var config = RpcInitializer.GetConfiguration(null);
+			var rpcConfig = RpcConfigHelper.GetConfig(config);
+			return AddRpcLite(services, rpcConfig);
+		}
+
+		/// <summary>
 		/// create AppHost and register to container
 		/// </summary>
 		/// <param name="services"></param>

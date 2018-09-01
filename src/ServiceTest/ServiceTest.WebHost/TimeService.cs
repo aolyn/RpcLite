@@ -10,7 +10,7 @@ namespace ServiceTest.WebHost
 		private readonly EmailService _emailService;
 		private readonly IProductService _productService;
 
-		public TimeService(IOptions<EmailService> emailService, IProductService productService)
+		public TimeService(Bean2 bean2, IOptions<EmailService> emailService, IProductService productService)
 		{
 			_emailService = emailService.Value;
 			_productService = productService;

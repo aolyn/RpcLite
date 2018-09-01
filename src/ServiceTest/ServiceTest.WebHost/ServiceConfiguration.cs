@@ -1,18 +1,49 @@
-﻿using System;
+﻿using Aolyn.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using RpcLite;
-using ServiceTest.Common;
 using ServiceTest.Contract;
 
 namespace ServiceTest.WebHost
 {
+	[Configuration]
 	public class ServiceConfiguration
 	{
 		[Service(ServiceLifetime.Singleton)]
-		public static IProductService GetProductService(IServiceProvider services)
+		public IProductService GetProductService(AppHost appHost)
 		{
-			var appHost = services.GetService<AppHost>();
 			return appHost.ClientFactory.GetInstance<IProductService>("http://localhost:5000/api/service/");
 		}
+	}
+
+	[Configuration]
+	public class ServiceConfiguration2
+	{
+		[Service(ServiceLifetime.Singleton)]
+		public Bean2 GetBean2(IProductService appHost, Bean3 bean3, IBean4 bean4)
+		{
+			return new Bean2(); 
+		}
+	}
+
+	public class Bean2
+	{
+
+	}
+
+	[Service(ServiceLifetime.Singleton)]
+	public class Bean3
+	{
+
+	}
+
+	[Service(ServiceLifetime.Singleton, typeof(IBean4))]
+	public class Bean4 : IBean4
+	{
+
+	}
+
+	public interface IBean4
+	{
+
 	}
 }
