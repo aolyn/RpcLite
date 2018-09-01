@@ -1,0 +1,12 @@
+﻿@{
+	ViewBag.Title = "Delete Service";
+}
+
+<h2>Delete Configuration</h2>
+<p class="text-danger">@ViewBag.StatusMessage</p>
+<form method="post">
+	<input type="submit" class="btn btn-default" value="Delete" />
+</form>
+<p>
+	<a asp-controller="Service" asp-action="Index">Service List</a>
+</p>

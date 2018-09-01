@@ -1,0 +1,35 @@
+﻿@model ServiceRegistry.Management.ViewModels.GroupIndexViewModel
+@{
+    ViewData["Title"] = "Group";
+}
+<h2>@ViewData["Title"].</h2>
+<h3>@ViewData["Message"]</h3>
+
+<div class="block-container">
+    <a class="btn btn-default" asp-action="EditGroup">Add Group</a>
+</div>
+
+@if (Model.ErrorMessage != null)
+{
+    <div class="alert-danger">@Model.ErrorMessage</div>
+}
+else
+{
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Delete</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var group in Model.Groups)
+            {
+                <tr>
+                    <td>@group.Id</td>
+                    <td><a asp-action="DeleteGroup" asp-route-id="@group.Id">Delete</a></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

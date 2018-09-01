@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace ServiceRegistry.Domain.Repositories
 {
-	public interface IRepository<TAggregateRoot, TId> : IDisposable
+	public interface IRepository<TAggregateRoot, in TId> : IDisposable
 		where TAggregateRoot : class, IAggregateRoot<TId>
 	{
 		Task AddAsync(TAggregateRoot aggregateRoot);
@@ -16,9 +16,9 @@ namespace ServiceRegistry.Domain.Repositories
 
 		Task<TAggregateRoot> GetAsync(Expression<Func<TAggregateRoot, bool>> express);
 
-		Task<IList<TAggregateRoot>> GetAllAsync();
+		Task<TAggregateRoot[]> GetAllAsync();
 
-		Task<IList<TAggregateRoot>> GetAllAsync(Expression<Func<TAggregateRoot, bool>> express);
+		Task<TAggregateRoot[]> GetAllAsync(Expression<Func<TAggregateRoot, bool>> express);
 
 		Task RemoveAsync(TId id);
 

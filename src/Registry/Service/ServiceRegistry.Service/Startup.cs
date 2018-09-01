@@ -1,7 +1,10 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using Aolyn.Config;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using RpcLite.Config;
 
 namespace ServiceRegistry.Service
 {
@@ -15,7 +18,13 @@ namespace ServiceRegistry.Service
 
 		public void ConfigureServices(IServiceCollection services)
 		{
+			var config = new ConfigurationBuilder()
+				.AddJsonFile("appsettings.json", true)
+				.Build();
+			ConfigurationManager.Initialize(config);
+
 			services.AddRouting();
+			services.AddRpcLite();
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -23,10 +32,10 @@ namespace ServiceRegistry.Service
 		{
 			app.UseRpcLite();
 
-			//app.Run(async (context) =>
-			//{
-			//	await context.Response.WriteAsync("Hello World!");
-			//});
+			app.Run(async (context) =>
+			{
+				await context.Response.WriteAsync("Hello World!");
+			});
 
 		}
 	}

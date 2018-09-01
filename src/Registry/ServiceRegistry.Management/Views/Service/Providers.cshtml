@@ -12,11 +12,11 @@
 		<table class="table table-bordered">
 			<thead>
 				<tr>
-					<td>Id</td>
-					<td>Group</td>
-					<td>Address</td>
-					<td>Data</td>
-					<td>View</td>
+					<th>Id</th>
+					<th>Group</th>
+					<th>Address</th>
+					<th>Data</th>
+					<th>View</th>
 				</tr>
 			</thead>
 			@foreach (var service in Model.ServiceProviers)
@@ -26,7 +26,7 @@
 					<td>@service.Group</td>
 					<td>@service.Address</td>
 					<td>@service.Data</td>
-					<td><a href="@Url.Action("EditProvider", new { id = service.Id })">Edit</a></td>
+					<td><a asp-action="EditProvider" asp-route-id="@service.Id">Edit</a></td>
 				</tr>
 			}
 		</table>

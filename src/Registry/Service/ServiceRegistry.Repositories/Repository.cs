@@ -76,18 +76,18 @@ namespace ServiceRegistry.Repositories
 			}
 		}
 
-		public Task<IList<TAggregateRoot>> GetAllAsync()
+		public Task<TAggregateRoot[]> GetAllAsync()
 		{
 			using (var ctx = new ConfigContext())
 			{
 				var result = ctx.Set<TAggregateRoot>()
-					.ToList();
+					.ToArray();
 
-				return Task.FromResult((IList<TAggregateRoot>)result);
+				return Task.FromResult(result);
 			}
 		}
 
-		public Task<IList<TAggregateRoot>> GetAllAsync(Expression<Func<TAggregateRoot, bool>> express)
+		public Task<TAggregateRoot[]> GetAllAsync(Expression<Func<TAggregateRoot, bool>> express)
 		{
 			using (var ctx = new ConfigContext())
 			{
@@ -95,7 +95,7 @@ namespace ServiceRegistry.Repositories
 					.Where(express)
 					.ToArray();
 
-				return Task.FromResult((IList<TAggregateRoot>)result);
+				return Task.FromResult(result);
 			}
 		}
 

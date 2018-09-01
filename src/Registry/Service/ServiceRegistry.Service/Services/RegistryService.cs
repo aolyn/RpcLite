@@ -31,21 +31,23 @@ namespace ServiceRegistry.Service.Services
 					{
 						try
 						{
-							var serviceMapping = await repository.GetAsync(it => it.Service.Name == item.Name
+							var serviceMapping = await repository.GetAllAsync(it => it.Service.Name == item.Name
 								&& it.Group == item.Group).ConfigureAwait(false);
 
-							var addr = new ServiceInfoDto
-							{
-								Name = item.Name,
-								Group = item.Group,
-								Address = serviceMapping.Address,
-								Data = serviceMapping.Data,
-							};
+							var addr = serviceMapping
+								.Select(it => new ServiceInfoDto
+								{
+									Name = item.Name,
+									Group = it.Group,
+									Address = it.Address,
+									Data = it.Data,
+								})
+								.ToArray();
 
 							var result = new ServiceResultDto
 							{
 								Identifier = item,
-								ServiceInfos = new[] { addr }
+								ServiceInfos = addr,
 							};
 
 							return result;
