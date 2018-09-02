@@ -36,6 +36,18 @@ namespace ServiceTest.UnitTests
 		}
 
 		[Fact]
+		public void UseRpcLiteForWebHostBulderTest()
+		{
+			var host = new WebHostBuilder()
+				.UseKestrel()
+				.UseRpcLite(config => config
+					.AddService<TimeService>("TimeServiceV1", "api/service/")
+					.AddService<TimeService>("TimeService", "api/time/"))
+				.Build();
+			host.Run();
+		}
+
+		[Fact]
 		public void IocTest2()
 		{
 			var host = new HostBuilder()
