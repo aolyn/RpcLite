@@ -21,7 +21,10 @@ namespace RpcLite.Server.Kestrel
 		public IServiceProvider ConfigureServices(IServiceCollection services)
 		{
 			services.AddRouting();
-			services.AddRpcLite(_rpcConfig);
+			if (_rpcConfig != null)
+				services.AddRpcLite(_rpcConfig);
+			else
+				services.AddRpcLite();
 			return services.BuildServiceProvider();
 		}
 

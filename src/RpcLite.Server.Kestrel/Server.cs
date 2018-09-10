@@ -3,11 +3,11 @@ using Microsoft.AspNetCore.Hosting;
 
 namespace RpcLite.Server.Kestrel
 {
-	public class Host
+	public class Server
 	{
 		private readonly IWebHost _webHost;
 
-		public Host(IWebHost webHost)
+		public Server(IWebHost webHost)
 		{
 			_webHost = webHost;
 		}

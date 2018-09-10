@@ -4,15 +4,24 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using RpcLite.Config;
+using Microsoft.Extensions.Logging;
 
 namespace ServiceRegistry.Service
 {
 	public class Startup
 	{
+		public IConfigurationRoot Configuration { get; }
 		private readonly IHostingEnvironment _env;
+
 		public Startup(IHostingEnvironment env)
 		{
+			var builder = new ConfigurationBuilder()
+				.SetBasePath(env.ContentRootPath)
+				.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+				.AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
+				.AddEnvironmentVariables();
+			Configuration = builder.Build();
+
 			_env = env;
 		}
 
@@ -28,8 +37,10 @@ namespace ServiceRegistry.Service
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-		public void Configure(IApplicationBuilder app)
+		public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory)
 		{
+			loggerFactory.AddConsole(_env.IsProduction() ? LogLevel.Warning : LogLevel.Debug);
+
 			app.UseRpcLite();
 
 			app.Run(async (context) =>

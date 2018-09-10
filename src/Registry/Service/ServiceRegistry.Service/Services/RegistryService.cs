@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using RpcLite.Logging;
 using RpcLite.Registry.Merops.Contract;
 using ServiceRegistry.Repositories;
@@ -9,6 +10,13 @@ namespace ServiceRegistry.Service.Services
 {
 	public class RegistryService : IRegistryService
 	{
+		private readonly ILogger _logger;
+
+		public RegistryService(ILoggerFactory loggerFactory)
+		{
+			_logger = loggerFactory.CreateLogger(GetType());
+		}
+
 		public GetServiceInfoResponse GetServiceInfo(GetServiceInfoRequest request)
 		{
 			if (!(request?.Services?.Length > 0))
@@ -22,7 +30,7 @@ namespace ServiceRegistry.Service.Services
 			return response;
 		}
 
-		private static async Task<ServiceResultDto[]> GetResultsAsync(ServiceIdentifierDto[] identifiers)
+		private async Task<ServiceResultDto[]> GetResultsAsync(ServiceIdentifierDto[] identifiers)
 		{
 			using (var repository = new ServiceProviderRepository())
 			{
@@ -55,6 +63,7 @@ namespace ServiceRegistry.Service.Services
 						catch (Exception ex)
 						{
 							LogHelper.Error(ex);
+							_logger.LogWarning(ex.ToString());
 						}
 						return null;
 					})

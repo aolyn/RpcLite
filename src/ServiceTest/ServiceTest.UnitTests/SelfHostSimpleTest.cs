@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using Microsoft.AspNetCore.Hosting;
 using RpcLite.Server.Kestrel;
 using Xunit;
 
@@ -10,8 +11,9 @@ namespace ServiceTest.UnitTests
 		[Fact]
 		public void Test()
 		{
-			var host = new HostBuilder()
-				.UseConfig(config => config.AddService<Service1>("api/service/"))
+			var host = new WebHostBuilder()
+				.UseKestrel()
+				.UseRpcLite(config => config.AddService<Service1>("api/service/"))
 				.Build();
 			host.Run();
 		}

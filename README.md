@@ -21,8 +21,9 @@ https://www.nuget.org/packages/RpcLite.Server.Kestrel/
 ```
 public void Test()
 {
-	var host = new HostBuilder()
-		.UseConfig(config => config.UseService<Service1>("api/service/"))
+	var host = new WebHostBuilder()
+		.UseKestrel()
+		.UseRpcLite(config => config.AddService<Service1>("api/service/"))
 		.Build();
 	host.Run();
 }
