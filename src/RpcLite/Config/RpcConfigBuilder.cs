@@ -298,7 +298,8 @@ namespace RpcLite.Config
 		/// <param name="group"></param>
 		/// <param name="address"></param>
 		/// <returns></returns>
-		public RpcConfigBuilder AddClient<TClient>(string name, string group, string address)
+		// ReSharper disable once MethodOverloadWithOptionalParameter
+		public RpcConfigBuilder AddClient<TClient>(string name, string group = null, string address = null)
 		{
 			var item = new ClientConfigItem(name, typeof(TClient), address)
 			{
@@ -320,14 +321,14 @@ namespace RpcLite.Config
 			return AddClient<TClient>(name, null, address);
 		}
 
-		/// <summary>
-		/// if Registry will be use, Service Name must be set, use UseClient&lt;TClient&gt;(string name, string address)
-		/// </summary>
-		/// <returns></returns>
-		public RpcConfigBuilder AddClient<TClient>(string name)
-		{
-			return AddClient<TClient>(name, null);
-		}
+		///// <summary>
+		///// if Registry will be use, Service Name must be set, use UseClient&lt;TClient&gt;(string name, string address)
+		///// </summary>
+		///// <returns></returns>
+		//public RpcConfigBuilder AddClient<TClient>(string name)
+		//{
+		//	return AddClient<TClient>(name, null);
+		//}
 
 		#endregion
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Consul;
@@ -13,12 +14,21 @@ namespace RpcLite.Registry.Consul
 		private readonly ConcurrentDictionary<string, ConsulTtlChecker> _checkers
 			= new ConcurrentDictionary<string, ConsulTtlChecker>();
 		private readonly RpcConfig _config;
+		private readonly ConsulAddressInfo _addressInfo;
+		private readonly object _serviceDiscoveryLock = new object();
+
+		private Dictionary<NameGroupPair, ServiceDiscovery> _serviceDiscoveries =
+			new Dictionary<NameGroupPair, ServiceDiscovery>();
+
+
 
 		public bool CanRegister => true;
 
 		public ConsulRegistry(RpcConfig config)
 		{
 			_config = config;
+			var address = _config.Registry.Address;
+			_addressInfo = ParseServers(address);
 		}
 
 		public Task RegisterAsync(ServiceInfo serviceInfo)
@@ -27,9 +37,7 @@ namespace RpcLite.Registry.Consul
 			if (_checkers.ContainsKey(key))
 				throw new ArgumentOutOfRangeException(nameof(serviceInfo), @"service already registered");
 
-			var address = _config.Registry.Address;
-			var addressInfo = ParseServers(address);
-			var checker = new ConsulTtlChecker(serviceInfo.Name, serviceInfo.Group, serviceInfo.Address, addressInfo);
+			var checker = new ConsulTtlChecker(serviceInfo.Name, serviceInfo.Group, serviceInfo.Address, _addressInfo);
 			_checkers.TryAdd(key, checker);
 			var _ = checker.Start();
 
@@ -38,17 +46,36 @@ namespace RpcLite.Registry.Consul
 
 		public Task<ServiceInfo[]> LookupAsync<TContract>()
 		{
-			throw new NotImplementedException();
+			var type = typeof(TContract);
+			var clientConfigItem = _config.Client.Clients
+				.First(it => it.TypeName == type.FullName);
+
+			return LookupAsync(clientConfigItem.Name, clientConfigItem.Group);
 		}
 
 		public Task<ServiceInfo[]> LookupAsync(string name)
 		{
-			throw new NotImplementedException();
+			return LookupAsync(name, null);
 		}
 
 		public Task<ServiceInfo[]> LookupAsync(string name, string group)
 		{
-			throw new NotImplementedException();
+			var key = new NameGroupPair(name, group);
+			if (_serviceDiscoveries.TryGetValue(key, out var serviceDiscovery))
+			{
+				return serviceDiscovery.LookupAsync();
+			}
+
+			lock (_serviceDiscoveryLock)
+			{
+				var discovery = new ServiceDiscovery(name, group, _addressInfo);
+				discovery.Start();
+				var newDic = _serviceDiscoveries = new Dictionary<NameGroupPair, ServiceDiscovery>(_serviceDiscoveries);
+				newDic[key] = discovery;
+				_serviceDiscoveries = newDic;
+				return discovery.LookupAsync();
+			}
+
 		}
 
 		public void Dispose()
@@ -135,17 +162,17 @@ namespace RpcLite.Registry.Consul
 			info.Servers = servers.ToArray();
 			return info;
 		}
-	}
 
-	class ConsulAddressInfo
-	{
-		public ConsulClientConfiguration[] Servers { get; set; }
+		private struct NameGroupPair
+		{
+			public string Name;
+			public string Group;
 
-		public int Ttl { get; set; }
-
-		/// <summary>
-		/// -1 means not setted
-		/// </summary>
-		public int CheckInterval { get; set; }
+			public NameGroupPair(string name, string group)
+			{
+				Name = name;
+				Group = group;
+			}
+		}
 	}
 }

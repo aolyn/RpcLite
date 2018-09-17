@@ -5,13 +5,22 @@ using Microsoft.Extensions.Options;
 
 namespace ServiceTest.UnitTests
 {
-	public class TimeService
+	public interface ITimeService
+	{
+		string GetDateTime();
+		string GetUtcDateTime();
+		Task<DateTime> GetDateTimeAsync();
+	}
+
+	public class TimeService : ITimeService
 	{
 		private readonly EmailService _emailService;
 		private readonly SmsService _smsService;
+		private readonly ITimeService _timeClient;
 
-		public TimeService()
+		public TimeService(ITimeService timeService)
 		{
+			_timeClient = timeService;
 		}
 
 		public TimeService(EmailService emailService, IOptions<SmsService> smsService)
@@ -31,6 +40,13 @@ namespace ServiceTest.UnitTests
 		public Task<DateTime> GetDateTimeAsync()
 		{
 			return Task.FromResult(DateTime.Now);
+		}
+
+		public string GetUtcDateTime()
+		{
+			var time = _timeClient.GetDateTime();
+
+			return DateTime.UtcNow.ToString(CultureInfo.InvariantCulture);
 		}
 	}
 }

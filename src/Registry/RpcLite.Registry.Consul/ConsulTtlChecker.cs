@@ -60,7 +60,7 @@ namespace RpcLite.Registry.Consul
 							Address = _address,
 							Check = new AgentCheckRegistration
 							{
-								//DeregisterCriticalServiceAfter = TimeSpan.FromSeconds(5), //not work for ttl
+								DeregisterCriticalServiceAfter = TimeSpan.FromSeconds(5),
 								TTL = TimeSpan.FromSeconds(_consulAddress.Ttl),
 							},
 						};

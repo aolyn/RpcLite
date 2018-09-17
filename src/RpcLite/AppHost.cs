@@ -92,6 +92,15 @@ namespace RpcLite
 					}
 				}
 
+				//if (config.Client?.Clients != null)
+				//{
+				//	foreach (var client in config.Client.Clients)
+				//	{
+				//		var type = ReflectHelper.GetTypeByIdentifier(client.Type);
+				//		var clientObj = ClientFactory.GetInstance()
+				//	}
+				//}
+
 				services.AddSingleton(this);
 				//services.AddSingleton(ClientFactory);
 			}

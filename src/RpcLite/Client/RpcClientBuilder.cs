@@ -9,7 +9,8 @@ namespace RpcLite.Client
 	internal class RpcClientBuilder<TContract>
 		where TContract : class
 	{
-		private static readonly Lazy<Func<RpcClientBase<TContract>>> ClientCreateFunc = new Lazy<Func<RpcClientBase<TContract>>>(() =>
+		private static readonly Lazy<Func<RpcClientBase<TContract>>> ClientCreateFunc =
+			new Lazy<Func<RpcClientBase<TContract>>>(() =>
 		{
 			var type = ClientWrapper.WrapInterface<TContract>();
 			var func = TypeCreator.GetCreateInstanceFunc(type) as Func<RpcClientBase<TContract>>;
