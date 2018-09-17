@@ -58,6 +58,20 @@ namespace RpcLite.Config
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <param name="address"></param>
+		/// <returns></returns>
+		public RpcConfigBuilder UseServerAddress(string address)
+		{
+			if (_config.Service == null)
+				_config.Service = new ServiceConfig();
+			_config.Service.ServerAddress = address;
+
+			return this;
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
 		/// <param name="name"></param>
 		/// <param name="factoryType"></param>
 		/// <param name="address"></param>

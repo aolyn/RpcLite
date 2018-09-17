@@ -39,6 +39,13 @@ namespace RpcLite.Service
 
 				foreach (var service in services)
 				{
+					if (!string.IsNullOrEmpty(serviceConfig.ServerAddress) && string.IsNullOrEmpty(service.Address))
+					{
+						service.Address = serviceConfig.ServerAddress
+							+ (serviceConfig.ServerAddress.EndsWith("/") ? null : "/")
+							+ service.Path;
+					}
+
 					_appHost.Registry.RegisterAsync(service.ToServiceInfo());
 				}
 

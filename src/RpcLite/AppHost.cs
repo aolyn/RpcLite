@@ -133,15 +133,6 @@ namespace RpcLite
 			}
 		}
 
-		///// <summary>
-		///// initialize service host
-		///// </summary>
-		//public void Initialize()
-		//{
-		//	ServiceHost.Initialize();
-		//	//RegisterServices();
-		//}
-
 		/// <summary>
 		/// 
 		/// </summary>
@@ -159,6 +150,14 @@ namespace RpcLite
 					ClientFilters.Add((IRpcClientFilter)filter);
 					break;
 			}
+		}
+
+		/// <summary>
+		/// deregister services
+		/// </summary>
+		public void Stop()
+		{
+			Registry?.Dispose();
 		}
 
 		/// <summary>

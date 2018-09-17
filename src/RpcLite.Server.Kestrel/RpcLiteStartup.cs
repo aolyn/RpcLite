@@ -32,8 +32,12 @@ namespace RpcLite.Server.Kestrel
 		{
 			app.UseRpcLite();
 
-			//Configure(app, app.ApplicationServices.GetService<IHostingEnvironment>(),
-			//	app.ApplicationServices.GetService<ILoggerFactory>());
+			var appHost = app.ApplicationServices.GetService<AppHost>();
+			if (appHost != null)
+			{
+				var appLifeTime = app.ApplicationServices.GetService<IApplicationLifetime>();
+				appLifeTime.ApplicationStopped.Register(() => { appHost.Stop(); });
+			}
 		}
 
 		//private void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
