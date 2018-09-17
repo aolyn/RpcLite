@@ -38,8 +38,10 @@ namespace RpcLite.Config
 		{
 			if (!typeof(IRegistryFactory).IsAssignableFrom(factoryType))
 			{
-				throw new ArgumentOutOfRangeException(nameof(factoryType), "factoryType must implement " + nameof(IRegistryFactory));
+				throw new ArgumentOutOfRangeException(nameof(factoryType),
+					"factoryType must implement " + nameof(IRegistryFactory));
 			}
+
 			_config.Registry = new RegistryConfig(name, factoryType, address);
 			return this;
 		}
@@ -80,7 +82,8 @@ namespace RpcLite.Config
 		{
 			if (!typeof(IMonitorFactory).IsAssignableFrom(factoryType))
 			{
-				throw new ArgumentOutOfRangeException(nameof(factoryType), "factoryType must implement " + nameof(IMonitorFactory));
+				throw new ArgumentOutOfRangeException(nameof(factoryType),
+					"factoryType must implement " + nameof(IMonitorFactory));
 			}
 
 			_config.Monitor = new MonitorConfig(name, factoryType, address);
@@ -130,7 +133,8 @@ namespace RpcLite.Config
 		public RpcConfigBuilder UseInvoker<TFactory>(string name)
 		{
 			if (!typeof(IInvokerFactory).IsAssignableFrom(typeof(TFactory)))
-				throw new ArgumentOutOfRangeException(nameof(TFactory), $"typeof {nameof(TFactory)} must implements { nameof(IInvokerFactory)}");
+				throw new ArgumentOutOfRangeException(nameof(TFactory),
+					$"typeof {nameof(TFactory)} must implements {nameof(IInvokerFactory)}");
 
 			if (_config.Client == null)
 				_config.Client = new ClientConfig();
@@ -155,8 +159,8 @@ namespace RpcLite.Config
 			_config.Service.Services = _config.Service.Services ?? new List<ServiceConfigItem>();
 
 			//check duplicate
-			var newNames = services.Select(it => it.Name);
-			var oldNames = _config.Service.Services.Select(it => it.Name);
+			var newNames = services.Select(it => it.Name + "@" + it.Group);
+			var oldNames = _config.Service.Services.Select(it => it.Name + "@" + it.Group);
 			var existNames = newNames.Intersect(oldNames).ToArray();
 			if (existNames.Length > 0)
 			{
@@ -179,12 +183,40 @@ namespace RpcLite.Config
 		public RpcConfigBuilder AddService<TService>(string name, string path, string address,
 			ServiceLifecycle lifeCycle)
 		{
+			return AddService<TService>(name, path, null, address, lifeCycle);
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="name"></param>
+		/// <param name="group"></param>
+		/// <param name="path"></param>
+		/// <param name="address"></param>
+		/// <param name="lifeCycle"></param>
+		/// <returns></returns>
+		// ReSharper disable MethodOverloadWithOptionalParameter
+		public RpcConfigBuilder AddService<TService>(string name, string path, string group = null,
+			string address = null, ServiceLifecycle lifeCycle = ServiceLifecycle.Singleton)
+		{
+			// ReSharper restore MethodOverloadWithOptionalParameter
 			var item = new ServiceConfigItem(name, typeof(TService), path)
 			{
+				Group = group,
 				Address = address,
 				LifeCycle = lifeCycle,
 			};
 
+			return AddService(item);
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="item"></param>
+		/// <returns></returns>
+		private RpcConfigBuilder AddService(ServiceConfigItem item)
+		{
 			return AddServices(item);
 		}
 
@@ -327,7 +359,8 @@ namespace RpcLite.Config
 
 			if (!typeof(IFilterFactory).IsAssignableFrom(typeof(TFactory)))
 			{
-				throw new ArgumentOutOfRangeException(nameof(TFactory), "factoryType must implement " + nameof(IFilterFactory));
+				throw new ArgumentOutOfRangeException(nameof(TFactory),
+					"factoryType must implement " + nameof(IFilterFactory));
 			}
 
 			_config.Filter.Filters.Add(new FilterItemConfig(name, typeof(TFactory)));
@@ -362,7 +395,8 @@ namespace RpcLite.Config
 
 			if (!typeof(IFormatter).IsAssignableFrom(typeof(TFormatter)))
 			{
-				throw new ArgumentOutOfRangeException(nameof(TFormatter), "factoryType must implement " + nameof(IFormatter));
+				throw new ArgumentOutOfRangeException(nameof(TFormatter),
+					"factoryType must implement " + nameof(IFormatter));
 			}
 
 			_config.Formatter.Formatters.Add(new FormatterItemConfig(name, typeof(TFormatter)));
@@ -420,6 +454,5 @@ namespace RpcLite.Config
 			var config = builderObj.Build();
 			return config;
 		}
-
 	}
 }

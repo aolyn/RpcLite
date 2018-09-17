@@ -46,7 +46,7 @@ namespace RpcLite.Registry.Consul
 			throw new NotImplementedException();
 		}
 
-		public Task<ServiceInfo[]> LookupAsync(string name, string @group)
+		public Task<ServiceInfo[]> LookupAsync(string name, string group)
 		{
 			throw new NotImplementedException();
 		}
@@ -63,6 +63,7 @@ namespace RpcLite.Registry.Consul
 		{
 			var info = new ConsulAddressInfo
 			{
+				Ttl = 10,
 				CheckInterval = -1,
 			};
 			var uri = new Uri(address);

@@ -18,8 +18,10 @@ namespace RpcLite.Registry.Consul
 
 		public ConsulTtlChecker(string serviceName, string group, string address, ConsulAddressInfo consulAddress)
 		{
-			_serviceName = serviceName;
-			_serviceId = $"{serviceName}::{group}::{Guid.NewGuid().ToString("n")}";
+			_serviceName = !string.IsNullOrEmpty(group)
+				? serviceName + "@" + group
+				: serviceName;
+			_serviceId = $"{serviceName}@{group}::{Guid.NewGuid().ToString("n")}";
 			_address = address;
 			_consulAddress = consulAddress;
 		}

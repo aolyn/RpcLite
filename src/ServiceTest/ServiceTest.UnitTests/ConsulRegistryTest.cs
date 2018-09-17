@@ -16,6 +16,14 @@ namespace ServiceTest.UnitTests
 				.UseUrls(url)
 				.UseRpcLite(config => config
 					.AddService<TimeService>("api/service/")
+					.AddService<TimeService>("TimeService", "api/service/", group: "dev")
+					//.AddService ( new ServiceConfigItem
+					//{
+					//	 Name = "TimeService",
+					//	 Group = "DEV",
+					//	 Path = "api/time/",
+					//	 Type = typeof(TimeService),
+					//} )
 					.UseServerAddress(url)
 					.UseRegistry<ConsulRegistryFactory>("consul",
 						"http://localhost:18500?dc=dc1&host2=localhost&port2=8500"))
