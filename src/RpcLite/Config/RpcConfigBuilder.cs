@@ -56,9 +56,9 @@ namespace RpcLite.Config
 		}
 
 		/// <summary>
-		/// 
+		/// set server address, eg host on Kestrel http://192.168.1.1:5000
 		/// </summary>
-		/// <param name="address"></param>
+		/// <param name="address">address of hosted server used to register service to registry</param>
 		/// <returns></returns>
 		public RpcConfigBuilder UseServerAddress(string address)
 		{
