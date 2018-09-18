@@ -15,9 +15,7 @@ namespace RpcLite.Client
 	/// <summary>
 	/// 
 	/// </summary>
-	/// <typeparam name="TContract">contract interface</typeparam>
-	public class RpcClientBase<TContract> : IRpcClient<TContract>
-		where TContract : class
+	public class RpcClientBase : IRpcClient
 	{
 		private readonly ClientActionManager _actionManager;
 		private IClientInvokeFilter[] _invokeFilters;
@@ -28,7 +26,10 @@ namespace RpcLite.Client
 		/// </summary>
 		public RpcClientBase()
 		{
-			_actionManager = ClientActionManager.GetInstance(null, typeof(TContract));
+			var contractType = GetType()
+				.GetInterfaces()
+				.First(it => it != typeof(IRpcClient));
+			_actionManager = ClientActionManager.GetInstance(null, contractType);
 		}
 
 		/// <summary>
@@ -200,24 +201,6 @@ namespace RpcLite.Client
 			_invokeFilters = filters;
 			return filters;
 		}
-
-		//class InvokerHolder<TResult>
-		//{
-		//	public Func<Task<TResult>, ClientContext> Value;
-		//}
-
-		//private IInvoker<TContract> _oldInvoker;
-		//private Func<Task<TResult>, ClientContext> GetInvokeAsyncFunc<TResult>()  //Task<TResult> InvokeAsync<TResult>(ClientContext request);
-		//{
-		//	if (AppHost == null)
-		//		return Invoker.InvokeAsync<TResult>;
-
-		//	var invoker = Invoker;
-		//	if (invoker == _oldInvoker && _oldInvoker == AppHost ?)
-
-		//		_oldInvoker = Invoker;
-		//	return null;
-		//}
 
 		/// <summary>
 		/// 

@@ -43,12 +43,11 @@ namespace RpcLite.Client
 			_invokerFactory.Initilize(appHost?.Registry, channelFactory);
 		}
 
-		private RpcClientBuilder<TContract> GetBuilder<TContract>() where TContract : class
+		private RpcClientBuilder GetBuilder(Type contractType)
 		{
-			var type = typeof(TContract);
-			var builder = (RpcClientBuilder<TContract>)_clientBuilders.GetOrAdd(type, tp =>
+			var builder = (RpcClientBuilder)_clientBuilders.GetOrAdd(contractType, tp =>
 			{
-				var b = new RpcClientBuilder<TContract>();
+				var b = new RpcClientBuilder(contractType);
 				return b;
 			});
 			return builder;
@@ -67,6 +66,18 @@ namespace RpcLite.Client
 				.FirstOrDefault(it => it.TypeName == type.FullName);
 
 			return GetInstance<TContract>(clientConfigItem?.Name, clientConfigItem?.Group, null);
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		internal RpcClientBase GetInstance(Type contractType)
+		{
+			var clientConfigItem = _clientConfig?.Clients
+				.FirstOrDefault(it => it.TypeName == contractType.FullName);
+
+			return GetInstance(clientConfigItem?.Name, clientConfigItem?.Group, null, contractType);
 		}
 
 		/// <summary>
@@ -105,7 +116,14 @@ namespace RpcLite.Client
 		private TContract GetInstance<TContract>(string name, string group, string address)
 			where TContract : class
 		{
-			var builder = GetBuilder<TContract>();
+			var contractType = typeof(TContract);
+			var client = GetInstance(name, group, address, contractType);
+			return client as TContract;
+		}
+
+		private RpcClientBase GetInstance(string name, string group, string address, Type contractType)
+		{
+			var builder = GetBuilder(contractType);
 			var client = builder.GetInstance(address);
 			client.Name = name;
 			client.Group = group;
@@ -117,8 +135,7 @@ namespace RpcLite.Client
 			client.Formatter = _appHost?.FormatterManager?.DefaultFormatter
 				?? FormatterManager.Default.DefaultFormatter;
 			client.AppHost = _appHost;
-			return client as TContract;
+			return client;
 		}
-
 	}
 }

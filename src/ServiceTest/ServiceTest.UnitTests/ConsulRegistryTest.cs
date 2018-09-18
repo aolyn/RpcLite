@@ -25,7 +25,7 @@ namespace ServiceTest.UnitTests
 					.UseServerAddress(url)
 					.UseRegistry<ConsulRegistryFactory>("consul",
 						"http://localhost:18500?dc=dc1&host2=localhost&port2=8500&ttl=10"))
-				.ConfigureServices(services => services.AddConfigType<ServiceClientConfigurator>())
+				//.ConfigureServices(services => services.AddConfigType<ServiceClientConfigurator>())
 				.Build();
 			host.Run();
 		}

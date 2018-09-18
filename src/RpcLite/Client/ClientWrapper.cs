@@ -17,8 +17,12 @@ namespace RpcLite.Client
 		public static Type WrapInterface<T>()
 		{
 			var contractType = typeof(T);
-			Type implementType;
-			if (ImplementTypes.TryGetValue(contractType, out implementType))
+			return WrapInterface(contractType);
+		}
+
+		public static Type WrapInterface(Type contractType)
+		{
+			if (ImplementTypes.TryGetValue(contractType, out var implementType))
 				return implementType;
 
 			object typeLock;
@@ -36,13 +40,12 @@ namespace RpcLite.Client
 				if (ImplementTypes.TryGetValue(contractType, out implementType))
 					return implementType;
 
-				var parentType = typeof(RpcClientBase<object>).GetGenericTypeDefinition().MakeGenericType(contractType);
-				implementType = TypeCreator.WrapInterface<T>(parentType);
+				var parentType = typeof(RpcClientBase); //.GetGenericTypeDefinition().MakeGenericType(contractType);
+				implementType = TypeCreator.WrapInterface(parentType, contractType);
 				ImplementTypes.Add(contractType, implementType);
 				ImplementTypeLocks.Remove(contractType);
 				return implementType;
 			}
-
 		}
 	}
 }

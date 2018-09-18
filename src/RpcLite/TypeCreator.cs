@@ -169,7 +169,8 @@ namespace RpcLite
 			return field;
 		}
 
-		private readonly static Dictionary<Type, Type> InterfaceImplementTypes = new Dictionary<Type, Type>();
+		private static readonly Dictionary<Type, Type> InterfaceImplementTypes = new Dictionary<Type, Type>();
+
 		/// <summary>
 		/// thread unsafe
 		/// </summary>
@@ -179,6 +180,11 @@ namespace RpcLite
 		public static Type WrapInterface<T>(Type parentType)
 		{
 			var interfaceType = typeof(T);
+			return WrapInterface(parentType, interfaceType);
+		}
+
+		public static Type WrapInterface(Type parentType, Type interfaceType)
+		{
 			Type implementType;
 			if (InterfaceImplementTypes.TryGetValue(interfaceType, out implementType))
 			{
