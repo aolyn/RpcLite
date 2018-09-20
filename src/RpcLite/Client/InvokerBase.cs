@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using RpcLite.Diagnostics;
 using RpcLite.Formatters;
 using RpcLite.Logging;
 using RpcLite.Service;
@@ -52,7 +53,7 @@ namespace RpcLite.Client
 #if DEBUG && LogDuration
 				var duration1 = stopwatch1.GetAndRest();
 #endif
-				if (tsk.Exception != null)
+				if (tsk.Exception?.InnerException != null)
 					throw tsk.Exception.InnerException;
 
 				var resultMessage = tsk.Result;
@@ -68,11 +69,11 @@ namespace RpcLite.Client
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="request"></param>
+		/// <param name="clientContext"></param>
 		/// <returns></returns>
-		protected virtual Task<IResponseMessage> SendAsync(ClientContext request)
+		protected virtual Task<IResponseMessage> SendAsync(ClientContext clientContext)
 		{
-			var mime = request.Formatter.SupportMimes.First();
+			var mime = clientContext.Formatter.SupportMimes.First();
 			var headDic = new Dictionary<string, string>
 			{
 				{ "Content-Type", mime },
@@ -80,12 +81,12 @@ namespace RpcLite.Client
 			};
 
 			var content = new MemoryStream();
-			if (request.Action.ArgumentType != null)
+			if (clientContext.Action.ArgumentType != null)
 			{
-				request.Monitor?.OnSerializing(request);
+				clientContext.Monitor?.OnSerializing(clientContext);
 				try
 				{
-					request.Formatter.Serialize(content, request.Request, request.Action.ArgumentType);
+					clientContext.Formatter.Serialize(content, clientContext.Request, clientContext.Action.ArgumentType);
 				}
 				catch (Exception ex)
 				{
@@ -93,7 +94,7 @@ namespace RpcLite.Client
 				}
 				finally
 				{
-					request.Monitor?.OnSerialized(request);
+					clientContext.Monitor?.OnSerialized(clientContext);
 				}
 			}
 			content.Position = 0;
@@ -101,8 +102,27 @@ namespace RpcLite.Client
 #if DEBUG && LogDuration
 			var stopwatch1 = Stopwatch.StartNew();
 #endif
+			try
+			{
+				DiagnosticsLogger.WriteClientRequestStart(clientContext);
+			}
+			catch
+			{
+				/* ignore exceptions */
+			}
 
-			var sendTask = SendAsync(request.Action.Name, content, headDic);
+			DiagnosticsLogger.WriteClientRequestStart(clientContext);
+			var sendTask = SendAsync(clientContext.Action.Name, content, headDic);
+
+			try
+			{
+				DiagnosticsLogger.WriteClientRequestEnd(clientContext);
+			}
+			catch
+			{
+				/* ignore exceptions */
+			}
+
 			return sendTask;
 		}
 

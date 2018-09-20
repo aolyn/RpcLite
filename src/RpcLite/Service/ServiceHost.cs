@@ -5,6 +5,7 @@ using System.Globalization;
 using System.IO;
 using System.Threading.Tasks;
 using RpcLite.Config;
+using RpcLite.Diagnostics;
 using RpcLite.Formatters;
 using RpcLite.Logging;
 
@@ -20,7 +21,6 @@ namespace RpcLite.Service
 	public class ServiceHost
 	{
 		private readonly RpcServiceFactory _serviceFactory;
-		private readonly Lazy<object> _initializeRegistry;
 		private readonly AppHost _appHost;
 
 		/// <summary>
@@ -31,7 +31,7 @@ namespace RpcLite.Service
 			_appHost = appHost;
 			_serviceFactory = new RpcServiceFactory(_appHost, serviceConfig);
 
-			_initializeRegistry = new Lazy<object>(() =>
+			var initializeRegistry = new Lazy<object>(() =>
 			{
 				var services = serviceConfig?.Services;
 				if (services == null || _appHost.Registry?.CanRegister != true)
@@ -52,17 +52,8 @@ namespace RpcLite.Service
 				return null;
 			});
 			// ReSharper disable once UnusedVariable
-			var initializeResult = _initializeRegistry.Value;
+			var initializeResult = initializeRegistry.Value;
 		}
-
-		///// <summary>
-		///// initialize service host
-		///// </summary>
-		//public void Initialize()
-		//{
-		//	// ReSharper disable once UnusedVariable
-		//	var initializeResult = _initializeRegistry.Value;
-		//}
 
 		/// <summary>
 		/// 
@@ -132,6 +123,15 @@ namespace RpcLite.Service
 				if (!parseResult.IsServiceRequest)
 					return TaskHelper.FromResult(false);
 
+				try
+				{
+					DiagnosticsLogger.WriteServiceRequestStart(serviceContext);
+				}
+				catch
+				{
+					/* ignore exceptions */
+				}
+
 #if DEBUG
 				serviceContext.SetExtensionData("StartTime", DateTime.Now);
 #endif
@@ -145,6 +145,15 @@ namespace RpcLite.Service
 				}
 
 				var result = serviceContext.Service.ProcessAsync(serviceContext);
+
+				try
+				{
+					DiagnosticsLogger.WriteServiceRequestEnd(serviceContext);
+				}
+				catch
+				{
+					/* ignore exceptions */
+				}
 
 				return result.ContinueWith(tsk =>
 				{
@@ -168,6 +177,7 @@ namespace RpcLite.Service
 					{
 						LogHelper.Error(ex2);
 					}
+
 					return true;
 				});
 			}
@@ -201,7 +211,8 @@ namespace RpcLite.Service
 			if (startTimeObj != null && endTimeObj != null)
 			{
 				httpContext.SetResponseHeader(HeaderName.ExecutionDuration,
-					((DateTime)endTimeObj - (DateTime)startTimeObj).TotalMilliseconds.ToString(CultureInfo.InvariantCulture));
+					((DateTime)endTimeObj - (DateTime)startTimeObj).TotalMilliseconds.ToString(CultureInfo
+						.InvariantCulture));
 			}
 #endif
 
@@ -223,7 +234,8 @@ namespace RpcLite.Service
 				var serializationStopwatch = Stopwatch.StartNew();
 #endif
 				if (context.Formatter.SupportException)
-					context.Formatter.Serialize(context.Response.ResponseStream, context.Exception, context.Exception.GetType());
+					context.Formatter.Serialize(context.Response.ResponseStream, context.Exception,
+						context.Exception.GetType());
 #if OUTPUT_SERIALIZATION_TIME
 				serializationStopwatch.Stop();
 				Console.WriteLine("serializationStopwatch.ElapsedMilliseconds {0}", serializationStopwatch.ElapsedMilliseconds);
@@ -255,7 +267,8 @@ namespace RpcLite.Service
 #if OUTPUT_SERIALIZATION_TIME
 							var serializationStopwatch = Stopwatch.StartNew();
 #endif
-							context.Formatter.Serialize(context.Response.ResponseStream, context.Result, context.Action.ResultType);
+							context.Formatter.Serialize(context.Response.ResponseStream, context.Result,
+								context.Action.ResultType);
 #if OUTPUT_SERIALIZATION_TIME
 							serializationStopwatch.Stop();
 							Console.WriteLine("serializationStopwatch.ElapsedMilliseconds {0}", serializationStopwatch.ElapsedMilliseconds);
@@ -267,7 +280,8 @@ namespace RpcLite.Service
 #if OUTPUT_SERIALIZATION_TIME
 						var serializationStopwatch = Stopwatch.StartNew();
 #endif
-						context.Formatter.Serialize(context.Response.ResponseStream, context.Result, context.Action.ResultType);
+						context.Formatter.Serialize(context.Response.ResponseStream, context.Result,
+							context.Action.ResultType);
 #if OUTPUT_SERIALIZATION_TIME
 						serializationStopwatch.Stop();
 						Console.WriteLine("serializationStopwatch.ElapsedMilliseconds {0}", serializationStopwatch.ElapsedMilliseconds);
@@ -279,5 +293,4 @@ namespace RpcLite.Service
 			//LogHelper.Debug("RpcAsyncHandler.EndProcessRequest end RpcService.EndProcessRequest(result);");
 		}
 	}
-
 }
