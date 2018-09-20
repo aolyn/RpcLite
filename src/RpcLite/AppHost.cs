@@ -77,7 +77,7 @@ namespace RpcLite
 					foreach (var service in config.Service.Services)
 					{
 						var type = ReflectHelper.GetTypeByIdentifier(service.Type);
-						switch (service.LifeCycle)
+						switch (service.Lifecycle)
 						{
 							case ServiceLifecycle.Singleton:
 								services.AddSingleton(type);

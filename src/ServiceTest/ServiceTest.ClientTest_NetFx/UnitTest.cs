@@ -46,7 +46,7 @@ namespace ServiceTest.ClientTest_NetFx
 				var client = ClientFactory.GetInstance<IProductService>(address);
 
 
-				var clientInfo = (RpcClientBase<IProductService>)client;
+				var clientInfo = (RpcClientBase)client;
 				//clientInfo.Formatter = new XmlFormatter();
 				clientInfo.Format = "xml";
 
@@ -117,7 +117,7 @@ namespace ServiceTest.ClientTest_NetFx
 			//appHost.AddFilter(new EmptyFilter());
 
 			var client = appHost.ClientFactory.GetInstance<IProductService>();
-			var clientInfo = client as IRpcClient<IProductService>;
+			var clientInfo = client as IRpcClient;
 			if (clientInfo != null)
 			{
 				clientInfo.Invoker = new MemoryInvoker(appHost, path);
@@ -411,7 +411,7 @@ namespace ServiceTest.ClientTest_NetFx
 
 	}
 
-	class ProductServiceImp22 : RpcClientBase<IProductService>
+	class ProductServiceImp22 : RpcClientBase
 	{
 		public int GetCount()
 		{

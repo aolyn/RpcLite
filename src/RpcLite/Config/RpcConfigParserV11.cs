@@ -303,7 +303,7 @@ namespace RpcLite.Config
 							Type = type,
 							//TypeName = typeName,
 							//AssemblyName = assemblyName,
-							LifeCycle = string.IsNullOrEmpty(lifeCycle)
+							Lifecycle = string.IsNullOrEmpty(lifeCycle)
 								? ServiceLifecycle.Singleton
 								: (ServiceLifecycle)Enum.Parse(typeof(ServiceLifecycle), lifeCycle),
 							Path = path,

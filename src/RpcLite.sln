@@ -79,9 +79,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RpcLite.Server.Kestrel", "R
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServiceTest.Common", "ServiceTest\ServiceTest.Common\ServiceTest.Common.csproj", "{28252C35-159E-4D49-9EF7-34B7C5E5F7AC}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Aolyn.Extensions.DependencyInjection", "..\..\DependencyInjection\src\Aolyn.Extensions.DependencyInjection\Aolyn.Extensions.DependencyInjection\Aolyn.Extensions.DependencyInjection.csproj", "{75955ED6-63E9-4254-B428-EB5650298416}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RpcLite.Registry.Consul", "Registry\RpcLite.Registry.Consul\RpcLite.Registry.Consul.csproj", "{889B4C94-E422-4DAB-AE8D-D0284BC1A037}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RpcLite.Registry.Consul", "Registry\RpcLite.Registry.Consul\RpcLite.Registry.Consul.csproj", "{889B4C94-E422-4DAB-AE8D-D0284BC1A037}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -427,18 +425,6 @@ Global
 		{28252C35-159E-4D49-9EF7-34B7C5E5F7AC}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{28252C35-159E-4D49-9EF7-34B7C5E5F7AC}.Release|x86.ActiveCfg = Release|Any CPU
 		{28252C35-159E-4D49-9EF7-34B7C5E5F7AC}.Release|x86.Build.0 = Release|Any CPU
-		{75955ED6-63E9-4254-B428-EB5650298416}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{75955ED6-63E9-4254-B428-EB5650298416}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{75955ED6-63E9-4254-B428-EB5650298416}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{75955ED6-63E9-4254-B428-EB5650298416}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{75955ED6-63E9-4254-B428-EB5650298416}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{75955ED6-63E9-4254-B428-EB5650298416}.Debug|x86.Build.0 = Debug|Any CPU
-		{75955ED6-63E9-4254-B428-EB5650298416}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{75955ED6-63E9-4254-B428-EB5650298416}.Release|Any CPU.Build.0 = Release|Any CPU
-		{75955ED6-63E9-4254-B428-EB5650298416}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{75955ED6-63E9-4254-B428-EB5650298416}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{75955ED6-63E9-4254-B428-EB5650298416}.Release|x86.ActiveCfg = Release|Any CPU
-		{75955ED6-63E9-4254-B428-EB5650298416}.Release|x86.Build.0 = Release|Any CPU
 		{889B4C94-E422-4DAB-AE8D-D0284BC1A037}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{889B4C94-E422-4DAB-AE8D-D0284BC1A037}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{889B4C94-E422-4DAB-AE8D-D0284BC1A037}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
@@ -488,7 +474,6 @@ Global
 		{4F3F87F3-8D53-4C24-AB73-E3AA1888F026} = {067E5EED-B95F-49F7-B9D7-C5CCDB4F34A6}
 		{E86CA24E-36E8-4420-9851-50CC73C005C2} = {6CBD1F77-F8FC-4C60-8D56-04FB7DF029D9}
 		{28252C35-159E-4D49-9EF7-34B7C5E5F7AC} = {067E5EED-B95F-49F7-B9D7-C5CCDB4F34A6}
-		{75955ED6-63E9-4254-B428-EB5650298416} = {067E5EED-B95F-49F7-B9D7-C5CCDB4F34A6}
 		{889B4C94-E422-4DAB-AE8D-D0284BC1A037} = {56677A53-0484-41A2-8045-89CB63537E10}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution

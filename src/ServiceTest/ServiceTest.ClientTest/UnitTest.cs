@@ -161,7 +161,7 @@ namespace ServiceTest.ClientTest
 
 
 			var client = appHost.ClientFactory.GetInstance<IProductService>();
-			var clientInfo = (IRpcClient<IProductService>)client;
+			var clientInfo = (IRpcClient)client;
 			clientInfo.Invoker = new MemoryInvoker(appHost, path);
 			clientInfo.Formatter = new XmlFormatter();
 			clientInfo.Format = "xml";
@@ -249,7 +249,7 @@ namespace ServiceTest.ClientTest
 
 			var channel = new MemoryClientChannel(appHost) { Address = "/api/service/" };
 
-			((IRpcClient<IProductService>)client).Invoker = new MemoryInvoker(appHost, "/api/service/");
+			((IRpcClient)client).Invoker = new MemoryInvoker(appHost, "/api/service/");
 
 			//((IRpcClient)client).Channel = channel;
 			var products = client.GetAll();

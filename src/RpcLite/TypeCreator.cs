@@ -17,14 +17,14 @@ namespace RpcLite
 	/// </summary>
 	public class TypeCreator
 	{
-		private static ModuleBuilder _moduleBuilder;
-		private static AssemblyBuilder _assemblyBuilder;
+		private static readonly ModuleBuilder ModuleBuilder;
+		private static readonly AssemblyBuilder AssemblyBuilder;
 
 		static TypeCreator()
 		{
 			var result = InitializeModuleBuilder();
-			_assemblyBuilder = result.Item1;
-			_moduleBuilder = result.Item2;
+			AssemblyBuilder = result.Item1;
+			ModuleBuilder = result.Item2;
 		}
 
 		private static Tuple<AssemblyBuilder, ModuleBuilder> InitializeModuleBuilder()
@@ -57,8 +57,8 @@ namespace RpcLite
 			var assemblyBuilder = result.Item1;
 			var modBuilder = result.Item2;
 #else
-			var assemblyBuilder = _assemblyBuilder;
-			var modBuilder = _moduleBuilder;
+			//var assemblyBuilder = _assemblyBuilder;
+			var modBuilder = ModuleBuilder;
 #endif
 
 			if (propeties == null)
@@ -183,10 +183,20 @@ namespace RpcLite
 			return WrapInterface(parentType, interfaceType);
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="parentType"></param>
+		/// <param name="interfaceType"></param>
+		/// <returns></returns>
 		public static Type WrapInterface(Type parentType, Type interfaceType)
 		{
-			Type implementType;
-			if (InterfaceImplementTypes.TryGetValue(interfaceType, out implementType))
+			if (parentType == null)
+				throw new ArgumentNullException(nameof(parentType));
+			if (interfaceType == null)
+				throw new ArgumentNullException(nameof(interfaceType));
+
+			if (InterfaceImplementTypes.TryGetValue(interfaceType, out var implementType))
 			{
 				return implementType;
 			}
@@ -196,8 +206,8 @@ namespace RpcLite
 			var assemblyBuilder = result.Item1;
 			var modBuilder = result.Item2;
 #else
-			var assemblyBuilder = _assemblyBuilder;
-			var modBuilder = _moduleBuilder;
+			//var assemblyBuilder = AssemblyBuilder;
+			var modBuilder = ModuleBuilder;
 #endif
 
 			//新类型的属性：要创建的是Class，而非Interface，Abstract Class等，而且是Public的
@@ -270,7 +280,6 @@ namespace RpcLite
 			var hasReturn = returnType != null && returnType != typeof(void);
 			var paramCount = paramTypes.Length;
 
-			// ReSharper disable once PossibleNullReferenceException
 			var getResponse = typeBuilder.BaseType.GetMethod(callMethodName, BindingFlags.Instance | BindingFlags.NonPublic);
 			if (isTask)
 			{
@@ -439,7 +448,8 @@ namespace RpcLite
 
 			var methodName = method.Name;
 			var paraTypeName = paraTypename
-					?? string.Format("{0}_{1}_{2}_ParameterType", declareType.FullName.Replace(".", "_").Replace("+", "__"), methodName, paras.Length);
+					?? string.Format("{0}_{1}_{2}_ParameterType",
+						declareType.FullName.Replace(".", "_").Replace("+", "__"), methodName, paras.Length);
 			if (!ActionParameterTypes.TryGetValue(paraTypeName, out parameterType))
 			{
 				var properties = paras

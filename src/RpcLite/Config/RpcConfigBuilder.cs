@@ -204,7 +204,7 @@ namespace RpcLite.Config
 			{
 				Group = group,
 				Address = address,
-				LifeCycle = lifeCycle,
+				Lifecycle = lifeCycle,
 			};
 
 			return AddService(item);

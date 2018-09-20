@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -88,8 +89,20 @@ namespace RpcLite.Registry.Consul
 
 		public async Task WatchAsync(CancellationToken cancellationToken)
 		{
+			const string NoPathToDataCenerText = "InternalServerError: No path to datacenter";
+
 			var serverIndex = 0;
 			var consulClient = GetClient(_consulAddress.Servers[serverIndex]);
+
+			void UseNextServer()
+			{
+				serverIndex++;
+				serverIndex %= _consulAddress.Servers.Length;
+
+				consulClient.Dispose();
+				consulClient = GetClient(_consulAddress.Servers[serverIndex]);
+			}
+
 			while (true)
 			{
 				if (cancellationToken.IsCancellationRequested) break;
@@ -125,16 +138,28 @@ namespace RpcLite.Registry.Consul
 						_lastIndex = queryResult.LastIndex;
 					}
 				}
+				catch (ConsulRequestException ex)
+				{
+					if (ex.StatusCode == HttpStatusCode.BadGateway)
+					{
+						UseNextServer();
+					}
+					else
+					{
+						if (ex.Message.EndsWith(NoPathToDataCenerText))
+						{
+							await Task.Delay(1000, cancellationToken);
+						}
+
+						await Task.Delay(500, cancellationToken);
+					}
+				}
 				catch (HttpRequestException)
 				{
-					serverIndex++;
-					serverIndex %= _consulAddress.Servers.Length;
-
-					consulClient.Dispose();
-					consulClient = GetClient(_consulAddress.Servers[serverIndex]);
+					UseNextServer();
 					await Task.Delay(50, cancellationToken);
 				}
-				catch (Exception)
+				catch (Exception ex)
 				{
 					await Task.Delay(50, cancellationToken);
 				}

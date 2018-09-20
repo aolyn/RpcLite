@@ -71,7 +71,7 @@ namespace ServiceTest.UnitTests
 				.UseRpcLite(config => config
 					.AddService<TimeService>("TimeServiceV1", "api/service/")
 					.AddService<TimeService>("TimeService", "api/time/"))
-				.ConfigureServices(services => services.AddAssembly<SelfHostTest>())
+				.ConfigureServices(services => services.AddConfigurationAssembly<SelfHostTest>())
 				.Build();
 			host.Run();
 		}

@@ -2,16 +2,6 @@
 
 namespace RpcLite.Client
 {
-	///// <summary>
-	///// 
-	///// </summary>
-	//public interface IRpcClient<TContract> : IRpcClient
-	//{
-	//	/// <summary>
-	//	/// Channel to transport data with service
-	//	/// </summary>
-	//}
-
 	/// <summary>
 	/// 
 	/// </summary>
@@ -27,14 +17,17 @@ namespace RpcLite.Client
 		/// </summary>
 		IFormatter Formatter { get; set; }
 
-		IInvoker Invoker { get; set; }
-
 		/// <summary>
 		/// name for Formatter,
 		/// <para>get: return Formatter.Name</para>
 		/// <para>set: find property Formatter set to Formatter field</para>
 		/// </summary>
 		string Format { get; set; }
+
+		/// <summary>
+		/// Invoker
+		/// </summary>
+		IInvoker Invoker { get; set; }
 
 		/// <summary>
 		/// service name

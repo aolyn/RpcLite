@@ -35,6 +35,11 @@ namespace RpcLite.Config
 		/// </summary>
 		public string TypeName { get; private set; }
 
+		///// <summary>
+		///// LifeCycle of DI instance
+		///// </summary>
+		//public ServiceLifecycle Lifecycle { get; set; }
+
 		/// <summary>
 		/// original configured type name, eg: ServiceImpl.ProductAsyncService,ServiceImpl
 		/// </summary>

@@ -20,8 +20,6 @@ namespace RpcLite.Registry.Consul
 		private Dictionary<NameGroupPair, ServiceDiscovery> _serviceDiscoveries =
 			new Dictionary<NameGroupPair, ServiceDiscovery>();
 
-
-
 		public bool CanRegister => true;
 
 		public ConsulRegistry(RpcConfig config)
@@ -68,6 +66,11 @@ namespace RpcLite.Registry.Consul
 
 			lock (_serviceDiscoveryLock)
 			{
+				if (_serviceDiscoveries.TryGetValue(key, out serviceDiscovery))
+				{
+					return serviceDiscovery.LookupAsync();
+				}
+
 				var discovery = new ServiceDiscovery(name, group, _addressInfo);
 				discovery.Start();
 				var newDic = _serviceDiscoveries = new Dictionary<NameGroupPair, ServiceDiscovery>(_serviceDiscoveries);
@@ -165,8 +168,10 @@ namespace RpcLite.Registry.Consul
 
 		private struct NameGroupPair
 		{
+			// ReSharper disable NotAccessedField.Local
 			public string Name;
 			public string Group;
+			// ReSharper restore NotAccessedField.Local
 
 			public NameGroupPair(string name, string group)
 			{

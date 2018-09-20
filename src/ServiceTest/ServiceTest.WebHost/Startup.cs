@@ -20,7 +20,7 @@ namespace ServiceTest.WebHost
 				.AddService<TimeService>("TimeService", "api/time/")
 				.AddFilter<TestFilterFactory>());
 
-			services.AddAssembly<Startup>();
+			services.AddConfigurationAssembly<Startup>();
 			//services.AddAssembly<Startup>();
 			//services.AddAutoConfiguration<ServiceConfiguration>();
 

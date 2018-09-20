@@ -1,6 +1,5 @@
 ﻿using Aolyn.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.DependencyInjection;
 using RpcLite;
 using RpcLite.Config;
 using RpcLite.Registry.Consul;
@@ -24,7 +23,8 @@ namespace ServiceTest.UnitTests
 					.AddClient<ITimeService>("TimeService", group: "dev")
 					.UseServerAddress(url)
 					.UseRegistry<ConsulRegistryFactory>("consul",
-						"http://localhost:18500?dc=dc1&host2=localhost&port2=8500&ttl=10"))
+						"http://192.168.9.10:8500?dc22=dc1a&host2=192.168.9.11&port2=8500&ttl=10"))
+				//"http://localhost:18500?dc22=dc1a&host2=localhost&port2=8500&ttl=10"))
 				//.ConfigureServices(services => services.AddConfigType<ServiceClientConfigurator>())
 				.Build();
 			host.Run();
