@@ -18,6 +18,10 @@ namespace ServiceTest.UnitTests
 		private readonly SmsService _smsService;
 		private readonly ITimeService _timeClient;
 
+		public TimeService()
+		{
+		}
+
 		public TimeService(ITimeService timeService)
 		{
 			_timeClient = timeService;

@@ -1,4 +1,5 @@
 ﻿//#define OUTPUT_SERIALIZATION_TIME
+#define SET_RESPONSE_CONTENT_LENGTH //for ab test, ab has bugs with KeepAlive and encoding in Chunk
 
 using System;
 using System.Globalization;
@@ -210,9 +211,9 @@ namespace RpcLite.Service
 			var endTimeObj = context.GetExtensionData("EndTime");
 			if (startTimeObj != null && endTimeObj != null)
 			{
+				var totalMilliseconds = ((DateTime)endTimeObj - (DateTime)startTimeObj).TotalMilliseconds;
 				httpContext.SetResponseHeader(HeaderName.ExecutionDuration,
-					((DateTime)endTimeObj - (DateTime)startTimeObj).TotalMilliseconds.ToString(CultureInfo
-						.InvariantCulture));
+					totalMilliseconds.ToString(CultureInfo.InvariantCulture));
 			}
 #endif
 
@@ -280,8 +281,20 @@ namespace RpcLite.Service
 #if OUTPUT_SERIALIZATION_TIME
 						var serializationStopwatch = Stopwatch.StartNew();
 #endif
+
+#if SET_RESPONSE_CONTENT_LENGTH
+						using (var ms = new MemoryStream())
+						{
+							context.Formatter.Serialize(ms, context.Result, context.Action.ResultType);
+							var data = ms.ToArray();
+							httpContext.ResponseContentLength = data.Length;
+							httpContext.ResponseStream.Write(data, 0, data.Length);
+						}
+#else
 						context.Formatter.Serialize(context.Response.ResponseStream, context.Result,
 							context.Action.ResultType);
+#endif
+
 #if OUTPUT_SERIALIZATION_TIME
 						serializationStopwatch.Stop();
 						Console.WriteLine("serializationStopwatch.ElapsedMilliseconds {0}", serializationStopwatch.ElapsedMilliseconds);

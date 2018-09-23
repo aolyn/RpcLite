@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.Net.Http.Headers;
 using RpcLite;
 using RpcLite.AspNetCore.Service;
 using RpcLite.Config;
@@ -92,6 +93,7 @@ td, th{
 					await context.Response.WriteAsync($"\r\n<tr><td>{item.Name}</td>"
 						+ $"<td><a href=\"{item.Path}\">{item.Path}</a></td></tr>");
 				}
+
 				await context.Response.WriteAsync("</table>");
 			});
 		}
@@ -100,10 +102,13 @@ td, th{
 		{
 			foreach (var path in serviceServices)
 			{
-				routers.MapRoute(path.Path + "{*RpcLiteServicePath}",
-					context => appHost.ProcessAsync(new AspNetCoreServerContext(context)));
+				routers.MapRoute(path.Path + "{*RpcLiteServicePath}", context =>
+				{
+					context.Response.Headers[HeaderNames.Connection] = "Keep-Alive";
+					var serverContext = new AspNetCoreServerContext(context);
+					return appHost.ProcessAsync(serverContext);
+				});
 			}
 		}
-
 	}
 }

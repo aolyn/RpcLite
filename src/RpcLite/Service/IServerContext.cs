@@ -42,6 +42,12 @@ namespace RpcLite.Service
 		/// 
 		/// </summary>
 		/// <returns></returns>
+		long? ResponseContentLength { get; set; }
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
 		string RequestContentType { get; }
 
 		/// <summary>

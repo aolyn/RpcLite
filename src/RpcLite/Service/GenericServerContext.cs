@@ -54,6 +54,9 @@ namespace RpcLite.Service
 		/// </summary>
 		public Stream ResponseStream { get; set; }
 
+		/// <inheritdoc />
+		public long? ResponseContentLength { get; set; }
+
 #if NETCORE
 		/// <summary>
 		/// 

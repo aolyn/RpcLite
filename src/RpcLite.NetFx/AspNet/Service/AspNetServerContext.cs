@@ -14,10 +14,7 @@ namespace RpcLite.AspNet.Service
 		private readonly HttpContext _httpContext;
 		private const string HeadPrefix = "RpcLite-";
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="httpContext"></param>
+		/// <inheritdoc />
 		public AspNetServerContext(HttpContext httpContext)
 		{
 			_httpContext = httpContext;
@@ -25,9 +22,7 @@ namespace RpcLite.AspNet.Service
 
 		private string _requestPath;
 
-		/// <summary>
-		/// 
-		/// </summary>
+		/// <inheritdoc />
 		public string RequestPath
 		{
 			get
@@ -49,72 +44,61 @@ namespace RpcLite.AspNet.Service
 			}
 		}
 
-		/// <summary>
-		/// 
-		/// </summary>
+		/// <inheritdoc />
 		public int RequestContentLength => _httpContext.Request.ContentLength;
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="key"></param>
-		/// <returns></returns>
+		/// <inheritdoc />
 		public string GetRequestHeader(string key)
 		{
 			return _httpContext.Request.Headers[HeadPrefix + key];
 		}
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="key"></param>
-		/// <param name="value"></param>
+		/// <inheritdoc />
 		public void SetResponseHeader(string key, string value)
 		{
 			_httpContext.Response.Headers[HeadPrefix + key] = value;
 		}
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="key"></param>
-		/// <returns></returns>
+		/// <inheritdoc />
 		public string GetResponseHeader(string key)
 		{
 			return _httpContext.Response.Headers[HeadPrefix + key];
 		}
 
-		/// <summary>
-		/// 
-		/// </summary>
+		/// <inheritdoc />
 		public string ResponseContentType
 		{
-			get { return _httpContext.Response.ContentType; }
-			set { _httpContext.Response.ContentType = value; }
+			get => _httpContext.Response.ContentType;
+			set => _httpContext.Response.ContentType = value;
 		}
 
-		/// <summary>
-		/// 
-		/// </summary>
+		/// <inheritdoc />
+		public long? ResponseContentLength
+		{
+			get
+			{
+				var header = _httpContext.Response.Headers["ContentLength"];
+				return header != null && long.TryParse(header, out var len)
+					? len
+					: -1L;
+			}
+			set => _httpContext.Response.Headers["ContentLength"] = value.ToString();
+		}
+
+		/// <inheritdoc />
 		public string RequestContentType => _httpContext.Request.ContentType;
 
-		/// <summary>
-		/// 
-		/// </summary>
+		/// <inheritdoc />
 		public Stream RequestStream => _httpContext.Request.InputStream;
 
-		/// <summary>
-		/// 
-		/// </summary>
+		/// <inheritdoc />
 		public Stream ResponseStream => _httpContext.Response.OutputStream;
 
-		/// <summary>
-		/// 
-		/// </summary>
+		/// <inheritdoc />
 		public int ResponseStatusCode
 		{
-			get { return _httpContext.Response.StatusCode; }
-			set { _httpContext.Response.StatusCode = value; }
+			get => _httpContext.Response.StatusCode;
+			set => _httpContext.Response.StatusCode = value;
 		}
 
 	}

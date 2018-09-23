@@ -76,6 +76,25 @@ namespace ServiceTest.UnitTests
 			host.Run();
 		}
 
+		[Fact]
+		public void IocTest3()
+		{
+			var host = new WebHostBuilder()
+				.UseKestrel()
+				.UseRpcLite(config => config
+					.AddService<TimeService>("TimeServiceV1", "api/service/")
+					.AddService<TimeService>("TimeService", "api/time/"))
+				.ConfigureServices(services => services
+					.AddSingleton<EmailService>()
+					//.Configure<SmsService>(opt => { opt.Name = "TestV1"; })
+					.AddSingleton(new SmsService
+					{
+						Name = "from new inject"
+					}))
+				.Build();
+			host.Run();
+		}
+
 		[Service(ServiceLifetime.Singleton)]
 		public static EmailService GetEmailService(IServiceProvider serviceProvider)
 		{
