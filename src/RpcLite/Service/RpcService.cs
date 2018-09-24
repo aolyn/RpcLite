@@ -112,12 +112,21 @@ namespace RpcLite.Service
 
 			context.Action = action;
 
-			GroupFilters();
+			//dig 7		54646.39 [#/sec]
+			//var content = System.Text.Encoding.UTF8.GetBytes("mock3 - 1 from RpcLite test run!");
+			//context.ExecutingContext.ResponseContentLength = content.Length;
+			//return context.ExecutingContext.ResponseStream.WriteAsync(content, 0, content.Length).ContinueWith(tsk => true);
+
 			var filterFunc = GetProcessFilterFunc();
+
+			//dig 4		29587.01 [#/sec]
 
 			return filterFunc(context);
 		}
 
+		/// <summary>
+		/// split filter to it's type collection
+		/// </summary>
 		private void GroupFilters()
 		{
 			if (Filters == null)
@@ -164,6 +173,8 @@ namespace RpcLite.Service
 
 		private Func<ServiceContext, Task> GetProcessFilterFunc()
 		{
+			GroupFilters();
+
 			if (_processFilters == null || _processFilters.Count == 0)
 				return ProcessRequestAsync;
 

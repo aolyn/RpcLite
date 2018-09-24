@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using Microsoft.AspNetCore.Hosting;
+using RpcLite.Config;
 using RpcLite.Server.Kestrel;
 
 namespace PerformanceTest
@@ -13,7 +14,9 @@ namespace PerformanceTest
 
 			var host = new WebHostBuilder()
 				.UseKestrel()
-				.UseRpcLite(config => config.AddService<TimeService>("api/service/"))
+				.UseLibuv()
+				.UseRpcLite(config => config.AddService<TimeService>("TimeService", "api/service/",
+					lifecycle: ServiceLifecycle.Singleton))
 				.UseUrls("http://*:8080")
 				.Build();
 			host.Run();

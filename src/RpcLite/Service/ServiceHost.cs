@@ -140,12 +140,12 @@ namespace RpcLite.Service
 				{
 					serviceContext.Monitor?.BeginRequest(serviceContext);
 				}
-				catch (Exception ex2)
+				catch (Exception ex)
 				{
-					LogHelper.Error(ex2);
+					LogHelper.Error(ex);
 				}
 
-				var result = serviceContext.Service.ProcessAsync(serviceContext);
+				var resultTask = serviceContext.Service.ProcessAsync(serviceContext);
 
 				try
 				{
@@ -156,7 +156,7 @@ namespace RpcLite.Service
 					/* ignore exceptions */
 				}
 
-				return result.ContinueWith(tsk =>
+				return resultTask.ContinueWith(tsk =>
 				{
 #if DEBUG
 					serviceContext.SetExtensionData("EndTime", DateTime.Now);
@@ -174,9 +174,9 @@ namespace RpcLite.Service
 					{
 						serviceContext.Monitor?.EndRequest(serviceContext);
 					}
-					catch (Exception ex2)
+					catch (Exception ex)
 					{
-						LogHelper.Error(ex2);
+						LogHelper.Error(ex);
 					}
 
 					return true;

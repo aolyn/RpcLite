@@ -178,12 +178,12 @@ namespace RpcLite.Config
 		/// <param name="name"></param>
 		/// <param name="path"></param>
 		/// <param name="address"></param>
-		/// <param name="lifeCycle"></param>
+		/// <param name="lifecycle"></param>
 		/// <returns></returns>
 		public RpcConfigBuilder AddService<TService>(string name, string path, string address,
-			ServiceLifecycle lifeCycle)
+			ServiceLifecycle lifecycle)
 		{
-			return AddService<TService>(name, path, null, address, lifeCycle);
+			return AddService<TService>(name, path, null, address, lifecycle);
 		}
 
 		/// <summary>
@@ -193,18 +193,18 @@ namespace RpcLite.Config
 		/// <param name="group"></param>
 		/// <param name="path"></param>
 		/// <param name="address"></param>
-		/// <param name="lifeCycle"></param>
+		/// <param name="lifecycle"></param>
 		/// <returns></returns>
 		// ReSharper disable MethodOverloadWithOptionalParameter
 		public RpcConfigBuilder AddService<TService>(string name, string path, string group = null,
-			string address = null, ServiceLifecycle lifeCycle = ServiceLifecycle.Singleton)
+			string address = null, ServiceLifecycle lifecycle = ServiceLifecycle.Singleton)
 		{
 			// ReSharper restore MethodOverloadWithOptionalParameter
 			var item = new ServiceConfigItem(name, typeof(TService), path)
 			{
 				Group = group,
 				Address = address,
-				Lifecycle = lifeCycle,
+				Lifecycle = lifecycle,
 			};
 
 			return AddService(item);

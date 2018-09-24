@@ -42,8 +42,9 @@ namespace RpcLite.Server.Kestrel
 		public Server Build()
 		{
 			var builder = new WebHostBuilder()
-					.UseKestrel()
-					.UseContentRoot(Directory.GetCurrentDirectory());
+				.UseKestrel()
+				.UseLibuv()
+				.UseContentRoot(Directory.GetCurrentDirectory());
 
 			var startup = new RpcLiteStartup(_rpcConfig);
 			var startupAssemblyName = startup.GetType().Assembly.GetName().Name;
