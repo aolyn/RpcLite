@@ -18,13 +18,16 @@ namespace RpcLite
 	public class TypeCreator
 	{
 		private static readonly ModuleBuilder ModuleBuilder;
+#if SAVE_DLL
 		private static readonly AssemblyBuilder AssemblyBuilder;
-
+#endif
 		static TypeCreator()
 		{
 			var result = InitializeModuleBuilder();
-			AssemblyBuilder = result.Item1;
 			ModuleBuilder = result.Item2;
+#if SAVE_DLL
+			AssemblyBuilder = result.Item1;
+#endif
 		}
 
 		private static Tuple<AssemblyBuilder, ModuleBuilder> InitializeModuleBuilder()
@@ -467,7 +470,8 @@ namespace RpcLite
 			return parameterType;
 		}
 
-		private static readonly Dictionary<Type, Func<object>> CreateInstanceFuncs = new Dictionary<Type, Func<object>>();
+		private static readonly CopyOnWriteDictionary<Type, Func<object>> CreateInstanceFuncs =
+			new CopyOnWriteDictionary<Type, Func<object>>();
 		/// <summary>
 		/// get Create Instance Function as: () = > new serviceType()
 		/// </summary>
@@ -481,21 +485,19 @@ namespace RpcLite
 			if (serviceType == null)
 				throw new ArgumentNullException(nameof(serviceType));
 
-			Func<object> func;
-			if (CreateInstanceFuncs.TryGetValue(serviceType, out func))
-				return func;
+			var func = CreateInstanceFuncs.GetOrAdd(serviceType, key =>
+			{
+				var ctor = serviceType.GetConstructor(Type.EmptyTypes);
+				if (ctor == null)
+					return null;
 
-			var ctor = serviceType.GetConstructor(Type.EmptyTypes);
-			if (ctor == null)
-				return null;
+				var newServiceBody = Expression.New(ctor);
+				var expression = Expression.Lambda(newServiceBody);
+				var del = expression.Compile() as Func<object>;
+				return del;
+			});
 
-			var newServiceBody = Expression.New(ctor);
-			var expression = Expression.Lambda(newServiceBody);
-			var del = expression.Compile() as Func<object>;
-
-			CreateInstanceFuncs.Add(serviceType, del);
-
-			return del;
+			return func;
 		}
 
 	}

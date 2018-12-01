@@ -14,12 +14,12 @@ namespace RpcLite.Config
 		public string Name { get; set; }
 
 		/// <summary>
-		/// relative path of service url, eg: ~/api/product
+		/// relative path of service url, eg: ~/api/product/
 		/// </summary>
 		public string Path { get; set; }
 
 		/// <summary>
-		/// relative path of service url, eg: ~/api/product
+		/// relative path of service url, eg: ~/api/product/
 		/// </summary>
 		public string Address { get; set; }
 

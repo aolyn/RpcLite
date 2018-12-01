@@ -28,46 +28,66 @@ namespace RpcLite.Service
 		/// <para>if yes get and set Service to serviceContext</para>
 		/// <para>compute and set ActionName to serviceContext.Request</para>
 		/// </summary>
-		/// <param name="serviceContext"></param>
+		/// <param name="requestPath"></param>
+		/// <param name="pathInfo"></param>
 		/// <returns></returns>
-		public MapServiceResult MapService(ServiceContext serviceContext)
+		public MapServiceResult MapService(string requestPath, RequestPathInfo pathInfo)
 		{
-			//var isServicePath = _config.Service?.Paths == null
-			//	|| _config.Service.Paths
-			//		.Any(it => serviceContext.Request.Path.StartsWith(it, StringComparison.OrdinalIgnoreCase));
-
-			//if (!isServicePath)
-			//	return MapServiceResult.Empty;
-
-			var requestPath = serviceContext.Request.Path;
-			if (string.IsNullOrWhiteSpace(requestPath))
-				throw new ArgumentException("request.AppRelativeCurrentExecutionFilePath is null or white space");
-
-			var service = _factory.Services.FirstOrDefault(it =>
-					requestPath.StartsWith(it.Path, StringComparison.OrdinalIgnoreCase));
-
-			if (service == null)
+			var result = new MapServiceResult
 			{
-				service = _factory.Services.FirstOrDefault(it =>
-					it.Path.StartsWith(requestPath, StringComparison.OrdinalIgnoreCase));
+				IsServiceRequest = false,
+			};
+
+			if (pathInfo == null && string.IsNullOrWhiteSpace(requestPath))
+			{
+				//throw new ArgumentException("request.AppRelativeCurrentExecutionFilePath is null or white space");
+				return result;
+			}
+
+			if (pathInfo != null)
+			{
+				var service = _factory.Services.FirstOrDefault(it =>
+					pathInfo.Service.Equals(it.Name, StringComparison.OrdinalIgnoreCase));
+
 				if (service == null)
 				{
 					LogHelper.Debug("BeginProcessReques Can't find service " + requestPath);
-					throw new ServiceNotFoundException(requestPath);
+					//throw new ServiceNotFoundException(requestPath);
+					return result;
 				}
+
+				result.ActionName = pathInfo.Action;
+				result.Service = service;
+
+				result.IsServiceRequest = true;
+				return result;
 			}
 			else
 			{
-				var actionName = requestPath.Substring(service.Path.Length);
-				serviceContext.Request.ActionName = actionName;
-			}
-			serviceContext.Service = service;
+				var service = _factory.Services.FirstOrDefault(it =>
+					requestPath.StartsWith(it.Path, StringComparison.OrdinalIgnoreCase));
 
-			return new MapServiceResult
-			{
-				IsServiceRequest = true,
-				//ServiceContext = serviceContext,
-			};
+				if (service == null)
+				{
+					service = _factory.Services.FirstOrDefault(it =>
+						it.Path.StartsWith(requestPath, StringComparison.OrdinalIgnoreCase));
+					if (service == null)
+					{
+						LogHelper.Debug("BeginProcessReques Can't find service " + requestPath);
+						//throw new ServiceNotFoundException(requestPath);
+						return result;
+					}
+				}
+				else
+				{
+					var actionName = requestPath.Substring(service.Path.Length);
+					result.ActionName = actionName;
+				}
+				result.Service = service;
+
+				result.IsServiceRequest = true;
+				return result;
+			}
 		}
 	}
 

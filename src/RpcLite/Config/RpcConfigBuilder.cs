@@ -376,6 +376,7 @@ namespace RpcLite.Config
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <typeparam name="TFormatter">type implemented IFormatter</typeparam>
 		/// <returns></returns>
 		public RpcConfigBuilder AddFormatter<TFormatter>()
 		{
@@ -386,6 +387,7 @@ namespace RpcLite.Config
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <typeparam name="TFormatter">type implemented IFormatter</typeparam>
 		/// <returns></returns>
 		public RpcConfigBuilder AddFormatter<TFormatter>(string name)
 		{

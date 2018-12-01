@@ -22,6 +22,11 @@ namespace RpcLite.Service
 		/// <summary>
 		/// 
 		/// </summary>
+		public RequestPathInfo RequestPathInfo { get; set; }
+
+		/// <summary>
+		/// 
+		/// </summary>
 		public int RequestContentLength { get; set; }
 
 		/// <summary>

@@ -2,7 +2,7 @@
   "profiles": {
     "PerformanceTest": {
       "commandName": "Project",
-      "commandLineArgs": "--URLS http://*:5000"
+      "commandLineArgs": "--URLS http://*:5000 --tv v1"
     }
   }
 }

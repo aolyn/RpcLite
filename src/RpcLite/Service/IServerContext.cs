@@ -68,6 +68,11 @@ namespace RpcLite.Service
 		string RequestPath { get; }
 
 		/// <summary>
+		/// parsed request path info details
+		/// </summary>
+		RequestPathInfo RequestPathInfo { get; }
+
+		/// <summary>
 		/// 
 		/// </summary>
 		int RequestContentLength { get; }

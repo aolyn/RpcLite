@@ -73,24 +73,13 @@ namespace RpcLite.Service
 		/// <para>get and set Service to serviceContext</para>
 		/// <para>compute and set ActionName to serviceContext.Request</para>
 		/// </summary>
-		/// <param name="serviceContext"></param>
+		/// <param name="requestPath"></param>
+		/// <param name="pathInfo"></param>
 		/// <returns></returns>
-		public MapServiceResult MapService(ServiceContext serviceContext)
+		public MapServiceResult MapService(string requestPath, RequestPathInfo pathInfo)
 		{
-			return _serviceMapper.MapService(serviceContext);
+			return _serviceMapper.MapService(requestPath, pathInfo);
 		}
-
-		///// <summary>
-		///// 
-		///// </summary>
-		///// <param name="name"></param>
-		///// <returns></returns>
-		//public static RpcService GetServiceByName(string name)
-		//{
-		//	var service = Services
-		//		.FirstOrDefault(it => string.Compare(it.Name, name, StringComparison.OrdinalIgnoreCase) == 0);
-		//	return service;
-		//}
 	}
 
 }

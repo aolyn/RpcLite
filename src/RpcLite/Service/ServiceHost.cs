@@ -66,6 +66,10 @@ namespace RpcLite.Service
 			if (serverContext == null)
 				throw new ArgumentNullException(nameof(serverContext));
 
+			var parseResult = _serviceFactory.MapService(serverContext.RequestPath, serverContext.RequestPathInfo);
+			if (!parseResult.IsServiceRequest)
+				return TaskHelper.FromResult(false);
+
 			var serviceContext = new ServiceContext
 			{
 				Request = new ServiceRequest
@@ -74,12 +78,14 @@ namespace RpcLite.Service
 					Path = serverContext.RequestPath,
 					ContentType = serverContext.RequestContentType,
 					ContentLength = serverContext.RequestContentLength,
+					ActionName = parseResult.ActionName,
 				},
 				Response = new ServiceResponse
 				{
 					ResponseStream = serverContext.ResponseStream,
 				},
 				ExecutingContext = serverContext,
+				Service = parseResult.Service,
 			};
 #if NETCORE
 			if (_appHost.SupportDi)
@@ -119,10 +125,6 @@ namespace RpcLite.Service
 				serviceContext.Formatter = GetFormatter(serviceContext.Request.ContentType);
 				serviceContext.Response.ContentType = serviceContext.Request.ContentType;
 				serviceContext.Monitor = _appHost.Monitor?.GetServiceSession(serviceContext);
-
-				var parseResult = _serviceFactory.MapService(serviceContext);
-				if (!parseResult.IsServiceRequest)
-					return TaskHelper.FromResult(false);
 
 				try
 				{

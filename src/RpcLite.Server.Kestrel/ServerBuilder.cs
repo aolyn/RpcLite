@@ -10,6 +10,7 @@ namespace RpcLite.Server.Kestrel
 	{
 		private RpcConfig _rpcConfig;
 		private Action<IServiceCollection> _configServices;
+		private Action<IWebHostBuilder> _configWebHost;
 		private string[] _urls;
 
 		public ServerBuilder UseConfig(Action<RpcConfigBuilder> configBuilder)
@@ -30,6 +31,12 @@ namespace RpcLite.Server.Kestrel
 			return this;
 		}
 
+		public ServerBuilder ConfigureWebHost(Action<IWebHostBuilder> config)
+		{
+			_configWebHost = config;
+			return this;
+		}
+
 		public ServerBuilder ConfigureServices(Action<IServiceCollection> configServices)
 		{
 			if (_configServices != null)
@@ -46,7 +53,9 @@ namespace RpcLite.Server.Kestrel
 				.UseLibuv()
 				.UseContentRoot(Directory.GetCurrentDirectory());
 
-			var startup = new RpcLiteStartup(_rpcConfig);
+			_configWebHost?.Invoke(builder);
+
+			var startup = new RpcLiteStartup(_rpcConfig, true);
 			var startupAssemblyName = startup.GetType().Assembly.GetName().Name;
 			builder.UseSetting(WebHostDefaults.ApplicationKey, startupAssemblyName);
 			builder.ConfigureServices(services =>

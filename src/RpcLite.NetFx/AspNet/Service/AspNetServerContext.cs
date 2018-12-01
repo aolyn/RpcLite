@@ -45,6 +45,9 @@ namespace RpcLite.AspNet.Service
 		}
 
 		/// <inheritdoc />
+		public RequestPathInfo RequestPathInfo => null;
+
+		/// <inheritdoc />
 		public int RequestContentLength => _httpContext.Request.ContentLength;
 
 		/// <inheritdoc />
@@ -100,7 +103,6 @@ namespace RpcLite.AspNet.Service
 			get => _httpContext.Response.StatusCode;
 			set => _httpContext.Response.StatusCode = value;
 		}
-
 	}
 }
 

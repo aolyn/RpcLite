@@ -10,6 +10,7 @@ namespace ServiceTest.UnitTests
 		string GetDateTime();
 		string GetUtcDateTime();
 		Task<DateTime> GetDateTimeAsync();
+		Task<DateTime> ThrowException();
 	}
 
 	public class TimeService : ITimeService
@@ -51,6 +52,11 @@ namespace ServiceTest.UnitTests
 			var time = _timeClient.GetDateTime();
 
 			return DateTime.UtcNow.ToString(CultureInfo.InvariantCulture);
+		}
+
+		public Task<DateTime> ThrowException()
+		{
+			throw new NotImplementedException();
 		}
 	}
 }

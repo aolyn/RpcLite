@@ -1,25 +1,15 @@
 ﻿namespace RpcLite.Client
 {
-	/// <summary>
-	/// 
-	/// </summary>
+	/// <inheritdoc />
 	public class DefaultChannelProvider : IChannelProvider
 	{
-		/// <summary>
-		/// 
-		/// </summary>
+		/// <inheritdoc />
 		public virtual string Name { get; } = nameof(DefaultChannelProvider);
 
-		/// <summary>
-		/// 
-		/// </summary>
+		/// <inheritdoc />
 		public virtual string[] Protocols { get; } = { "http", "https" };
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="address"></param>
-		/// <returns></returns>
+		/// <inheritdoc />
 		public virtual IChannel GetChannel(string address)
 		{
 			return new HttpClientChannel(address);

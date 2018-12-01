@@ -40,6 +40,8 @@ namespace RpcLite.AspNetCore.Service
 			}
 		}
 
+		public RequestPathInfo RequestPathInfo { get; set; }
+
 		/// <inheritdoc />
 		public int RequestContentLength => (int)(_httpContext.Request.ContentLength ?? 0);
 

@@ -13,6 +13,7 @@ namespace RpcLite.Net
 	internal static class WebRequestHelper
 	{
 		private const string HeadPrefix = "RpcLite-";
+		private const string RequestMarkPropertyKey = "RpcLiteClient-HttpRequest";
 
 		private static ResponseMessage GetResponseMessage(HttpWebResponse response)
 		{
@@ -60,7 +61,7 @@ namespace RpcLite.Net
 			{
 				Content = new StreamContent(content)
 			};
-
+			requestMessage.Properties[RequestMarkPropertyKey] = "";
 			if (headDic != null && headDic.Count > 0)
 			{
 				if (headDic.TryGetValue("Content-Type", out var contentType))
@@ -87,7 +88,7 @@ namespace RpcLite.Net
 					var webException = tsk.Exception.InnerException as HttpRequestException;
 					if (webException == null)
 					{
-						throw tsk.Exception.InnerException;
+						throw tsk.Exception?.InnerException ?? tsk.Exception;
 					}
 
 					//TODO check error like 500, 403

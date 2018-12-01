@@ -252,7 +252,8 @@ namespace RpcLite.Service
 			}
 		}
 
-		private static readonly QuickReadConcurrentDictionary<Type, Func<object, object>> GetTaskResultFuncs = new QuickReadConcurrentDictionary<Type, Func<object, object>>();
+		private static readonly CopyOnWriteDictionary<Type, Func<object, object>> GetTaskResultFuncs =
+			new CopyOnWriteDictionary<Type, Func<object, object>>();
 
 		/// <summary>
 		/// get result of task
@@ -301,7 +302,9 @@ namespace RpcLite.Service
 					if (task == null)
 						throw new ServiceException("task async api return no Task result");
 
-					resultObject = GetTaskResult(task);
+					resultObject = context.Action.ResultType != null
+						? GetTaskResult(task)
+						: null;
 				}
 				else
 				{

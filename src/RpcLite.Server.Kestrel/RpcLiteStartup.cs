@@ -11,16 +11,23 @@ namespace RpcLite.Server.Kestrel
 	{
 		private static int _startupIndex;
 		private readonly RpcConfig _rpcConfig;
+		private readonly bool _selfHost;
 
-		public RpcLiteStartup(RpcConfig configServices)
+		public RpcLiteStartup(RpcConfig configServices) : this(configServices, false)
+		{
+		}
+
+		public RpcLiteStartup(RpcConfig configServices, bool selfHost)
 		{
 			Interlocked.Increment(ref _startupIndex);
 			_rpcConfig = configServices;
+			_selfHost = selfHost;
 		}
 
 		public IServiceProvider ConfigureServices(IServiceCollection services)
 		{
-			services.AddRouting();
+			if (!_selfHost)
+				services.AddRouting();
 			if (_rpcConfig != null)
 				services.AddRpcLite(_rpcConfig);
 			else
@@ -30,7 +37,16 @@ namespace RpcLite.Server.Kestrel
 
 		public void Configure(IApplicationBuilder app)
 		{
-			app.UseRpcLite();
+			if (_selfHost)
+			{
+#pragma warning disable 618
+				PathMatchRpcLiteIApplicationBuilder.ConfigSelfHost(app);
+#pragma warning restore 618
+			}
+			else
+			{
+				app.UseRpcLite();
+			}
 
 			var appHost = app.ApplicationServices.GetService<AppHost>();
 			if (appHost != null)
@@ -39,15 +55,5 @@ namespace RpcLite.Server.Kestrel
 				appLifeTime.ApplicationStopped.Register(() => { appHost.Stop(); });
 			}
 		}
-
-		//private void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
-		//{
-		//	app.UseRpcLite();
-
-		//	app.Run(async context =>
-		//	{
-		//		await context.Response.WriteAsync("RpcLite Server is running");
-		//	});
-		//}
 	}
 }

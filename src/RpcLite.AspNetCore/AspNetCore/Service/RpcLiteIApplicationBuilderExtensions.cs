@@ -98,14 +98,34 @@ td, th{
 			});
 		}
 
-		private static void MapService(List<ServiceConfigItem> serviceServices, IRouteBuilder routers, AppHost appHost)
+		private static void MapService(List<ServiceConfigItem> services, IRouteBuilder routers, AppHost appHost)
 		{
-			foreach (var path in serviceServices)
+			const string nullOperation = "_DefaultNullOperationName";
+			foreach (var service in services)
 			{
-				routers.MapRoute(path.Path + "{*RpcLiteServicePath}", context =>
+				routers.MapRoute(service.Path + $"{{RpcOperationName={nullOperation}}}/{{*RpcPathInfo}}", context =>
 				{
 					context.Response.Headers[HeaderNames.Connection] = "Keep-Alive";
-					var serverContext = new AspNetCoreServerContext(context);
+
+					//var content = System.Text.Encoding.UTF8.GetBytes("mock3 - 1 from RpcLite test run!");
+					//context.Response.ContentLength = content.Length;
+					//return context.Response.Body.WriteAsync(content, 0, content.Length);
+
+					var operationName = (string)context.GetRouteValue("RpcOperationName");
+					if (operationName == nullOperation) operationName = null;
+
+					var pathInfo = (string)context.GetRouteValue("RpcPathInfo");
+					var serverContext = new AspNetCoreServerContext(context)
+					{
+						RequestPathInfo = new RequestPathInfo
+						{
+							Service = service.Name,
+							Action = operationName,
+							Query = context.Request.QueryString.ToString(),
+							PathInfo = pathInfo,
+						}
+					};
+
 					return appHost.ProcessAsync(serverContext);
 				});
 			}

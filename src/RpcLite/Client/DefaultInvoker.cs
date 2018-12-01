@@ -8,9 +8,7 @@ using RpcLite.Service;
 
 namespace RpcLite.Client
 {
-	/// <summary>
-	/// 
-	/// </summary>
+	/// <inheritdoc />
 	public class DefaultInvoker : InvokerBase
 	{
 		private string _address;
@@ -31,9 +29,7 @@ namespace RpcLite.Client
 			_registry = registry;
 		}
 
-		/// <summary>
-		/// 
-		/// </summary>
+		/// <inheritdoc />
 		public override string Address
 		{
 			get
@@ -69,14 +65,9 @@ namespace RpcLite.Client
 				.FirstOrDefault();
 		}
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="action"></param>
-		/// <param name="content"></param>
-		/// <param name="headers"></param>
-		/// <returns></returns>
-		protected override Task<IResponseMessage> SendAsync(string action, Stream content, IDictionary<string, string> headers)
+		/// <inheritdoc />
+		protected override Task<IResponseMessage> SendAsync(string action, Stream content,
+			IDictionary<string, string> headers)
 		{
 			if (string.IsNullOrEmpty(Address))
 				throw new ServiceException("service address not provided");

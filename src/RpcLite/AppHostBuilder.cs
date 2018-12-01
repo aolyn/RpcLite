@@ -217,7 +217,7 @@ namespace RpcLite
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <typeparam name="TFormatter"></typeparam>
+		/// <typeparam name="TFormatter">type implemented IFormatter</typeparam>
 		/// <returns></returns>
 		public AppHostBuilder UseFormatter<TFormatter>()
 		{
@@ -228,6 +228,7 @@ namespace RpcLite
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <typeparam name="TFormatter">type implemented IFormatter</typeparam>
 		/// <returns></returns>
 		public AppHostBuilder UseFormatter<TFormatter>(string name)
 		{

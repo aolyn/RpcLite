@@ -17,14 +17,10 @@ namespace RpcLite.Client
 	/// </summary>
 	public abstract class InvokerBase : IInvoker
 	{
-		/// <summary>
-		/// 
-		/// </summary>
+		/// <inheritdoc />
 		public virtual string Address { get; set; }
 
-		/// <summary>
-		/// service name
-		/// </summary>
+		/// <inheritdoc />
 		public string Name { get; private set; }
 
 		/// <summary>
@@ -32,11 +28,7 @@ namespace RpcLite.Client
 		/// </summary>
 		public string Group { get; private set; }
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="context"></param>
-		/// <returns></returns>
+		/// <inheritdoc />
 		public virtual Task InvokeAsync(ClientContext context)
 		{
 			//var argumentType = request.Action.ArgumentType;
@@ -216,11 +208,7 @@ namespace RpcLite.Client
 			throw new ServiceException("exception occored but no exception data transported");
 		}
 
-		/// <summary>
-		/// optional initialize method
-		/// </summary>
-		/// <param name="name">service name</param>
-		/// <param name="group">service group</param>
+		/// <inheritdoc />
 		public void Initialize(string name, string group)
 		{
 			Name = name;
