@@ -21,5 +21,15 @@ namespace RpcLite.Server.Kestrel
 		{
 			return _webHost.RunAsync();
 		}
+
+		public void Start()
+		{
+			_webHost.Start();
+		}
+
+		public Task StopAsync()
+		{
+			return _webHost.StopAsync();
+		}
 	}
 }

@@ -7,7 +7,7 @@ using RpcLite.Config;
 using RpcLite.Server.Kestrel;
 using Xunit;
 
-namespace ServiceTest.UnitTests
+namespace ServiceTest.UnitTests.SelfHost
 {
 	public class SelfHostTest
 	{

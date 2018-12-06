@@ -1,11 +1,10 @@
 ﻿using Aolyn.Extensions.DependencyInjection;
 
-namespace ServiceTest.UnitTests
+namespace ServiceTest.UnitTests.SelfHost
 {
 	[Service]
-	public class SmsService
+	public class EmailService
 	{
-		public string Name { get; set; }
 		public void Send(string message)
 		{
 		}

@@ -3,11 +3,8 @@ using Microsoft.Extensions.Configuration;
 using RpcLite.Client;
 using RpcLite.Config;
 using RpcLite.Formatters;
-using RpcLite.Registry;
-using RpcLite.Registry.Zookeeper;
 using RpcLiteClientTestNetCore;
 using ServiceTest.Contract;
-using Xunit;
 
 namespace ServiceTest.ClientTest
 {

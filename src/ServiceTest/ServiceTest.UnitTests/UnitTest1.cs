@@ -1,13 +1,20 @@
+using System;
 using RpcLite;
 using RpcLite.Client;
 using RpcLite.Config;
 using ServiceTest.Contract;
 using Xunit;
+using IProductService = ServiceTest.UnitTests.Basics.IProductService;
 
 namespace ServiceTest.UnitTests
 {
-	public class UnitTest1
+	public class UnitTest1 : IDisposable
 	{
+		public UnitTest1()
+		{
+
+		}
+
 		[Fact]
 		public void Test1()
 		{
@@ -28,6 +35,10 @@ namespace ServiceTest.UnitTests
 
 			var page2 = client.GetPageAsync(1, 3).Result;
 			Assert.Equal(3, page2.Length);
+		}
+
+		public void Dispose()
+		{
 		}
 	}
 }

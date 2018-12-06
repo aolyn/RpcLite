@@ -4,6 +4,7 @@ using RpcLite;
 using RpcLite.Config;
 using RpcLite.Registry.Consul;
 using RpcLite.Server.Kestrel;
+using ServiceTest.UnitTests.SelfHost;
 using Xunit;
 
 namespace ServiceTest.UnitTests
@@ -23,8 +24,8 @@ namespace ServiceTest.UnitTests
 					.AddClient<ITimeService>("TimeService", group: "dev")
 					.UseServerAddress(url)
 					.UseRegistry<ConsulRegistryFactory>("consul",
-						"http://192.168.9.10:8500?dc22=dc1a&host2=192.168.9.11&port2=8500&ttl=10"))
-				//"http://localhost:18500?dc22=dc1a&host2=localhost&port2=8500&ttl=10"))
+				//"http://192.168.9.10:8500?dc22=dc1a&host2=192.168.9.11&port2=8500&ttl=10"))
+				"http://localhost:18500?dc22=dc1a&host2=localhost&port2=8500&ttl=10"))
 				//.ConfigureServices(services => services.AddConfigType<ServiceClientConfigurator>())
 				.Build();
 			host.Run();

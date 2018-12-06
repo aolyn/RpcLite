@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 
-namespace ServiceTest.UnitTests
+namespace ServiceTest.UnitTests.SelfHost
 {
 	public interface ITimeService
 	{

@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Hosting;
 using RpcLite.Server.Kestrel;
 using Xunit;
 
-namespace ServiceTest.UnitTests
+namespace ServiceTest.UnitTests.SelfHost
 {
 	public class SelfHostSimpleTest
 	{
