@@ -68,13 +68,20 @@ td, th{
 		private static void MapService(IApplicationBuilder app, RpcConfig config, AppHost appHost)
 		{
 			var rpcliteInfoPath = new PathString("/rpcliteinfo");
-			var dic = config.Service.Services
-				.Select(it => new
+			var mappings = config.Service.Services
+				.Select(it =>
 				{
-					Path = new PathString(it.Path.StartsWith("/") ? it.Path : "/" + it),
-					Service = it,
+					var path = it.Path.TrimEnd('/');
+					path = it.Path.StartsWith("/") ? path : "/" + path;
+
+					return new
+					{
+						Path = path,
+						Service = it,
+					};
 				})
-				.OrderBy(it => it.Path)
+				.OrderByDescending(it => it.Path)
+				.ThenByDescending(it => it.Path.Length)
 				.ToArray();
 
 			app.Run(async context =>
@@ -88,6 +95,24 @@ td, th{
 				}
 
 				var serverContext = new AspNetCoreServerContext(context);
+				var serviceInfo = mappings.FirstOrDefault(it =>
+					(context.Request.Path.Value.Length > it.Path.Length
+						&& context.Request.Path.Value[it.Path.Length] == '/'
+						|| context.Request.Path.Value.Length == it.Path.Length)
+					&& context.Request.Path.StartsWithSegments(it.Path));
+				if (serviceInfo != null)
+				{
+					var action = context.Request.Path.Value.Length > serviceInfo.Path.Length
+						? context.Request.Path.Value.Substring(serviceInfo.Path.Length + 1)
+						: null;
+					serverContext.RequestPathInfo = new RequestPathInfo
+					{
+						Service = serviceInfo.Service.Name,
+						Action = action,
+						Query = context.Request.QueryString.Value
+					};
+				}
+
 				var isServiceRequest = await appHost.ProcessAsync(serverContext);
 
 				if (!isServiceRequest)

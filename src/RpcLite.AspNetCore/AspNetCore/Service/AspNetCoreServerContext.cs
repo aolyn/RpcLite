@@ -36,7 +36,6 @@ namespace RpcLite.AspNetCore.Service
 					: path;
 
 				return _requestPath;
-
 			}
 		}
 

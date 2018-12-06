@@ -14,7 +14,7 @@
     <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
     <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
     <GenerateAssemblyCopyrightAttribute>false</GenerateAssemblyCopyrightAttribute>
-    <Version>1.3.0.9</Version>
+    <Version>1.3.0.10</Version>
     <RootNamespace>RpcLite</RootNamespace>
   </PropertyGroup>
 
