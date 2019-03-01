@@ -13,77 +13,56 @@ namespace RpcLite.Service
 	/// </summary>
 	public class RpcAction
 	{
+		private long _processFilterOldVersion;
+
 		#region public properties
 
 		/// <summary>
 		/// 
 		/// </summary>
-		public string Name { get; set; }
+		public string Name { get; internal set; }
 
 		/// <summary>
 		/// 
 		/// </summary>
-		public MethodInfo MethodInfo { get; set; }
+		public MethodInfo MethodInfo { get; internal set; }
 
 		/// <summary>
 		/// 
 		/// </summary>
-		public int ArgumentCount { get; set; }
+		public int ArgumentCount { get; internal set; }
 
 		/// <summary>
 		/// 
 		/// </summary>
-		public Type ArgumentType { get; set; }
+		public Type ArgumentType { get; internal set; }
 
 		/// <summary>
 		/// 
 		/// </summary>
-		public bool HasReturnValue { get; set; }
+		public bool HasReturnValue { get; internal set; }
 
 
 		/// <summary>
 		/// T: service, argument, callback, state, return
 		/// </summary>
-		public Func<object, object, object> InvokeTask { get; set; }
+		internal Func<object, object, object> InvokeTask { get; set; }
 
 
 		/// <summary>
 		/// T: service, argument, return
 		/// </summary>
-		public Func<object, object, object> Func { get; set; }
-
-		///// <summary>
-		///// T: service, argument, callback, state, return
-		///// </summary>
-		//public Func<object, object, AsyncCallback, object, IAsyncResult> BeginFunc { get; set; }
-
-		////public Func<object, object, object, object, object> BeginFunc { get; set; }
-
-		///// <summary>
-		///// 
-		///// </summary>
-		//public Func<object, IAsyncResult, object> EndFunc { get; set; }
+		internal Func<object, object, object> Func { get; set; }
 
 		/// <summary>
 		/// 
 		/// </summary>
-		public Action<object, object> Action { get; set; }
-
-		///// <summary>
-		///// 
-		///// </summary>
-		//public Func<object, object, AsyncCallback, object, IAsyncResult> BeginAction { get; set; }
-		////public Func<object, object, object, object, object> BeginAction { get; set; }
-
-		///// <summary>
-		///// 
-		///// </summary>
-		//public Action<object, IAsyncResult> EndAction { get; set; }
+		internal Action<object, object> Action { get; set; }
 
 		/// <summary>
 		/// 
 		/// </summary>
-		public Func<object> ServiceCreator { get; set; }
+		internal Func<object> ServiceCreator { get; set; }
 
 		///// <summary>
 		///// 
@@ -93,27 +72,22 @@ namespace RpcLite.Service
 		/// <summary>
 		/// 
 		/// </summary>
-		public bool IsStatic { get; set; }
+		public bool IsStatic { get; internal set; }
 
 		/// <summary>
 		/// 
 		/// </summary>
-		public bool IsTask { get; set; }
+		public bool IsTask { get; internal set; }
 
 		/// <summary>
 		/// 
 		/// </summary>
-		public Type TaskResultType { get; set; }
-
-		///// <summary>
-		///// 
-		///// </summary>
-		//public Type ServiceType { get; set; }
+		public Type TaskResultType { get; internal set; }
 
 		/// <summary>
 		/// default value or argument type
 		/// </summary>
-		public object DefaultArgument { get; set; }
+		public object DefaultArgument { get; internal set; }
 
 		/// <summary>
 		/// 
@@ -132,7 +106,12 @@ namespace RpcLite.Service
 		/// </summary>
 		/// <param name="context"></param>
 		/// <returns></returns>
-		public Task ExecuteAsync(ServiceContext context)
+		internal Task ExecuteAsync(ServiceContext context)
+		{
+			return GetExecutingFilterFunc()(context);
+		}
+
+		private Task ExecuteInternalAsync(ServiceContext context)
 		{
 			if (ArgumentCount > 0)
 			{
@@ -204,12 +183,43 @@ namespace RpcLite.Service
 			}
 		}
 
+		private Func<ServiceContext, Task> _filterFunc;
+		private Func<ServiceContext, Task> GetExecutingFilterFunc()
+		{
+			var filters = Service.ActionExecutingFilter;
+			if (filters == null || filters.Count == 0)
+				return ExecuteInternalAsync;
+
+			var version = filters.Version;
+			if (_processFilterOldVersion == version)
+				return _filterFunc;
+
+			//use copy on write instead of lock
+			Func<ServiceContext, Task> filterFunc = ExecuteInternalAsync;
+			var preFilterFunc = filterFunc;
+			for (var idxFilter = filters.Count - 1; idxFilter > -1; idxFilter--)
+			{
+				var thisFilter = filters[idxFilter];
+
+				var nextFilterFunc = preFilterFunc;
+				//all currentFilterFunc.GetHashCode is the same
+				Func<ServiceContext, Task> currentFilterFunc = sc => thisFilter.ProcessAsync(sc, nextFilterFunc);
+
+				preFilterFunc = currentFilterFunc;
+			}
+			filterFunc = preFilterFunc;
+
+			_filterFunc = filterFunc;
+			_processFilterOldVersion = version;
+			return filterFunc;
+		}
+
 		private void ApplyExecutingFilters(ServiceContext context)
 		{
-			if (!(Service?.ActionExecteFilter?.Count > 0))
+			if (!(Service?.ActionExecuteFilter?.Count > 0))
 				return;
 
-			foreach (var item in Service.ActionExecteFilter)
+			foreach (var item in Service.ActionExecuteFilter)
 			{
 				try
 				{
@@ -224,10 +234,10 @@ namespace RpcLite.Service
 
 		private void ApplyExecutedFilters(ServiceContext context)
 		{
-			if (!(Service?.ActionExecteFilter?.Count > 0))
+			if (!(Service?.ActionExecuteFilter?.Count > 0))
 				return;
 
-			foreach (var item in Service.ActionExecteFilter)
+			foreach (var item in Service.ActionExecuteFilter)
 			{
 				try
 				{
@@ -252,8 +262,7 @@ namespace RpcLite.Service
 			}
 		}
 
-		private static readonly CopyOnWriteDictionary<Type, Func<object, object>> GetTaskResultFuncs =
-			new CopyOnWriteDictionary<Type, Func<object, object>>();
+		private static readonly QuickReadConcurrentDictionary<Type, Func<object, object>> GetTaskResultFuncs = new QuickReadConcurrentDictionary<Type, Func<object, object>>();
 
 		/// <summary>
 		/// get result of task
@@ -302,9 +311,10 @@ namespace RpcLite.Service
 					if (task == null)
 						throw new ServiceException("task async api return no Task result");
 
-					resultObject = context.Action.ResultType != null
-						? GetTaskResult(task)
-						: null;
+					if (context.Action.ResultType == null)
+						return null;
+
+					resultObject = GetTaskResult(task);
 				}
 				else
 				{
@@ -325,6 +335,30 @@ namespace RpcLite.Service
 			return resultObject;
 		}
 
+		private object GetServiceInstance(ServiceContext context)
+		{
+#if NETCORE
+			if (context.RequestServices != null)
+			{
+				try
+				{
+					return context.RequestServices.GetService(MethodInfo.DeclaringType);
+				}
+				catch (Exception ex)
+				{
+					var message = "Resolve service instance failed: " + ex.Message;
+					LogHelper.Error(message);
+					throw new ResolveServiceInstanceException(message, ex);
+				}
+			}
+#endif
+
+			using (var serviceInstance = ServiceFactory.GetService(this))
+			{
+				return serviceInstance.ServiceObject;
+			}
+		}
+
 		private object InvokeAction(ServiceContext context)
 		{
 			if (IsStatic)
@@ -332,22 +366,8 @@ namespace RpcLite.Service
 				return InvokeAction(context.Argument, null);
 			}
 
-#if NETCORE
-			if (context.RequestServices != null)
-			{
-				var serviceInstance = context.RequestServices.GetService(MethodInfo.DeclaringType);
-				if (serviceInstance == null)
-				{
-					throw new ServiceException("cannot resolve Service Instance from DI Container");
-				}
-				return InvokeAction(context.Argument, serviceInstance);
-			}
-#endif
-
-			using (var serviceInstance = ServiceFactory.GetService(this))
-			{
-				return InvokeAction(context.Argument, serviceInstance.ServiceObject);
-			}
+			var serviceInstance = GetServiceInstance(context);
+			return InvokeAction(context.Argument, serviceInstance);
 		}
 
 		private object InvokeAction(object requestObject, object serviceObject)
@@ -367,28 +387,9 @@ namespace RpcLite.Service
 
 		private Task InvokeTaskInternal(ServiceContext context)
 		{
-			object serviceObject = null;
-			if (!context.Action.IsStatic)
-			{
-#if NETCORE
-				if (context.RequestServices != null)
-				{
-					serviceObject = context.RequestServices.GetService(MethodInfo.DeclaringType);
-					if (serviceObject == null)
-					{
-						throw new ServiceException("cannot resolve Service Instance from DI Container");
-					}
-				}
-				else
-				{
-#endif
-					var serviceContainer = ServiceFactory.GetService(context.Action);
-					context.ServiceContainer = serviceContainer;
-					serviceObject = serviceContainer.ServiceObject;
-#if NETCORE
-				}
-#endif
-			}
+			var serviceObject = context.Action.IsStatic
+				? null
+				: GetServiceInstance(context);
 
 			var ar = (Task)context.Action.InvokeTask(serviceObject, context.Argument);
 			return ar;

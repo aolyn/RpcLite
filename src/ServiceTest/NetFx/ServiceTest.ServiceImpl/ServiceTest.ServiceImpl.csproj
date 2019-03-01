@@ -46,6 +46,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Aolyn.RpcLite.Security.Merops.Abstracts\Aolyn.RpcLite.Security.Abstracts.csproj">
+      <Project>{5aba6f58-69cf-4d66-bb86-72ab0e3a7d27}</Project>
+      <Name>Aolyn.RpcLite.Security.Abstracts</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ServiceTest.Contract\ServiceTest.Contract.csproj">
       <Project>{5d2cc80c-942a-4b5a-810d-b8594eff2937}</Project>
       <Name>ServiceTest.Contract</Name>

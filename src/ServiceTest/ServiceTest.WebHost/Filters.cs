@@ -26,17 +26,16 @@ namespace ServiceTest.WebHost
 
 		public async Task ProcessAsync(ServiceContext context, Func<ServiceContext, Task> next)
 		{
-			var stopwatch = Stopwatch.StartNew();
+			//var stopwatch = Stopwatch.StartNew();
 			await next(context);
-			stopwatch.Stop();
+			//stopwatch.Stop();
 			//Console.WriteLine($"Service: {context.Service.Name}, Action: {context.Action.Name}, Request Length: {context.Request.ContentLength}bytes");
 		}
-
 	}
 
 	class ResultFilter : IActionExecuteFilter
 	{
-		public string Name { get; set; } = nameof(LogRequestTimeFilter);
+		public string Name { get; set; } = nameof(ResultFilter);
 
 		public void OnExecuted(ServiceContext context)
 		{
@@ -55,6 +54,5 @@ namespace ServiceTest.WebHost
 			Console.WriteLine(context.Action.Name + " before execute action");
 		}
 	}
-
 
 }

@@ -13,20 +13,22 @@ namespace RpcLite.Service
 		private readonly ActionManager _actionManager;
 		private readonly AppHost _host;
 		private readonly MetaInfoBuilder _metaInfoBuilder = new MetaInfoBuilder();
-		private VersionedList<IServiceFilter> Filters => _host?.ServiceFilters;
 		private VersionedList<IServiceInvokeFilter> _invokeFilters;
 		private VersionedList<IProcessFilter> _processFilters;
-		internal VersionedList<IActionExecuteFilter> ActionExecteFilter;
+		internal VersionedList<IActionExecuteFilter> ActionExecuteFilter;
+		internal VersionedList<IActionExecutingFilter> ActionExecutingFilter;
 		private long _oldVersion;
 		private long _processFilterOldVersion;
-
 		Func<ServiceContext, Task> _filterFunc;
+
+		private VersionedList<IServiceFilter> Filters => _host?.ServiceFilters;
+
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="serviceType"></param>
 		/// <param name="host"></param>
-		public RpcService(Type serviceType, AppHost host)
+		internal RpcService(Type serviceType, AppHost host)
 		{
 			Type = serviceType;
 			_actionManager = new ActionManager(this, true);
@@ -38,7 +40,7 @@ namespace RpcLite.Service
 		/// <summary>
 		/// Service request url path
 		/// </summary>
-		public string Path { get; set; }
+		public string Path { get; internal set; }
 
 		/// <summary>
 		/// Service's Type
@@ -48,18 +50,7 @@ namespace RpcLite.Service
 		/// <summary>
 		/// Name of Service
 		/// </summary>
-		public string Name { get; set; }
-
-
-		///// <summary>
-		///// 
-		///// </summary>
-		//public event Action<ServiceContext> BeforeInvoke;
-
-		///// <summary>
-		///// 
-		///// </summary>
-		//public event Action<ServiceContext> AfterInvoke;
+		public string Name { get; internal set; }
 
 		/// <summary>
 		/// Convert to string
@@ -77,7 +68,7 @@ namespace RpcLite.Service
 		/// </summary>
 		/// <param name="context"></param>
 		/// <returns></returns>
-		public Task ProcessAsync(ServiceContext context)
+		internal Task ProcessAsync(ServiceContext context)
 		{
 			LogHelper.Debug("RpcService.BeginProcessRequest");
 
@@ -112,21 +103,12 @@ namespace RpcLite.Service
 
 			context.Action = action;
 
-			//dig 7		54646.39 [#/sec]
-			//var content = System.Text.Encoding.UTF8.GetBytes("mock3 - 1 from RpcLite test run!");
-			//context.ExecutingContext.ResponseContentLength = content.Length;
-			//return context.ExecutingContext.ResponseStream.WriteAsync(content, 0, content.Length).ContinueWith(tsk => true);
-
+			GroupFilters();
 			var filterFunc = GetProcessFilterFunc();
-
-			//dig 4		29587.01 [#/sec]
 
 			return filterFunc(context);
 		}
 
-		/// <summary>
-		/// split filter to it's type collection
-		/// </summary>
 		private void GroupFilters()
 		{
 			if (Filters == null)
@@ -136,7 +118,7 @@ namespace RpcLite.Service
 
 				_invokeFilters = null;
 				_processFilters = null;
-				ActionExecteFilter = null;
+				ActionExecuteFilter = null;
 				_oldVersion = 0;
 				return;
 			}
@@ -145,9 +127,10 @@ namespace RpcLite.Service
 				return;
 
 			//copy on write instead of lock
-			var processFilters = new VersionedList<IProcessFilter>();
-			var invokeFilters = new VersionedList<IServiceInvokeFilter>();
-			var actionExecteFilter = new VersionedList<IActionExecuteFilter>();
+			var processFilters = new VersionedList<IProcessFilter>(_processFilters?.Version ?? 0);
+			var invokeFilters = new VersionedList<IServiceInvokeFilter>(_invokeFilters?.Version ?? 0);
+			var actionExecuteFilter = new VersionedList<IActionExecuteFilter>(ActionExecuteFilter?.Version ?? 0);
+			var actionExecutingFilter = new VersionedList<IActionExecutingFilter>(ActionExecutingFilter?.Version ?? 0);
 
 			foreach (var item in Filters)
 			{
@@ -160,21 +143,23 @@ namespace RpcLite.Service
 						invokeFilters.Add(item as IServiceInvokeFilter);
 						break;
 					case IActionExecuteFilter _:
-						actionExecteFilter.Add(item as IActionExecuteFilter);
+						actionExecuteFilter.Add(item as IActionExecuteFilter);
+						break;
+					case IActionExecutingFilter _:
+						actionExecutingFilter.Add(item as IActionExecutingFilter);
 						break;
 				}
 			}
+
 			_processFilters = processFilters;
 			_invokeFilters = invokeFilters;
-			ActionExecteFilter = actionExecteFilter;
-
+			ActionExecuteFilter = actionExecuteFilter;
+			ActionExecutingFilter = actionExecutingFilter;
 			_oldVersion = Filters.Version;
 		}
 
 		private Func<ServiceContext, Task> GetProcessFilterFunc()
 		{
-			GroupFilters();
-
 			if (_processFilters == null || _processFilters.Count == 0)
 				return ProcessRequestAsync;
 

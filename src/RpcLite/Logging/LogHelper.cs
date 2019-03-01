@@ -17,7 +17,7 @@ namespace RpcLite.Logging
 
 		public static void Error(string message)
 		{
-
+			Console.WriteLine(message);
 		}
 
 		public static void Error(string v, Exception ex)

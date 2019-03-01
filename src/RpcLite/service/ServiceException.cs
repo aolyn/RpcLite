@@ -128,6 +128,45 @@ namespace RpcLite.Service
 	/// <summary>
 	/// Represents errors that occor during application execution in RpcLite server
 	/// </summary>
+	public class ResolveServiceInstanceException : ServiceException
+	{
+		/// <summary>
+		/// Initializes a new instance of RpcLite.ServiceException with specifid message and inner exception
+		/// </summary>
+		/// <param name="innerException">inner exception</param>
+		public ResolveServiceInstanceException(string message, Exception innerException)
+			: base(message, innerException)
+		{ }
+
+#if !NETCORE
+	///// <summary>
+		///// 
+		///// </summary>
+		///// <param name="info"></param>
+		///// <param name="context"></param>
+		//protected ResolveServiceFromContainerException(SerializationInfo info, StreamingContext context) : base(info, context)
+		//{
+		//}
+#endif
+
+		/// <summary>
+		/// Initializes a new instance of RpcLite.ServiceException with specifid message and inner exception
+		/// </summary>
+		public ResolveServiceInstanceException()
+		{ }
+
+		/// <summary>
+		/// Initializes a new instance of RpcLite.ServiceException with specifid message and inner exception
+		/// </summary>
+		/// <param name="message">message</param>
+		public ResolveServiceInstanceException(string message)
+			: base(message)
+		{ }
+	}
+
+	/// <summary>
+	/// Represents errors that occor during application execution in RpcLite server
+	/// </summary>
 	public class NotInitializedException : RpcLiteException
 	{
 		/// <summary>

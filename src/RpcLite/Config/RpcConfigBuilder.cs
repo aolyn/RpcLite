@@ -358,7 +358,8 @@ namespace RpcLite.Config
 				};
 			}
 
-			if (!typeof(IFilterFactory).IsAssignableFrom(typeof(TFactory)))
+			if (!typeof(IFilterFactory).IsAssignableFrom(typeof(TFactory))
+				&& !typeof(IRpcFilter).IsAssignableFrom(typeof(TFactory)))
 			{
 				throw new ArgumentOutOfRangeException(nameof(TFactory),
 					"factoryType must implement " + nameof(IFilterFactory));

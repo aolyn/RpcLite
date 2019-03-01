@@ -21,16 +21,17 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\DependencyInjection\src\Aolyn.Extensions.DependencyInjection\Aolyn.Extensions.DependencyInjection\Aolyn.Extensions.DependencyInjection.csproj" />
     <ProjectReference Include="..\..\RpcLite.AspNetCore\RpcLite.AspNetCore.csproj" />
     <ProjectReference Include="..\..\RpcLite.Server.Kestrel\RpcLite.Server.Kestrel.csproj" />
     <ProjectReference Include="..\..\RpcLite\RpcLite.csproj" />
+    <ProjectReference Include="..\Aolyn.RpcLite.Security.Merops\Aolyn.RpcLite.Security.Merops.csproj" />
     <ProjectReference Include="..\ServiceTest.Common\ServiceTest.Common.csproj" />
     <ProjectReference Include="..\ServiceTest.ServiceImpl\ServiceTest.ServiceImpl.csproj" />
     <ProjectReference Include="..\..\Registry\RpcLite.Registry.Zookeeper\RpcLite.Registry.Zookeeper.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Aolyn.Extensions.DependencyInjection" Version="1.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics" Version="2.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.Server.IISIntegration" Version="2.1.1" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="2.1.1" />

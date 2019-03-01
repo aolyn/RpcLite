@@ -45,5 +45,7 @@ namespace ServiceTest.Contract
 		void ThrowException(Exception ex);
 
 		Task ExceptionTestAsync();
+
+		Task<int> AddWithAuthAsync(Product product);
 	}
 }

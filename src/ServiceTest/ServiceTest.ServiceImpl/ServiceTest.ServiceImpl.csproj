@@ -10,6 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Aolyn.RpcLite.Security.Merops.Abstracts\Aolyn.RpcLite.Security.Abstracts.csproj" />
     <ProjectReference Include="..\ServiceTest.Contract\ServiceTest.Contract.csproj" />
   </ItemGroup>
 

@@ -132,11 +132,20 @@ namespace RpcLite
 			{
 				foreach (var item in config.Filter.Filters)
 				{
-					var factory = ReflectHelper.CreateInstanceByIdentifier<IFilterFactory>(item.Type);
-					var filters = factory.CreateFilters();
-					if (filters == null) continue;
-					foreach (var filter in filters)
+					var type = ReflectHelper.GetTypeByIdentifier(item.Type);
+					if (typeof(IFilterFactory).IsAssignableFrom(type))
 					{
+						var factory = ReflectHelper.CreateInstanceByIdentifier<IFilterFactory>(item.Type);
+						var filters = factory.CreateFilters();
+						if (filters == null) continue;
+						foreach (var filter in filters)
+						{
+							AddFilter(filter);
+						}
+					}
+					else if (typeof(IRpcFilter).IsAssignableFrom(type))
+					{
+						var filter = ReflectHelper.CreateInstanceByIdentifier<IRpcFilter>(item.Type);
 						AddFilter(filter);
 					}
 				}

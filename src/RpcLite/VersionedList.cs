@@ -16,6 +16,22 @@ namespace RpcLite
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <param name="version">initialization version</param>
+		public VersionedList(long version)
+		{
+			_version = version;
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public VersionedList()
+		{
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
 		public long Version { get { return Interlocked.Read(ref _version); } }
 
 		/// <summary>

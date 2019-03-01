@@ -15,37 +15,37 @@ namespace RpcLite.Service
 		/// <summary>
 		/// 
 		/// </summary>
-		public object ServiceContainer { get; set; }
+		internal object ServiceContainer { get; set; }
 
 		/// <summary>
 		/// 
 		/// </summary>
-		public object State { get; set; }
+		public object State { get; internal set; }
 
 		/// <summary>
 		/// 
 		/// </summary>
-		public RpcAction Action { get; set; }
+		public RpcAction Action { get; internal set; }
 
 		/// <summary>
 		/// 
 		/// </summary>
-		public ServiceResponse Response { get; set; }
+		public ServiceResponse Response { get; internal set; }
 
 		/// <summary>
 		/// 
 		/// </summary>
 		public object Result { get; set; }
 
-		/// <summary>
-		/// 
-		/// </summary>
-		public object Tag { get; set; }
+		///// <summary>
+		///// 
+		///// </summary>
+		//public object Tag { get; set; }
 
 		/// <summary>
 		/// 
 		/// </summary>
-		public ServiceRequest Request { get; set; }
+		public ServiceRequest Request { get; internal set; }
 
 		/// <summary>
 		/// 
@@ -55,27 +55,27 @@ namespace RpcLite.Service
 		/// <summary>
 		/// 
 		/// </summary>
-		public RpcService Service { get; set; }
+		public RpcService Service { get; internal set; }
 
 		/// <summary>
 		/// 
 		/// </summary>
-		public IFormatter Formatter { get; set; }
+		public IFormatter Formatter { get; internal set; }
+
+		///// <summary>
+		///// 
+		///// </summary>
+		//public object ExtraData { get; set; }
 
 		/// <summary>
 		/// 
 		/// </summary>
-		public object ExtraData { get; set; }
+		public IServerContext ExecutingContext { get; internal set; }
 
 		/// <summary>
 		/// 
 		/// </summary>
-		public IServerContext ExecutingContext { get; set; }
-
-		/// <summary>
-		/// 
-		/// </summary>
-		public Exception Exception { get; set; }
+		public Exception Exception { get; internal set; }
 
 		/// <summary>
 		/// 
@@ -92,7 +92,7 @@ namespace RpcLite.Service
 		/// </summary>
 		/// <param name="key"></param>
 		/// <param name="data"></param>
-		public void SetExtensionData(string key, object data)
+		internal void SetExtensionData(string key, object data)
 		{
 			if (_extensionData == null)
 				_extensionData = new Dictionary<string, object>();
@@ -105,7 +105,7 @@ namespace RpcLite.Service
 		/// </summary>
 		/// <param name="key"></param>
 		/// <returns></returns>
-		public object GetExtensionData(string key)
+		internal object GetExtensionData(string key)
 		{
 			if (_extensionData == null)
 				return null;
@@ -119,7 +119,7 @@ namespace RpcLite.Service
 		/// <summary>
 		/// 
 		/// </summary>
-		public IServiceProvider RequestServices { get; set; }
+		public IServiceProvider RequestServices { get; internal set; }
 #endif
 	}
 }

@@ -8,16 +8,22 @@ namespace RpcLite.Service
 {
 	class MethodHelper
 	{
-		private static readonly QuickReadConcurrentDictionary<string, MethodInfo> ActionMethods = new QuickReadConcurrentDictionary<string, MethodInfo>();
-		private static readonly QuickReadConcurrentDictionary<MethodInfo, Delegate> CallMethods = new QuickReadConcurrentDictionary<MethodInfo, Delegate>();
-		private static readonly QuickReadConcurrentDictionary<MethodInfo, Delegate> AsyncCallMethods = new QuickReadConcurrentDictionary<MethodInfo, Delegate>();
+		private static readonly QuickReadConcurrentDictionary<string, MethodInfo> ActionMethods
+			= new QuickReadConcurrentDictionary<string, MethodInfo>();
+		private static readonly QuickReadConcurrentDictionary<MethodInfo, Delegate> CallMethods
+			= new QuickReadConcurrentDictionary<MethodInfo, Delegate>();
+		private static readonly QuickReadConcurrentDictionary<MethodInfo, Delegate> AsyncCallMethods
+			= new QuickReadConcurrentDictionary<MethodInfo, Delegate>();
 
-		public static Delegate GetCallMethodFunc(Type serviceType, Type argumentType, ParameterInfo[] arguments, MethodInfo method, bool hasReturn)
+		public static Delegate GetCallMethodFunc(Type serviceType, Type argumentType, ParameterInfo[] arguments,
+			MethodInfo method, bool hasReturn)
 		{
-			return CallMethods.GetOrAdd(method, (k) => GetCallMethodFuncInternal(serviceType, argumentType, arguments, method, hasReturn));
+			return CallMethods.GetOrAdd(method, (k) => GetCallMethodFuncInternal(serviceType, argumentType,
+				arguments, method, hasReturn));
 		}
 
-		private static Delegate GetCallMethodFuncInternal(Type serviceType, Type argumentType, ParameterInfo[] arguments, MethodInfo method, bool hasReturn)
+		private static Delegate GetCallMethodFuncInternal(Type serviceType, Type argumentType,
+			ParameterInfo[] arguments, MethodInfo method, bool hasReturn)
 		{
 			if (method.ReturnType.IsGenericType && method.ReturnType.BaseType == typeof(Task))
 				return GetCallTaskMethodFuncInternal(serviceType, argumentType, arguments, method, hasReturn);
@@ -75,7 +81,8 @@ namespace RpcLite.Service
 			return methodFunc;
 		}
 
-		private static Delegate GetCallTaskMethodFuncInternal(Type serviceType, Type argumentType, ParameterInfo[] arguments, MethodInfo method, bool hasReturn)
+		private static Delegate GetCallTaskMethodFuncInternal(Type serviceType, Type argumentType,
+			ParameterInfo[] arguments, MethodInfo method, bool hasReturn)
 		{
 			if (arguments.Length > 0 && argumentType == null)
 				throw new ArgumentException("parameterType can not be null when paras.Length > 0");
@@ -130,12 +137,15 @@ namespace RpcLite.Service
 			return methodFunc;
 		}
 
-		public static Delegate GetCallMethodAsyncFunc(Type serviceType, Type argumentType, ParameterInfo[] arguments, MethodInfo method, bool hasReturn)
+		public static Delegate GetCallMethodAsyncFunc(Type serviceType, Type argumentType, ParameterInfo[] arguments,
+			MethodInfo method, bool hasReturn)
 		{
-			return AsyncCallMethods.GetOrAdd(method, (k) => GetCallMethodAsyncFuncInternal(serviceType, argumentType, arguments, method, hasReturn));
+			return AsyncCallMethods.GetOrAdd(method, (k) => GetCallMethodAsyncFuncInternal(serviceType, argumentType,
+				arguments, method, hasReturn));
 		}
 
-		private static Delegate GetCallMethodAsyncFuncInternal(Type serviceType, Type argumentType, ParameterInfo[] arguments, MethodInfo method, bool hasReturn)
+		private static Delegate GetCallMethodAsyncFuncInternal(Type serviceType, Type argumentType,
+			ParameterInfo[] arguments, MethodInfo method, bool hasReturn)
 		{
 			if (arguments.Length > 0 && argumentType == null)
 				throw new ArgumentException("parameterType can not be null when paras.Length > 0");
@@ -165,11 +175,13 @@ namespace RpcLite.Service
 			}
 			else if (arguments.Length == 1)
 			{
-				call = Expression.Call(convertService, method, new Expression[] { convertArgument, asyncCallbackArgument, stateArgument });
+				call = Expression.Call(convertService, method,
+					new Expression[] { convertArgument, asyncCallbackArgument, stateArgument });
 			}
 			else
 			{
-				call = Expression.Call(convertService, method, new Expression[] { asyncCallbackArgument, stateArgument });
+				call = Expression.Call(convertService, method,
+					new Expression[] { asyncCallbackArgument, stateArgument });
 			}
 
 			var methodArgs = new[] { serviceArgument, actionArgument, asyncCallbackArgument, stateArgument };
