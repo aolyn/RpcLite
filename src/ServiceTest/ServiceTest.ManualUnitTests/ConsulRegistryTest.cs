@@ -1,7 +1,7 @@
-﻿using System;
-using Aolyn.Extensions.DependencyInjection;
+﻿using Aolyn.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Hosting;
 using RpcLite;
+using RpcLite.Config;
 using RpcLite.Registry.Consul;
 using RpcLite.Server.Kestrel;
 using ServiceTest.UnitTests.SelfHost;
@@ -14,7 +14,7 @@ namespace ServiceTest.UnitTests
 		[Fact]
 		public void ServiceRegisterTest()
 		{
-			var url = "http://localhost:" + (40000 + new Random().Next(10000)).ToString();
+			var url = "http://localhost:5004";
 			var host = new WebHostBuilder()
 				.UseKestrel()
 				.UseUrls(url)
@@ -28,8 +28,7 @@ namespace ServiceTest.UnitTests
 				"http://localhost:18500?dc22=dc1a&host2=localhost&port2=8500&ttl=10"))
 				//.ConfigureServices(services => services.AddConfigType<ServiceClientConfigurator>())
 				.Build();
-			host.Start();
-			host.StopAsync().Wait();
+			host.Run();
 		}
 
 		public class ServiceClientConfigurator
@@ -41,17 +40,17 @@ namespace ServiceTest.UnitTests
 			}
 		}
 
-		//[Fact]
-		//public void ServiceDiscoveryTest()
-		//{
-		//	var config = new RpcConfigBuilder()
-		//		.UseRegistry<ConsulRegistryFactory>("consul",
-		//			"http://localhost:18500?dc=dc1&host2=localhost&port2=8500&ttl=600")
-		//		.Build();
+		[Fact]
+		public void ServiceDiscoveryTest()
+		{
+			var config = new RpcConfigBuilder()
+				.UseRegistry<ConsulRegistryFactory>("consul",
+					"http://localhost:18500?dc=dc1&host2=localhost&port2=8500&ttl=600")
+				.Build();
 
-		//	var registry = new ConsulRegistry(config);
-		//	var serviceInfo = registry.LookupAsync("TimeService", "dev").Result;
-		//}
+			var registry = new ConsulRegistry(config);
+			var serviceInfo = registry.LookupAsync("TimeService", "dev").Result;
+		}
 
 		[Fact]
 		public void ServiceDiscoveryTest2()
@@ -67,8 +66,7 @@ namespace ServiceTest.UnitTests
 					.UseRegistry<ConsulRegistryFactory>("consul",
 						"http://localhost:18500?dc=dc1&host2=localhost&port2=8500&ttl=600"))
 				.Build();
-			host.Start();
-			host.StopAsync().Wait();
+			host.Run();
 		}
 	}
 }

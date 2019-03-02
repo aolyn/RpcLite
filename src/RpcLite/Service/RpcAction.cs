@@ -14,6 +14,7 @@ namespace RpcLite.Service
 	public class RpcAction
 	{
 		private long _processFilterOldVersion;
+		private Func<ServiceContext, Task> _filterFunc;
 
 		#region public properties
 
@@ -113,6 +114,7 @@ namespace RpcLite.Service
 
 		private Task ExecuteInternalAsync(ServiceContext context)
 		{
+			//parse request Argument
 			if (ArgumentCount > 0)
 			{
 				try
@@ -171,10 +173,7 @@ namespace RpcLite.Service
 				catch (Exception ex)
 				{
 					context.Exception = ex;
-
-					var tcs = new TaskCompletionSource<object>();
-					tcs.SetResult(null);
-					return tcs.Task;
+					return TaskHelper.FromResult<object>(null);
 				}
 				ApplyExecutedFilters(context);
 				LogHelper.Debug("RpcService.BeginProcessRequest: end ActionHelper.InvokeAction");
@@ -183,7 +182,6 @@ namespace RpcLite.Service
 			}
 		}
 
-		private Func<ServiceContext, Task> _filterFunc;
 		private Func<ServiceContext, Task> GetExecutingFilterFunc()
 		{
 			var filters = Service.ActionExecutingFilter;
@@ -262,7 +260,8 @@ namespace RpcLite.Service
 			}
 		}
 
-		private static readonly QuickReadConcurrentDictionary<Type, Func<object, object>> GetTaskResultFuncs = new QuickReadConcurrentDictionary<Type, Func<object, object>>();
+		private static readonly CopyOnWriteDictionary<Type, Func<object, object>> GetTaskResultFuncs =
+			new CopyOnWriteDictionary<Type, Func<object, object>>();
 
 		/// <summary>
 		/// get result of task
@@ -337,6 +336,11 @@ namespace RpcLite.Service
 
 		private object GetServiceInstance(ServiceContext context)
 		{
+			if (IsStatic)
+			{
+				return null;
+			}
+
 #if NETCORE
 			if (context.RequestServices != null)
 			{
@@ -361,36 +365,23 @@ namespace RpcLite.Service
 
 		private object InvokeAction(ServiceContext context)
 		{
-			if (IsStatic)
-			{
-				return InvokeAction(context.Argument, null);
-			}
+			var serviceObject = GetServiceInstance(context);
 
-			var serviceInstance = GetServiceInstance(context);
-			return InvokeAction(context.Argument, serviceInstance);
-		}
-
-		private object InvokeAction(object requestObject, object serviceObject)
-		{
-			object resultObj;
 			if (HasReturnValue)
 			{
-				resultObj = Func(serviceObject, requestObject);
+				var resultObj = Func(serviceObject, context.Argument);
+				return resultObj;
 			}
 			else
 			{
-				Action(serviceObject, requestObject);
-				resultObj = null;
+				Action(serviceObject, context.Argument);
+				return null;
 			}
-			return resultObj;
 		}
 
 		private Task InvokeTaskInternal(ServiceContext context)
 		{
-			var serviceObject = context.Action.IsStatic
-				? null
-				: GetServiceInstance(context);
-
+			var serviceObject = GetServiceInstance(context);
 			var ar = (Task)context.Action.InvokeTask(serviceObject, context.Argument);
 			return ar;
 		}

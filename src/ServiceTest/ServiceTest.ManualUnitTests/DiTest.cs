@@ -19,10 +19,10 @@ namespace ServiceTest.UnitTests
 
 			var serviceProvider = services.BuildServiceProvider();
 			var emailService = serviceProvider.GetService<EmailService>();
-			Assert.Equal(1, _times);
+			Assert.Equal(2, _times);
 		}
 
-		private class EmailService
+		public class EmailService
 		{
 			public void Send(string message)
 			{

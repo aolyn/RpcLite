@@ -11,35 +11,14 @@ namespace ServiceTest.UnitTests.SelfHost
 {
 	public class SelfHostTest
 	{
-		private string _serverAddress;
-		private string _serviceAddress;
-
-		public SelfHostTest()
-		{
-			_serverAddress = "http://localhost:" + (40000 + new Random().Next(10000)).ToString();
-			_serviceAddress = _serverAddress + "/api/service/";
-		}
-
 		[Fact]
 		public void Test1()
 		{
 			var host = new WebHostBuilder()
 				.UseKestrel()
 				.UseRpcLite(config => config.AddService<TimeService>("api/service/"))
-				.UseUrls(_serverAddress)
 				.Build();
-			host.Start();
-
-			InvokeApiTest();
-			host.StopAsync().Wait();
-		}
-
-		private void InvokeApiTest()
-		{
-			var appHost = new AppHost(new RpcConfig());
-			var client = appHost.ClientFactory.GetInstance<ITimeService>(_serviceAddress);
-			var result = client.GetDateTime();
-			Assert.NotNull(result);
+			host.Run();
 		}
 
 		[Fact]
@@ -47,21 +26,19 @@ namespace ServiceTest.UnitTests.SelfHost
 		{
 			var server = new ServerBuilder()
 				.UseConfig(config => config.AddService<TimeService>("api/service/"))
-				.UseUrls(_serverAddress)
 				.Build();
-			server.Start();
-			InvokeApiTest();
-			server.StopAsync().Wait();
+			server.Run();
 		}
 
-		//[Fact]
-		//public void ConsulRegistryTest()
-		//{
-		//	var server = new ServerBuilder()
-		//		.UseConfig(config => config.AddService<TimeService>("api/service/"))
-		//		.Build();
-		//	server.Run();
-		//}
+
+		[Fact]
+		public void ConsulRegistryTest()
+		{
+			var server = new ServerBuilder()
+				.UseConfig(config => config.AddService<TimeService>("api/service/"))
+				.Build();
+			server.Run();
+		}
 
 		[Fact]
 		public void IocTest1()
@@ -70,12 +47,8 @@ namespace ServiceTest.UnitTests.SelfHost
 				.UseKestrel()
 				.UseRpcLite(config => config.AddService<TimeService>("api/service/"))
 				.ConfigureServices(services => services.AddSingleton<EmailService>())
-				.UseUrls(_serverAddress)
 				.Build();
-
-			host.Start();
-			InvokeApiTest();
-			host.StopAsync().Wait();
+			host.Run();
 		}
 
 		[Fact]
@@ -86,12 +59,8 @@ namespace ServiceTest.UnitTests.SelfHost
 				.UseRpcLite(config => config
 					.AddService<TimeService>("TimeServiceV1", "api/service/")
 					.AddService<TimeService>("TimeService", "api/time/"))
-				.UseUrls(_serverAddress)
 				.Build();
-
-			host.Start();
-			InvokeApiTest();
-			host.StopAsync().Wait();
+			host.Run();
 		}
 
 		[Fact]
@@ -103,12 +72,8 @@ namespace ServiceTest.UnitTests.SelfHost
 					.AddService<TimeService>("TimeServiceV1", "api/service/")
 					.AddService<TimeService>("TimeService", "api/time/"))
 				.ConfigureServices(services => services.AddConfigurationAssembly<SelfHostTest>())
-				.UseUrls(_serverAddress)
 				.Build();
-
-			host.Start();
-			InvokeApiTest();
-			host.StopAsync().Wait();
+			host.Run();
 		}
 
 		[Fact]
@@ -126,12 +91,8 @@ namespace ServiceTest.UnitTests.SelfHost
 					{
 						Name = "from new inject"
 					}))
-				.UseUrls(_serverAddress)
 				.Build();
-
-			host.Start();
-			InvokeApiTest();
-			host.StopAsync().Wait();
+			host.Run();
 		}
 
 		[Service(ServiceLifetime.Singleton)]

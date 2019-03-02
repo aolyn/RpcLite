@@ -15,8 +15,7 @@ namespace ServiceTest.UnitTests.SelfHost
 				.UseKestrel()
 				.UseRpcLite(config => config.AddService<Service1>("api/service/"))
 				.Build();
-			host.Start();
-			host.StopAsync().GetAwaiter().GetResult();
+			host.Run();
 		}
 
 		public class Service1

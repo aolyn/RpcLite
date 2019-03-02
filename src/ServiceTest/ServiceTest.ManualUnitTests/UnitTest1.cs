@@ -2,8 +2,7 @@ using System;
 using RpcLite;
 using RpcLite.Client;
 using RpcLite.Config;
-using RpcLite.Server.Kestrel;
-using ServiceTest.UnitTests.Basics;
+using ServiceTest.Contract;
 using Xunit;
 using IProductService = ServiceTest.UnitTests.Basics.IProductService;
 
@@ -13,21 +12,15 @@ namespace ServiceTest.UnitTests
 	{
 		public UnitTest1()
 		{
+
 		}
 
 		[Fact]
 		public void Test1()
 		{
-			var serverAddress = "http://localhost:" + (40000 + new Random().Next(10000)).ToString();
-			var serviceAddress = serverAddress + "/api/service/";
-
-			var server = new ServerBuilder()
-				.UseConfig(config => config.AddService<ProductService>("api/service/"))
-				.UseUrls(serverAddress)
-				.Build();
-			server.Start();
-
 			RpcManager.Initialize(new RpcConfig());
+
+			var serviceAddress = "http://localhost:5000/api/service/";
 			var client = ClientFactory.GetInstance<IProductService>(serviceAddress);
 
 			var product1 = client.GetById(9);

@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
-using Aolyn.RpcLite.Security.Abstracts;
-using ServiceTest.Contract;
 
-namespace ServiceTest.ServiceImpl
+namespace ServiceTest.UnitTests.Basics
 {
 	public class ProductService : IProductService
 	{
@@ -27,11 +25,6 @@ namespace ServiceTest.ServiceImpl
 					Price = Rnd.Next(1000)
 				});
 			}
-		}
-
-		public ProductService()
-		{
-			Console.WriteLine("ProductService created");
 		}
 
 		public Task<Product[]> GetPageAsync(int pageIndex, int pageSize)
@@ -129,14 +122,6 @@ namespace ServiceTest.ServiceImpl
 		{
 			throw ex;
 		}
-
-		[Authorize]
-		public Task<int> AddWithAuthAsync(Product product)
-		{
-			Products.Add(product);
-			return Task.FromResult(product?.Id ?? -1);
-		}
-
 	}
 
 }

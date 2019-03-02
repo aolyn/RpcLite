@@ -133,6 +133,7 @@ namespace RpcLite.Service
 		/// <summary>
 		/// Initializes a new instance of RpcLite.ServiceException with specifid message and inner exception
 		/// </summary>
+		/// <param name="message"></param>
 		/// <param name="innerException">inner exception</param>
 		public ResolveServiceInstanceException(string message, Exception innerException)
 			: base(message, innerException)
