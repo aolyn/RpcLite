@@ -51,7 +51,6 @@ namespace RpcLite.AspNetCore.Service
 			set => _httpContext.Response.ContentType = value;
 		}
 
-
 		/// <inheritdoc />
 		public long? ResponseContentLength
 		{

@@ -109,11 +109,6 @@ namespace RpcLite.Service
 		/// <returns></returns>
 		internal Task ExecuteAsync(ServiceContext context)
 		{
-			return GetExecutingFilterFunc()(context);
-		}
-
-		private Task ExecuteInternalAsync(ServiceContext context)
-		{
 			//parse request Argument
 			if (ArgumentCount > 0)
 			{
@@ -130,6 +125,11 @@ namespace RpcLite.Service
 				}
 			}
 
+			return GetExecutingFilterFunc()(context);
+		}
+
+		private Task ExecuteInternalAsync(ServiceContext context)
+		{
 			ApplyExecutingFilters(context);
 
 			if (IsTask)
@@ -163,23 +163,21 @@ namespace RpcLite.Service
 					return TaskHelper.FromResult<object>(null);
 				}
 			}
-			else
-			{
-				LogHelper.Debug("RpcService.BeginProcessRequest: start ActionHelper.InvokeAction");
-				try
-				{
-					context.Result = InvokeAction(context);
-				}
-				catch (Exception ex)
-				{
-					context.Exception = ex;
-					return TaskHelper.FromResult<object>(null);
-				}
-				ApplyExecutedFilters(context);
-				LogHelper.Debug("RpcService.BeginProcessRequest: end ActionHelper.InvokeAction");
 
-				return TaskHelper.FromResult(context.Result);
+			LogHelper.Debug("RpcService.BeginProcessRequest: start ActionHelper.InvokeAction");
+			try
+			{
+				context.Result = InvokeAction(context);
 			}
+			catch (Exception ex)
+			{
+				context.Exception = ex;
+				return TaskHelper.FromResult<object>(null);
+			}
+			ApplyExecutedFilters(context);
+			LogHelper.Debug("RpcService.BeginProcessRequest: end ActionHelper.InvokeAction");
+
+			return TaskHelper.FromResult(context.Result);
 		}
 
 		private Func<ServiceContext, Task> GetExecutingFilterFunc()

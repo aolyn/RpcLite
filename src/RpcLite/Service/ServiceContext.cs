@@ -75,7 +75,7 @@ namespace RpcLite.Service
 		/// <summary>
 		/// 
 		/// </summary>
-		public Exception Exception { get; internal set; }
+		public Exception Exception { get; set; }
 
 		/// <summary>
 		/// 

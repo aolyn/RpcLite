@@ -162,11 +162,11 @@ namespace RpcLite
 			{
 				case null:
 					throw new ArgumentNullException(nameof(filter));
-				case IServiceFilter _:
-					ServiceFilters.Add((IServiceFilter)filter);
+				case IServiceFilter item:
+					ServiceFilters.Add(item);
 					break;
-				case IRpcClientFilter _:
-					ClientFilters.Add((IRpcClientFilter)filter);
+				case IRpcClientFilter item:
+					ClientFilters.Add(item);
 					break;
 			}
 		}

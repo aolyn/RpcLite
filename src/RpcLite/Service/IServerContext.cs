@@ -1,6 +1,6 @@
 ﻿#if NETCORE
-using System;
 #endif
+using System;
 
 using System.IO;
 

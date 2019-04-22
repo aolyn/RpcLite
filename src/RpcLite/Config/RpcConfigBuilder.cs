@@ -261,6 +261,18 @@ namespace RpcLite.Config
 			return AddService<TService>(typeof(TService).Name, path);
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <typeparam name="TService"></typeparam>
+		/// <param name="path"></param>
+		/// <param name="lifecycle"></param>
+		/// <returns></returns>
+		public RpcConfigBuilder AddService<TService>(string path, ServiceLifecycle lifecycle)
+		{
+			return AddService<TService>(typeof(TService).Name, path, lifecycle: lifecycle);
+		}
+
 		#endregion
 
 		#region AddClient
