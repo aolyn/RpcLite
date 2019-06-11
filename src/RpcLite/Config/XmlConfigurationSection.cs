@@ -5,7 +5,7 @@ namespace RpcLite.Config
 	/// <summary>
 	/// 
 	/// </summary>
-	public class XmlConfigurationSection : XmlConfiguration, IConfigurationSection
+	public class XmlConfigurationSection : XmlConfiguration, IRpcConfigurationSection
 	{
 		/// <summary>
 		/// 

@@ -6,7 +6,7 @@ using RpcLite.Logging;
 namespace RpcLite.Service
 {
 	/// <summary>
-	/// Respresnts service infomation
+	/// Represents service information
 	/// </summary>
 	public class RpcService
 	{
@@ -141,17 +141,17 @@ namespace RpcLite.Service
 			{
 				switch (item)
 				{
-					case IProcessFilter _:
-						processFilters.Add(item as IProcessFilter);
+					case IProcessFilter filter:
+						processFilters.Add(filter);
 						break;
-					case IServiceInvokeFilter _:
-						invokeFilters.Add(item as IServiceInvokeFilter);
+					case IServiceInvokeFilter filter:
+						invokeFilters.Add(filter);
 						break;
-					case IActionExecuteFilter _:
-						actionExecuteFilter.Add(item as IActionExecuteFilter);
+					case IActionExecuteFilter filter:
+						actionExecuteFilter.Add(filter);
 						break;
-					case IActionExecutingFilter _:
-						actionExecutingFilter.Add(item as IActionExecutingFilter);
+					case IActionExecutingFilter filter:
+						actionExecutingFilter.Add(filter);
 						break;
 				}
 			}

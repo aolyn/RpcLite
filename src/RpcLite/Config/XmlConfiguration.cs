@@ -8,7 +8,7 @@ namespace RpcLite.Config
 	/// <summary>
 	/// 
 	/// </summary>
-	public class XmlConfiguration : IConfiguration
+	public class XmlConfiguration : IRpcConfiguration
 	{
 		private readonly XmlNode _node;
 
@@ -48,7 +48,7 @@ namespace RpcLite.Config
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		public IEnumerable<IConfigurationSection> GetChildren()
+		public IEnumerable<IRpcConfigurationSection> GetChildren()
 		{
 			return _node.ChildNodes
 				.Cast<XmlNode>()
@@ -59,14 +59,14 @@ namespace RpcLite.Config
 		/// <summary>
 		/// 
 		/// </summary>
-		public IEnumerable<IConfigurationSection> Children => GetChildren();
+		public IEnumerable<IRpcConfigurationSection> Children => GetChildren();
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="key"></param>
 		/// <returns></returns>
-		public IConfigurationSection GetSection(string key)
+		public IRpcConfigurationSection GetSection(string key)
 		{
 			var node = _node[key];
 			return node == null

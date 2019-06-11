@@ -7,7 +7,7 @@ namespace RpcLite.Config
 	/// <summary>
 	/// 
 	/// </summary>
-	public class CoreConfigurationSection : CoreConfiguration, IConfigurationSection
+	public class CoreConfigurationSection : CoreConfiguration, IRpcConfigurationSection
 	{
 		/// <summary>
 		/// 

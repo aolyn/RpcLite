@@ -28,7 +28,7 @@ namespace RpcLite.Config
 		/// </summary>
 		/// <param name="config"></param>
 		/// <returns></returns>
-		public static RpcConfig GetConfig(IConfiguration config)
+		public static RpcConfig GetConfig(IRpcConfiguration config)
 		{
 			var version = GetVersion(config);
 
@@ -50,7 +50,7 @@ namespace RpcLite.Config
 			return instance;
 		}
 
-		internal static Version GetVersion(IConfiguration config)
+		internal static Version GetVersion(IRpcConfiguration config)
 		{
 			var versionText = config["version"];
 			Version version;
@@ -72,7 +72,7 @@ namespace RpcLite.Config
 
 	internal interface IRpcConfigParser
 	{
-		RpcConfig GetConfig(IConfiguration config);
+		RpcConfig GetConfig(IRpcConfiguration config);
 	}
 
 }

@@ -9,7 +9,7 @@ namespace RpcLite.Config
 		/// </summary>
 		/// <param name="config"></param>
 		/// <returns></returns>
-		public RpcConfig GetConfig(IConfiguration config)
+		public RpcConfig GetConfig(IRpcConfiguration config)
 		{
 			var instance = new RpcConfig
 			{
@@ -26,7 +26,7 @@ namespace RpcLite.Config
 		}
 
 		// ReSharper disable once FunctionComplexityOverflow
-		private static void InitializeClientConfig(IConfiguration config, RpcConfig instance)
+		private static void InitializeClientConfig(IRpcConfiguration config, RpcConfig instance)
 		{
 			var clientsNode = config.GetSection("clients");
 			if (clientsNode != null)
@@ -120,7 +120,7 @@ namespace RpcLite.Config
 		//	}
 		//}
 
-		private static void InitializeServiceConfig(IConfiguration config, RpcConfig instance)
+		private static void InitializeServiceConfig(IRpcConfiguration config, RpcConfig instance)
 		{
 			try
 			{

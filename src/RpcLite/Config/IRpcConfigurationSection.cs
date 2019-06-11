@@ -3,7 +3,7 @@
 	/// <summary>
 	/// Represents a section of application configuration values.
 	/// </summary>
-	public interface IConfigurationSection : IConfiguration
+	public interface IRpcConfigurationSection : IRpcConfiguration
 	{
 		/// <summary>
 		/// Gets the key this section occupies in its parent.

@@ -27,7 +27,7 @@ namespace ServiceTest.WebHost
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
 		public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
 		{
-			loggerFactory.AddConsole(LogLevel.Error);
+			//loggerFactory.AddConsole(LogLevel.Error);
 
 			//RpcManager.AddFilter(new LogTimeFilter());
 			//RpcManager.AddFilter(new LogRequestTimeFilter());

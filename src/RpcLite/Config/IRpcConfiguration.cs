@@ -5,18 +5,18 @@ namespace RpcLite.Config
 	/// <summary>
 	/// 
 	/// </summary>
-	public interface IConfiguration
+	public interface IRpcConfiguration
 	{
 		/// <summary>
 		/// Gets the immediate descendant configuration sub-sections.
 		/// </summary>
 		/// <returns>The configuration sub-sections.</returns>
-		IEnumerable<IConfigurationSection> GetChildren();
+		IEnumerable<IRpcConfigurationSection> GetChildren();
 
 		/// <summary>
 		/// 
 		/// </summary>
-		IEnumerable<IConfigurationSection> Children { get; }
+		IEnumerable<IRpcConfigurationSection> Children { get; }
 
 		/// <summary>
 		/// Gets or sets a configuration value.
@@ -35,6 +35,6 @@ namespace RpcLite.Config
 		///     the specified key, an empty Microsoft.Extensions.Configuration.IConfigurationSection
 		///     will be returned.
 		/// </remarks>
-		IConfigurationSection GetSection(string key);
+		IRpcConfigurationSection GetSection(string key);
 	}
 }

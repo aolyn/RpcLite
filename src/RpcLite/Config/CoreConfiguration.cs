@@ -11,7 +11,7 @@ namespace RpcLite.Config
 	/// <summary>
 	/// 
 	/// </summary>
-	public class CoreConfiguration : IConfiguration
+	public class CoreConfiguration : IRpcConfiguration
 	{
 		/// <summary>
 		/// 
@@ -42,7 +42,7 @@ namespace RpcLite.Config
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		public IEnumerable<IConfigurationSection> GetChildren()
+		public IEnumerable<IRpcConfigurationSection> GetChildren()
 		{
 			return Node.GetChildren()
 				.Select(it => new CoreConfigurationSection(it));
@@ -51,14 +51,14 @@ namespace RpcLite.Config
 		/// <summary>
 		/// 
 		/// </summary>
-		public IEnumerable<IConfigurationSection> Children => GetChildren();
+		public IEnumerable<IRpcConfigurationSection> Children => GetChildren();
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="key"></param>
 		/// <returns></returns>
-		public IConfigurationSection GetSection(string key)
+		public IRpcConfigurationSection GetSection(string key)
 		{
 			var node = Node.GetSection(key);
 			return node == null

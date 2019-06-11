@@ -11,7 +11,7 @@ namespace RpcLite.Config
 		/// </summary>
 		/// <param name="config"></param>
 		/// <returns></returns>
-		public RpcConfig GetConfig(IConfiguration config)
+		public RpcConfig GetConfig(IRpcConfiguration config)
 		{
 			var instance = new RpcConfig
 			{
@@ -29,7 +29,7 @@ namespace RpcLite.Config
 			return instance;
 		}
 
-		private void InitializeFilterConfig(IConfiguration config, RpcConfig instance)
+		private void InitializeFilterConfig(IRpcConfiguration config, RpcConfig instance)
 		{
 			var filterNode = config.GetSection("filter");
 
@@ -59,7 +59,7 @@ namespace RpcLite.Config
 			}
 		}
 
-		private static void InitializeChannelConfig(IConfiguration config, RpcConfig instance)
+		private static void InitializeChannelConfig(IRpcConfiguration config, RpcConfig instance)
 		{
 			var channelNode = config.GetSection("channel");
 			if (channelNode?.GetChildren()?.Any() != true) return;
@@ -84,7 +84,7 @@ namespace RpcLite.Config
 			}
 		}
 
-		private static void InitializeFormatterConfig(IConfiguration config, RpcConfig instance)
+		private static void InitializeFormatterConfig(IRpcConfiguration config, RpcConfig instance)
 		{
 			var formatterNode = config.GetSection("formatter");
 
@@ -120,7 +120,7 @@ namespace RpcLite.Config
 		}
 
 		// ReSharper disable once FunctionComplexityOverflow
-		private static void InitializeClientConfig(IConfiguration config, RpcConfig instance)
+		private static void InitializeClientConfig(IRpcConfiguration config, RpcConfig instance)
 		{
 			var clientNode = config.GetSection("client");
 			if (clientNode?.GetChildren()?.Any() != true)
@@ -190,7 +190,7 @@ namespace RpcLite.Config
 			InitializeChannelConfig(clientNode, instance);
 		}
 
-		private static void InitializeRegistryConfig(IConfiguration config, RpcConfig instance)
+		private static void InitializeRegistryConfig(IRpcConfiguration config, RpcConfig instance)
 		{
 			var registryNode = config.GetSection("registry");
 			if (registryNode == null || !registryNode.GetChildren().Any()) return;
@@ -219,7 +219,7 @@ namespace RpcLite.Config
 		}
 
 
-		private static void InitializeMonitorConfig(IConfiguration config, RpcConfig instance)
+		private static void InitializeMonitorConfig(IRpcConfiguration config, RpcConfig instance)
 		{
 			var monitorNode = config.GetSection("monitor");
 			if (monitorNode == null || !monitorNode.GetChildren().Any()) return;
@@ -248,7 +248,7 @@ namespace RpcLite.Config
 		}
 
 
-		private static void InitializeServiceConfig(IConfiguration config, RpcConfig instance)
+		private static void InitializeServiceConfig(IRpcConfiguration config, RpcConfig instance)
 		{
 			try
 			{
@@ -347,7 +347,7 @@ namespace RpcLite.Config
 			}
 		}
 
-		private static ServiceMapperConfig InitializeServiceMapperConfig(IConfigurationSection monitorNode)
+		private static ServiceMapperConfig InitializeServiceMapperConfig(IRpcConfigurationSection monitorNode)
 		{
 			if (monitorNode == null || !monitorNode.GetChildren().Any())
 				return null;
