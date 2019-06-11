@@ -4,7 +4,7 @@
     <Description>RpcLite.AspNetCore Class Library</Description>
     <AssemblyTitle>RpcLite.AspNetCore</AssemblyTitle>
     <Authors>chrishwang</Authors>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <AssemblyName>RpcLite.AspNetCore</AssemblyName>
     <PackageId>RpcLite.AspNetCore</PackageId>
@@ -22,7 +22,7 @@
     <ProjectReference Include="..\RpcLite\RpcLite.csproj" />
   </ItemGroup>
 
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.0'  ">
     <DefineConstants>$(DefineConstants);NETCORE</DefineConstants>
   </PropertyGroup>
 

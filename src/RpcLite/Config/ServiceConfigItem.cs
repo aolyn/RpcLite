@@ -39,6 +39,11 @@ namespace RpcLite.Config
 		public ServiceLifecycle Lifecycle { get; set; }
 
 		/// <summary>
+		/// if use chunked response encoding
+		/// </summary>
+		public bool UseChunkedEncoding { get; set; }
+
+		/// <summary>
 		/// 
 		/// </summary>
 		public ServiceConfigItem() { }

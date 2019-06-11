@@ -269,6 +269,7 @@ namespace RpcLite.Config
 						var path = item["path"];
 						var type = item["type"];
 						var lifeCycle = item["lifeCycle"];
+						var useChunkedEncoding = item["useChunkedEncoding"];
 						var address = item["address"];
 						var env = item["environment"]; //GetAttribute("type", item);
 
@@ -309,6 +310,9 @@ namespace RpcLite.Config
 							Path = path,
 							Address = address,
 							Group = env,
+							UseChunkedEncoding = string.IsNullOrEmpty(useChunkedEncoding)
+								? true
+								: bool.Parse(useChunkedEncoding),
 						};
 						serviceItems.Add(serviceConfigItem);
 					}

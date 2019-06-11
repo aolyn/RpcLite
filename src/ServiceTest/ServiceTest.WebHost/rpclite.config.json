@@ -7,7 +7,8 @@
       {
         "name": "ProductService",
         "path": "api/service/",
-        "type": "ServiceTest.ServiceImpl.ProductService, ServiceTest.ServiceImpl"
+        "type": "ServiceTest.ServiceImpl.ProductService, ServiceTest.ServiceImpl",
+        "useChunkedEncoding": false
         //"address": "http://192.168.9.1:5000/api/service/"
       },
       {

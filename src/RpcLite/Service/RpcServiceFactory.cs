@@ -62,6 +62,7 @@ namespace RpcLite.Service
 				{
 					Name = item.Name,
 					Path = item.Path,
+					UseChunkedEncoding = item.UseChunkedEncoding,
 					//Type = typeInfo,
 					//Filters = _host.Filters,
 				});

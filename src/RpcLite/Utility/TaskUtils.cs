@@ -3,7 +3,8 @@ namespace System.Threading.Tasks
 {
 	internal static class TaskUtils
 	{
-		public static Task<TOut> ContinueWithTask<TIn, TOut>(this Task<TIn> src, Func<Task<TIn>, Task<TOut>> continuation)
+		public static Task<TOut> ContinueWithTask<TIn, TOut>(this Task<TIn> src,
+			Func<Task<TIn>, Task<TOut>> continuation)
 		{
 			var tcs = new TaskCompletionSource<TOut>();
 			src.ContinueWith(tsk =>

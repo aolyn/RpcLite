@@ -194,10 +194,12 @@ namespace RpcLite.Config
 		/// <param name="path"></param>
 		/// <param name="address"></param>
 		/// <param name="lifecycle"></param>
+		/// <param name="useChunkedEncoding">use chunked transfer encoding for write response</param>
 		/// <returns></returns>
 		// ReSharper disable MethodOverloadWithOptionalParameter
 		public RpcConfigBuilder AddService<TService>(string name, string path, string group = null,
-			string address = null, ServiceLifecycle lifecycle = ServiceLifecycle.Singleton)
+			string address = null, ServiceLifecycle lifecycle = ServiceLifecycle.Singleton,
+			bool useChunkedEncoding = true)
 		{
 			// ReSharper restore MethodOverloadWithOptionalParameter
 			var item = new ServiceConfigItem(name, typeof(TService), path)
@@ -205,6 +207,7 @@ namespace RpcLite.Config
 				Group = group,
 				Address = address,
 				Lifecycle = lifecycle,
+				UseChunkedEncoding = useChunkedEncoding
 			};
 
 			return AddService(item);

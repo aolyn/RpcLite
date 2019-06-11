@@ -53,6 +53,11 @@ namespace RpcLite.Service
 		public string Name { get; internal set; }
 
 		/// <summary>
+		/// Use chunked encoding for write response
+		/// </summary>
+		public bool UseChunkedEncoding { get; set; }
+
+		/// <summary>
 		/// Convert to string
 		/// </summary>
 		/// <returns></returns>

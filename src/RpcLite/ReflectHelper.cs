@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Reflection;
-#if NETFX
 using System.Linq;
+#if NETFX
 #endif
 
 namespace RpcLite

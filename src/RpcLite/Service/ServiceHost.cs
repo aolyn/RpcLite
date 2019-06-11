@@ -286,18 +286,21 @@ namespace RpcLite.Service
 						var serializationStopwatch = Stopwatch.StartNew();
 #endif
 
-#if SET_RESPONSE_CONTENT_LENGTH
-						using (var ms = new MemoryStream())
+						if (context.Service.UseChunkedEncoding)
 						{
-							context.Formatter.Serialize(ms, context.Result, context.Action.ResultType);
-							var data = ms.ToArray();
-							httpContext.ResponseContentLength = data.Length;
-							httpContext.ResponseStream.Write(data, 0, data.Length);
+							context.Formatter.Serialize(context.Response.ResponseStream, context.Result,
+								context.Action.ResultType);
 						}
-#else
-						context.Formatter.Serialize(context.Response.ResponseStream, context.Result,
-							context.Action.ResultType);
-#endif
+						else
+						{
+							using (var ms = new MemoryStream())
+							{
+								context.Formatter.Serialize(ms, context.Result, context.Action.ResultType);
+								var data = ms.ToArray();
+								httpContext.ResponseContentLength = data.Length;
+								httpContext.ResponseStream.Write(data, 0, data.Length);
+							}
+						}
 
 #if OUTPUT_SERIALIZATION_TIME
 						serializationStopwatch.Stop();
