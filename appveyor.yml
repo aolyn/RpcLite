@@ -1,0 +1,18 @@
+version: '{build}'
+branches:  
+  only:
+  - master
+build_script:
+- ps: .\nuget-pack\pack.ps1
+test: off
+artifacts:  
+- path: .\nuget-pack\artifacts\*.nupkg
+  name: NuGet
+deploy:
+- provider: NuGet
+  name: production
+  api_key:
+    secure: 【加密后的apikey】
+  skip_symbols: true
+  on:
+    branch: master
