@@ -1,3 +1,5 @@
+Set-Location "nuget-pack"
+
 $CurrentPath = "$((Get-Location).Path)"
 
 $AfactsPath = "$CurrentPath\artifacts"
