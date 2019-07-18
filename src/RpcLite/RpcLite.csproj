@@ -7,7 +7,7 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <AssemblyName>RpcLite</AssemblyName>
     <PackageId>RpcLite</PackageId>
-    <Version>2.0.3</Version>
+    <Version>2.0.4</Version>
     <Copyright>Copyright © Aolyn Inc 2014</Copyright>
     <PackageProjectUrl>https://github.com/aolyn/RpcLite</PackageProjectUrl>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
@@ -46,6 +46,10 @@
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
+    <PackageReference Include="SourceLink.Embed.AllSourceFiles" Version="2.8.3">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
 
 </Project>
