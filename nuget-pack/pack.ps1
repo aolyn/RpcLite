@@ -13,8 +13,8 @@ else {
 
 function BuildPackage($dir) {     
     Set-Location $dir
-    Remove-Item bin/Debug/*.nupkg
     dotnet build -c Debug
+    Remove-Item bin/Debug/*.nupkg
     dotnet pack -c Debug
     Copy-Item "bin/Debug/*.nupkg" $AfactsPath
 }
@@ -31,4 +31,13 @@ for ($i = 0; $i -lt $CodePaths.Count; $i++) {
     Set-Location $CurrentPath
 }
 
-Write-Host "Finish"
+#Write-Host "Start push packages"
+#Set-Location $AfactsPath
+#$packages = Get-ChildItem -Filter "*.nupkg"
+#ForEach ($item in $packages) {
+#    $pakcagePath = $item.FullName
+#    Write-Host $pakcagePath
+#
+#    nuget push "$pakcagePath" -Source https://api.nuget.org/v3/index.json -ApiKey ${env:NUGET_API_KEY_ORIGIN}
+#}
+#Write-Host "Finish"

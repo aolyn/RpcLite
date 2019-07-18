@@ -12,7 +12,7 @@ deploy:
 - provider: NuGet
   name: production
   api_key:
-    secure: 【加密后的apikey】
+    secure: "QXXyEee/wuuGwKOeU0FEJf8v2S0soTkM2NkuhKySVj/dJ15ciG7JfxtO+SeqplFi"
   skip_symbols: true
   on:
     branch: master
