@@ -1,5 +1,6 @@
 version: '{build}'
-branches:  
+image: Visual Studio 2019
+branches:
   only:
   - master
 build_script:

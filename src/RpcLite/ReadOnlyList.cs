@@ -49,21 +49,21 @@ namespace RpcLite
 	}
 }
 
-#if NET40
+//#if NET40
 
-namespace System.Collections.Generic
-{
-	/// <summary>
-	/// 
-	/// </summary>
-	/// <typeparam name="T"></typeparam>
-	public interface IReadOnlyCollection<out T> : IEnumerable<T>, IEnumerable
-	{
-		/// <summary>
-		/// 
-		/// </summary>
-		int Count { get; }
-	}
-}
+//namespace System.Collections.Generic
+//{
+//	/// <summary>
+//	/// 
+//	/// </summary>
+//	/// <typeparam name="T"></typeparam>
+//	public interface IReadOnlyCollection<out T> : IEnumerable<T>, IEnumerable
+//	{
+//		/// <summary>
+//		/// 
+//		/// </summary>
+//		int Count { get; }
+//	}
+//}
 
-#endif
+//#endif

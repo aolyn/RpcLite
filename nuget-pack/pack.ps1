@@ -1,3 +1,5 @@
+dotnet --info
+
 Set-Location "nuget-pack"
 
 $CurrentPath = "$((Get-Location).Path)"
@@ -40,4 +42,4 @@ for ($i = 0; $i -lt $CodePaths.Count; $i++) {
 #
 #    nuget push "$pakcagePath" -Source https://api.nuget.org/v3/index.json -ApiKey ${env:NUGET_API_KEY_ORIGIN}
 #}
-#Write-Host "Finish"
+Write-Host "Finish"
