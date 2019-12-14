@@ -1,0 +1,33 @@
+name: .NET Core
+
+on: [push]
+
+jobs:
+
+  publish_package_ActionsTestLibrary:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.100
+    - name: Build with dotnet
+      run: |
+        cd src/
+        dotnet pack -c Release RpcLite.LibOnly.sln
+        
+        mkdir packages-temp
+        cp RpcLite/bin/Release/*.nupkg packages-temp/
+        cp RpcLite.AspNetCore/bin/Release/*.nupkg packages-temp/
+        cp RpcLite.Formatters.Protobuf/bin/Release/*.nupkg packages-temp/
+        cp RpcLite.NetFx/bin/Release/*.nupkg packages-temp/
+        cp RpcLite.Server.Kestrel/bin/Release/*.nupkg packages-temp/
+        
+        ls RpcLite/
+        ls RpcLite.AspNetCore/
+        ls packages-temp
+        
+        # dotnet nuget push bin/Release/*.nupkg --source https://www.nuget.org -k ${{ secrets.NuGetAPIKey }}
