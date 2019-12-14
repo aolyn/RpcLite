@@ -1,0 +1,22 @@
+name: .NET Core
+
+on: [push]
+
+jobs:
+
+  publish_package_ActionsTestLibrary:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.100
+    - name: Build with dotnet
+      run: |
+        cd RpcLite/src/
+        dotnet pack -c Release
+        ls RpcLite/
+        # dotnet nuget push bin/Release/*.nupkg --source https://www.nuget.org -k ${{ secrets.NuGetAPIKey }}
