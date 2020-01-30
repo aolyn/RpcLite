@@ -6,7 +6,7 @@ jobs:
 
   publish_package_ActionsTestLibrary:
 
-    runs-on: ubuntu-latest
+    runs-on: windows-latest #ubuntu-latest
 
     steps:
     - uses: actions/checkout@v1
@@ -14,10 +14,20 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 3.1.100
+    - name: Setup NuGet.exe for use with actions
+      uses: NuGet/setup-nuget@v1.0.2
+      with:
+        # NuGet version to install. Can be `latest`, `preview`, a concrete version like `5.3.1`, or a semver range specifier like `5.x`.
+        nuget-version: latest
+        # NuGet API Key to configure.
+        nuget-api-key: ${{ secrets.NuGetAPIKey }}
+        # Source to scope the NuGet API Key to.
+        #nuget-api-key-source: # optional
+      
     - name: Build with dotnet
       run: |
         cd src/
-        dotnet pack -c Release RpcLite.LibOnly.sln
+        dotnet pack -c Release RpcLite.PackLibOnly.sln
         
         mkdir packages-temp
         cp RpcLite/bin/Release/*.nupkg packages-temp/
@@ -30,4 +40,5 @@ jobs:
         ls RpcLite.AspNetCore/
         ls packages-temp
         
-        # dotnet nuget push bin/Release/*.nupkg --source https://www.nuget.org -k ${{ secrets.NuGetAPIKey }}
+        # dotnet nuget push packages-temp/*.nupkg --source https://www.nuget.org -k ${{ secrets.NuGetAPIKey }}
+        dotnet nuget push packages-temp/*.nupkg -Source https://www.nuget.org
