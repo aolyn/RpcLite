@@ -38,10 +38,10 @@ jobs:
         cp RpcLite.NetFx/bin/Release/*.nupkg packages-temp/
         cp RpcLite.Server.Kestrel/bin/Release/*.nupkg packages-temp/
         
-        ls RpcLite/
-        ls RpcLite.AspNetCore/
+        #ls RpcLite/
+        #ls RpcLite.AspNetCore/
         ls packages-temp
         
         # dotnet nuget push packages-temp/*.nupkg --source https://www.nuget.org -k ${{ secrets.NuGetAPIKey }}
         # dotnet nuget push packages-temp/*.nupkg -s https://www.nuget.org
-        nuget push packages-temp/*.nupkg -Source https://api.nuget.org/v3/index.json
+        nuget push packages-temp\*.nupkg -Source https://api.nuget.org/v3/index.json
