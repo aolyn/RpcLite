@@ -20,14 +20,15 @@ namespace RpcLite.Logging
 			Console.WriteLine(message);
 		}
 
-		public static void Error(string v, Exception ex)
+		public static void Error(string msg, Exception ex)
 		{
-
+			Console.WriteLine(msg);
+			Console.WriteLine(ex);
 		}
 
 		public static void Error(Exception ex)
 		{
-
+			Console.WriteLine(ex);
 		}
 	}
 }

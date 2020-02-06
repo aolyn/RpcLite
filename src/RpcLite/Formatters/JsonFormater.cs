@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using RpcLite.Utility;
 
 namespace RpcLite.Formatters
@@ -26,7 +27,7 @@ namespace RpcLite.Formatters
 		/// <returns></returns>
 		public object Deserialize(Stream inputStream, Type targetType)
 		{
-			var reader = new StreamReader(inputStream);
+			var reader = new StreamReader(inputStream, Encoding.UTF8);
 			return Deserialize(reader, targetType);
 		}
 
@@ -49,7 +50,7 @@ namespace RpcLite.Formatters
 		/// <param name="type"></param>
 		public void Serialize(Stream outputStream, object source, Type type)
 		{
-			var writer = new StreamWriter(outputStream);
+			var writer = new StreamWriter(outputStream, Encoding.UTF8);
 			Serialize(writer, source, type);
 			writer.Flush();
 		}
