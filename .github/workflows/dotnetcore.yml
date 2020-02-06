@@ -43,4 +43,4 @@ jobs:
         ls packages-temp
         
         # dotnet nuget push packages-temp/*.nupkg --source https://www.nuget.org -k ${{ secrets.NuGetAPIKey }}
-        dotnet nuget push packages-temp/*.nupkg -Source https://www.nuget.org
+        dotnet nuget push packages-temp/*.nupkg -s https://www.nuget.org
