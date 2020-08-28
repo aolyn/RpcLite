@@ -18,7 +18,7 @@ namespace RpcLite.Formatters.Protobuf
         static ProtobufHelper()
         {
 #if USEPROTOBUF
-            TypeModel = ProtoBuf.Meta.TypeModel.Create();
+            TypeModel = ProtoBuf.Meta.RuntimeTypeModel.Create();
             //TypeModel[typeof(KeyValuePair<string, object>)].SetSurrogate(typeof(TagRefPair));
 #endif
         }
