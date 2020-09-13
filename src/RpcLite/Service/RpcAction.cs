@@ -114,7 +114,7 @@ namespace RpcLite.Service
 			{
 				try
 				{
-					context.Argument = context.Request.ContentLength > 0
+					context.Argument = context.Request.ContentLength > 0 || context.Request.ContentLength == -1
 						? GetRequestObject(context.Request.RequestStream, context.Formatter, ArgumentType)
 						: DefaultArgument;
 				}

@@ -42,7 +42,18 @@ namespace RpcLite.AspNetCore.Service
 		public RequestPathInfo RequestPathInfo { get; set; }
 
 		/// <inheritdoc />
-		public int RequestContentLength => (int)(_httpContext.Request.ContentLength ?? 0);
+		public int RequestContentLength
+		{
+			get
+			{
+				if (_httpContext.Request.Headers.TryGetValue("transfer-encoding", out var values)
+					&& values.Count == 1 && values[0] == "chunked")
+				{
+					return -1;
+				}
+				return (int)(_httpContext.Request.ContentLength ?? 0);
+			}
+		}
 
 		/// <inheritdoc />
 		public string ResponseContentType
