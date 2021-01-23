@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using RpcLite.Config;
@@ -12,7 +13,12 @@ namespace ServiceTest.WebHost
 	{
 		public void ConfigureServices(IServiceCollection services)
 		{
-			services.AddMvc();
+			services.AddControllersWithViews();
+
+			services
+				.Configure<KestrelServerOptions>(x => x.AllowSynchronousIO = true)
+				.Configure<IISServerOptions>(x => x.AllowSynchronousIO = true);
+			//services.AddMvc();
 			//services.AddRouting();
 
 			services.AddRpcLite(builder => builder
@@ -44,17 +50,25 @@ namespace ServiceTest.WebHost
 				app.UseDeveloperExceptionPage();
 			}
 
-			app.UseMvc(routes =>
-			{
-				routes.MapRoute(
-					name: "default",
-					template: "{controller=Home}/{action=Index}/{id?}");
+			//app.UseMvc(routes =>
+			//{
+			//	routes.MapRoute(
+			//		name: "default",
+			//		template: "{controller=Home}/{action=Index}/{id?}");
 
-				////Method2: use IRouteBuilder
-				//routes.UseRpcLite(builder => builder
-				//	.UseService<TestService>("TestService", "api/test/")
-				//	.UseService<ProductService>("TestService", "api/service/")
-				//	.UseFilter<TestFilterFactory>());
+			//	////Method2: use IRouteBuilder
+			//	//routes.UseRpcLite(builder => builder
+			//	//	.UseService<TestService>("TestService", "api/test/")
+			//	//	.UseService<ProductService>("TestService", "api/service/")
+			//	//	.UseFilter<TestFilterFactory>());
+			//});
+			app.UseRouting();
+
+			app.UseEndpoints(endpoints =>
+			{
+				endpoints.MapControllerRoute(
+					name: "default",
+					pattern: "{controller=Home}/{action=Index}/{id?}");
 			});
 
 			app.Run(async (context) =>

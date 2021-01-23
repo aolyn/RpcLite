@@ -4,7 +4,7 @@
     <Description>RpcLite.AspNetCore Class Library</Description>
     <AssemblyTitle>RpcLite.AspNetCore</AssemblyTitle>
     <Authors>chrishwang</Authors>
-    <TargetFrameworks>netstandard2.0;netcoreapp3.1</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;netcoreapp3.1;net50</TargetFrameworks>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <AssemblyName>RpcLite.AspNetCore</AssemblyName>
     <PackageId>RpcLite.AspNetCore</PackageId>
@@ -14,7 +14,7 @@
     <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
     <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
     <GenerateAssemblyCopyrightAttribute>false</GenerateAssemblyCopyrightAttribute>
-    <Version>3.1.5</Version>
+    <Version>5.0</Version>
     <RootNamespace>RpcLite</RootNamespace>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
@@ -29,6 +29,10 @@
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp3.1' ">
+    <DefineConstants>$(DefineConstants);NETCORE</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'net50' ">
     <DefineConstants>$(DefineConstants);NETCORE</DefineConstants>
   </PropertyGroup>
 
@@ -47,6 +51,10 @@
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp3.1' ">
+    <FrameworkReference Include ="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net50' ">
     <FrameworkReference Include ="Microsoft.AspNetCore.App" />
   </ItemGroup>
 

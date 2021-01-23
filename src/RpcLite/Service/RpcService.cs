@@ -15,11 +15,12 @@ namespace RpcLite.Service
 		private readonly MetaInfoBuilder _metaInfoBuilder = new MetaInfoBuilder();
 		private VersionedList<IServiceInvokeFilter> _invokeFilters;
 		private VersionedList<IProcessFilter> _processFilters;
-		internal VersionedList<IActionExecuteFilter> ActionExecuteFilter;
-		internal VersionedList<IActionExecutingFilter> ActionExecutingFilter;
 		private long _oldVersion;
 		private long _processFilterOldVersion;
-		Func<ServiceContext, Task> _filterFunc;
+		private Func<ServiceContext, Task> _filterFunc;
+
+		internal VersionedList<IActionExecuteFilter> ActionExecuteFilter;
+		internal VersionedList<IActionExecutingFilter> ActionExecutingFilter;
 
 		private VersionedList<IServiceFilter> Filters => _host?.ServiceFilters;
 
