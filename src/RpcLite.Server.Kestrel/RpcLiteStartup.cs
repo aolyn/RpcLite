@@ -2,6 +2,7 @@
 using System.Threading;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.DependencyInjection;
 using RpcLite.Config;
 
@@ -26,6 +27,8 @@ namespace RpcLite.Server.Kestrel
 
 		public IServiceProvider ConfigureServices(IServiceCollection services)
 		{
+			services.Configure<KestrelServerOptions>(x => x.AllowSynchronousIO = true);
+
 			if (!_selfHost)
 				services.AddRouting();
 			if (_rpcConfig != null)
