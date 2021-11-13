@@ -63,7 +63,11 @@ namespace RpcLite.Net
 			{
 				Content = new StreamContent(content)
 			};
+#if NET5_0_OR_GREATER
+			requestMessage.Options.TryAdd(RequestMarkPropertyKey, "");
+#else
 			requestMessage.Properties[RequestMarkPropertyKey] = "";
+#endif
 			if (headDic != null && headDic.Count > 0)
 			{
 				if (headDic.TryGetValue("Content-Type", out var contentType))
@@ -113,7 +117,7 @@ namespace RpcLite.Net
 				if (!tsk.Result.IsSuccessStatusCode)
 				{
 					throw new ConnectionException("connection error when transport data with server: "
-					    + tsk.Result.ReasonPhrase);
+						+ tsk.Result.ReasonPhrase);
 				}
 
 				return GetResponseMessage(tsk.Result).ContinueWith(msgTask =>
