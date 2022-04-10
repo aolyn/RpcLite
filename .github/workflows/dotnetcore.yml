@@ -13,9 +13,9 @@ jobs:
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 3.1.100
+        dotnet-version: 6.0.201
     - name: Setup NuGet.exe for use with actions
-      uses: NuGet/setup-nuget@v1.0.2
+      uses: nuget/setup-nuget@v1
       with:
         # NuGet version to install. Can be `latest`, `preview`, a concrete version like `5.3.1`, or a semver range specifier like `5.x`.
         nuget-version: latest
@@ -41,4 +41,4 @@ jobs:
         ls packages-temp
         
         # dotnet nuget push packages-temp/*.nupkg --source https://www.nuget.org -k ${{ secrets.NuGetAPIKey }}
-        dotnet nuget push packages-temp/*.nupkg -Source https://www.nuget.org
+        dotnet nuget push --source https://www.nuget.org packages-temp/*.nupkg
