@@ -87,6 +87,38 @@ namespace RpcLite.Service
 	/// <summary>
 	/// Represents errors that occor during application execution in RpcLite server
 	/// </summary>
+	public class MetaActionNotEnabledException : ServiceException
+	{
+		/// <summary>
+		/// Initializes a new instance of RpcLite.ServiceException with specifid message and inner exception
+		/// </summary>
+		/// <param name="innerException">inner exception</param>
+		public MetaActionNotEnabledException(Exception innerException)
+			: base($"Meta Action Not Enabled", innerException)
+		{ }
+
+#if !NETCORE
+	///// <summary>
+		///// 
+		///// </summary>
+		///// <param name="info"></param>
+		///// <param name="context"></param>
+		//protected MetaActionNotEnabledException(SerializationInfo info, StreamingContext context) : base(info, context)
+		//{
+		//}
+#endif
+
+		/// <summary>
+		/// Initializes a new instance of RpcLite.ServiceException with specifid message and inner exception
+		/// </summary>
+		public MetaActionNotEnabledException()
+		{ }
+
+	}
+
+	/// <summary>
+	/// Represents errors that occor during application execution in RpcLite server
+	/// </summary>
 	public class ServiceNotFoundException : ServiceException
 	{
 		/// <summary>

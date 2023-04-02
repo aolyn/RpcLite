@@ -21,6 +21,11 @@ namespace RpcLite.Config
 		public RegistryConfig Registry { get; set; }
 
 		/// <summary>
+		/// Meta info config, for example /rpcliteinfo
+		/// </summary>
+		public MetaConfig Meta { get; set; }
+
+		/// <summary>
 		/// App Id of current app
 		/// </summary>
 		public string AppId { get; set; }

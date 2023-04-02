@@ -70,10 +70,13 @@ namespace Microsoft.AspNetCore.Builder
 
 		private static void MapServiceInfoHandler(RpcConfig rpcConfig, IRouteBuilder routerBuilder)
 		{
-			if (rpcConfig?.Service?.Services == null)
+			if (rpcConfig?.Meta?.Enabled != true || rpcConfig?.Service?.Services == null)
+			{
 				return;
+			}
 
-			routerBuilder.MapRoute("rpcliteinfo", async context =>
+			var path = rpcConfig.Meta.Path ?? "rpcliteinfo";
+			routerBuilder.MapRoute(path, async context =>
 			{
 				await context.Response.WriteAsync(@"<style>
 a:visited{

@@ -44,6 +44,11 @@ namespace RpcLite.Config
 		public bool UseChunkedEncoding { get; set; }
 
 		/// <summary>
+		/// enable meta operation or not
+		/// </summary>
+		public bool EnableMeta { get; set; }
+
+		/// <summary>
 		/// 
 		/// </summary>
 		public ServiceConfigItem() { }

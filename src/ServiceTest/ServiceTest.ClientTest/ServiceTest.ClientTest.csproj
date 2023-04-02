@@ -7,6 +7,14 @@
     <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <WarningsAsErrors></WarningsAsErrors>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <WarningsAsErrors>$(WarningsAsErrors);</WarningsAsErrors>
+  </PropertyGroup>
+
   <ItemGroup>
     <None Update="rpclite.config.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

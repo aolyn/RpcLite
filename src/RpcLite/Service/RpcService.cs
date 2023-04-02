@@ -59,6 +59,11 @@ namespace RpcLite.Service
 		public bool UseChunkedEncoding { get; set; }
 
 		/// <summary>
+		/// enable meta data action or not
+		/// </summary>
+		public bool EnableMeta { get; set; }
+
+		/// <summary>
 		/// Convert to string
 		/// </summary>
 		/// <returns></returns>
@@ -80,6 +85,11 @@ namespace RpcLite.Service
 
 			if (context.Request.ActionName == "?meta" || string.IsNullOrEmpty(context.Request.ActionName))
 			{
+				if (!EnableMeta)
+				{
+					throw new ActionNotFoundException();
+				}
+
 				LogHelper.Debug("RpcService.BeginProcessRequest: start ActionHelper.InvokeAction");
 				try
 				{

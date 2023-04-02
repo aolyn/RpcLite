@@ -448,6 +448,31 @@ namespace RpcLite.Config
 		}
 
 		/// <summary>
+		/// config meta data api
+		/// </summary>
+		/// <param name="enabled">is enable meta data api</param>
+		/// <param name="path">meta data api path, default is /rpcliteinfo</param>
+		public RpcConfigBuilder AddMeta(bool enabled, string path)
+		{
+			if (_config.Meta == null)
+				_config.Meta = new MetaConfig();
+
+			_config.Meta.Enabled = enabled;
+			_config.Meta.Path = path;
+
+			return this;
+		}
+
+		/// <summary>
+		/// config meta data api
+		/// </summary>
+		/// <param name="enabled">is enable meta data api</param>
+		public RpcConfigBuilder AddMeta(bool enabled)
+		{
+			return AddMeta(enabled, null);
+		}
+
+		/// <summary>
 		/// 
 		/// </summary>
 		/// <returns></returns>

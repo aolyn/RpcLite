@@ -22,6 +22,7 @@ namespace ServiceTest.WebHost
 			//services.AddRouting();
 
 			services.AddRpcLite(builder => builder
+				//.AddMeta(true)
 				.AddService<TestService>("TestService", "api/test/")
 				.AddService<ProductService>("ProductService", "api/service/", null, ServiceLifecycle.Scoped)
 				.AddService<TimeService>("TimeService", "api/time/")
