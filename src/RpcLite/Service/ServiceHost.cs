@@ -7,6 +7,7 @@ using System.IO;
 using System.Threading.Tasks;
 using RpcLite.Config;
 using RpcLite.Diagnostics;
+using RpcLite.Filter;
 using RpcLite.Formatters;
 using RpcLite.Logging;
 
@@ -32,9 +33,27 @@ namespace RpcLite.Service
 			_appHost = appHost;
 			_serviceFactory = new RpcServiceFactory(_appHost, serviceConfig);
 
+			var services = serviceConfig?.Services;
+			if (services == null)
+			{
+				return;
+			}
+
+			foreach (var service in services)
+			{
+				var serviceType = ReflectHelper.GetTypeByIdentifier(service.Type);
+				foreach (var serviceFilter in _appHost.ServiceFilters)
+				{
+					var serviceTypeAware = serviceFilter as IServiceTypeAware;
+					if (serviceTypeAware != null)
+					{
+						serviceTypeAware.OnServiceTypeAdded(serviceType);
+					}
+				}
+			}
+
 			var initializeRegistry = new Lazy<object>(() =>
 			{
-				var services = serviceConfig?.Services;
 				if (services == null || _appHost.Registry?.CanRegister != true)
 					return null;
 
@@ -106,7 +125,7 @@ namespace RpcLite.Service
 		}
 
 		/// <summary>
-		/// get formatter by content type
+		/// get formatter by content serviceType
 		/// </summary>
 		/// <param name="contentType"></param>
 		/// <returns></returns>

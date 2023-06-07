@@ -87,7 +87,7 @@ namespace RpcLite.Service
 			{
 				if (!EnableMeta)
 				{
-					throw new ActionNotFoundException();
+					throw new MetaActionNotEnabledException();
 				}
 
 				LogHelper.Debug("RpcService.BeginProcessRequest: start ActionHelper.InvokeAction");

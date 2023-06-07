@@ -116,12 +116,6 @@ namespace RpcLite
 			if (config == null)
 				throw new ArgumentNullException(nameof(config));
 
-			AppId = config.AppId;
-			Registry = RegistryHelper.GetRegistry(config);
-			ServiceHost = new ServiceHost(this, config.Service);
-			FormatterManager = new FormatterManager(config.Formatter);
-			ClientFactory = new RpcClientFactory(this, config.Client);
-
 			if (config.Monitor != null && !string.IsNullOrWhiteSpace(config.Monitor.Type))
 			{
 				var monitorFactory = ReflectHelper.CreateInstanceByIdentifier<IMonitorFactory>(config.Monitor.Type);
@@ -150,6 +144,12 @@ namespace RpcLite
 					}
 				}
 			}
+
+			AppId = config.AppId;
+			Registry = RegistryHelper.GetRegistry(config);
+			ServiceHost = new ServiceHost(this, config.Service);
+			FormatterManager = new FormatterManager(config.Formatter);
+			ClientFactory = new RpcClientFactory(this, config.Client);
 		}
 
 		/// <summary>
